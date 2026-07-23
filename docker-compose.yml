@@ -1,11 +1,38 @@
 services:
 
-  nginx:
+  webserver:
     build:
-      context: ./NGINX
+      context: ./webserver
       dockerfile: dockerfile
-    container_name: nginx
+    container_name: webserver
     ports:
-      - "8080:8080"
-      - "9090:9090"
+        - "8080:8080"
+        - "9090:9090"
+    networks:
+      - Container_network
     restart: always
+
+  back:
+    build:
+     context: ./back
+     dockerfile: dockerfile
+    container_name: back
+    networks:
+      - Container_network
+    restart: always
+
+  postgresql:
+    build:
+      context: ./database
+      dockerfile: dockerfile
+    container_name: postgresql
+    networks:
+      - Container_network
+    volumes:
+      - '/home/mchanlia/data/postgresql'
+
+    restart: always
+
+networks:
+  Container_network:
+    driver: bridge

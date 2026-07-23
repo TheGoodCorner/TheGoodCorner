@@ -1,0 +1,11 @@
+FROM node:26-alpine
+WORKDIR /app
+COPY NodeJS/package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# COPY ./conf/back_setup.sh /usr/local/bin/back_setup.sh
+# RUN chmod +x /usr/local/bin/back_setup.sh
+# ENTRYPOINT ["/usr/local/bin/back_setup.sh"]
+CMD ["npm", "start"]

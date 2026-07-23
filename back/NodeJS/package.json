@@ -1,0 +1,13 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "\"back_end NodeJS/Typescript\"",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "echo 'No build required' or your build command here",
+    "start": "node index.js"
+  }
+}

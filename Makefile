@@ -67,7 +67,33 @@ clean: down
 	@docker system prune -a -f
 	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete."
 
+# back:
 
+# 	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
+# 		echo -e "$(RED)Inception is already up."; \
+# 	else \
+# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
+# 		docker build -t back ./back && docker run -d --name back --network Container_network back; \
+# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
+# 	fi
+# database:
+
+# 	@if [ $$(docker ps -q -f name=database | wc -l ) -gt 0 ]; then \
+# 		echo -e "$(RED)Inception is already up."; \
+# 	else \
+# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
+# 		docker build -t database . && docker run -d --database; \
+# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
+# 	fi
+# webserver:
+
+# 	@if [ $$(docker ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
+# 		echo -e "$(RED)Inception is already up."; \
+# 	else \
+# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
+# 		docker build -t webserver . && docker run -d --webserver;\
+# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
+# 	fi
 re: clean all
 
 .PHONY: all up down clean re
