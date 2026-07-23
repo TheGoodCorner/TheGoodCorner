@@ -36,9 +36,11 @@ services:
     #   timeout: 5s
     #   retries: 5
     volumes:
-      - '/home/mchanlia/data/postgresql'
+      - postgresql_data:/var/lib/postgresql/data
     restart: always
 
 networks:
   Container_network:
     driver: bridge
+volumes:
+  postgresql_data:

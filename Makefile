@@ -47,6 +47,7 @@ up:
 		echo -e "$(RED)Inception is already up."; \
 	else \
 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
+		mkdir -p /home/$$USER/data/postgresql; \
 		$(COMPOSE) -f $(CONF) up --build -d; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
 	fi
