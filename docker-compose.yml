@@ -7,7 +7,6 @@ services:
     container_name: webserver
     ports:
         - "8080:8080"
-        - "9090:9090"
     networks:
       - Container_network
     restart: always
@@ -19,6 +18,9 @@ services:
     container_name: back
     networks:
       - Container_network
+    # depends_on:
+    #   postgresql:
+    #     condition: service_healthy
     restart: always
 
   postgresql:
@@ -28,9 +30,13 @@ services:
     container_name: postgresql
     networks:
       - Container_network
+    # healthcheck:
+    #   test: ["CMD", "pg_isready", "-U", "postgres"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
     volumes:
       - '/home/mchanlia/data/postgresql'
-
     restart: always
 
 networks:

@@ -1,13 +1,15 @@
 FROM node:26-alpine AS builder
+
 WORKDIR /app
 COPY app/package*.json ./
 RUN npm install
 COPY . .
+    #copy all files from the current directory to the /app directory in the container
 RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app /usr/share/nginx/html
+    #copy the builder built node app to the new nginx container to have one unified container
 COPY ./nginx/conf/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8080
-EXPOSE 9090
 CMD ["nginx", "-g", "daemon off;"]

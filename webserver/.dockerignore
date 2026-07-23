@@ -3,5 +3,7 @@
 *md
 *.pdf
 *.txt
+dockerfile
+.dockerignore
 Makefile
 docker-compose.yml

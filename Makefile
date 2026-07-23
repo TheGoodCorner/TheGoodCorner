@@ -3,6 +3,9 @@
 # -------------------------------------------------- #
 
 NAME				= inception
+BACK_CONT			= back
+DATABASE_CONT		= database
+WEB_SERVER_CONT		= webserver
 SRC_DIR				= srcs
 COMPOSE				= docker compose
 CONF				= ./docker-compose.yml
@@ -40,7 +43,7 @@ all: up launch
 
 up:
 	
-	@if [ $$(docker ps -q -f name=nginx | wc -l ) -gt 0 ]; then \
+	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)Inception is already up."; \
 	else \
 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
@@ -57,7 +60,7 @@ refresh: down up
 	@echo -e "\n$(BLUE)Refresh done !\n";
 
 launch:
-	$(MARKDOWN)
+# 	$(MARKDOWN)
 	@echo -e "\n$(BLUE)Here's a list of basic commands to get you started :$(GREEN)\n";
 	@echo -e "- docker compose -f ./srcs/docker-compose.yaml ps ([service name])";
 	@echo -e "- docker compose -f ./srcs/docker-compose.yaml logs -f ([service name]) $(RESET)\n";
@@ -67,33 +70,37 @@ clean: down
 	@docker system prune -a -f
 	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete."
 
-# back:
-
-# 	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
-# 		echo -e "$(RED)Inception is already up."; \
-# 	else \
-# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
-# 		docker build -t back ./back && docker run -d --name back --network Container_network back; \
-# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
-# 	fi
-# database:
-
-# 	@if [ $$(docker ps -q -f name=database | wc -l ) -gt 0 ]; then \
-# 		echo -e "$(RED)Inception is already up."; \
-# 	else \
-# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
-# 		docker build -t database . && docker run -d --database; \
-# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
-# 	fi
-# webserver:
-
-# 	@if [ $$(docker ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
-# 		echo -e "$(RED)Inception is already up."; \
-# 	else \
-# 		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
-# 		docker build -t webserver . && docker run -d --webserver;\
-# 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
-# 	fi
 re: clean all
 
-.PHONY: all up down clean re
+back:
+
+	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
+		echo -e "$(RED)back container is already up refreshing. $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT); \
+	else \
+		echo -e "$(YELLOW)Starting $(BACK_CONT) $(RESET)"; \
+			$(COMPOSE) -f $(CONF) up -d $(BACK_CONT) 2>/dev/null; \
+		echo -e "$(GREEN)[DONE]$(RESET) $(BACK_CONT) is running."; \
+	fi
+database:
+
+	@if [ $$(docker ps -q -f name=database | wc -l ) -gt 0 ]; then \
+		echo -e "$(RED)database container is already up refreshing. $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT); \
+	else \
+		echo -e "$(YELLOW)Starting $(DATABASE_CONT) $(RESET)"; \
+			$(COMPOSE) -f $(CONF) up -d $(DATABASE_CONT) 2>/dev/null; \
+		echo -e "$(GREEN)[DONE]$(RESET) $(DATABASE_CONT) is running."; \
+	fi
+webserver:
+
+	@if [ $$(docker ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
+		echo -e "$(RED)webserver container is already up refreshing. $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(WEB_SERVER_CONT); \
+	else \
+		echo -e "$(YELLOW)Starting $(WEB_SERVER_CONT) $(RESET)"; \
+			$(COMPOSE) -f $(CONF) up -d $(WEB_SERVER_CONT) 2>/dev/null; \
+		echo -e "$(GREEN)[DONE]$(RESET) $(WEB_SERVER_CONT) is running."; \
+	fi
+
+.PHONY: all up down back database webserver clean re
