@@ -1,4 +1,4 @@
-names: CD_Action
+name: CD_Action
 
 on:
   push:
