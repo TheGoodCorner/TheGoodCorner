@@ -22,5 +22,5 @@ jobs:
 
     -name: Deploy APP
     run: |
-    echo "execute deployment command here"
+      echo "execute deployment command here"
     # env
