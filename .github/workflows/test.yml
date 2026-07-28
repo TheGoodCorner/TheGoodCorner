@@ -10,10 +10,10 @@ jobs:
     steps:
       - run: echo "Hello world !"
       - name: check out repo code
-      - uses: action/checkout@v6
-      - run: echo "The ${{github.repository}} repo has been cloned to the runner"
+        uses: actions/checkout@v6
+        run: echo "The ${{github.repository}} repo has been cloned to the runner"
       - name: list files in the repo
-      - run: ls -la
-      - run: |
+        run: ls -la
+        run: |
           ls ${{github.workspace}}
       - run: echo "this job's status is ${{job.status}}"
