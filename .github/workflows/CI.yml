@@ -1,8 +1,23 @@
-names: CI_test
+name: CI_Action
 
 on:
   push:
-    branches: "main"
-jobs:
+    branches:
+      - main
 
-steps:
+jobs:
+  verify-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify Build
+        run: npm run build
