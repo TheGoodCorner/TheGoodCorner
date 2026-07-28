@@ -1,0 +1,8 @@
+names: CD_test
+
+on:
+  push:
+    branches: "main"
+jobs:
+
+steps:
