@@ -1,0 +1,49 @@
+services:
+
+  webserver:
+    build:
+      context: ./webserver
+      dockerfile: dockerfile
+    container_name: webserver
+    ports:
+        - "8000:80"
+        - "4443:443"
+    networks:
+      - Container_network
+    restart: always
+
+  back:
+    build:
+     context: ./back
+     dockerfile: dockerfile
+    container_name: back
+    expose:
+      - "3000"
+    networks:
+      - Container_network
+    # depends_on:
+    #   postgresql:
+    #     condition: service_healthy
+    restart: always
+
+  postgresql:
+    build:
+      context: ./database
+      dockerfile: dockerfile
+    container_name: postgresql
+    networks:
+      - Container_network
+    # healthcheck:
+    #   test: ["CMD", "pg_isready", "-U", "postgres"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    restart: always
+
+networks:
+  Container_network:
+    driver: bridge
+volumes:
+  postgresql_data:
