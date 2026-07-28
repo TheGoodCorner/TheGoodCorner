@@ -7,6 +7,8 @@ on:
       - completed
     branches:
       - main
+      # a voir si on garde le filtre branch main ou sur toute les branches
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -15,14 +17,14 @@ jobs:
     steps:
       - name: checkout-code
         uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
 
-      - name: Set up NodeJS
-        uses: actions/setup-node@v6
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install Dep & build
-        run: |
-          npm ci
-          npm run build --if-present
+      - name: Test Docker Compose Build
+        run: docker compose build
 
       - name: Deploy APP
         run: |
