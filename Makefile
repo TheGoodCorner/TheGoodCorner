@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 # -------------------------------------------------- #
 #                   VARIABLES                        #
 # -------------------------------------------------- #
@@ -107,4 +105,3 @@ webserver:
 	fi
 
 .PHONY: all up down back database webserver clean re
->>>>>>> Stashed changes

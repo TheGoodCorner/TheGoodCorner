@@ -1,2 +1,5 @@
-echo hello world
-#a faire
+#!/bin/bash
+set -e
+
+# Ton contenu de configuration PostgreSQL ici
+echo "PostgreSQL setup complete"
