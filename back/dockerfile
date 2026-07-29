@@ -9,6 +9,7 @@ RUN npm install
 COPY src ./src
 RUN npx prisma generate --schema=./src/prisma/schema.prisma
 RUN npm run build
+COPY NodeJS/ .
 
 RUN mkdir -p ./dist/prisma/generated && cp -r ./src/prisma/generated/* ./dist/prisma/generated
 
