@@ -1,6 +1,7 @@
 FROM node:26-alpine
 WORKDIR /app
-COPY NodeJS/package*.json ./
+COPY package*.json ./
+COPY tsconfig.json ./
 RUN npm install
 COPY . .
 RUN npm run build
