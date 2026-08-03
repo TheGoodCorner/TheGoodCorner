@@ -1,12 +1,25 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
+import { useThemeStore } from './stores/themeStore';
+import { useNotificationStore } from './stores/notifications';
+import { useCartStore } from './stores/cartStore';
+import { useProductStore } from './stores/productStore';
+import Navbar from './components/layouts/Navbar';
+import Footer from './components/layouts/Footer';
 import Home from './pages/Home';
 import Products from './pages/Produits';
 import Cart from './pages/Panier';
 import Contact from './pages/Contact';
+import Profile from './pages/Profile';
+import './styles/style.css';
 
+/**
+ * Le composant principal de l'application.
+ * C'est le point d'entrée qui structure toute l'app.
+ */
 function App() {
+  const theme = useThemeStore((state) => state.theme)
+
   return (
     <Router>
       <Navbar />
@@ -15,7 +28,9 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
