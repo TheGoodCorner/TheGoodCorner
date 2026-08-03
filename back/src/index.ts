@@ -1,4 +1,4 @@
-import express, { Express, Request, Response} from 'express';
+import express, { Express} from 'express';
 import router from './routes/routes.js'
 // import express dependencies for handling request and response and routing methods
 
