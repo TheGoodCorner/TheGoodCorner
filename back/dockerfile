@@ -3,10 +3,10 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
+COPY prisma ./prisma/
+RUN npx prisma generate
 COPY . .
 RUN npm run build
 
-# COPY ./conf/back_setup.sh /usr/local/bin/back_setup.sh
-# RUN chmod +x /usr/local/bin/back_setup.sh
-# ENTRYPOINT ["/usr/local/bin/back_setup.sh"]
+
 CMD ["npm", "start"]

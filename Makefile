@@ -46,14 +46,21 @@ up:
 	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)Inception is already up."; \
 	else \
-		echo -e "$(YELLOW)Starting $(NAME) $(RESET)"; \
+		mkdir -p .secrets; \
+		if [ -f ./.secrets/password.txt ]; then \
+			rm .secrets/password.txt; \
+		fi; \
+		touch ./.secrets/password.txt; \
+		echo -e "GoodCornerPass123" > ./.secrets/password.txt; \
+		echo -e "$(GREEN) [up] $(YELLOW)Starting $(NAME) $(RESET)"; \
 		mkdir -p /home/$$USER/data/postgresql; \
 		$(COMPOSE) -f $(CONF) up --build -d; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
 	fi
+## A ENLEVER LE MOT DE PASSE AVEC LE ECHO
 
 down:
-	@echo -e "$(RED)Stopping $(NAME)... if there are volumes they stays mounted $(RESET)"
+	@echo -e "$(GREEN) [DOWN] $(RED)Stopping $(NAME)... if there are volumes they stays mounted $(RESET)"
 	@$(COMPOSE) -f $(CONF) down 2>/dev/null
 	@echo -e "$(BLUE)[DONE]$(RESET) $(NAME) stopped."
 
@@ -66,10 +73,12 @@ launch:
 	@echo -e "- docker compose -f ./srcs/docker-compose.yaml ps ([service name])";
 	@echo -e "- docker compose -f ./srcs/docker-compose.yaml logs -f ([service name]) $(RESET)\n";
 
-clean: down
-	@echo -e "$(YELLOW)Cleaning Docker system...$(RESET)"
-	@docker system prune -a -f
-	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete."
+clean:
+	@echo -e "$(YELLOW)Cleaning Docker system...$(RESET)";
+	@$(COMPOSE) -f $(CONF) down -v 2>/dev/null;
+	@docker system prune -a -f;
+	@rm -rf /home/$$USER/data/postgresql;
+	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete.";
 
 re: clean all
 
@@ -80,7 +89,7 @@ back:
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT); \
 	else \
 		echo -e "$(YELLOW)Starting $(BACK_CONT) $(RESET)"; \
-			$(COMPOSE) -f $(CONF) up -d $(BACK_CONT) 2>/dev/null; \
+		$(COMPOSE) -f $(CONF) up -d $(BACK_CONT) 2>/dev/null; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(BACK_CONT) is running."; \
 	fi
 database:
@@ -90,7 +99,7 @@ database:
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT); \
 	else \
 		echo -e "$(YELLOW)Starting $(DATABASE_CONT) $(RESET)"; \
-			$(COMPOSE) -f $(CONF) up -d $(DATABASE_CONT) 2>/dev/null; \
+		$(COMPOSE) -f $(CONF) up -d $(DATABASE_CONT) 2>/dev/null; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(DATABASE_CONT) is running."; \
 	fi
 webserver:

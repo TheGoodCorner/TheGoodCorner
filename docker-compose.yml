@@ -29,6 +29,12 @@ services:
       context: ./database
       dockerfile: dockerfile
     container_name: postgresql
+    env_file:
+      - ./back/.env
+    secrets:
+      - db_password
+    ports:
+      - "5432:5432"
     networks:
       - Container_network
     # healthcheck:
@@ -37,11 +43,14 @@ services:
     #   timeout: 5s
     #   retries: 5
     volumes:
-      - postgresql_data:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql
     restart: always
 
 networks:
   Container_network:
     driver: bridge
+secrets:
+  db_password:
+    file: ./.secrets/password.txt
 volumes:
   postgresql_data:

@@ -17,5 +17,13 @@ model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   name      String?
+  username  String   @unique
+  password  String   @unique
   createdAt DateTime @default(now())
+}
+model product {
+  id        Int      @id @default(autoincrement())
+  name String
+  price Int
+  quantity Int? @default(1)
 }
