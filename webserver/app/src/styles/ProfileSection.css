@@ -1,0 +1,260 @@
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* CONNECTÉ */
+.profile-connected {
+  position: relative;
+}
+
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+  border-color: #667eea;
+  transform: scale(1.05);
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.profile-info {
+  padding: 12px 16px;
+}
+
+.profile-info .username {
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+.profile-info .email {
+  font-size: 12px;
+  color: #666;
+  margin: 4px 0 0 0;
+}
+
+.profile-menu hr {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 8px 0;
+}
+
+.menu-item {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.menu-item:hover {
+  background: #f5f5f5;
+}
+
+.logout-btn {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.logout-btn:hover {
+  background: #ffe6e6;
+}
+
+/* NON CONNECTÉ */
+.profile-not-connected {
+  display: flex;
+  gap: 8px;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.login-btn {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.login-btn:hover {
+  background: #667eea;
+  color: white;
+}
+
+.register-btn {
+  background: #667eea;
+  color: white;
+}
+
+.register-btn:hover {
+  background: #5568d3;
+}
+
+/* MODALES */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  padding: 32px;
+  min-width: 300px;
+  max-width: 400px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+}
+
+.modal-content form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-content input {
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.2s;
+}
+
+.modal-content input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.submit-btn {
+  padding: 12px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-top: 8px;
+}
+
+.submit-btn:hover {
+  background: #5568d3;
+}
+
+.modal-toggle {
+  text-align: center;
+  font-size: 13px;
+  color: #666;
+  margin-top: 16px;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #667eea;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.link-btn:hover {
+  color: #5568d3;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+/* Dark theme support */
+.dark .profile-menu {
+  background: #222;
+  border-color: #444;
+}
+
+.dark .profile-info .username,
+.dark .menu-item {
+  color: #e0e0e0;
+}
+
+.dark .menu-item:hover {
+  background: #333;
+}
+
+.dark .modal-content {
+  background: #222;
+  color: #e0e0e0;
+}
+
+.dark .modal-content input {
+  background: #333;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+.dark .modal-content input:focus {
+  border-color: #667eea;
+}

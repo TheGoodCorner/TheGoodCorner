@@ -13,7 +13,7 @@ RUN apk add --no-cache openssl && \
     mkdir -p /etc/nginx/ssl
     
 RUN openssl req -x509 -nodes -days 365 \
-    -subj "/C=FR/ST=IDF/L=Paris/O=42/OU=42/CN=localhost" \
+    -subj "/CN=localhost" \
     -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/nginx.key \
     -out /etc/nginx/ssl/nginx.crt

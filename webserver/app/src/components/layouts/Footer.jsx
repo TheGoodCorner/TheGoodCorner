@@ -1,0 +1,59 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+function Footer() {
+  return (
+    <footer className="footer">
+      <div className="container">
+        <div className="footer-grid">
+          {/* Column 1 */}
+          <div className="footer-column">
+            <h3 className="footer-title">TheGoodCorner</h3>
+            <p className="footer-text">
+              Votre boutique en ligne pour les meilleurs produits handpickés.
+            </p>
+          </div>
+
+          {/* Column 2 */}
+          <div className="footer-column">
+            <h3 className="footer-title">Navigation</h3>
+            <ul className="footer-links">
+              <li><Link to="/">Accueil</Link></li>
+              <li><Link to="/products">Produits</Link></li>
+              <li><Link to="/cart">Panier</Link></li>
+              <li><Link to="/contact">Contact</Link></li>
+            </ul>
+          </div>
+
+          {/* Column 3 */}
+          <div className="footer-column">
+            <h3 className="footer-title">Support</h3>
+            <ul className="footer-links">
+              <li><a href="#faq">FAQ</a></li>
+              <li><a href="#conditions">Conditions</a></li>
+              <li><a href="#privacy">Politique de confidentialité</a></li>
+            </ul>
+          </div>
+
+          {/* Column 4 */}
+          <div className="footer-column">
+            <h3 className="footer-title">Nous suivre</h3>
+            <ul className="footer-links">
+              <li><a href="#facebook">Facebook</a></li>
+              <li><a href="#twitter">Twitter</a></li>
+              <li><a href="#instagram">Instagram</a></li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="footer-divider"></div>
+        <div className="footer-bottom">
+          <p>&copy; 2026 TheGoodCorner. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export default Footer;

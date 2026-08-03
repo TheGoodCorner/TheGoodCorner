@@ -1,0 +1,374 @@
+/* ========== TAILWIND DIRECTIVES ========== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import './Navbar.css';
+
+/* ========== LAYOUT ========== */
+.container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.footer {
+  @apply bg-gray-100 text-gray-800 py-8;
+}
+
+/* ========== BUTTONS ========== */
+.btn-primary {
+  @apply px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors;
+}
+
+.btn-secondary {
+  @apply px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors;
+}
+
+.btn-white {
+  @apply px-8 py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-gray-100 transition-colors;
+}
+
+.btn-full {
+  @apply w-full px-4 py-2 rounded-lg font-semibold transition-colors;
+}
+
+/* ========== CARDS ========== */
+.card {
+  @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
+}
+
+.card-image {
+  @apply h-48 flex items-center justify-center;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+.card-title {
+  @apply text-xl font-bold mb-2 text-gray-800;
+}
+
+.card-text {
+  @apply text-gray-600 mb-4;
+}
+
+.card-price {
+  @apply text-2xl font-bold text-blue-600 mb-4;
+}
+
+/* ========== SECTIONS ========== */
+.hero-section {
+  @apply bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 text-white py-20 px-4;
+}
+
+.hero-title {
+  @apply text-5xl md:text-6xl font-bold mb-4;
+}
+
+.hero-subtitle {
+  @apply text-lg md:text-xl mb-8 opacity-90;
+}
+
+.featured-section {
+  @apply py-16 px-4 bg-gray-50;
+}
+
+.featured-title {
+  @apply text-4xl font-bold text-center mb-12 text-gray-800;
+}
+
+.featured-grid {
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6;
+}
+
+.cta-section {
+  @apply bg-blue-600 text-white py-12 px-4;
+}
+
+.cta-title {
+  @apply text-3xl font-bold mb-4;
+}
+
+.cta-subtitle {
+  @apply text-lg mb-6 opacity-90;
+}
+
+/* ========== UTILITIES ========== */
+.text-center-flex {
+  @apply flex justify-center items-center;
+}
+
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+
+/* ========== FOOTER ========== */
+.footer {
+  @apply bg-gray-900 text-gray-200 py-12 px-4 mt-16;
+}
+
+.footer-grid {
+  @apply grid grid-cols-1 md:grid-cols-4 gap-8 mb-8;
+}
+
+.footer-column {
+  @apply flex flex-col space-y-3;;
+}
+
+.footer-title {
+  @apply text-lg font-bold text-white mb-4;
+}
+
+.footer-text {
+  @apply text-gray-400 text-sm;
+}
+
+.footer-links {
+  @apply space-y-2;
+}
+
+.footer-links a {
+  @apply text-gray-400 hover:text-white transition-colors text-sm;
+}
+
+.footer-divider {
+  @apply border-t border-gray-700 my-8;
+}
+
+.footer-bottom {
+  @apply text-center text-gray-500 text-sm;
+}
+/* ========== NAVBAR ========== */
+.navbar {
+  @apply shadow-md sticky top-0 z-50 border-b transition-smooth py-4;
+}
+
+/* Thème clair */
+.navbar-light {
+  @apply bg-white text-gray-900 border-gray-200;
+}
+
+/* Thème sombre */
+.navbar-dark {
+  @apply bg-gray-900 text-white border-gray-700;
+}
+
+.navbar-wrapper {
+  @apply flex items-center justify-between gap-8 px-6;
+}
+
+.navbar-logo {
+  @apply text-3xl font-bold hover:text-blue-600 transition-smooth whitespace-nowrap;
+}
+
+.navbar-logo {
+  @apply text-2xl font-bold hover:text-blue-600 transition-smooth whitespace-nowrap;
+  /* La couleur du texte est héritée du .navbar automatiquement */
+}
+
+.navbar-menu {
+  @apply hidden md:flex gap-8 items-center text-lg;
+}
+
+.navbar-link {
+  @apply font-medium transition-smooth relative py-2 px-2;
+}
+
+.navbar-light .navbar-link {
+  @apply text-gray-700 hover:text-blue-600;
+}
+
+.navbar-dark .navbar-link {
+  @apply text-gray-300 hover:text-blue-400;
+}
+
+.navbar-link::after {
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-blue-600 transition-smooth;
+  content: '';
+}
+
+.navbar-link:hover::after {
+  @apply w-full;
+}
+
+.cart-badge {
+  @apply ml-1 inline-flex items-center justify-center w-5 h-5 text-xs font-bold bg-red-500 text-white rounded-full;
+}
+
+.navbar-actions {
+  @apply flex items-center gap-4;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  @apply flex items-center justify-center w-10 h-10 rounded-lg transition-smooth text-lg border-none cursor-pointer;
+}
+
+.navbar-light .theme-toggle {
+  @apply bg-gray-200 hover:bg-gray-300;
+}
+
+.navbar-dark .theme-toggle {
+  @apply bg-gray-700 hover:bg-gray-600;
+}
+
+/* Hamburger Menu */
+.hamburger {
+  @apply hidden md:hidden text-2xl bg-transparent border-none cursor-pointer p-2;
+}
+
+
+
+
+/*=============*/
+.profile-section {
+  position: relative;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.dropdown-header {
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+}
+
+.user-name {
+  font-weight: 600;
+  margin: 0;
+  color: #1f2937;
+}
+
+.user-email {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0.25rem 0 0 0;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.logout-item {
+  color: #dc2626;
+}
+
+.logout-item:hover {
+  background-color: #fee2e2;
+}
+
+.overlay {
+  position: fixed;           /* Couvre tout l'écran */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;              /* Au-dessus de tout sauf du dropdown (1000) */
+  background: transparent;   /* Invisible */
+  cursor: pointer;           /* Montre que c'est cliquable */
+}
+
+/*============== DROPDOWN ================*/
+
+/* Animation pour l'apparition du dropdown */
+@keyframes fadeInZoom {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation: fadeInZoom 0.1s ease-out;
+}
+
+/* Quelques styles utilitaires pour les items du dropdown */
+.dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #374151;
+  font-size: 0.95rem;
+  transition: background-color 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-item.danger {
+  color: #dc2626;
+}
+
+.dropdown-item.danger:hover {
+  background-color: #fee2e2;
+}
+
+.dropdown-divider {
+  margin: 0.5rem 0;
+  border: none;
+  border-top: 1px solid #e5e7eb;
+}
+
+.dropdown-header {
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.dropdown-header p {
+  margin: 0;
+}
+
+.dropdown-header .user-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.dropdown-header .user-email {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
