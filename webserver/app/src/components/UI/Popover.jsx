@@ -42,9 +42,11 @@ export function Popover({
             <Button
               onClick={() => closeUi(id)}
               className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
-            >
-              <PanelRightClose className="w-4 h-4" />
-            </Button>
+              variant='primary'
+              icon={PanelRightClose}
+              title="Fermer panier popover"
+              aria-label="Fermer panier popover"
+            />
           )}
           {/* Contenu */}
           <div className="p-6">{children}</div>
