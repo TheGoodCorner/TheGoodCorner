@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from './generated/client.js';
+import { Prisma, PrismaClient} from './generated/client.js';
 // import generated prisma binaries containing scheme tables as methods/objects
 
 const prisma: PrismaClient = new PrismaClient;
@@ -26,8 +26,9 @@ const getRandomElement = (array: string[]) :string =>
 {
 	if(array.length === 0)
 		return ("");
-	const randomIndex = Math.floor(Math.random() * array.length);
-	return (array[randomIndex]);
+	const randomIndex: number = Math.floor(Math.random() * array.length);
+	const element = array[randomIndex];
+	return (element !== undefined ? element : "");
 }
 
 // just basic strings[] datastructures
@@ -36,43 +37,44 @@ const lastNamePool:string[] = ['dubougnon', 'carpenterie' , 'leland' ,'frondeur'
 const domainPool:string[] = ['@gmail.com', '@yahoo.fr', '@laposte.net', '@screemer.net'];
 
 /**
- * create an array from predetermined length then map it to respective corresponding indexes.
- * then produce random values by calling functions and return a final map Usertype object containing a randomized Users
+ * simple for loop that create a dummy randomized user and then push it to the array
  * @param undefined array
  * @param map builtin function
  * @return an initialized User
  */
 
-const randomUsers = Array.from({length:10}).map((_, index) =>
-{
-	const firstName:string = getRandomElement(firstNamePool); 
-	const lastName:string = getRandomElement(lastNamePool);
-	const username:string =`${firstName}_${getRandomInt(100, 999)}`;
-	const email:string = `${username}${getRandomElement(domainPool)}`;
-	return {email, name: `${firstName} ${lastName}`, password: `pass_${getRandomInt(0, 999)}`, username};
-})
+const randomUsers: Prisma.UserCreateInput[] = [];
+for (let i = 0; i < 10; i++) {
+	const firstName: string = getRandomElement(firstNamePool);
+	const lastName: string = getRandomElement(lastNamePool);
+	const username: string = `${firstName}_${getRandomInt(100, 999)}`;
+	const email: string = `${username}${getRandomElement(domainPool)}`;
 
-// async function that actually populate the prisma user table
-async function main()
-{
-	const CreatedUsers = await prisma.user.createMany({
-		data: randomUsers,
-		skipDuplicates: true,
+	randomUsers.push({
+		email,
+		name: `${firstName} ${lastName}`,
+		password: `pass_${getRandomInt(0, 999)}`,
+		username
 	});
 }
 
 /**
- * since all theses operations take some time (especially if we add more users) they are run asynchronously
+ * since all theses operations take some time and since Prisma databases operation and NodeJs runs asynchronously(especially if we add more users) they are run asynchronously
  * we then have to wait for them to finish, then we use try to screen for errors and prints them. finally (in any case),
  * we disconnect from the DB instance so Node doesnt hang
  */
 try
 {
-	await main();
+	await prisma.user.createMany(
+	{
+		data: randomUsers, skipDuplicates: true
+	});
+	console.log("seeding successful !");
 }
 catch (e)
 {
-	console.log(e);
+	console.log("error seeding the database", e);
+	process.exit(1);
 }
 finally
 {
