@@ -9,6 +9,7 @@ import Footer from './components/layouts/Footer';
 import Home from './pages/Home';
 import Products from './pages/Produits';
 import Cart from './pages/Panier';
+import {CartPopover} from './pages/CartPopover'; 
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import './styles/style.css';
@@ -39,6 +40,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
+      <CartPopover /> 
       <Footer />
     </Router>
   );

@@ -1,25 +1,37 @@
 import { create } from 'zustand';
 
-export const useUIStore = create((set, get) => ({
-  openDropdowns: {},
+export const useUIStore = create((set) => ({
+  UserInterfaces: {},
 
-  isDropdownOpen: (id) => get().openDropdowns[id] ?? false,
+  openUi: (id) => {
+    set((state) => {
+      const newState = { ...state.UserInterfaces, [id]: true };
+      return { UserInterfaces: newState };  // ← OUI faut toujours retourner l'objet!
+    });
+  },
 
-  toggleDropdown: (id) => 
-    set((state) => ({
-      openDropdowns: {...state.openDropdowns, [id]: !state.openDropdowns[id]}
-    })),
+  toggleUi: (id) => {
+    set((state) => {
+      const newState = { ...state.UserInterfaces, [id]: !state.UserInterfaces[id] };
+      return { UserInterfaces: newState };
+    });
+  },
 
-  closeDropdown: (id) => 
-    set((state) => ({
-      openDropdowns: {...state.openDropdowns, [id]: false}
-    })),
+  closeUi: (id) => {
+    set((state) => {
+      const newState = { ...state.UserInterfaces, [id]: false };
+      return { UserInterfaces: newState };
+    });
+  },
 
-  openDropdown: (id) => 
-    set((state) => ({
-      openDropdowns: { ...state.openDropdowns, [id]: true }
-    })),
+  closeAllUis: () => {
+    set(() => {
+      const newState = {};
+      return { UserInterfaces: newState };
+    });
+  },
 
-  closeAllDropdowns: () => 
-    set({ openDropdowns: {} })
+  isUiOpen: (id) => {
+    return useUIStore.getState().UserInterfaces[id] || false;
+  },
 }));
