@@ -9,11 +9,10 @@
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-.footer {
-  @apply bg-gray-100 text-gray-800 py-8;
-}
-
 /* ========== BUTTONS ========== */
+/* ⚠️ .btn-primary et .btn-secondary n'apparaissent dans aucun des fichiers
+   que j'ai vus (Button.jsx les a probablement remplacés). Vérifie avec un
+   grep avant de les supprimer, je ne peux pas le garantir à 100%. */
 .btn-primary {
   @apply px-8 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition-colors;
 }
@@ -101,7 +100,6 @@
   @apply transition-all duration-300 ease-in-out;
 }
 
-
 /* ========== FOOTER ========== */
 .footer {
   @apply bg-gray-900 text-gray-200 py-12 px-4 mt-16;
@@ -112,7 +110,7 @@
 }
 
 .footer-column {
-  @apply flex flex-col space-y-3;;
+  @apply flex flex-col space-y-3;
 }
 
 .footer-title {
@@ -138,6 +136,7 @@
 .footer-bottom {
   @apply text-center text-gray-500 text-sm;
 }
+
 /* ========== NAVBAR ========== */
 .navbar {
   @apply shadow-md sticky top-0 z-50 border-b transition-smooth py-4;
@@ -155,10 +154,6 @@
 
 .navbar-wrapper {
   @apply flex items-center justify-between gap-8 px-6;
-}
-
-.navbar-logo {
-  @apply text-3xl font-bold hover:text-blue-600 transition-smooth whitespace-nowrap;
 }
 
 .navbar-logo {
@@ -217,94 +212,10 @@
   @apply hidden md:hidden text-2xl bg-transparent border-none cursor-pointer p-2;
 }
 
-
-
-
-/*=============*/
-.profile-section {
-  position: relative;
-}
-
-.profile-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  min-width: 200px;
-  z-index: 1000;
-  overflow: hidden;
-}
-
-.dropdown-header {
-  padding: 0.75rem 1rem;
-  background: #f9fafb;
-}
-
-.user-name {
-  font-weight: 600;
-  margin: 0;
-  color: #1f2937;
-}
-
-.user-email {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin: 0.25rem 0 0 0;
-}
-
-.dropdown-divider {
-  margin: 0.5rem 0;
-  border: none;
-  border-top: 1px solid #e5e7eb;
-}
-
-.dropdown-item {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #374151;
-  font-size: 0.95rem;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f3f4f6;
-}
-
-.logout-item {
-  color: #dc2626;
-}
-
-.logout-item:hover {
-  background-color: #fee2e2;
-}
-
-.overlay {
-  position: fixed;           /* Couvre tout l'écran */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 999;              /* Au-dessus de tout sauf du dropdown (1000) */
-  background: transparent;   /* Invisible */
-  cursor: pointer;           /* Montre que c'est cliquable */
-}
-
-/*============== DROPDOWN ================*/
-
-/* Animation pour l'apparition du dropdown */
+/* ========== ANIMATIONS ========== */
+/* Réutilisée par Dropdown.Menu (components/UI/Dropdown.jsx).
+   Tailwind seul ne peut pas générer un @keyframes personnalisé,
+   donc ça reste ici plutôt que dans tokens.css. */
 @keyframes fadeInZoom {
   from {
     opacity: 0;
@@ -318,57 +229,4 @@
 
 .animate-in {
   animation: fadeInZoom 0.1s ease-out;
-}
-
-/* Quelques styles utilitaires pour les items du dropdown */
-.dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  text-align: left;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #374151;
-  font-size: 0.95rem;
-  transition: background-color 0.2s;
-}
-
-.dropdown-item:hover {
-  background-color: #f3f4f6;
-}
-
-.dropdown-item.danger {
-  color: #dc2626;
-}
-
-.dropdown-item.danger:hover {
-  background-color: #fee2e2;
-}
-
-.dropdown-divider {
-  margin: 0.5rem 0;
-  border: none;
-  border-top: 1px solid #e5e7eb;
-}
-
-.dropdown-header {
-  padding: 0.75rem 1rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.dropdown-header p {
-  margin: 0;
-}
-
-.dropdown-header .user-name {
-  font-weight: 600;
-  color: #1f2937;
-}
-
-.dropdown-header .user-email {
-  font-size: 0.875rem;
-  color: #6b7280;
-  margin-top: 0.25rem;
 }

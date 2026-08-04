@@ -1,96 +1,58 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import avatardefault from '../../assets/profil_image.jpg'
-import { useAuthStore } from '../../stores/authStore'
-import { useUIStore } from '../../stores/uiStore';
-import { Button } from '../UI/Button'
-import Avatar from '../UI/Avatar'
+import avatardefault from '../../assets/profil_image.jpg';
+import { useAuthStore } from '../../stores/authStore';
+import { Button } from '../UI/Button';
+import Avatar from '../UI/Avatar';
+import { Dropdown } from '../UI/Dropdown';
 
 function ProfileSection() {
-  const { isAuthenticated, user, logout, login, register } = useAuthStore()
-  const { openDropdowns, toggleDropdown, closeDropdown } = useUIStore()
-
-  const isOpen = openDropdowns['profile'] || false
+  const { isAuthenticated, user, logout, login } = useAuthStore();
 
   const handleLogin = () => {
-    login('test@example.com', 'password123')
-  }
+    // TODO: remplacer par la vraie logique de connexion (redirection /login,
+    // modale...) quand le backend sera prêt
+    login('test@example.com', 'password123');
+  };
 
-  const handleLogout = () => {
-    logout()
-    closeDropdown('profile')
-  }
-
-  const handleItemClick = () => {
-    closeDropdown('profile')
-  }
-  
   if (!isAuthenticated) {
     return (
-      <Button onClick={handleLogin} variant='ghost'>
+      <Button onClick={handleLogin} variant="ghost">
         Se connecter
       </Button>
     );
   }
 
   return (
-    <>
-    {isOpen && (
-      <div
-        className='fixed inset-0 z-[999]'
-        onClick={() => closeDropdown('profile')}
-      />
-    )}
-    <div className="profile-section">
-          <Button 
-            onClick= {() => toggleDropdown('profile')} 
-            variant='ghost'
-            className='profile-button'
-          >
-            <Avatar
-              src={user?.avatar || avatardefault}
-              alt={user?.name || "Profil"} 
-              size="sm"
-            />
-            <span>Profil</span>
-          </Button>
+    <Dropdown>
+      <Dropdown.Trigger as={Button} variant="ghost">
+        <Avatar src={user?.avatar || avatardefault} alt={user?.name || 'Profil'} size="sm" />
+        <span>Profil</span>
+      </Dropdown.Trigger>
 
-          {isOpen && (
-          <div className="dropdown-menu">
-            <div className="dropdown-header">
-              <p className="user-name">{user?.name || 'Utilisateur'}</p>
-              <p className="user-email">{user?.email || ''}</p>
-            </div>
+      <Dropdown.Menu>
+        <Dropdown.Label>
+          <p className="text-sm font-medium text-[var(--color-text)]">
+            {user?.name || 'Utilisateur'}
+          </p>
+          <p className="text-xs text-[var(--color-text-muted)]">{user?.email || ''}</p>
+        </Dropdown.Label>
 
-            <hr className="dropdown-divider" />
+        <Dropdown.Separator />
 
-            <Link to="/profile" onClick={handleItemClick}>
-              <button className="dropdown-item">
-                👤 Mon Profil
-              </button>
-            </Link>
+        <Dropdown.Item as={Link} to="/profile">
+          👤 Mon Profil
+        </Dropdown.Item>
+        <Dropdown.Item>⚙️ Paramètres</Dropdown.Item>
+        <Dropdown.Item>🔐 Sécurité</Dropdown.Item>
 
-            <button className="dropdown-item" onClick={handleItemClick}>
-              ⚙️ Paramètres
-            </button>
+        <Dropdown.Separator />
 
-            <button className="dropdown-item" onClick={handleItemClick}>
-              🔐 Sécurité
-            </button>
-
-            <hr className="dropdown-divider" />
-
-            <button 
-              className="dropdown-item logout-item"
-              onClick={handleLogout}
-            >
-              🚪 Se déconnecter
-            </button>
-          </div>
-        )}
-    </div>
-    </>
-  )
+        <Dropdown.Item variant="danger" onClick={logout}>
+          🚪 Se déconnecter
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
 }
 
-export default ProfileSection
+export default ProfileSection;
