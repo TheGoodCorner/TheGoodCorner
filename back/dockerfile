@@ -1,12 +1,31 @@
-FROM node:26-alpine
+FROM node:26-alpine AS builder
+
 WORKDIR /app
+
 COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
-COPY prisma ./prisma/
-RUN npx prisma generate
-COPY . .
+
+COPY src ./src
+RUN npx prisma generate --schema=./src/prisma/schema.prisma
 RUN npm run build
 
+RUN mkdir -p ./dist/prisma/generated && cp -r ./src/prisma/generated/* ./dist/prisma/generated
 
+RUN npm prune --production && rm -rf ~/.cache ~/.npm
+
+FROM node:26-alpine AS runner
+
+WORKDIR /app
+
+COPY ./conf/back_setup.sh /usr/local/bin/back_setup.sh
+RUN chmod +x /usr/local/bin/back_setup.sh
+
+COPY package*.json ./
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src/prisma/generated ./dist/prisma/generated
+
+ENTRYPOINT ["/usr/local/bin/back_setup.sh"]
 CMD ["npm", "start"]

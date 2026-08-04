@@ -39,9 +39,11 @@ const getPassword = ():string =>
 
 const password = encodeURIComponent(getPassword());
 const user = process.env.POSTGRES_USER || 'GoodCorner';
+const host = process.env.POSTGRES_HOST || 'localhost';
+const port = process.env.POSTGRE_PORT || 5432;
 const dbName = process.env.POSTGRES_DB || 'mydb';
 
-const connectionString = `postgresql://${user}:${password}@localhost:5432/${dbName}?schema=public`;
+const connectionString = `postgresql://${user}:${password}@${host}:${port}/${dbName}?schema=public`;
 const prisma = new PrismaClient({
 	datasources: {
 	db: {

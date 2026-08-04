@@ -4,7 +4,7 @@
 
 NAME				= inception
 BACK_CONT			= back
-DATABASE_CONT		= database
+DATABASE_CONT		= postgresql
 WEB_SERVER_CONT		= webserver
 SRC_DIR				= srcs
 COMPOSE				= docker compose
@@ -94,7 +94,7 @@ back:
 	fi
 database:
 
-	@if [ $$(docker ps -q -f name=database | wc -l ) -gt 0 ]; then \
+	@if [ $$(docker ps -q -f name=postgresql | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)database container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT); \
 	else \

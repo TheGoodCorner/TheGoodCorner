@@ -1,5 +1,6 @@
 import express from 'express';
 import router from './routes/routes.js';
+import prisma from './services/db.js';
 // import express dependencies for handling request and response and routing methods
 const app = express(); // server init
 const port = Number(process.env.port) || 3000; // port number
@@ -11,12 +12,36 @@ const port = Number(process.env.port) || 3000; // port number
 // enable json body parsing
 app.use(express.json());
 app.use('/', router);
-const server = app.listen(port, () => {
-    console.log(`Serveur démarré sur http://localhost:${port}`);
-});
-server.on('error', (error) => {
-    if (error.code === 'EADDRINUSE')
-        console.log(`port:${port} already in use cannot start server`);
-    else
-        console.log(`server failed to start:`, error.message);
-});
+/**
+ * asynchronous function that start the backend server while checking for errors
+ */
+async function startServer() {
+    try {
+        /**
+         * listen to server socket on port 3000
+         * @param port server-port constant
+         * @param callback empty callback function
+         * @returns void undefined
+         */
+        await prisma.$connect();
+        console.log('Connected to db.');
+        await new Promise((resolve, reject) => {
+            const server = app.listen(port, () => {
+                console.log(`Serveur démarré sur http://localhost:${port}`);
+                resolve();
+            });
+            server.on('error', (error) => {
+                if (error.code === 'EADDRINUSE')
+                    console.log(`port:${port} already in use cannot start server`);
+                else
+                    console.log(`server failed to start:`, error.message);
+                reject(error);
+            });
+        });
+    }
+    catch (error) {
+        console.error('Failed to start application:', error.message);
+        process.exit(1);
+    }
+}
+startServer();

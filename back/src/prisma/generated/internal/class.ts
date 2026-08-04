@@ -23,7 +23,7 @@ const config: runtime.GetPrismaClientConfig = {
       "value": "prisma-client"
     },
     "output": {
-      "value": "/home/mchanlia/42_School/git_max/TheGoodCorner/back/prisma/generated",
+      "value": "/home/mchanlia/42_School/git_max/TheGoodCorner/back/src/prisma/generated",
       "fromEnvVar": null
     },
     "config": {
@@ -34,10 +34,14 @@ const config: runtime.GetPrismaClientConfig = {
         "fromEnvVar": null,
         "value": "rhel-openssl-3.0.x",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "linux-musl-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/home/mchanlia/42_School/git_max/TheGoodCorner/back/prisma/schema.prisma",
+    "sourceFilePath": "/home/mchanlia/42_School/git_max/TheGoodCorner/back/src/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativePath": "..",
@@ -55,8 +59,8 @@ const config: runtime.GetPrismaClientConfig = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"./generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  name      String?\n  username  String   @unique\n  password  String   @unique\n  createdAt DateTime @default(now())\n}\n\nmodel product {\n  id       Int    @id @default(autoincrement())\n  name     String\n  price    Int\n  quantity Int?   @default(1)\n}\n",
-  "inlineSchemaHash": "d8a5ca6297e9d01cf25768cf8959c286de401914c4d7de7ae749017dda831915",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Get a free hosted Postgres database in seconds: `npx create-db`\n\ngenerator client {\n  provider      = \"prisma-client\"\n  output        = \"./generated\"\n  binaryTargets = [\"native\", \"linux-musl-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  name      String?\n  username  String   @unique\n  password  String   @unique\n  createdAt DateTime @default(now())\n}\n\nmodel product {\n  id       Int    @id @default(autoincrement())\n  name     String\n  price    Int\n  quantity Int?   @default(1)\n}\n",
+  "inlineSchemaHash": "83ff7e11eb808131c9544398f32ea4fb76c03d5dc10e5fd31076be43d614f8a2",
   "copyEngine": true,
   "runtimeDataModel": {
     "models": {},

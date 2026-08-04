@@ -17,6 +17,10 @@ services:
      context: ./back
      dockerfile: dockerfile
     container_name: back
+    env_file:
+      - ./back/.env
+    secrets:
+      - db_password
     networks:
       - Container_network
     depends_on:
@@ -24,21 +28,22 @@ services:
         condition: service_healthy
     restart: always
 
+# enlever plus tard les ports d'acces
   postgresql:
     build:
       context: ./database
       dockerfile: dockerfile
     container_name: postgresql
+    ports:
+      - "127.0.0.1:5432:5432"
     env_file:
       - ./back/.env
     secrets:
       - db_password
-    ports:
-      - "5432:5432"
     networks:
       - Container_network
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: ["CMD", "pg_isready", "-U", "GoodCorner"]
       interval: 10s
       timeout: 5s
       retries: 5

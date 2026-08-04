@@ -42,7 +42,11 @@ export { Prisma }
 
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node")
-path.join(process.cwd(), "prisma/generated/libquery_engine-rhel-openssl-3.0.x.so.node")
+path.join(process.cwd(), "src/prisma/generated/libquery_engine-rhel-openssl-3.0.x.so.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-linux-musl-openssl-3.0.x.so.node")
+path.join(process.cwd(), "src/prisma/generated/libquery_engine-linux-musl-openssl-3.0.x.so.node")
 
 /**
  * Model User
