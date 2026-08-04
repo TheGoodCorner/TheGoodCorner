@@ -1,5 +1,5 @@
 import express from 'express';
-import router from './routes/routes.js';
+import router from './routes/getBasic.js';
 import prisma from './services/db.js';
 // import express dependencies for handling request and response and routing methods
 const app = express(); // server init

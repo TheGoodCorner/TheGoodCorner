@@ -5,11 +5,13 @@ services:
       context: ./webserver
       dockerfile: dockerfile
     container_name: webserver
+    networks:
+      - Container_network
+    volumes:
+      - uploads_data:/app/uploads
     ports:
         - "8000:80"
         - "4443:443"
-    networks:
-      - Container_network
     restart: always
 
   back:
@@ -23,6 +25,8 @@ services:
       - db_password
     networks:
       - Container_network
+    volumes:
+      - uploads_data:/app/uploads
     depends_on:
       postgresql:
         condition: service_healthy
@@ -42,13 +46,13 @@ services:
       - db_password
     networks:
       - Container_network
+    volumes:
+      - postgresql_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "GoodCorner"]
       interval: 10s
       timeout: 5s
       retries: 5
-    volumes:
-      - postgresql_data:/var/lib/postgresql
     restart: always
 
 networks:
@@ -59,3 +63,4 @@ secrets:
     file: ./.secrets/password.txt
 volumes:
   postgresql_data:
+  uploads_data:

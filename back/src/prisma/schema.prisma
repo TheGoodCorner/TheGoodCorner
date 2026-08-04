@@ -22,9 +22,10 @@ model User {
   password  String   @unique
   createdAt DateTime @default(now())
 }
-model product {
+model Product {
   id        Int      @id @default(autoincrement())
   name String
   price Int
+  imageUrl  String?
   quantity Int? @default(1)
 }

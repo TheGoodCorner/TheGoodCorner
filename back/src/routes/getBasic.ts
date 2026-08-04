@@ -11,6 +11,7 @@ const router: Router = Router();
 
 router.get('/', controller.getHomePage);
 router.get('/login', controller.getLoginPage);
+router.get('/products', controller.getProductsPage);
 router.get('/paiement', controller.getPaiementPage);
 router.get('/messages', controller.getMessagesPage);
 router.get('/profil', controller.getProfilPage)

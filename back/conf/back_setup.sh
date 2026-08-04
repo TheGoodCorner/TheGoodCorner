@@ -7,4 +7,5 @@ if [ -f "/run/secrets/db_password" ]; then
 elif [ -f "../.secrets/password.txt" ]; then
 	export POSTGRES_PASSWORD=$(cat ../.secrets/password.txt)
 fi
+
 exec "$@"
