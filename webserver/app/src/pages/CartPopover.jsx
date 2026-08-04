@@ -1,6 +1,7 @@
 import { ShoppingCart, Trash2 } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
+import { Button } from '../components/UI/Button';
 
 export function CartPopover() {
   const { cartItems, cartCount, cartTotal, removeFromCart } = useCartStore();
@@ -27,12 +28,14 @@ export function CartPopover() {
                     {item.quantity} × ${item.price.toFixed(2)}
                   </p>
                 </div>
-                <button
+                <Button
                   onClick={() => removeFromCart(item.id)}
-                  className="p-2 hover:bg-red-100 text-red-500 rounded transition"
-                >
-                  <Trash2 className="w-5 h-5" />
-                </button>
+                  variant='danger'
+                  icon={Trash2}
+                  className="rounded transition"
+                  title="Votre panier"
+                  aria-label="Votre panier"
+                />
               </div>
             ))}
           </div>
