@@ -61,6 +61,11 @@ async function main()
 	});
 }
 
+/**
+ * since all theses operations take some time (especially if we add more users) they are run asynchronously
+ * we then have to wait for them to finish, then we use try to screen for errors and prints them. finally (in any case),
+ * we disconnect from the DB instance so Node doesnt hang
+ */
 try
 {
 	await main();
