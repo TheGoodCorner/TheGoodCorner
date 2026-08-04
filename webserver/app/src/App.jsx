@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
@@ -12,6 +12,8 @@ import Cart from './pages/Panier';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import './styles/style.css';
+import './styles/tokens.css';
+
 
 /**
  * Le composant principal de l'application.
@@ -20,6 +22,13 @@ import './styles/style.css';
 function App() {
   const theme = useThemeStore((state) => state.theme)
 
+    // Synchronise le thème du store avec l'attribut data-theme sur <html>.
+    // C'est ce que lisent les tokens (styles/tokens.css) pour que toute
+    // l'app réagisse au thème depuis un seul et même endroit.
+    useEffect(() => {
+      document.documentElement.dataset.theme = theme
+    }, [theme])
+    
   return (
     <Router>
       <Navbar />

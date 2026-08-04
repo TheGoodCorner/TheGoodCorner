@@ -1,5 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import ProductCard from '../components/products/ProductCard';
+
+const testProducts = [
+  { id: 1, imageUrl: "/Images_db_test/image_1.jpg", name: "Gants de Boxe Yokkao", category: "Fight", price: 40 },
+  { id: 2, imageUrl: "/Images_db_test/image_5.jpg", name: "Un article au hasard", category: "Cardio", price: 15 },
+  { id: 3, imageUrl: "/Images_db_test/image_8.jpg", name: "Pareil", category: "Fight", price: 120 },
+];
 
 function Home() {
   return (
@@ -19,7 +26,7 @@ function Home() {
         </div>
       </section>
 
-      {/* FEATURED PRODUCTS SECTION */}
+      {/*PRODUCTS SECTION */}
       <section className="featured-section">
         <div className="container">
           <h2 className="featured-title">
@@ -27,45 +34,9 @@ function Home() {
           </h2>
           
           <div className="featured-grid">
-            <div className="card">
-              <div className="card-image bg-gradient-to-r from-blue-400 to-blue-500">
-                <span className="text-6xl">📱</span>
-              </div>
-              <div className="card-body">
-                <h3 className="card-title">Produit 1</h3>
-                <p className="card-text">Description du produit numéro 1</p>
-                <p className="card-price">29.99€</p>
-                <button className="btn-full bg-blue-500 text-white hover:bg-blue-600">
-                  Ajouter au panier
-                </button>
-              </div>
-            </div>
-            <div className="card">
-              <div className="card-image bg-gradient-to-r from-purple-400 to-purple-500">
-                <span className="text-6xl">🎧</span>
-              </div>
-              <div className="card-body">
-                <h3 className="card-title">Produit 2</h3>
-                <p className="card-text">Description du produit numéro 2</p>
-                <p className="card-price">49.99€</p>
-                <button className="btn-full bg-blue-500 text-white hover:bg-blue-600">
-                  Ajouter au panier
-                </button>
-              </div>
-            </div>
-            <div className="card">
-              <div className="card-image bg-gradient-to-r from-pink-400 to-pink-500">
-                <span className="text-6xl">⌚</span>
-              </div>
-              <div className="card-body">
-                <h3 className="card-title">Produit 3</h3>
-                <p className="card-text">Description du produit numéro 3</p>
-                <p className="card-price">79.99€</p>
-                <button className="btn-full bg-blue-500 text-white hover:bg-blue-600">
-                  Ajouter au panier
-                </button>
-              </div>
-            </div>
+            {testProducts.map((product) => (
+              <ProductCard key={product.id} product={product}/>
+            ))}
           </div>
         </div>
       </section>
@@ -73,7 +44,7 @@ function Home() {
       {/* CALL TO ACTION */}
       <section className="cta-section">
         <div className="container text-center-flex flex-col">
-          <h2 className="cta-title">Prêt à magasiner?</h2>
+          <h2 className="cta-title">Prêt à acheter un max de produit ?</h2>
           <p className="cta-subtitle">Retrouvez tous nos produits avec les meilleurs prix</p>
           <Link to="/products" className="btn-white">
             Parcourir la boutique

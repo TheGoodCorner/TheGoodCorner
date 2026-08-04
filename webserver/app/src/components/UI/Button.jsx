@@ -1,17 +1,31 @@
 import { Loader2, ShoppingCart, Heart, Trash2, ArrowRight } from 'lucide-react';
 import Avatar from './Avatar';
 
+// Toutes les couleurs viennent des tokens (styles/tokens.css) via la
+// syntaxe Tailwind arbitraire var(--x) : Button s'adapte donc au thème
+// sans jamais tester `theme === 'dark'` lui-même.
 const baseStyles =
-  'inline-flex items-center justify-center gap-2 font-medium rounded-lg ' +
+  'inline-flex items-center justify-center gap-2 font-medium rounded-[var(--radius-md)] ' +
   'transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 ' +
-  'focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
+  'focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg)] ' +
+  'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none';
 
 const variantStyles = {
-  primary: 'bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800 focus-visible:ring-blue-500',
-  secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 focus-visible:ring-gray-400',
-  outline: 'border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 active:bg-gray-100 focus-visible:ring-gray-400',
-  ghost: 'text-gray-700 hover:bg-gray-100 active:bg-gray-200 focus-visible:ring-gray-400',
-  danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500',
+  primary:
+    'bg-[var(--color-primary)] text-[var(--color-on-primary)] hover:bg-[var(--color-primary-hover)] ' +
+    'active:bg-[var(--color-primary-active)] focus-visible:ring-[var(--color-primary)]',
+  secondary:
+    'bg-[var(--color-surface-hover)] text-[var(--color-text)] hover:bg-[var(--color-border)] ' +
+    'active:bg-[var(--color-border)] focus-visible:ring-[var(--color-border)]',
+  outline:
+    'border border-[var(--color-border)] text-[var(--color-text)] bg-[var(--color-surface)] ' +
+    'hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-border)] focus-visible:ring-[var(--color-border)]',
+  ghost:
+    'text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-border)] ' +
+    'focus-visible:ring-[var(--color-border)]',
+  danger:
+    'bg-[var(--color-danger)] text-[var(--color-on-danger)] hover:bg-[var(--color-danger-hover)] ' +
+    'active:bg-[var(--color-danger-active)] focus-visible:ring-[var(--color-danger)]',
 };
 
 const sizeStyles = {

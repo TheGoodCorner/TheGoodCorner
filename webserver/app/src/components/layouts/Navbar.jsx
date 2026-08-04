@@ -3,7 +3,7 @@ import { useThemeStore } from '../../stores/themeStore'
 import { useCartStore } from '../../stores/cartStore'
 import { Button } from '../UI/Button';
 import ProfileSection from './ProfileSection'
-import { Moon, Sun } from 'lucide-react'
+import { Moon, Sun, ShoppingCart } from 'lucide-react'
 
 function Navbar() {
   const theme = useThemeStore((state) => state.theme)
@@ -12,9 +12,16 @@ function Navbar() {
 
   return (
     <nav className={`navbar navbar-${theme}`}>
-          <Link to="/" className="navbar-logo">
-            🛍️ TheGoodCorner
-          </Link>
+      <Link to="/" className="navbar-logo">
+        🛍️ TheGoodCorner
+      </Link>
+      <Button
+        onClick={toggleTheme}
+        variant="ghost"
+        icon={theme === 'light' ? Moon : Sun}
+        title={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
+        aria-label={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
+      />
       <div className="container">
         <div className="navbar-wrapper">
           
@@ -26,17 +33,15 @@ function Navbar() {
           <div className="navbar-actions">
             <ProfileSection />
           </div>
-
         </div>
       </div>
-
-          <Button
-            onClick={toggleTheme}
-            variant="ghost"
-            icon={theme === 'light' ? Moon : Sun}
-            title={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
-            aria-label={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
-          />
+      <Button
+        onClick={() => {}}
+        variant='ghost'
+        icon={ShoppingCart}
+        title="Panier d'articles"
+        aria-label="Panier d'articles"
+      />
     </nav>
   );
 }

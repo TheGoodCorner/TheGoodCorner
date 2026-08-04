@@ -17,13 +17,13 @@ function Avatar({ src, alt = '', size = 'md', className = '' }) {
   return (
     <span
       className={[
-        'inline-flex items-center justify-center rounded-full bg-gray-200 overflow-hidden shrink-0',
+        'inline-flex items-center justify-center rounded-full bg-[var(--color-surface-hover)] overflow-hidden shrink-0',
         sizeStyles[size],
         className,
       ].filter(Boolean).join(' ')}
     >
       {showFallback ? (
-        <CircleUserRound size={iconDimensions[size]} className="text-gray-400" aria-hidden="true" />
+        <CircleUserRound size={iconDimensions[size]} className="text-[var(--color-text-muted)]" aria-hidden="true" />
       ) : (
         <img
           src={src}
