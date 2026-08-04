@@ -19,9 +19,9 @@ services:
     container_name: back
     networks:
       - Container_network
-    # depends_on:
-    #   postgresql:
-    #     condition: service_healthy
+    depends_on:
+      postgresql:
+        condition: service_healthy
     restart: always
 
   postgresql:
@@ -37,11 +37,11 @@ services:
       - "5432:5432"
     networks:
       - Container_network
-    # healthcheck:
-    #   test: ["CMD", "pg_isready", "-U", "postgres"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgresql_data:/var/lib/postgresql
     restart: always
