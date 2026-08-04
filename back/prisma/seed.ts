@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '../src/generated/prisma/client.js';
+import { PrismaClient, Prisma } from './generated/client.js';
 // import generated prisma binaries containing scheme tables as methods/objects
 
 const prisma: PrismaClient = new PrismaClient;
