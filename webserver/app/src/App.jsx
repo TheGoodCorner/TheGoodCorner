@@ -40,7 +40,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
-      <CartPopover /> 
+      <CartPopover />
       <Footer />
     </Router>
   );
