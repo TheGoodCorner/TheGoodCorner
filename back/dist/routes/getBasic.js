@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import controller from '../controllers/controllers.js';
-const router = Router();
+const GetRouter = Router();
 /**
  * ensemble de get routes
  * @param 'path' string
  * @param 'express Request and response' express Object
  */
-router.get('/', controller.getHomePage);
-router.get('/login', controller.getLoginPage);
-router.get('/products', controller.getProductsPage);
-router.get('/paiement', controller.getPaiementPage);
-router.get('/messages', controller.getMessagesPage);
-router.get('/profil', controller.getProfilPage);
-export default router;
+GetRouter.get('/', controller.getHomePage);
+GetRouter.get('/login', controller.getLoginPage);
+GetRouter.get('/products', controller.getProductsPage);
+GetRouter.get('/paiement', controller.getPaiementPage);
+GetRouter.get('/messages', controller.getMessagesPage);
+GetRouter.get('/profil', controller.getProfilPage);
+export default GetRouter;

@@ -8,4 +8,7 @@ elif [ -f "../.secrets/password.txt" ]; then
 	export POSTGRES_PASSWORD=$(cat ../.secrets/password.txt)
 fi
 
+npx prisma generate --schema=./dist/prisma/schema.prisma
+npx prisma db push --schema=./dist/prisma/schema.prisma
+
 exec "$@"

@@ -1,6 +1,7 @@
 import express, { Express} from 'express';
-import router from './routes/getBasic.js'
 import prisma from './services/db.js';
+import PostRouter from './routes/products.js'
+import GetRouter from './routes/getBasic.js';
 // import express dependencies for handling request and response and routing methods
 
 const app: Express = express(); // server init
@@ -14,7 +15,9 @@ const port: number = Number(process.env.port) || 3000; // port number
 
 // enable json body parsing
 app.use(express.json());
-app.use('/', router);
+app.use(express.urlencoded({ extended: true }));
+app.use('/', GetRouter);
+app.use('/', PostRouter);
 
 /**
  * asynchronous function that start the backend server while checking for errors
@@ -32,7 +35,7 @@ async function startServer()
 		console.log('Connected to db.');
 		await new Promise<void> ((resolve, reject) =>
 		{
-			const server = app.listen(port, () => 
+			const server = app.listen(port, '0.0.0.0', () => 
 			{
 				console.log(`Serveur démarré sur http://localhost:${port}`);
 				resolve();

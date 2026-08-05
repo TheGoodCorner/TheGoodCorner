@@ -1,5 +1,5 @@
-// import { PrismaClient } from '@prisma/client';
-import { PrismaClient } from '../prisma/generated/client.js';
+// import { PrismaClient } from '../prisma/generated/client.js';
+import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 // import all dependency such as PrismaClient, filesystem for read/write and path for env variables searche

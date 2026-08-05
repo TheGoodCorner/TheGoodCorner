@@ -2,7 +2,7 @@
 #                   VARIABLES                        #
 # -------------------------------------------------- #
 
-NAME				= inception
+NAME				= TheGoodCorner
 BACK_CONT			= back
 DATABASE_CONT		= postgresql
 WEB_SERVER_CONT		= webserver
@@ -44,20 +44,33 @@ all: up launch
 up:
 	
 	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
-		echo -e "$(RED)Inception is already up."; \
+		echo -e "$(RED)TheGoodCorner is already up."; \
 	else \
 		mkdir -p .secrets; \
 		if [ -f ./.secrets/password.txt ]; then \
-			rm .secrets/password.txt; \
+			echo -e "$(GREEN)Password file already exists in .secrets folder.$(RESET)"; \
+		elif [ -f ../password.txt ]; then \
+			echo -e "$(GREEN)Successfully copied password to .secrets folder.$(RESET)"; \
+			cp ../password.txt ./.secrets/password.txt; \
+		else \
+			echo -e "$(BLUE)Don't forget to fill out the secret password.txt file$(RESET)"; \
+			exit 1; \
 		fi; \
 		touch ./.secrets/password.txt; \
-		echo -e "GoodCornerPass123" > ./.secrets/password.txt; \
+		if [ -f ../.env ]; then \
+			cp ../.env ./back/; \
+			echo -e "$(GREEN) .env file has been successfully copied to ./back !"; \
+		elif grep "TODO" ./back/.env_example; then \
+			echo -e "$(BLUE) There is an env.example file inside ./back folder you must fill it out and rename it to .env before launching again !";\
+			exit 1; \
+		else \
+			echo -e "$(BLUE) If the env.example file is absent, create .env file inside ./back folder you must fill it out before launching again !";\
+			exit 1; \
+		fi; \
 		echo -e "$(GREEN) [up] $(YELLOW)Starting $(NAME) $(RESET)"; \
-		mkdir -p /home/$$USER/data/postgresql; \
 		$(COMPOSE) -f $(CONF) up --build -d; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(NAME) is running."; \
 	fi
-## A ENLEVER LE MOT DE PASSE AVEC LE ECHO
 
 down:
 	@echo -e "$(GREEN) [DOWN] $(RED)Stopping $(NAME)... if there are volumes they stays mounted $(RESET)"
@@ -75,8 +88,9 @@ launch:
 
 clean:
 	@echo -e "$(YELLOW)Cleaning Docker system...$(RESET)";
-	@$(COMPOSE) -f $(CONF) down -v 2>/dev/null;
-	@docker system prune -a -f;
+	@$(COMPOSE) -f $(CONF) down -v --remove-orphans 2>/dev/null || true;
+	@podman rm -fa 2>/dev/null || true;
+	@podman system prune -a --volumes -f 2>/dev/null || true;
 	@rm -rf /home/$$USER/data/postgresql;
 	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete.";
 
