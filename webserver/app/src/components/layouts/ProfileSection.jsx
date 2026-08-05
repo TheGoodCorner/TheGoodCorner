@@ -7,15 +7,10 @@ import { Dropdown } from '../UI/Dropdown';
 function ProfileSection() {
   const { isAuthenticated, user, logout, login } = useAuthStore();
 
-  const handleLogin = () => {
-    // TODO: remplacer par la vraie logique de connexion (redirection /login,
-    // modale...) quand le backend sera prêt
-    login('test@example.com', 'password123');
-  };
 
   if (!isAuthenticated) {
     return (
-      <Button onClick={handleLogin} variant="ghost">
+      <Button to="/authentication" variant="ghost">
         <Avatar size="sm" />
         Se connecter
       </Button>

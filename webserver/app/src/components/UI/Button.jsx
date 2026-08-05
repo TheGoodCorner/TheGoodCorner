@@ -1,4 +1,5 @@
 import { Loader2, ShoppingCart, Heart, Trash2, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Avatar from './Avatar';
 
 // Toutes les couleurs viennent des tokens (styles/tokens.css) via la
@@ -58,6 +59,7 @@ export function Button({
   iconOnly: iconOnlyProp = false,
   iconPosition = 'left',
   className = '',
+  to,
   children,
   ...props
 }) {
@@ -71,6 +73,22 @@ export function Button({
     !props['aria-label']
   ) {
     console.warn("Button: ajoute un aria-label quand le bouton n'a qu'une icône, sans texte.");
+  }
+
+  if (to) {
+    return (
+      <Link to={to}
+        className={cx(
+        baseStyles,
+        variantStyles[variant],
+        iconOnly ? iconOnlySizeStyles[size] : sizeStyles[size],
+        fullWidth && 'w-full',
+        className
+      )}
+        {...props}>
+          {children}
+      </Link>
+    );
   }
 
   return (
