@@ -39,6 +39,7 @@ function App() {
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/authentification"/>
       </Routes>
       <CartPopover />
       <Footer />
