@@ -19,8 +19,9 @@ services:
      context: ./back
      dockerfile: dockerfile
     container_name: back
-    env_file:
-      - ./back/.env
+    environment:
+      POSTGRES_HOST: postgresql
+      DATABASE_URL: postgresql://GoodCorner:GoodCornerPass123@postgresql:5432/mydb?schema=public
     secrets:
       - db_password
     networks:
@@ -40,8 +41,9 @@ services:
     container_name: postgresql
     ports:
       - "127.0.0.1:5432:5432"
-    env_file:
-      - ./back/.env
+    environment:
+      POSTGRES_USER: GoodCorner
+      POSTGRES_DB: mydb
     secrets:
       - db_password
     networks:
