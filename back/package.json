@@ -24,6 +24,7 @@
     "express": "^5.2.1",
     "http-errors": "^2.0.1",
     "multer": "^2.2.0"
+	
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

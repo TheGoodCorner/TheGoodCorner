@@ -10,7 +10,7 @@ services:
     volumes:
       - uploads_data:/app/uploads
     ports:
-        - "8000:80"
+        - "8080:80"
         - "4443:443"
     restart: always
 
@@ -52,8 +52,8 @@ services:
       - postgresql_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "GoodCorner"]
-      interval: 10s
-      timeout: 5s
+      interval: 2s
+      timeout: 3s
       retries: 5
     restart: always
 

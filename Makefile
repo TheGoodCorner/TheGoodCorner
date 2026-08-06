@@ -42,7 +42,7 @@ RESET		:=	\033[0m
 all: up launch
 
 up:
-	
+	npm install --prefix back --no-audit --no-fund --loglevel=error
 	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)TheGoodCorner is already up."; \
 	else \
@@ -88,10 +88,9 @@ launch:
 
 clean:
 	@echo -e "$(YELLOW)Cleaning Docker system...$(RESET)";
-	@$(COMPOSE) -f $(CONF) down -v --remove-orphans 2>/dev/null || true;
-	@podman rm -fa 2>/dev/null || true;
-	@podman system prune -a --volumes -f 2>/dev/null || true;
-	@rm -rf /home/$$USER/data/postgresql;
+	@$(COMPOSE) -f $(CONF) down -v --remove-orphans >/dev/null 2>&1 || true;
+	@podman rm -fa >/dev/null 2>&1 || true;
+	@podman system prune -a --volumes -f >/dev/null 2>&1 || true;
 	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete.";
 
 re: clean all
@@ -100,17 +99,17 @@ back:
 
 	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)back container is already up refreshing. $(RESET)"; \
-		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT); \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT) 2>/dev/null; \
 	else \
 		echo -e "$(YELLOW)Starting $(BACK_CONT) $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d $(BACK_CONT) 2>/dev/null; \
 		echo -e "$(GREEN)[DONE]$(RESET) $(BACK_CONT) is running."; \
 	fi
-database:
+postgresql:
 
 	@if [ $$(docker ps -q -f name=postgresql | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)database container is already up refreshing. $(RESET)"; \
-		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT); \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT) 2>/dev/null; \
 	else \
 		echo -e "$(YELLOW)Starting $(DATABASE_CONT) $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d $(DATABASE_CONT) 2>/dev/null; \
@@ -120,7 +119,7 @@ webserver:
 
 	@if [ $$(docker ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)webserver container is already up refreshing. $(RESET)"; \
-		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(WEB_SERVER_CONT); \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(WEB_SERVER_CONT) 2>/dev/null; \
 	else \
 		echo -e "$(YELLOW)Starting $(WEB_SERVER_CONT) $(RESET)"; \
 			$(COMPOSE) -f $(CONF) up -d $(WEB_SERVER_CONT) 2>/dev/null; \

@@ -2,25 +2,23 @@ FROM node:26-alpine AS builder
 
 WORKDIR /app
 COPY app/package*.json ./
-RUN npm install
 COPY app/ .
-    #copy all files from the current directory to the /app directory in the container
+
+RUN npm install --no-audit --no-fund --loglevel=error
 RUN npm run build
 
-FROM nginx:alpine
+FROM nginx:alpine AS runner
 
 RUN apk add --no-cache openssl && \
     mkdir -p /etc/nginx/ssl
-    
+
 RUN openssl req -x509 -nodes -days 365 \
     -subj "/CN=localhost" \
     -newkey rsa:2048 \
     -keyout /etc/nginx/ssl/nginx.key \
     -out /etc/nginx/ssl/nginx.crt
 
-#copy the builder built node app to the new nginx container to have one unified container
 COPY --from=builder /app/build /usr/share/nginx/html/app
-
 COPY ./nginx/conf/nginx.conf /etc/nginx/nginx.conf
-EXPOSE 8080
+
 CMD ["nginx", "-g", "daemon off;"]
