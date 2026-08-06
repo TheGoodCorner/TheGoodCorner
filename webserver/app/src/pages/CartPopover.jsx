@@ -2,7 +2,6 @@ import { ShoppingCart, Trash2 } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { Button } from '../components/UI/Button';
-import { SlideIn } from '../animations/SlideIn';
 
 export function CartPopover() {
   const { cartItems, cartCount, cartTotal, removeFromCart } = useCartStore();

@@ -3,6 +3,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
 import { Dropdown } from '../UI/Dropdown';
+import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
 
 function ProfileSection() {
   const { isAuthenticated, user, logout, login } = useAuthStore();
@@ -26,8 +27,8 @@ function ProfileSection() {
 
       <Dropdown.Menu>
         <Dropdown.Label>
-          <p className="text-sm font-medium text-[var(--color-text)]">
-            {user?.name || 'Utilisateur'}
+          <p className="text-base font-medium text-[var(--color-text)]">
+            {user?.username || 'Utilisateur'}
           </p>
           <p className="text-xs text-[var(--color-text-muted)]">{user?.email || ''}</p>
         </Dropdown.Label>
@@ -35,15 +36,23 @@ function ProfileSection() {
         <Dropdown.Separator />
 
         <Dropdown.Item as={Link} to="/profile">
-          👤 Mon Profil
+          <UserRound/>
+            Mon Profil
         </Dropdown.Item>
-        <Dropdown.Item>⚙️ Paramètres</Dropdown.Item>
-        <Dropdown.Item>🔐 Sécurité</Dropdown.Item>
+        <Dropdown.Item>
+          <MessageCircle/>
+            Mes messages
+        </Dropdown.Item>
+        <Dropdown.Item>
+          <Settings/>
+            Parametres
+        </Dropdown.Item>
 
         <Dropdown.Separator />
 
         <Dropdown.Item variant="danger" onClick={logout}>
-          🚪 Se déconnecter
+          <LogOut/>
+            Se déconnecter
         </Dropdown.Item>
       </Dropdown.Menu>
     </Dropdown>

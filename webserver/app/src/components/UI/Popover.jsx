@@ -40,7 +40,7 @@ export function Popover({
             animate={{ x: 0, opacity: 1 }} // Position finale
             exit={{ x: 400, opacity: 0 }} // Sort vers droite
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className={`fixed ${positionClass} top-5 bottom-5 bg-white z-50 rounded-lg shadow-2xl border border-gray-300 w-96 max-w-lg overflow-hidden`}
+            className={`fixed ${positionClass} top-5 bottom-5 bg-white z-50 rounded-lg shadow-3xl border border-gray-300 w-96 max-w-lg overflow-hidden`}
           >
               {/* Header avec close button */}
               {showCloseButton && (
@@ -49,8 +49,8 @@ export function Popover({
                   className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
                   variant="primary"
                   icon={PanelRightClose}
-                  title="Fermer panier popover"
-                  aria-label="Fermer panier popover"
+                  title="Fermer popover"
+                  aria-label="Fermer popover"
                 />
               )}
               {/* Contenu */}
