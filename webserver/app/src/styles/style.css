@@ -27,11 +27,7 @@
 
 /* ========== CARDS ========== */
 .card {
-  @apply bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
-}
-
-.card-image {
-  @apply h-48 flex items-center justify-center;
+  @apply bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow;
 }
 
 .card-body {
@@ -39,15 +35,15 @@
 }
 
 .card-title {
-  @apply text-xl font-bold mb-2 text-gray-800;
+  @apply text-xl font-bold mb-2 text-[var(--color-text)];
 }
 
 .card-text {
-  @apply text-gray-600 mb-4;
+  @apply text-[var(--color-text-muted)] mb-4;
 }
 
 .card-price {
-  @apply text-2xl font-bold text-blue-600 mb-4;
+  @apply text-2xl font-bold text-[var(--color-primary)] mb-4;
 }
 
 /* ========== SECTIONS ========== */
@@ -64,11 +60,11 @@
 }
 
 .featured-section {
-  @apply py-16 px-4 bg-gray-50;
+  @apply py-16 px-4 bg-[var(--color-surface-hover)];
 }
 
 .featured-title {
-  @apply text-4xl font-bold text-center mb-12 text-gray-800;
+  @apply text-4xl font-bold text-center mb-12 text-[var(--color-text)];
 }
 
 .featured-grid {
@@ -76,7 +72,7 @@
 }
 
 .cta-section {
-  @apply bg-blue-600 text-white py-12 px-4;
+  @apply bg-[var(--color-primary)] text-white py-12 px-4;
 }
 
 .cta-title {
@@ -98,7 +94,7 @@
 
 /* ========== FOOTER ========== */
 .footer {
-  @apply bg-gray-900 text-gray-200 py-12 px-4 mt-16;
+  @apply bg-[var(--color-surface)] text-[var(--color-text-muted)] border-t border-[var(--color-border)] py-12 px-4;
 }
 
 .footer-grid {
@@ -110,11 +106,11 @@
 }
 
 .footer-title {
-  @apply text-lg font-bold text-white mb-4;
+  @apply text-lg font-bold text-[var(--color-text)] mb-4;
 }
 
 .footer-text {
-  @apply text-gray-400 text-sm;
+  @apply text-[var(--color-text-muted)] text-sm;
 }
 
 .footer-links {
@@ -122,15 +118,15 @@
 }
 
 .footer-links a {
-  @apply text-gray-400 hover:text-white transition-colors text-sm;
+  @apply text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors text-sm;
 }
 
 .footer-divider {
-  @apply border-t border-gray-700 my-8;
+  @apply border-t border-[var(--color-border)] my-8;
 }
 
 .footer-bottom {
-  @apply text-center text-gray-500 text-sm;
+  @apply text-center text-[var(--color-text-muted)] text-sm;
 }
 
 /* ========== NAVBAR ========== */
@@ -195,6 +191,51 @@
   @apply hidden md:hidden text-2xl bg-transparent border-none cursor-pointer p-2;
 }
 
+/* ========== AUTH PAGE ========== */
+/* Fond décoratif discret pour les pages sans Navbar/Footer (AuthLayout) :
+   deux tâches floutées en --color-primary qui flottent doucement. */
+.auth-backdrop {
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-backdrop::before,
+.auth-backdrop::after {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  border-radius: 9999px;
+  background: var(--color-primary);
+  opacity: 0.12;
+  filter: blur(60px);
+  animation: floatBlob 8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.auth-backdrop::before {
+  width: 320px;
+  height: 320px;
+  top: -80px;
+  left: -80px;
+}
+
+.auth-backdrop::after {
+  width: 260px;
+  height: 260px;
+  bottom: -60px;
+  right: -60px;
+  animation-delay: -4s;
+}
+
+@keyframes floatBlob {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(20px, -20px) scale(1.1);
+  }
+}
+
 /* ========== ANIMATIONS ========== */
 /* Réutilisée par Dropdown.Menu (components/UI/Dropdown.jsx).
    Tailwind seul ne peut pas générer un @keyframes personnalisé,
@@ -212,4 +253,32 @@
 
 .animate-in {
   animation: fadeInZoom 0.1s ease-out;
+}
+
+/* Entrée de page/carte (login, futures pages sans Navbar) */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide-up {
+  animation: fadeSlideUp 0.5s ease-out;
+}
+
+/* Feedback visuel sur erreur de formulaire (ex: validation login) */
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
 }

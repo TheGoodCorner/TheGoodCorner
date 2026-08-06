@@ -1,6 +1,5 @@
-import { Loader2, ShoppingCart, Heart, Trash2, ArrowRight } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Avatar from './Avatar';
 
 // Toutes les couleurs viennent des tokens (styles/tokens.css) via la
 // syntaxe Tailwind arbitraire var(--x) : Button s'adapte donc au thème
@@ -75,39 +74,42 @@ export function Button({
     console.warn("Button: ajoute un aria-label quand le bouton n'a qu'une icône, sans texte.");
   }
 
-  if (to) {
+  const classes = cx(
+    baseStyles,
+    variantStyles[variant],
+    iconOnly ? iconOnlySizeStyles[size] : sizeStyles[size],
+    fullWidth && 'w-full',
+    className
+  );
+
+  const content = (
+    <>
+      {loading && <Loader2 size={dim} className="animate-spin" aria-hidden="true" />}
+      {!loading && Icon && iconPosition === 'left' && <Icon size={dim} aria-hidden="true" />}
+      {children}
+      {!loading && Icon && iconPosition === 'right' && <Icon size={dim} aria-hidden="true" />}
+    </>
+  );
+
+  // Rendu comme un vrai lien de navigation quand `to` est fourni (sauf
+  // désactivé/chargement : un <Link> ne peut pas être "disabled" comme un
+  // <button>, donc on retombe sur un bouton natif désactivé dans ce cas).
+  if (to && !disabled && !loading) {
     return (
-      <Link to={to}
-        className={cx(
-        baseStyles,
-        variantStyles[variant],
-        iconOnly ? iconOnlySizeStyles[size] : sizeStyles[size],
-        fullWidth && 'w-full',
-        className
-      )}
-        {...props}>
-          {children}
+      <Link to={to} className={classes} {...props}>
+        {content}
       </Link>
     );
   }
 
   return (
     <button
-      className={cx(
-        baseStyles,
-        variantStyles[variant],
-        iconOnly ? iconOnlySizeStyles[size] : sizeStyles[size],
-        fullWidth && 'w-full',
-        className
-      )}
+      className={classes}
       disabled={disabled || loading}
       aria-busy={loading}
       {...props}
     >
-      {loading && <Loader2 size={dim} className="animate-spin" aria-hidden="true" />}
-      {!loading && Icon && iconPosition === 'left' && <Icon size={dim} aria-hidden="true" />}
-      {children}
-      {!loading && Icon && iconPosition === 'right' && <Icon size={dim} aria-hidden="true" />}
+      {content}
     </button>
   );
 }
