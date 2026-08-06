@@ -48,3 +48,5 @@ async function startServer() {
     }
 }
 startServer();
+let test = "salut";
+console.log(typeof (test));

@@ -68,7 +68,9 @@ export const JsonNull = runtime.objectEnumValues.instances.JsonNull;
 export const AnyNull = runtime.objectEnumValues.instances.AnyNull;
 export const ModelName = {
     User: 'User',
-    Product: 'Product'
+    Product: 'Product',
+    Category: 'Category',
+    Location: 'Location'
 };
 /**
  * Enums
@@ -93,6 +95,19 @@ export const ProductScalarFieldEnum = {
     price: 'price',
     imageUrl: 'imageUrl',
     quantity: 'quantity'
+};
+export const CategoryScalarFieldEnum = {
+    id: 'id',
+    name: 'name'
+};
+export const LocationScalarFieldEnum = {
+    id: 'id',
+    country: 'country',
+    region: 'region',
+    city: 'city',
+    street: 'street',
+    house_number: 'house_number',
+    additionnal_infos: 'additionnal_infos'
 };
 export const SortOrder = {
     asc: 'asc',
