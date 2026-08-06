@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import avatardefault from '../../assets/profil_image.jpg';
 import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
@@ -8,15 +7,11 @@ import { Dropdown } from '../UI/Dropdown';
 function ProfileSection() {
   const { isAuthenticated, user, logout, login } = useAuthStore();
 
-  const handleLogin = () => {
-    // TODO: remplacer par la vraie logique de connexion (redirection /login,
-    // modale...) quand le backend sera prêt
-    login('test@example.com', 'password123');
-  };
 
   if (!isAuthenticated) {
     return (
-      <Button onClick={handleLogin} variant="ghost">
+      <Button to="/authentication" variant="ghost">
+        <Avatar size="sm" />
         Se connecter
       </Button>
     );
@@ -25,7 +20,7 @@ function ProfileSection() {
   return (
     <Dropdown>
       <Dropdown.Trigger as={Button} variant="ghost">
-        <Avatar src={user?.avatar || avatardefault} alt={user?.name || 'Profil'} size="sm" />
+        <Avatar src={user?.avatar} alt={user?.name || 'Profil'} size="sm" />
         <span>Profil</span>
       </Dropdown.Trigger>
 

@@ -1,14 +1,18 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
 import { useCartStore } from './stores/cartStore';
 import { useProductStore } from './stores/productStore';
+import MainLayout from './components/layouts/MainLayout';
+import AuthLayout from './components/layouts/AuthLayout';
 import Navbar from './components/layouts/Navbar';
 import Footer from './components/layouts/Footer';
 import Home from './pages/Home';
 import Products from './pages/Produits';
 import Cart from './pages/Panier';
+import Login from './pages/Login';
 import {CartPopover} from './pages/CartPopover'; 
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
@@ -32,16 +36,21 @@ function App() {
     
   return (
     <Router>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/products" element={<Products />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* Routes avec Navbar/Footer */}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        {/* Routes sans Navbar/Footer */}
+        <Route element={<AuthLayout />}>
+          <Route path="/authentication" element={<Login />} />
+        </Route>
       </Routes>
-      <CartPopover /> 
-      <Footer />
     </Router>
   );
 }

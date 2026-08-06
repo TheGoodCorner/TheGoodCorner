@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useThemeStore } from '../../stores/themeStore'
 import { useCartStore } from '../../stores/cartStore'
+import { useUIStore } from '../../stores/uiStore';
 import { Button } from '../UI/Button';
 import ProfileSection from './ProfileSection'
 import { Moon, Sun, ShoppingCart } from 'lucide-react'
@@ -9,6 +10,7 @@ function Navbar() {
   const theme = useThemeStore((state) => state.theme)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const cartCount = useCartStore((state) => state.cartCount)
+  const openUi = useUIStore((state) => state.openUi)
 
   return (
     <nav className={`navbar navbar-${theme}`}>
@@ -36,7 +38,7 @@ function Navbar() {
         </div>
       </div>
       <Button
-        onClick={() => {}}
+        onClick={() => {openUi('cart-popover')}}
         variant='ghost'
         icon={ShoppingCart}
         title="Panier d'articles"
