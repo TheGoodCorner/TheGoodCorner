@@ -13,7 +13,6 @@ import Home from './pages/Home';
 import Products from './pages/Produits';
 import Cart from './pages/Panier';
 import Login from './pages/Login';
-import {CartPopover} from './pages/CartPopover'; 
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
 import './styles/style.css';
@@ -41,7 +40,6 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
-          <Route path="/cart" element={<Cart />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/profile" element={<Profile />} />
         </Route>
