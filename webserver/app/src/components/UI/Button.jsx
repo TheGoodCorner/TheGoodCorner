@@ -65,14 +65,14 @@ export function Button({
   const iconOnly = iconOnlyProp || (Boolean(Icon) && !children);
   const dim = iconDimensions[size];
 
-  if (
-    typeof process !== 'undefined' &&
-    process.env?.NODE_ENV !== 'production' &&
-    iconOnly &&
-    !props['aria-label']
-  ) {
-    console.warn("Button: ajoute un aria-label quand le bouton n'a qu'une icône, sans texte.");
-  }
+  // if (
+  //   typeof process !== 'undefined' &&
+  //   process.env?.NODE_ENV !== 'production' &&
+  //   iconOnly &&
+  //   !props['aria-label']
+  // ) {
+  //   console.warn("Button: ajoute un aria-label quand le bouton n'a qu'une icône, sans texte.");
+  // }
 
   const classes = cx(
     baseStyles,

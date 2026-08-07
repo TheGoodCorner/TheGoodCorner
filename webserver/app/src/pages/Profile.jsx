@@ -1,4 +1,6 @@
 import React from 'react';
+import { Button } from '../components/UI/Button';
+import { UserRoundPen } from 'lucide-react';
 
 function Profile() {
   return (
@@ -22,9 +24,15 @@ function Profile() {
           </div>
 
           {/* Bouton modifier */}
-          <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+          <Button 
+            className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'
+            variant='secondary'
+            icon={UserRoundPen}
+            iconPosition='right'
+            
+          >  
             Modifier le profil
-          </button>
+          </Button>
         </div>
       </section>
     </div>

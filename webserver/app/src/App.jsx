@@ -5,6 +5,7 @@ import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
 import { useCartStore } from './stores/cartStore';
 import { useProductStore } from './stores/productStore';
+import { useAuthStore } from './stores/authStore';
 import MainLayout from './components/layouts/MainLayout';
 import AuthLayout from './components/layouts/AuthLayout';
 import Navbar from './components/layouts/Navbar';
@@ -32,6 +33,11 @@ function App() {
     useEffect(() => {
       document.documentElement.dataset.theme = theme
     }, [theme])
+
+    const initAuth = useAuthStore((state) => state.initAuth);
+    useEffect(() => {
+      initAuth();
+    }, []); // Une seule fois !
     
   return (
     <Router>

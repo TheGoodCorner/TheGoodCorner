@@ -21,8 +21,8 @@ function ProfileSection() {
   return (
     <Dropdown>
       <Dropdown.Trigger as={Button} variant="ghost">
-        <Avatar src={user?.avatar} alt={user?.name || 'Profil'} size="sm" />
-        <span>Profil</span>
+        <Avatar src={user?.avatar} alt={user?.username || 'Profil'} size="sm" />
+        <span>{user?.username || 'Profil'}</span>
       </Dropdown.Trigger>
 
       <Dropdown.Menu>
