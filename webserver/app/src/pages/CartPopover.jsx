@@ -7,7 +7,7 @@ export function CartPopover() {
   const { cartItems, cartCount, cartTotal, removeFromCart } = useCartStore();
 
   return (
-      <Popover id="cart-popover" position="right" showCloseButton={true}>
+      <Popover id="cart-popover" position="right" showCloseButton={true} width="w-[500px]">
       <div className="flex flex-col h-full">
         {/* Header */}
         <h3 className="font-semibold text-xl mb-6">Panier</h3>
@@ -17,11 +17,11 @@ export function CartPopover() {
           {cartItems.length === 0 ? (
             <div className="text-center text-gray-500 py-12">Panier vide</div>
           ) : (
-            <div className="max-h-96 overflow-y-auto space-y-5">
+            <div className="max-h-[600px] overflow-y-auto space-y-5 bg-gradient-to-b from-gray-50 to-gray-200 p-2 rounded-lg">
               {cartItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex justify-between items-center p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition"
+                  className="flex justify-between items-center p-4 bg-white rounded-lg hover:bg-gray-100 transition"
                 >
                   <div className="flex-1">
                     <p className="font-medium text-base">{item.name}</p>
@@ -34,8 +34,8 @@ export function CartPopover() {
                     variant='danger'
                     icon={Trash2}
                     className="rounded transition"
-                    title="Votre panier"
-                    aria-label="Votre panier"
+                    title="Retirer article du panier"
+                    aria-label="Retirer article du panier"
                   />
                 </div>
               ))}

@@ -17,6 +17,7 @@ export function Popover({
   children,
   position = "right",
   showCloseButton = true,
+  width="w-96",
 }) {
   const { openUi, toggleUi, closeUi } = useUIStore();
   const isOpen = useUIStore((state) => state.UserInterfaces[id]) || false;
@@ -40,7 +41,7 @@ export function Popover({
             animate={{ x: 0, opacity: 1 }} // Position finale
             exit={{ x: 400, opacity: 0 }} // Sort vers droite
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className={`fixed ${positionClass} top-5 bottom-5 bg-white z-50 rounded-lg shadow-3xl border border-gray-300 w-96 max-w-lg overflow-hidden`}
+            className={`fixed ${positionClass} ${width} top-5 bottom-5 bg-white z-50 rounded-lg shadow-3xl border border-gray-300 max-w-lg overflow-hidden`}
           >
               {/* Header avec close button */}
               {showCloseButton && (
