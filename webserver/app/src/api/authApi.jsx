@@ -27,6 +27,8 @@ export async function loginRequest(email, password) {
     return mockAuthResponse(email);
   }
 
+  // axios retourne ce que le serveur renvoie (data) + des metadonnee
+  // En destructurant '{ data }' on garde que ce qui nous interesse (les donnees renvoyer par le back)
   const { data } = await apiClient.post('/auth/login', { email, password });
   return data;
 }
