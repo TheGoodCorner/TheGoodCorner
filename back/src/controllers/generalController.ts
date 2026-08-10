@@ -5,9 +5,9 @@ import multer from 'multer';
 
 void multer;
 /**
- * controller object creation with methods
+ * generalController object creation with methods
  */
-const controller = 
+const generalController = 
 {
 	getHomePage: (req: Request, res: Response) =>
 	{
@@ -41,4 +41,4 @@ const controller =
 	},
 }
 
-export default controller;
+export default generalController;

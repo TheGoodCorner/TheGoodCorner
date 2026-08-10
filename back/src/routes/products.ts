@@ -2,9 +2,9 @@ import { Router } from 'express';
 import { uploadMiddleware } from '../services/middlewareMulter.js';
 import productController from '../controllers/productController.js';
 
-const PostRouter = Router();
+const pController = Router();
 
-PostRouter.post('/products', uploadMiddleware.single('image'), productController.createProduct);
-PostRouter.get('/products/:id', productController.GetProductById);
+pController.post('/products', uploadMiddleware.single('image'), productController.createProduct);
+pController.get('/products/:id', productController.GetProductById);
 
-export default PostRouter;
+export default pController;
