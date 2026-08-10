@@ -29,7 +29,7 @@ const ProductController =
 			});
 
 			return (res.status(201).json({ status: 'OK', data: newProduct }));
-		} catch (error) {
+		} catch (error) { // a voir pas de throw
 			console.error(error);
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}
@@ -49,7 +49,7 @@ const ProductController =
 				return (res.status(404).json({message: `Product ID not found.`}))
 			return (res.status(200).json(product));
 		}
-		catch (error){
+		catch (error){ // a voir pas de throw
 			console.error(error);
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}

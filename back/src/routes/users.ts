@@ -4,5 +4,13 @@ import usersController from '../controllers/usersController.js';
 
 const UController = Router();
 
-// UController.post()
-// UController.get()
+UController.post(`/auth/register`, usersController.createUser);
+// UController.post(/auth/login)
+// UController.get(/auth/login)
+// UController.get(/auth/logout)
+// UController.get(/auth/refresh)
+// UController.put(/login)
+// UController.delete(/login)
+
+export default UController;
+

@@ -1,30 +1,14 @@
 import { Prisma, PrismaClient} from '../prisma/generated/client.js';
+import prisma from "./db.js";
 import 'dotenv/config';
 
-const prisma: PrismaClient = new PrismaClient;
-
-const User: Prisma.UserCreateInput[] = [];
-
-const firstName: string = ;
-const lastName: string = ;
-const username: string = ;
-const email: string = ;
-User.push({
-		email,
-		name: `${firstName} ${lastName}`,
-		password: "",
-		username
-});
-
-try 
+export const FindUserByEmail = async (email: string) =>
 {
-	await prisma.user.create(
-	{
-		data: User
-	});
-	console.log("user sucessfully created");
+	return (await prisma.user.findUnique({where: {email}}));
 }
-catch (error)
-{
 
+export const CreateDbUser = async (data: Prisma.UserCreateInput) =>
+{
+	return (await prisma.user.create({data}));
 }
+

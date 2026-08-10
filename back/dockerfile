@@ -7,9 +7,9 @@ COPY tsconfig.json ./
 RUN npm install --no-audit --no-fund --loglevel=error
 
 COPY src ./src
-RUN npm run build
 
-COPY src/prisma/schema.prisma /app/dist/prisma/
+RUN npm run build
+COPY src/prisma /app/dist/prisma
 RUN npm prune --omit=dev
 
 FROM node:26-alpine AS runner

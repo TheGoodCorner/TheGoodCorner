@@ -1,7 +1,8 @@
 import express, { Express} from 'express';
 import prisma from './services/db.js';
-import PostRouter from './routes/products.js'
-import GetRouter from './routes/getBasic.js';
+import PRoutes from './routes/products.js'
+import GRoutes from './routes/getBasic.js';
+import URoutes from './routes/users.js';
 // import express dependencies for handling request and response and routing methods
 
 const app: Express = express(); // server init
@@ -16,8 +17,9 @@ const port: number = Number(process.env.port) || 3000; // port number
 // enable json body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/', GetRouter);
-app.use('/', PostRouter);
+app.use('/', GRoutes); // general routes
+app.use('/', PRoutes); // product routes
+app.use('/', URoutes); // Users /auth/register
 
 /**
  * asynchronous function that start the backend server while checking for errors
