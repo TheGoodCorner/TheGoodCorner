@@ -20,7 +20,7 @@ const port: number = Number(process.env.port) || 3000; // port number
 app.use(cors({
   origin: '*', // Remplacez par le domaine de votre frontend (ou '*' pour tout autoriser)
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['*']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
