@@ -1,8 +1,8 @@
-import { useUIStore } from '../../stores/uiStore';
-import { useClickOutside } from '../../hooks/useClickOutside';
-import { X, PanelRightClose } from 'lucide-react';
-import { Button } from './Button';
-
+import { useUIStore } from "../../stores/uiStore";
+import { useClickOutside } from "../../hooks/useClickOutside";
+import { Button } from "./Button";
+import { X, PanelRightClose } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 /**
  * Popover générique réutilisable
  * @param {string} id - identifiant unique (pour le store UI)
@@ -15,8 +15,9 @@ export function Popover({
   id,
   trigger,
   children,
-  position = 'right',
+  position = "right",
   showCloseButton = true,
+  width="w-96",
 }) {
   const { openUi, toggleUi, closeUi } = useUIStore();
   const isOpen = useUIStore((state) => state.UserInterfaces[id]) || false;
@@ -24,34 +25,40 @@ export function Popover({
   const ref = useClickOutside(() => closeUi(id), isOpen);
 
   const positionClass = {
-    right: 'right-0',
-    left: 'left-0',
-    center: 'left-1/2 -translate-x-1/2',
+    right: "right-0",
+    left: "left-0",
+    center: "left-1/2 -translate-x-1/2",
   }[position];
 
   return (
     <div className="relative" ref={ref}>
-      <div onClick={() => openUi(id)}>
-        {trigger}
-      </div>
+      <div onClick={() => openUi(id)}>{trigger}</div>
       {/* Popover Panel */}
-      {isOpen && (
-        <div className={`fixed ${positionClass} top-4 right-4 bottom-4 top-0 mt-2 bg-white  z-50 rounded-lg shadow-2xl border border-gray-300 z-50 w-96 max-w-lg`}>
-          {/* Header avec close button */}
-          {showCloseButton && (
-            <Button
-              onClick={() => closeUi(id)}
-              className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
-              variant='primary'
-              icon={PanelRightClose}
-              title="Fermer panier popover"
-              aria-label="Fermer panier popover"
-            />
-          )}
-          {/* Contenu */}
-          <div className="p-6">{children}</div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ x: 400, opacity: 0 }} // Entre de droite
+            animate={{ x: 0, opacity: 1 }} // Position finale
+            exit={{ x: 400, opacity: 0 }} // Sort vers droite
+            transition={{ type: "spring", damping: 20, stiffness: 100 }}
+            className={`fixed ${positionClass} ${width} top-5 bottom-5 bg-white z-50 rounded-lg shadow-3xl border border-gray-300 max-w-lg overflow-hidden`}
+          >
+              {/* Header avec close button */}
+              {showCloseButton && (
+                <Button
+                  onClick={() => closeUi(id)}
+                  className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
+                  variant="primary"
+                  icon={PanelRightClose}
+                  title="Fermer popover"
+                  aria-label="Fermer popover"
+                />
+              )}
+              {/* Contenu */}
+              <div className="p-6 h-full overflow-y-auto">{children}</div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
