@@ -47,7 +47,7 @@ const ProductController =
 			})
 			if (!product)
 				return (res.status(404).json({message: `Product ID not found.`}))
-			console.log(`obect found !`);
+			console.log(`object found !`);
 			return (res.status(200).json(product));
 		}
 		catch (error){ // a voir pas de throw
