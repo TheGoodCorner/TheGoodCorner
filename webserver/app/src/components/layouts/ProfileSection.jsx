@@ -6,8 +6,14 @@ import { Dropdown } from '../UI/Dropdown';
 import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
 
 function ProfileSection() {
-  const { isAuthenticated, user, logout, login } = useAuthStore();
+  const { isAuthenticated, user, logout, initializing } = useAuthStore();
 
+  // Le temps que initAuth() (appelé une fois dans App.jsx) tranche entre
+  // "session restaurée" ou "pas de session" — évite un flash "Se connecter"
+  // qui basculerait immédiatement sur le profil si la reconnexion réussit.
+  if (initializing) {
+    return <div className="w-24 h-9 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />;
+  }
 
   if (!isAuthenticated) {
     return (

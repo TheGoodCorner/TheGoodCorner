@@ -26,6 +26,7 @@ import './styles/tokens.css';
  */
 function App() {
   const theme = useThemeStore((state) => state.theme)
+  const initAuth = useAuthStore((state) => state.initAuth);
 
     // Synchronise le thème du store avec l'attribut data-theme sur <html>.
     // C'est ce que lisent les tokens (styles/tokens.css) pour que toute
@@ -34,10 +35,13 @@ function App() {
       document.documentElement.dataset.theme = theme
     }, [theme])
 
-    const initAuth = useAuthStore((state) => state.initAuth);
+    // Tentative de reconnexion silencieuse au démarrage, une seule fois
+    // (voir authStore.initAuth) : le cookie refresh httpOnly, s'il existe
+    // et est encore valide, restaure la session sans rien demander à
+    // l'utilisateur.
     useEffect(() => {
-      initAuth();
-    }, []); // Une seule fois !
+      initAuth()
+    }, [initAuth])
     
   return (
     <Router>
