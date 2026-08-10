@@ -31,7 +31,7 @@ export function Popover({
   }[position];
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative " ref={ref}>
       <div onClick={() => openUi(id)}>{trigger}</div>
       {/* Popover Panel */}
       <AnimatePresence>
@@ -41,7 +41,7 @@ export function Popover({
             animate={{ x: 0, opacity: 1 }} // Position finale
             exit={{ x: 400, opacity: 0 }} // Sort vers droite
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
-            className={`fixed ${positionClass} ${width} top-5 bottom-5 bg-white z-50 rounded-lg shadow-3xl border border-gray-300 overflow-hidden`}
+            className={`fixed ${positionClass} ${width} top-5 bottom-5 bg-[var(--color-surface)] z-50 rounded-lg shadow-3xl border border-[var(--color-border)] overflow-hidden text-[var(--color-text)]`}
           >
               {/* Header avec close button */}
               {showCloseButton && (
