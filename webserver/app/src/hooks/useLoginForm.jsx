@@ -52,14 +52,15 @@ export function useLoginForm() {
 
     setSubmitting(true);
 
-    if (isRegister) {
-      await register(form.email, form.password, form.username.trim());
-    } else {
-      await login(form.email, form.password);
-    }
+    const success = isRegister
+        ? await register(form.email, form.password, form.username.trim())
+        : await login(form.email, form.password);
 
-    setSubmitting(false);
-    onSuccess?.();
+      setSubmitting(false);
+      
+      if (success) {
+        onSuccess?.();
+      }
   };
 
   return {

@@ -1,13 +1,13 @@
-import { ShoppingCart, Trash2, CreditCard, Store } from 'lucide-react';
+import { Trash2, CreditCard, Store, Minus, Plus } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { Button } from '../components/UI/Button';
 
 export function CartPopover() {
-  const { cartItems, cartCount, cartTotal, removeFromCart } = useCartStore();
+  const { cartItems, cartCount, cartTotal, removeFromCart, updateQuantity } = useCartStore();
 
   return (
-      <Popover id="cart-popover" position="right" showCloseButton={true} width="w-[500px]">
+      <Popover id="cart-popover" position="right" showCloseButton={true} width="w-[700px]">
       <div className="flex flex-col h-full">
         {/* Header */}
         <h3 className="font-semibold text-xl mb-6">Votre Panier</h3>
@@ -15,8 +15,8 @@ export function CartPopover() {
         {/* Contenu */}
         <div className="flex-1 overflow-hidden">
           {cartItems.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center py-12">
-              <div className="text-center text-gray-500 py-12">Panier vide</div>
+            <div className="flex flex-col items-center justify-center h-full py-12">
+              <div className="text-center text-gray-500 mb-6">Panier vide</div>
               <Button
                 icon={Store}
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
@@ -40,14 +40,35 @@ export function CartPopover() {
                       {item.quantity} × {item.price.toFixed(2)} €
                     </p>
                   </div>
-                  <Button
-                    onClick={() => removeFromCart(item.id)}
-                    variant='danger'
-                    icon={Trash2}
-                    className="rounded transition"
-                    title="Retirer article du panier"
-                    aria-label="Retirer article du panier"
-                  />
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          icon={Minus}
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          disabled={item.quantity <= 1}
+                          aria-label="Diminuer la quantité"
+                        />
+                        <span className="w-8 text-center text-sm text-[var(--color-text)]">{item.quantity}</span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          icon={Plus}
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          aria-label="Augmenter la quantité"
+                        />
+                      </div>
+                      
+                      <Button
+                        onClick={() => removeFromCart(item.id)}
+                        variant='danger'
+                        icon={Trash2}
+                        className="rounded transition"
+                        title="Retirer article du panier"
+                        aria-label="Retirer article du panier"
+                      />
+                    </div>
                 </div>
               ))}
             </div>
