@@ -58,7 +58,7 @@ const generalController =
 			}
 			return res.json({status: 'NOT OK'})
 		}catch(error){
-			return (res.status(500).json({status: 'ERROR', message: 'Internal server error'})) // a voir, pas de throw
+			return (res.status(500).json({status: 'ERROR', message: 'Internal server error' + error})) // a voir, pas de throw
 		}
 
 	},

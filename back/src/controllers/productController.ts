@@ -27,7 +27,7 @@ const ProductController =
 					imageUrl: imageUrl,
 				},
 			});
-
+			console.log(`User created an object`);
 			return (res.status(201).json({ status: 'OK', data: newProduct }));
 		} catch (error) { // a voir pas de throw
 			console.error(error);
@@ -47,11 +47,12 @@ const ProductController =
 			})
 			if (!product)
 				return (res.status(404).json({message: `Product ID not found.`}))
+			console.log(`obect found !`);
 			return (res.status(200).json(product));
 		}
 		catch (error){ // a voir pas de throw
 			console.error(error);
-			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
+			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
 		}
 	}
 }
