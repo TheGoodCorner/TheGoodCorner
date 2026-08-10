@@ -1,4 +1,4 @@
-import Link from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
@@ -16,12 +16,12 @@ export default function ProductCard({ product }) {
 
   return (
       <div className="card">
-        <div>
+        <div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
           <img
           src={product.imageUrl}
           alt={product.name}
           loading="lazy"
-          className="w-[300px] h-64 object-cover bg-gray-100"
+          className="max-w-full h-auto"
           />
         </div>
         <div className="card-body">

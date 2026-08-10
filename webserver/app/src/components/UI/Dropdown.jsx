@@ -129,7 +129,7 @@ Dropdown.Menu = function DropdownMenu({ children, className = '', align = 'right
     <div
       role="menu"
       className={cx(
-        'absolute z-50 mt-2 min-w-[220px] py-1 overflow-hidden animate-in',
+        'absolute z-50 mt-2 min-w-[280px] py-2 overflow-hidden animate-in',
         'rounded-[var(--radius-md)] border shadow-lg',
         'bg-[var(--color-surface)] border-[var(--color-border)]',
         align === 'right' ? 'right-0' : 'left-0',
@@ -174,7 +174,7 @@ Dropdown.Item = function DropdownItem({
       role="menuitem"
       onClick={handleClick}
       className={cx(
-        'flex w-full items-center gap-2 px-3 py-2 text-sm text-left transition-colors',
+        'flex w-full items-center gap-3 px-4 py-2 text-base text-left transition-colors',
         itemVariantStyles[variant],
         className
       )}
@@ -187,7 +187,7 @@ Dropdown.Item = function DropdownItem({
 
 /** Zone libre en tête de menu (ex: nom + email de l'utilisateur) */
 Dropdown.Label = function DropdownLabel({ children, className = '' }) {
-  return <div className={cx('px-3 py-2', className)}>{children}</div>;
+  return <div className={cx('px-4 py-0.80 text-center', className)}>{children}</div>;
 };
 
 /** Séparateur entre groupes d'items */
