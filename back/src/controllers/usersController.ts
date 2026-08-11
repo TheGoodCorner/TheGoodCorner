@@ -59,7 +59,7 @@ const userController =
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
 		}
 	},
-	logout: async (req:Request, res:Response) =>
+	logout: async (_req:Request, res:Response) =>
 	{
 		try{
 			res.clearCookie('token', {httpOnly: true,secure: process.env.NODE_ENV === 'production',sameSite: 'strict'
