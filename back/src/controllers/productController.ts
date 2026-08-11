@@ -1,46 +1,52 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
-import multer from 'multer';
+import {AuthenticatedRequest} from "../services/middlewareAuthenticateToken.js";
 // import express dependancies for request handling
 
-void multer;
-
+// request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
+/**
+ * create a product inside the prisma database by taking the request and sending the json object
+ * @param request
+ * @returns promise containing the json object
+ */
 const ProductController =
 {
-	createProduct: async (req: Request, res: Response) =>
+	createProduct: async (req: AuthenticatedRequest, res: Response) =>
 	{
 		try {
-			const { name, price, quantity, userId, CategoryId, UserID } = req.body;
-
-			if (!name || !price) {
-				return( res.status(400).json({ status: 'ERROR', message: 'Name and price are required' }));
+			const userId = req.user?.id;
+			if (!userId)
+				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+			const { name, price, quantity, CategoryId } = req.body;
+			if (!name || !price || !CategoryId) {
+				return( res.status(400).json({ status: 'ERROR', message: 'Name and price and userId are mandatory' }));
 			}
+			
 			// req.file est généré par Multer si un fichier est envoyé dans le champ 'image'
-			const file = (req as Request & { file?: Express.Multer.File }).file;
-			const imageUrl = file ? `/uploads/${file.filename}` : null;
+			const file = req.file;
 
+			const imageUrl = file? `/uploads/${file.filename}` : null;
 			const newProduct = await prisma.product.create({
 				data: {
-				  name: String(name),
-				  price: parseInt(price, 10),
-				  quantity: quantity ? parseInt(quantity, 10) : 1,
-				  imageUrl: imageUrl,
-				  UserID: String(userId), // Non-optional field from your Product model
-				  author: {
-				    connect: { id: userId } // Connects product to existing User by id
-				  },
-				  Category: {
-				    connect: { id: parseInt(CategoryId, 10) } // Connects to existing Category by id
-				  }
+					name: String(name),
+					price: parseInt(price, 10),
+					quantity: quantity ? parseInt(quantity, 10) : 1,
+					imageUrl: imageUrl,
+					UserID: String(userId), // Non-optional field from your Product model
+					author: {
+						connect: { id: userId } // Connects product to existing User by id
+					},
+					Category: {
+						connect: { id: parseInt(CategoryId, 10) } // Connects to existing Category by id
+					}
 				}
 			});
 			console.log(`User created an object`);
 			return (res.status(201).json({ status: 'OK', data: newProduct }));
-		} catch (error) { // a voir pas de throw
+		} catch (error) {
 			console.error(error);
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}
 	},
-	
 }
 export default ProductController;

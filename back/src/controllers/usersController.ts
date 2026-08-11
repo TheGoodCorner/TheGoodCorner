@@ -6,24 +6,25 @@ import { FindUserByEmail, CreateDbUser } from "../services/manageUsers.js";
 import { generateTokens, verifyAcessToken, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { saveRefreshToken } from '../services/manageUsers.js';
 
-const prisma: PrismaClient = new PrismaClient; // get the prisma client instance
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === 'production',
-  sameSite: 'strict' as const,
+const prisma = new PrismaClient; // get the prisma client instance
+const BASIC_COOKIE = {
+	httpOnly: true,
+	secure: process.env.NODE_ENV === 'production',
+	sameSite: 'strict' as const,
 };
+
 const userController = 
 {
-	createUser: async (req: Request, res: Response) =>{// retirer Unique de la bdd pour le mdp
+	createUser: async (req: Request, res: Response) =>
+	{
 		try {
 			const password = req.body.password;
 			const email = req.body.email;
 			const username = req.body.username;
-
 			if (!email || !password || !username)
 				return res.status(400).json({ status: 'ERROR', message: 'Email, password, and name are required' });
+
 			const existingUser = await FindUserByEmail(email);
-			
 			if (existingUser)
 				return res.status(400).json({ status: 'ERROR', message: 'Email already exists'});
 			
@@ -34,11 +35,12 @@ const userController =
 					username: username,
 				}
 			)
+
 			const {accessToken, refreshToken} = generateTokens(newuser.id, newuser.email);
 			const hashedRefreshToken = hashIt(refreshToken);
 			await saveRefreshToken(newuser.id, hashedRefreshToken);
 
-			res.cookie('refreshToken', refreshToken, {
+			res.cookie('refreshToken', refreshToken, { // set the refreshToken cookie to refreshToken value and pass some options such as expiry date
 				httpOnly: true,
 				secure: process.env.NODE_ENV === 'production',
 				sameSite: 'strict',
@@ -47,7 +49,7 @@ const userController =
 			console.log(`User created`);
 			return res.status(201).json({status: 'OK', message: 'User created !', accessToken, data: {email: req.body.email, name: req.body.name, username: req.body.username }});
 		}
-		catch (error) { // pareil pas de throw
+		catch (error) {
 			console.error(error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
 		}
@@ -57,15 +59,17 @@ const userController =
 		try{
 			const password = req.body.password;
 			const email = req.body.email;
-
 			if (!password || !email)
 				return (res.status(400).json({ status: 'ERROR', message: 'Email and password cannot be omitted'}));
+
 			const existingUser = await FindUserByEmail(email);
 			if (!existingUser)
-				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credentials'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'Email not registered on our site'}));
+			
 			const passMatch = comparePassword(password, existingUser.password);
 			if (!passMatch)
-				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credentials'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential'}));
+			
 			console.log(`User logged in`);
 			return res.status(200).json({status: 'OK', message: 'User logged in !', data: { email: req.body.email, password: password}});
 		}
@@ -77,12 +81,12 @@ const userController =
 	logout: async (_req:Request, res:Response) =>
 	{
 		try{
-			const refreshToken = req.cookies?.refreshToken;
+			const refreshToken = req.cookies?.refreshToken; // get the resfreshToken from the cookies if present
 			if (refreshToken) {
-			const hashedToken = hashIt(refreshToken);
-			await prisma.refreshToken.deleteMany({where: { hashedToken }});
+			const hashedToken = hashIt(refreshToken); // hash it to delete it in database (matching data)
+			await prisma.refreshToken.deleteMany({where: { hashedToken }}); // delete it
 			}
-			res.clearCookie('refreshToken', COOKIE_OPTIONS);
+			res.clearCookie('refreshToken', BASIC_COOKIE); // reset the refreshToken cookie to BASIC_COOKIE value
 			return (res.status(200).json({ status: 'OK', message: 'User logged out successfully' }));
 		}
 		catch (error){
@@ -90,30 +94,30 @@ const userController =
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
 		}
 	},
-	refresh: async (req:Request, res:Response) =>{
+	refresh: async (req:Request, res:Response) =>
+	{
 		try{
-			const refreshToken = req.cookies?.refreshToken;
-
+			const refreshToken = req.cookies?.refreshToken; // get the resfreshToken from the cookies if present
 			if (!refreshToken) {
 				return (res.status(401).json({ status: 'ERROR', message: 'Refresh token missing' }));
 			}
-			const decodedPayload = verifyRefreshToken(refreshToken);
 
-			const hashedToken = hashIt(refreshToken);
-			const storedToken = await prisma.refreshToken.findUnique({
+			const decodedPayload = verifyRefreshToken(refreshToken);
+			const hashedToken = hashIt(refreshToken); // hash it to find it in database (matching data)
+			const storedToken = await prisma.refreshToken.findUnique({ // get the actual stored token inside the database
 			  where: { hashedToken },
 			});
 			if (!storedToken || storedToken.expiresAt < new Date()) {
-			  res.clearCookie('refreshToken', COOKIE_OPTIONS);
-			  return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
+				res.clearCookie('refreshToken', BASIC_COOKIE); // clear the invalid token
+				return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
 			}
-			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email);
 
+			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
 			return res.status(200).json({status: 'OK', message: 'Token refreshed successfully',  accessToken,});
 		}
 		catch (error){
 			console.error(error);
-			res.clearCookie('refreshToken', COOKIE_OPTIONS);
+			res.clearCookie('refreshToken', BASIC_COOKIE); // clear the token 
 			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' + error }));
 		}
 	}

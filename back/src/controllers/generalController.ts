@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
 import { comparePassword } from "../utils/securityUtils.js";
-import multer from 'multer';
+import { ok } from "node:assert";
 // import express dependancies for request handling
 
-void multer;
 /**
  * generalController object creation with methods
  */
@@ -13,34 +12,40 @@ const generalController =
 	getHomePage: (req: Request, res: Response) =>
 	{
 		void req;
-		res.json({status: 'OK', message: 'home page !'});
+		res.status(200).json({status: 'OK', message: 'home page !'});
 	},
 	getLoginPage: (req: Request, res: Response) =>
 	{
 		void req;
-		res.json({status: 'OK', message: 'login page !'});
+		res.status(200).json({status: 'OK', message: 'login page !'});
 	},
 	getPaiementPage: (req: Request, res: Response) =>
 	{
 		void req;
-		res.json({status: 'OK', message: 'payment page !'});
+		res.status(200).json({status: 'OK', message: 'payment page !'});
 	},
 	getMessagesPage: (req: Request, res: Response) =>
 	{
 		void req;
-		res.json({status: 'OK', message: 'messages page !'});
+		res.status(200).json({status: 'OK', message: 'messages page !'});
 	},
 	getProfilPage: (req: Request, res: Response) =>
 	{
 		void req;
-		res.json({status: 'OK', message: 'profil page !'});
+		res.status(200).json({status: 'OK', message: 'profil page !'});
 	},
-	getProductsPage: (req: Request, res: Response) =>
+	getProductsPage: async (_req: Request, res: Response) =>
 	{
-		void req;
-		res.json({status: 'OK', message: 'product page !'});
+		try{
+			const products = await prisma.product.findMany();
+			return(res.status(200).json({status: 'OK', data:products}));
+		}
+		catch(error){
+			console.log(` an error ocurred inside the productPage getter` + error);
+			res.status(500).json({status: 'ERROR', message: 'failed to retrieve product', error: "Unknown error"});
+		}
 	},
-	getSignInPage: async (req: Request, res: Response) =>
+	getSignUpPage: async (req: Request, res: Response) =>
 	{
 		try
 		{
@@ -58,9 +63,8 @@ const generalController =
 			}
 			return res.json({status: 'NOT OK'})
 		}catch(error){
-			return (res.status(500).json({status: 'ERROR', message: 'Internal server error' + error})) // a voir, pas de throw
+			return (res.status(500).json({status: 'ERROR', message: 'Internal server error'}))
 		}
-
 	},
 }
 
