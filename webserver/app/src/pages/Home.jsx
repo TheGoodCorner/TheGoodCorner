@@ -1,14 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useProductStore } from '../stores/productStore';
 import ProductCard from '../components/products/ProductCard';
 
-const testProducts = [
-  { id: 1, imageUrl: "/Images_db_test/image_1.jpg", name: "Gants de Boxe Yokkao", category: "Fight", price: 40 },
-  { id: 2, imageUrl: "/Images_db_test/image_5.jpg", name: "Un article au hasard", category: "Cardio", price: 15 },
-  { id: 3, imageUrl: "/Images_db_test/image_8.jpg", name: "Pareil", category: "Fight", price: 120 },
-];
-
 function Home() {
+
+  const featuredProducts = useProductStore((state) => state.products).slice(0, 3);
+
   return (
     <div>
       {/* HERO SECTION */}
@@ -34,7 +32,7 @@ function Home() {
           </h2>
           
           <div className="featured-grid">
-            {testProducts.map((product) => (
+            {featuredProducts.map((product) => (
               <ProductCard key={product.id} product={product}/>
             ))}
           </div>

@@ -1,17 +1,36 @@
 import { create } from 'zustand'
 
+// Données de démonstration en attendant le backend. Quand l'API existera,
+// appelle fetchProducts() une fois quelque part (ex. dans App.jsx comme
+// initAuth) : ça remplacera ce mock par les vraies données, sans rien
+// changer côté composants.
+const mockProducts = [
+  { id: 0, imageUrl: "/Images_db_test/image_0.jpg", name: "Gants de Boxe Yokkao Elite", category: "Professional", price: 85, description: "Gants haut de gamme conçus pour la compétition, cuir véritable et rembourrage optimisé pour la protection des poings.", owner: "Max", ownerRating: 4.8, ownerReviewCount: 42 },
+  { id: 1, imageUrl: "/Images_db_test/image_1.jpg", name: "Gants d'Entraînement Basic", category: "Training", price: 35, description: "Parfaits pour débuter, ces gants offrent un bon compromis entre confort et durabilité pour vos séances régulières.", owner: "Khalid", ownerRating: 4.5, ownerReviewCount: 28 },
+  { id: 2, imageUrl: "/Images_db_test/image_2.jpg", name: "Gants Muay Thai Premium", category: "Combat", price: 65, description: "Conçus spécifiquement pour le Muay Thai, avec un poignet renforcé et une mousse haute densité pour absorber les chocs.", owner: "Thomas", ownerRating: 4.9, ownerReviewCount: 65 },
+  { id: 3, imageUrl: "/Images_db_test/image_3.jpg", name: "Gants de Compétition Pro", category: "Professional", price: 120, description: "Le choix des compétiteurs exigeants : finitions soignées, maintien optimal du poignet et amorti premium.", owner: "Max", ownerRating: 4.7, ownerReviewCount: 51 },
+  { id: 4, imageUrl: "/Images_db_test/image_4.jpg", name: "Gants pour Débutants", category: "Cardio", price: 25, description: "Légers et confortables, idéaux pour découvrir la boxe cardio sans se ruiner.", owner: "Khalid", ownerRating: 1.3, ownerReviewCount: 19 },
+  { id: 5, imageUrl: "/Images_db_test/image_5.jpg", name: "Gants d'Entraînement Intensif", category: "Training", price: 50, description: "Pensés pour les séances intenses, avec une ventilation renforcée et un rembourrage résistant.", owner: "Thomas", ownerRating: 4.6, ownerReviewCount: 37 },
+  { id: 6, imageUrl: "/Images_db_test/image_6.jpg", name: "Gants Loisir Confort", category: "Cardio", price: 30, description: "Un confort optimal pour vos entraînements loisir, sans compromis sur la protection.", owner: "Max", ownerRating: 4.4, ownerReviewCount: 24 },
+  { id: 7, imageUrl: "/Images_db_test/image_7.jpg", name: "Gants Boxe Anglaise", category: "Professional", price: 95, description: "Spécialement conçus pour la boxe anglaise, avec une prise en main précise et un excellent maintien du poignet.", owner: "Khalid", ownerRating: 3.7, ownerReviewCount: 33 },
+  { id: 8, imageUrl: "/Images_db_test/image_8.jpg", name: "Gants d'Entraînement Légers", category: "Training", price: 40, description: "Légers et souples, parfaits pour travailler la vitesse et la technique.", owner: "Thomas", ownerRating: 4.5, ownerReviewCount: 29 },
+  { id: 9, imageUrl: "/Images_db_test/image_9.jpg", name: "Gants Kickboxing", category: "Combat", price: 70, description: "Robustes et bien rembourrés, conçus pour encaisser les échanges intenses du kickboxing.", owner: "Max", ownerRating: 4.8, ownerReviewCount: 58 },
+  { id: 10, imageUrl: "/Images_db_test/image_10.jpg", name: "Gants Sparring", category: "Training", price: 55, description: "Un amorti généreux pour protéger votre partenaire d'entraînement autant que vous-même.", owner: "Khalid", ownerRating: 4.6, ownerReviewCount: 44 },
+  { id: 11, imageUrl: "/Images_db_test/image_11.jpg", name: "Gants Ultra Premium", category: "Professional", price: 150, description: "Le nec plus ultra : cuir premium, finitions artisanales et performance de niveau professionnel.", owner: "Thomas", ownerRating: 2.9, ownerReviewCount: 72 },
+];
+
+
 export const useProductStore = create((set, get) => ({
-  products: [],
+  products: mockProducts,
   loading: false,
   error: null,
   filters: {
     search: '',
     selectedCategory: '',
     minPrice: 0,
-    maxPrice: 1000,
+    maxPrice: 200,
   },
 
-  // Récupérer tous les produits au démarrage
   fetchProducts: async () => {
     set({ loading: true, error: null });
     try {
@@ -23,42 +42,28 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-  // Filtrer les produits
   getFilteredProducts: () => {
     const { products, filters } = get()
     return products.filter((product) => {
-      // Filtre par recherche texte
       const matchSearch = product.name?.toLowerCase().includes(filters.search.toLowerCase())
-      // Filtre par catégorie
       const matchCategory = !filters.selectedCategory || product.category === filters.selectedCategory
-      // Filtre par prix
       const matchPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice
-      
       return matchSearch && matchCategory && matchPrice
     })
   },
-  
+
   resetFilters: () =>
     set({
-      filters: {
-        search: '',
-        selectedCategory: '',
-        minPrice: 0,
-        maxPrice: 1000,
-      },
+      filters: { search: '', selectedCategory: '', minPrice: 0, maxPrice: 200 },
     }),
 
-  // Récupérer un produit par ID (pour page détail)
   getProductById: (id) => {
-    return get().products.find(p => p.id === id);
+    return get().products.find((p) => String(p.id) === String(id));
   },
 
   setProducts: (products) => set({ products }),
   setLoading: (loading) => set({ loading }),
   setError: (error) => set({ error }),
-
   setFilters: (filters) =>
-    set((state) => ({
-      filters: { ...state.filters, ...filters },
-    }))
+    set((state) => ({ filters: { ...state.filters, ...filters } })),
 }))

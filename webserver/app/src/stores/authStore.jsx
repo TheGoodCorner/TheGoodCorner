@@ -66,6 +66,8 @@ export const useAuthStore = create((set) => ({
     // "utilisateur" viendra du serveur et ce clearCart() disparaîtra au
     // profit d'un simple refetch.
     useCartStore.getState().clearCart()
+    const { logout: logoutUser } = useUserStore.getState();
+    logoutUser();
   },
 
   setToken: (token) => set({ token }),

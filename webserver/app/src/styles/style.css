@@ -499,3 +499,32 @@
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   }
 }
+
+
+.card-header {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface);
+  font-size: 0.875rem;
+}
+
+.card-footer-compact {
+  padding: 0.75rem;
+  gap: 0.5rem;
+}
+
+.card-footer-compact .card-title {
+  margin-bottom: 0.25rem;
+  font-size: 0.95rem;
+}
+
+.card-footer-compact .card-price {
+  margin-bottom: 0.5rem;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

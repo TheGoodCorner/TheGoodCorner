@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 
 /**
  * Encapsule toute la logique du formulaire login/register : état des champs,
@@ -11,6 +12,7 @@ import { useAuthStore } from '../stores/authStore';
  */
 export function useLoginForm() {
   const { login, register, error, setError } = useAuthStore();
+  const { fetchUser } = useUserStore();
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [form, setForm] = useState({ username: '', email: '', password: '' });
@@ -59,6 +61,7 @@ export function useLoginForm() {
       setSubmitting(false);
       
       if (success) {
+        await fetchUser()
         onSuccess?.();
       }
   };
