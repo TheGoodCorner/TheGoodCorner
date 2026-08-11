@@ -1,10 +1,12 @@
-import express, { Express, Request, Response, NextFunction} from 'express';
+import express, { Express} from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+
 import prisma from './services/db.js';
 import PRoutes from './routes/products.js'
 import GRoutes from './routes/getBasic.js';
 import URoutes from './routes/users.js';
-import cors from 'cors';
-// import express dependencies for handling request and response and routing methods
+import { printRequest } from './utils/printHttpRequest.js';
 
 const app: Express = express(); // server init
 const port: number = Number(process.env.port) || 3000; // port number
@@ -24,21 +26,13 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   const timestamp = new Date().toISOString();
-//   console.log(`[${timestamp}] ${req.method} ${req.url}`);
-  
-//   // Affiche le body s'il y en a un (POST/PUT)
-//   if (Object.keys(req.body || {}).length > 0) {
-//     console.log('Body:', JSON.stringify(req.body, null, 2));
-//   }
-//   void res;
-//   next(); // Passer la main au middleware/routeur suivant
-// });
+app.use(cookieParser());
+
 
 app.use('/', GRoutes); // general routes
 app.use('/', PRoutes); // product routes
 app.use('/', URoutes); // Users /auth/register
+// app.use(printRequest);
 
 /**
  * asynchronous function that start the backend server while checking for errors

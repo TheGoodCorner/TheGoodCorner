@@ -1,8 +1,10 @@
 import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import prisma from './services/db.js';
-import PostRouter from './routes/products.js';
-import GetRouter from './routes/getBasic.js';
-// import express dependencies for handling request and response and routing methods
+import PRoutes from './routes/products.js';
+import GRoutes from './routes/getBasic.js';
+import URoutes from './routes/users.js';
 const app = express(); // server init
 const port = Number(process.env.port) || 3000; // port number
 /**
@@ -11,10 +13,18 @@ const port = Number(process.env.port) || 3000; // port number
  * @param {empty array callback} ""
  */
 // enable json body parsing
+app.use(cors({
+    origin: '*', // Remplacez par le domaine de votre frontend (ou '*' pour tout autoriser)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['*']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/', GetRouter);
-app.use('/', PostRouter);
+app.use(cookieParser());
+app.use('/', GRoutes); // general routes
+app.use('/', PRoutes); // product routes
+app.use('/', URoutes); // Users /auth/register
+// app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors
  */
@@ -48,5 +58,3 @@ async function startServer() {
     }
 }
 startServer();
-let test = "salut";
-console.log(typeof (test));

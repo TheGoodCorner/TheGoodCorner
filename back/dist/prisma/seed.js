@@ -1,4 +1,4 @@
-import { PrismaClient } from './generated/client.js';
+import { PrismaClient } from '@prisma/client';
 import 'dotenv/config';
 // import generated prisma binaries containing scheme tables as methods/objects
 const prisma = new PrismaClient;

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
-import { comparePassword, hashPassword } from "../utils/password.js";
+import { comparePassword } from "../utils/securityUtils.js";
 import multer from 'multer';
 // import express dependancies for request handling
 

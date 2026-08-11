@@ -47,7 +47,7 @@ up:
 		echo -e "$(RED)TheGoodCorner is already up."; \
 	else \
 		mkdir -p .secrets; \
-		if [ -f ./.secrets/password.txt ]; then \
+		if [ -f ./.secrets/password.txt ] && [ -s ./.secrets/password.txt ]; then \
 			echo -e "$(GREEN)Password file already exists in .secrets folder.$(RESET)"; \
 		elif [ -f ../password.txt ]; then \
 			echo -e "$(GREEN)Successfully copied password to .secrets folder.$(RESET)"; \
@@ -57,10 +57,16 @@ up:
 			exit 1; \
 		fi; \
 		touch ./.secrets/password.txt; \
-		if [ -f ../.env ]; then \
+		if [ -f ./back/.env ]; then \
+			if grep -q "TODO" ./back/.env; then \
+				echo -e "$(BLUE)Please remove TODOs from ./back/.env before launching!$(RESET)"; \
+				exit 1; \
+			fi; \
+			echo -e "$(GREEN)Project files are present, proceeding with compilation.$(RESET)"; \
+		elif [ -f ../.env ]; then \
 			cp ../.env ./back/; \
 			echo -e "$(GREEN) .env file has been successfully copied to ./back !"; \
-		elif grep "TODO" ./back/.env_example; then \
+		elif grep -q "TODO" ./back/.env_example; then \
 			echo -e "$(BLUE) There is an env.example file inside ./back folder you must fill it out and rename it to .env before launching again !";\
 			exit 1; \
 		else \

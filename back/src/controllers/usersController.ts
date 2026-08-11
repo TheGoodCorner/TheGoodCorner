@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
-import { Prisma, PrismaClient} from '../prisma/generated/client.js';
+import { Prisma, PrismaClient} from '@prisma/client';
 import multer from 'multer';
-import { comparePassword, hashPassword } from "../utils/password.js";
+import { comparePassword, hashIt } from "../utils/securityUtils.js";
 import { FindUserByEmail, CreateDbUser } from "../services/manageUsers.js";
-import { error } from "node:console";
+import { generateTokens, verifyAcessToken, verifyRefreshToken } from '../utils/jsonWebTokens.js';
+import { saveRefreshToken } from '../services/manageUsers.js';
 
 const prisma: PrismaClient = new PrismaClient; // get the prisma client instance
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict' as const,
+};
 const userController = 
 {
 	createUser: async (req: Request, res: Response) =>{// retirer Unique de la bdd pour le mdp
@@ -16,7 +22,6 @@ const userController =
 
 			if (!email || !password || !username)
 				return res.status(400).json({ status: 'ERROR', message: 'Email, password, and name are required' });
-			
 			const existingUser = await FindUserByEmail(email);
 			
 			if (existingUser)
@@ -25,12 +30,22 @@ const userController =
 			const newuser = await CreateDbUser(
 				{
 					email: email,
-					password: hashPassword(password),
+					password: hashIt(password),
 					username: username,
 				}
 			)
+			const {accessToken, refreshToken} = generateTokens(newuser.id, newuser.email);
+			const hashedRefreshToken = hashIt(refreshToken);
+			await saveRefreshToken(newuser.id, hashedRefreshToken);
+
+			res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+				maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+			});
 			console.log(`User created`);
-			return res.status(201).json({status: 'OK', message: 'User created !', data: {email: req.body.email, name: req.body.name, username: req.body.username }});
+			return res.status(201).json({status: 'OK', message: 'User created !', accessToken, data: {email: req.body.email, name: req.body.name, username: req.body.username }});
 		}
 		catch (error) { // pareil pas de throw
 			console.error(error);
@@ -62,14 +77,44 @@ const userController =
 	logout: async (req:Request, res:Response) =>
 	{
 		try{
-			res.clearCookie('token', {httpOnly: true,secure: process.env.NODE_ENV === 'production',sameSite: 'strict'
-		});
-			return res.status(200).json({ status: 'OK', message: 'User logged out successfully' 
-		});
+			const refreshToken = req.cookies?.refreshToken;
+			if (refreshToken) {
+			const hashedToken = hashIt(refreshToken);
+			await prisma.refreshToken.deleteMany({where: { hashedToken }});
+			}
+			res.clearCookie('refreshToken', COOKIE_OPTIONS);
+			return (res.status(200).json({ status: 'OK', message: 'User logged out successfully' }));
 		}
 		catch (error){
 			console.error(error);
-			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
+			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
+		}
+	},
+	refresh: async (req:Request, res:Response) =>{
+		try{
+			const refreshToken = req.cookies?.refreshToken;
+
+			if (!refreshToken) {
+				return (res.status(401).json({ status: 'ERROR', message: 'Refresh token missing' }));
+			}
+			const decodedPayload = verifyRefreshToken(refreshToken);
+
+			const hashedToken = hashIt(refreshToken);
+			const storedToken = await prisma.refreshToken.findUnique({
+			  where: { hashedToken },
+			});
+			if (!storedToken || storedToken.expiresAt < new Date()) {
+			  res.clearCookie('refreshToken', COOKIE_OPTIONS);
+			  return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
+			}
+			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email);
+
+			return res.status(200).json({status: 'OK', message: 'Token refreshed successfully',  accessToken,});
+		}
+		catch (error){
+			console.error(error);
+			res.clearCookie('refreshToken', COOKIE_OPTIONS);
+			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' + error }));
 		}
 	}
 	

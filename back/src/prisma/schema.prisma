@@ -20,6 +20,18 @@ model User {
   username  String   @unique
   password  String
   Product  Product[]
+  RefreshToken RefreshToken[]
+  createdAt DateTime @default(now())
+}
+
+model RefreshToken{
+  id        String   @id @default(uuid())
+  hashedToken String @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  revokedAt  DateTime?
+  replacedBy String?
+  expiresAt DateTime
   createdAt DateTime @default(now())
 }
 

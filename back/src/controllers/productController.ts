@@ -10,7 +10,7 @@ const ProductController =
 	createProduct: async (req: Request, res: Response) =>
 	{
 		try {
-			const { name, price, quantity } = req.body;
+			const { name, price, quantity, userId, CategoryId, UserID } = req.body;
 
 			if (!name || !price) {
 				return( res.status(400).json({ status: 'ERROR', message: 'Name and price are required' }));
@@ -21,11 +21,18 @@ const ProductController =
 
 			const newProduct = await prisma.product.create({
 				data: {
-					name: String(name),
-					price: parseInt(price, 10),
-					quantity: quantity ? parseInt(quantity, 10) : 1,
-					imageUrl: imageUrl,
-				},
+				  name: String(name),
+				  price: parseInt(price, 10),
+				  quantity: quantity ? parseInt(quantity, 10) : 1,
+				  imageUrl: imageUrl,
+				  UserID: String(userId), // Non-optional field from your Product model
+				  author: {
+				    connect: { id: userId } // Connects product to existing User by id
+				  },
+				  Category: {
+				    connect: { id: parseInt(CategoryId, 10) } // Connects to existing Category by id
+				  }
+				}
 			});
 			console.log(`User created an object`);
 			return (res.status(201).json({ status: 'OK', data: newProduct }));
