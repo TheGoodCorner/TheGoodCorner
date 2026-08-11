@@ -9,7 +9,7 @@ const prismaInstance = new PrismaClient();
  * @param email 
  * @returns said user promise
  */
-export const FindUserByEmail = async (email: string) =>
+export const findUserByEmail = async (email: string) =>
 {
 	return (await prisma.user.findUnique({where: {email}}));
 }
@@ -19,7 +19,7 @@ export const FindUserByEmail = async (email: string) =>
  * @param data 
  * @returns user promise
  */
-export const CreateDbUser = async (data: Prisma.UserCreateInput) =>
+export const createDbUser = async (data: Prisma.UserCreateInput) =>
 {
 	return (await prisma.user.create({data}));
 }

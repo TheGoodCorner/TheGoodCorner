@@ -1,5 +1,7 @@
 import prisma from "../services/db.js";
-// import express dependancies for request handling
+import { buildProduct } from "../services/products/buildProduct.js";
+import { productUpdate } from "../services/products/updateProduct.js";
+import { findReturnProduct } from "../services/products/utilsProducts.js";
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a product inside the prisma database by taking the request and sending the json object
@@ -12,27 +14,8 @@ const ProductController = {
             const userId = req.user?.id;
             if (!userId)
                 return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
-            const { name, price, quantity, CategoryId } = req.body;
-            if (!name || !price || !CategoryId) {
-                return (res.status(400).json({ status: 'ERROR', message: 'Name and price and userId are mandatory' }));
-            }
-            // req.file est généré par Multer si un fichier est envoyé dans le champ 'image'
-            const file = req.file;
-            const imageUrl = file ? `/uploads/${file.filename}` : null;
             const newProduct = await prisma.product.create({
-                data: {
-                    name: String(name),
-                    price: parseInt(price, 10),
-                    quantity: quantity ? parseInt(quantity, 10) : 1,
-                    imageUrl: imageUrl,
-                    UserID: String(userId), // Non-optional field from your Product model
-                    author: {
-                        connect: { id: userId } // Connects product to existing User by id
-                    },
-                    Category: {
-                        connect: { id: parseInt(CategoryId, 10) } // Connects to existing Category by id
-                    }
-                }
+                data: buildProduct({ body: req.body, file: req.file, userId }),
             });
             console.log(`User created an object`);
             return (res.status(201).json({ status: 'OK', data: newProduct }));
@@ -40,6 +23,50 @@ const ProductController = {
         catch (error) {
             console.error(error);
             return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
+        }
+    },
+    updateProduct: async (req, res) => {
+        const userId = req.user?.id;
+        if (!userId)
+            return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+        const product = await findReturnProduct(req.params.id);
+        if ('error' in product) {
+            return (res.status(product.status).json({ message: product.error }));
+        }
+        if (Number(userId) !== product.UserID)
+            return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
+        const productId = parseInt(req.params.id, 10);
+        const updatedProduct = await prisma.product.update({
+            where: { id: productId },
+            data: productUpdate({
+                body: req.body,
+                file: req.file,
+            }),
+        });
+        console.log(`User updated product ID ${updatedProduct.id}`);
+        return (res.status(200).json({ status: 'OK', data: product }));
+    },
+    deleteProduct: async (req, res) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId)
+                return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+            const product = await findReturnProduct(req.params.id);
+            if ('error' in product) {
+                return (res.status(product.status).json({ message: product.error }));
+            }
+            if (Number(userId) !== product.UserID)
+                return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
+            const productId = parseInt(req.params.id, 10);
+            const deletedProduct = await prisma.product.delete({
+                where: { id: productId },
+            });
+            console.log(`User deleted product ID ${deletedProduct.id}`);
+            return (res.status(200).json({ status: 'OK', data: product }));
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     },
 };

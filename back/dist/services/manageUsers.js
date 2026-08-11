@@ -7,7 +7,7 @@ const prismaInstance = new PrismaClient();
  * @param email
  * @returns said user promise
  */
-export const FindUserByEmail = async (email) => {
+export const findUserByEmail = async (email) => {
     return (await prisma.user.findUnique({ where: { email } }));
 };
 /**
@@ -15,7 +15,7 @@ export const FindUserByEmail = async (email) => {
  * @param data
  * @returns user promise
  */
-export const CreateDbUser = async (data) => {
+export const createDbUser = async (data) => {
     return (await prisma.user.create({ data }));
 };
 /**
