@@ -34,26 +34,6 @@ const ProductController =
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}
 	},
-	GetProductById: async (req: Request<{id: string}>, res: Response) =>
-	{
-		try{
-			const ProductId = parseInt(req.params.id, 10);
-			if (isNaN(ProductId))
-				return(res.status(400).json({message: `Invalid ID, must be an integer.`}))
-			const product = await prisma.product.findUnique({
-				where: {
-					id: ProductId,
-				},
-			})
-			if (!product)
-				return (res.status(404).json({message: `Product ID not found.`}))
-			console.log(`object found !`);
-			return (res.status(200).json(product));
-		}
-		catch (error){ // a voir pas de throw
-			console.error(error);
-			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
-		}
-	}
+	
 }
 export default ProductController;

@@ -58,6 +58,19 @@ const userController =
 			console.error(error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
 		}
+	},
+	logout: async (req:Request, res:Response) =>
+	{
+		try{
+			res.clearCookie('token', {httpOnly: true,secure: process.env.NODE_ENV === 'production',sameSite: 'strict'
+		});
+			return res.status(200).json({ status: 'OK', message: 'User logged out successfully' 
+		});
+		}
+		catch (error){
+			console.error(error);
+			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
+		}
 	}
 	
 	// removeUser: async (req:Request, res:Response) =>{

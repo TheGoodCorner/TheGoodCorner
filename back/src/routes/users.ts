@@ -6,8 +6,7 @@ const UController = Router();
 
 UController.post(`/auth/register`, usersController.createUser);
 UController.post(`/auth/login`, usersController.login);
-// UController.get(/auth/login)
-// UController.get(/auth/logout)
+UController.get(`/auth/logout`, usersController.logout);
 // UController.get(/auth/refresh)
 // UController.put(/login)
 // UController.delete(/login)
