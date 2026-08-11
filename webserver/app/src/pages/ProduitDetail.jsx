@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useState } from 'react';
-import { ArrowLeft, Minus, Plus, ShoppingCart } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
@@ -35,6 +35,7 @@ function ProductDetail() {
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
+    const mock = false;
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-10">
@@ -116,39 +117,46 @@ function ProductDetail() {
 
         {/* Divider */}
         <div className="my-16 border-t border-[var(--color-border)]"></div>
-
         {/* Section Informations */}
-         <section className="mb-16">
-          <h3 className="text-lg font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
-          <div className="flex items-center gap-4">
+        <section className="mb-16">
+        <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
+        <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
             {/* Avatar */}
             <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-              {avatarUrl ? (
+                {mock ? (
                 <img
-                  src={avatarUrl}
-                  alt={userName}
-                  className="w-full h-full object-cover"
+                    src={avatarUrl}
+                    alt={userName}
+                    className="w-full h-full object-cover"
                 />
-              ) : (
-                <div className={`w-full h-full ${mockAvatarColor} flex items-center justify-center`}>
-                  <span className="text-xl font-bold text-white">{userInitial}</span>
+                ) : (
+                <div className={`w-full h-full flex items-center justify-center bg-[var(--color-primary)]`}>
+                    <span className="text-xl font-bold text-white">A</span>
                 </div>
-              )}
+                )}
             </div>
-
             {/* Infos vendeur */}
             <div>
-              <h4 className="text-lg font-semibold text-[var(--color-text)] mb-2">
-                {userName}
-              </h4>
-              <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                <h4 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+                {product.owner}
+                </h4>
+                <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                 <Calendar size={16} />
-                <span>Membre depuis {user?.memberSince || 'janvier 2026'}</span>
-              </div>
+                <span>Membre depuis janvier 2026</span>
+                </div>
             </div>
-          </div>
+            </div>
+            <Button
+            variant="outline"
+            size="md"
+            icon={MessageCircle}
+            onClick={() => {}}
+            >
+            Contacter le vendeur
+            </Button>
+        </div>
         </section>
-
         {/* Produits similaires */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
