@@ -34,11 +34,12 @@ export const saveRefreshToken = async (userId:number, hashedToken:string) =>{
 	const expiresAt = new Date();
 
 	expiresAt.setDate(expiresAt.getDate() + 7); // add a 7 days expiration to get date which return day date
-	return (await prismaInstance.refreshToken.create({
+	const token = await prismaInstance.refreshToken.create({
 		data: {
 			userId,
 			hashedToken,
 			expiresAt,
 		}
-	}))
+	});
+	console.log(`refresh token added to db` + token);
 }

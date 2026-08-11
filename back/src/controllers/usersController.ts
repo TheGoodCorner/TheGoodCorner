@@ -78,7 +78,7 @@ const userController =
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
 		}
 	},
-	logout: async (_req:Request, res:Response) =>
+	logout: async (req:Request, res:Response) =>
 	{
 		try{
 			const refreshToken = req.cookies?.refreshToken; // get the resfreshToken from the cookies if present
