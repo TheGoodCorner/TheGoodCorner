@@ -21,8 +21,10 @@ export const useAuthStore = create((set) => ({
     try {
       const { user, token } = await loginRequest(email, password)
       set({ user, token, isAuthenticated: true, loading: false })
+      return true
     } catch (err) {
       set({ error: err.message, loading: false })
+      return false
     }
   },
 
@@ -31,8 +33,10 @@ export const useAuthStore = create((set) => ({
     try {
       const { user, token } = await registerRequest(email, password, username)
       set({ user, token, isAuthenticated: true, loading: false })
+      return true
     } catch (err) {
       set({ error: err.message, loading: false })
+      return false
     }
   },
 

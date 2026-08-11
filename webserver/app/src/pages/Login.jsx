@@ -103,10 +103,9 @@ function Login() {
             <p className="text-center text-sm text-[var(--color-text-muted)] mt-6">
               {isRegister ? 'Déjà un compte ?' : 'Pas encore de compte ?'}{' '}
               <Button
-                type="switch mode"
                 onClick={switchMode}
                 disabled={submitting}
-                variant='gohst'
+                variant='ghost'
                 className="font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors disabled:opacity-50"
               >
                 {isRegister ? 'Se connecter' : "S'inscrire"}

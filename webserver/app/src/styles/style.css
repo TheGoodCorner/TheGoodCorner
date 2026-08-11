@@ -293,6 +293,7 @@
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
+  background: var(--color-bg);
 }
 
 .products-header {
@@ -320,15 +321,16 @@
 .filters-sidebar {
   width: 260px; /* Réduit de 300px à 260px */
   flex-shrink: 0;
-  background: #f9f9f9;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
   padding: 25px 18px;
   border-radius: 8px;
   height: fit-content;
   min-height: 600px;
   position: sticky;
   top: 20px;
-  border: 1px solid #e0e0e0;
-  margin-left: -200px; /* Ajouter cette ligne */
+  margin-left: -200px;
+  color: var(--color-text);
 }
 
 .filter-group {
@@ -350,7 +352,7 @@
   font-weight: 700;
   font-size: 1.15rem;
   margin-bottom: 18px;
-  color: #222;
+  color: var(--color-text);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -366,6 +368,7 @@
   align-items: center;
   gap: 10px;
   cursor: pointer;
+  color: var(--color-text-muted);
   font-size: 0.95rem;
   padding: 8px 0;
   transition: all 0.2s;
@@ -383,7 +386,7 @@
 }
 
 .filter-checkbox span {
-  color: #555;
+  color: var(--color-text);
   transition: color 0.2s;
 }
 

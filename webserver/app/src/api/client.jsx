@@ -8,7 +8,7 @@ export const apiClient = axios.create({
     'Content-Type': 'application/json',
   },
   // Indispensable pour que le cookie refresh httpOnly voyage entre le front
-  // (localhost:3000) et l'API (autre port/domaine) : sans ça, le navigateur
+  // (localhost:4443) et l'API (autre port/domaine) : sans ça, le navigateur
   // ne l'envoie ni ne l'accepte jamais. Le backend doit avoir un CORS
   // symétrique (credentials: true + origin explicite, jamais '*').
   withCredentials: true,

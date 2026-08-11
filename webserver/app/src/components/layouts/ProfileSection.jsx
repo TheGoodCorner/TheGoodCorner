@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
@@ -7,6 +7,7 @@ import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
 
 function ProfileSection() {
   const { isAuthenticated, user, logout, initializing } = useAuthStore();
+  const navigate = useNavigate();
 
   // Le temps que initAuth() (appelé une fois dans App.jsx) tranche entre
   // "session restaurée" ou "pas de session" — évite un flash "Se connecter"
@@ -23,6 +24,11 @@ function ProfileSection() {
       </Button>
     );
   }
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <Dropdown>
@@ -56,7 +62,7 @@ function ProfileSection() {
 
         <Dropdown.Separator />
 
-        <Dropdown.Item variant="danger" onClick={logout}>
+        <Dropdown.Item variant="danger" onClick={handleLogout}>
           <LogOut/>
             Se déconnecter
         </Dropdown.Item>

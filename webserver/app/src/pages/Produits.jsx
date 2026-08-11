@@ -33,24 +33,25 @@ function Products() {
   });
 
   return (
-    <div className="products-container">
-      <div className="products-header">
+    <div className='bg-[var(--color-bg)]'>
+    <div className="products-container bg-[var(--color-bg)]">
+      <div className="products-header text-[var(--color-text)]">
         <h1>Nos Produits</h1>
-        <p>Retrouvez notre sélection de produits, de peer to peer</p>
+        <p className="text-[var(--color-text-muted)]">Retrouvez notre sélection de produits, de peer to peer</p>
       </div>
 
       <div className="products-content">
         {/* Barre de filtre à gauche */}
-        <aside className="filters-sidebar">
+        <aside className="filters-sidebar bg-[var(--color-surface)] border-r border-[var(--color-border)]">
           {/* Filtres par catégorie */}
           <div className="filter-group">
-            <div className="filter-title">
+            <div className="filter-title text-[var(--color-text)]">
               <Filter size={18} />
               <span>Catégorie</span>
             </div>
             <div className="filter-options">
               {categories.map(category => (
-                <label key={category} className="filter-checkbox">
+                <label key={category} className="filter-checkbox text-[var(--color-text)]">
                   <input
                     type="radio"
                     name="category"
@@ -66,7 +67,7 @@ function Products() {
 
           {/* Filtres par prix */}
           <div className="filter-group">
-            <div className="filter-title">
+            <div className="filter-title text-[var(--color-text)]">
               <span>Prix</span>
             </div>
             <div className="price-filter">
@@ -78,9 +79,9 @@ function Products() {
                   value={priceRange[0]}
                   onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
                   placeholder="Min"
-                  className="price-input"
+                  className="price-input bg-[var(--color-surface-hover)] text-[var(--color-text)] border-[var(--color-border)]"
                 />
-                <span>-</span>
+                <span className="text-[var(--color-text)]">-</span>
                 <input
                   type="number"
                   min="0"
@@ -88,7 +89,7 @@ function Products() {
                   value={priceRange[1]}
                   onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                   placeholder="Max"
-                  className="price-input"
+                  className="price-input bg-[var(--color-surface-hover)] text-[var(--color-text)] border-[var(--color-border)]"
                 />
               </div>
               <input
@@ -97,9 +98,9 @@ function Products() {
                 max="200"
                 value={priceRange[1]}
                 onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                className="price-slider"
+                className="price-slider accent-[var(--color-primary)]"
               />
-              <div className="price-display">
+              <div className="price-display text-[var(--color-text-muted)]">
                 {priceRange[0]}€ - {priceRange[1]}€
               </div>
             </div>
@@ -114,16 +115,17 @@ function Products() {
                 <ProductCard key={product.id} product={product} />
               ))
             ) : (
-              <p className="no-products">Aucun produit ne correspond à vos critères</p>
+              <p className="no-products text-[var(--color-text-muted)]">Aucun produit ne correspond à vos critères</p>
             )}
           </div>
 
           {/* Compteur de résultats */}
-          <div className="products-footer">
-            <p>{filteredProducts.length} produit(s) trouvé(s)</p>
+          <div className="products-footer border-t border-[var(--color-border)]">
+            <p className="text-[var(--color-text-muted)]">{filteredProducts.length} produit(s) trouvé(s)</p>
           </div>
         </main>
       </div>
+    </div>
     </div>
   );
 }
