@@ -3,12 +3,12 @@ import { uploadMiddleware } from '../services/middlewareMulter.js';
 import { GetProductById } from '../services/manageProducts.js';
 import productController from '../controllers/productController.js';
 
-const pController = Router();
+const productRouter = Router();
 
-pController.post('/products', uploadMiddleware.single('image'), productController.createProduct);
-pController.get('/products/:id', GetProductById);
+productRouter.post('/products', uploadMiddleware.single('image'), productController.createProduct);
+productRouter.get('/products/:id', GetProductById);
 
-// pController.put('/products/:id', productController.GetProductById);
-// pController.delete('/products/:id', productController.GetProductById);
+// productRouter.put('/products/:id', productController.GetProductById);
+// productRouter.delete('/products/:id', productController.GetProductById);
 
-export default pController;
+export default productRouter;
