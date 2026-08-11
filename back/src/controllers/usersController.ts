@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Prisma, PrismaClient} from '@prisma/client';
 import multer from 'multer';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
-import { FindUserByEmail, CreateDbUser } from "../services/manageUsers.js";
+import { findUserByEmail, createDbUser } from "../services/manageUsers.js";
 import { generateTokens, verifyAcessToken, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { saveRefreshToken } from '../services/manageUsers.js';
 
@@ -24,11 +24,11 @@ const userController =
 			if (!email || !password || !username)
 				return res.status(400).json({ status: 'ERROR', message: 'Email, password, and name are required' });
 
-			const existingUser = await FindUserByEmail(email);
+			const existingUser = await findUserByEmail(email);
 			if (existingUser)
 				return res.status(400).json({ status: 'ERROR', message: 'Email already exists'});
 			
-			const newuser = await CreateDbUser(
+			const newuser = await createDbUser(
 				{
 					email: email,
 					password: hashIt(password),
@@ -62,7 +62,7 @@ const userController =
 			if (!password || !email)
 				return (res.status(400).json({ status: 'ERROR', message: 'Email and password cannot be omitted'}));
 
-			const existingUser = await FindUserByEmail(email);
+			const existingUser = await findUserByEmail(email);
 			if (!existingUser)
 				return (res.status(400).json({ status: 'ERROR', message: 'Email not registered on our site'}));
 			

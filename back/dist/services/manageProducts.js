@@ -5,7 +5,7 @@ import prisma from './db.js';
  * @param res
  * @returns promise containing the product object
  */
-export const GetProductById = async (req, res) => {
+export const getProductById = async (req, res) => {
     try {
         const ProductId = parseInt(req.params.id, 10);
         if (isNaN(ProductId))
@@ -20,8 +20,8 @@ export const GetProductById = async (req, res) => {
         console.log(`object found !`);
         return (res.status(200).json(product));
     }
-    catch (error) { // a voir pas de throw
+    catch (error) {
         console.error(error);
-        return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
+        return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
     }
 };

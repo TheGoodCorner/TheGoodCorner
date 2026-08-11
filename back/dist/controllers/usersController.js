@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
-import { FindUserByEmail, CreateDbUser } from "../services/manageUsers.js";
+import { findUserByEmail, createDbUser } from "../services/manageUsers.js";
 import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { saveRefreshToken } from '../services/manageUsers.js';
 const prisma = new PrismaClient; // get the prisma client instance
@@ -17,10 +17,10 @@ const userController = {
             const username = req.body.username;
             if (!email || !password || !username)
                 return res.status(400).json({ status: 'ERROR', message: 'Email, password, and name are required' });
-            const existingUser = await FindUserByEmail(email);
+            const existingUser = await findUserByEmail(email);
             if (existingUser)
                 return res.status(400).json({ status: 'ERROR', message: 'Email already exists' });
-            const newuser = await CreateDbUser({
+            const newuser = await createDbUser({
                 email: email,
                 password: hashIt(password),
                 username: username,
@@ -48,7 +48,7 @@ const userController = {
             const email = req.body.email;
             if (!password || !email)
                 return (res.status(400).json({ status: 'ERROR', message: 'Email and password cannot be omitted' }));
-            const existingUser = await FindUserByEmail(email);
+            const existingUser = await findUserByEmail(email);
             if (!existingUser)
                 return (res.status(400).json({ status: 'ERROR', message: 'Email not registered on our site' }));
             const passMatch = comparePassword(password, existingUser.password);
