@@ -7,7 +7,7 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "dotenv -e .env -- npx prisma generate --schema=./src/prisma/schema.prisma && tsc",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "db:migrate:prod": "dotenv -e .env -- npx prisma migrate deploy",
@@ -20,13 +20,17 @@
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "http-errors": "^2.0.1",
+    "jsonwebtoken": "^9.0.3",
     "multer": "^2.2.0"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/http-errors": "^2.0.5",
