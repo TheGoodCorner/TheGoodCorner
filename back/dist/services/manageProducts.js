@@ -1,9 +1,9 @@
 import prisma from './db.js';
 /**
- * fin a product using its automatically added at creation product ID
+ * find a product using its automatically added at creation product ID
  * @param req
  * @param res
- * @returns json product object
+ * @returns promise containing the product object
  */
 export const GetProductById = async (req, res) => {
     try {

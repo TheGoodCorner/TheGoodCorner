@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
+import {AuthenticatedRequest} from "../services/middlewareAuthenticateToken.js";
 // import express dependancies for request handling
 
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
@@ -10,11 +11,14 @@ import prisma from "../services/db.js";
  */
 const ProductController =
 {
-	createProduct: async (req: Request, res: Response) =>
+	createProduct: async (req: AuthenticatedRequest, res: Response) =>
 	{
 		try {
-			const { name, price, quantity, userId, CategoryId } = req.body;
-			if (!name || !price || !userId) {
+			const userId = req.user?.id;
+			if (!userId)
+				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+			const { name, price, quantity, CategoryId } = req.body;
+			if (!name || !price || !CategoryId) {
 				return( res.status(400).json({ status: 'ERROR', message: 'Name and price and userId are mandatory' }));
 			}
 			

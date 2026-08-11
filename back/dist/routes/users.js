@@ -1,11 +1,14 @@
 import { Router } from 'express';
-import usersController from '../controllers/usersController.js';
+import userController from '../controllers/usersController.js';
 // import { uploadMiddleware } from '../services/middlewareMulter.js';
-const UController = Router();
-UController.post(`/auth/register`, usersController.createUser);
-UController.post(`/auth/login`, usersController.login);
-UController.get(`/auth/logout`, usersController.logout);
-UController.get(`/auth/refresh`, usersController.refresh);
-// UController.put(/login)
-// UController.delete(/login)
-export default UController;
+const userRouter = Router();
+/**
+ * ensemble des routes concernant les users
+ */
+userRouter.post(`/auth/register`, userController.createUser);
+userRouter.post(`/auth/login`, userController.login);
+userRouter.post(`/auth/logout`, userController.logout);
+userRouter.post(`/auth/refresh`, userController.refresh);
+// userRouter.put(/login) // update un user
+// userRouter.delete(/login) // delete un user
+export default userRouter;

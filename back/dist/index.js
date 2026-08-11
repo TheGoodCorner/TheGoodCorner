@@ -2,59 +2,54 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import prisma from './services/db.js';
-import PRoutes from './routes/products.js';
-import GRoutes from './routes/getBasic.js';
-import URoutes from './routes/users.js';
-const app = express(); // server init
+import productRouter from './routes/products.js';
+import generalRouter from './routes/generalGetRouter.js';
+import userRouter from './routes/users.js';
+// import { printRequest } from './utils/printHttpRequest.js';
+const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
-/**
- * this starts the server and let it listen on said port
- * @param {port} 3000
- * @param {empty array callback} ""
- */
-// enable json body parsing
 app.use(cors({
-    origin: '*', // Remplacez par le domaine de votre frontend (ou '*' pour tout autoriser)
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['*']
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
-app.use('/', GRoutes); // general routes
-app.use('/', PRoutes); // product routes
-app.use('/', URoutes); // Users /auth/register
+app.use(express.json()); // enable json body parsing
+app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
+app.use(cookieParser()); // allow processing of cookie headers to access as objects
+app.use('/', generalRouter); // general routes
+app.use('/', productRouter); // product routes
+app.use('/', userRouter); // Users routes
 // app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors
+ * @returns a void promise relative to the async nature of the function
  */
 async function startServer() {
     try {
-        /**
-         * listen to server socket on port 3000
-         * @param port server-port constant
-         * @param callback empty callback function
-         * @returns void undefined
-         */
-        await prisma.$connect();
+        await prisma.$connect(); // await for promise fullfilment, here connect return a void promise. when fullfilled control flow continue, else error
         console.log('Connected to db.');
-        await new Promise((resolve, reject) => {
+        await new Promise((resolve, reject) => // same as above, block until promise is fulfilled (server started correctly on port)
+         {
             const server = app.listen(port, '0.0.0.0', () => {
                 console.log(`Serveur démarré sur http://localhost:${port}`);
-                resolve();
+                resolve(); // resolve the promise
             });
             server.on('error', (error) => {
                 if (error.code === 'EADDRINUSE')
                     console.log(`port:${port} already in use cannot start server`);
                 else
                     console.log(`server failed to start:`, error.message);
-                reject(error);
+                reject(error); // reject the promise
             });
         });
     }
     catch (error) {
-        console.error('Failed to start application:', error.message);
+        console.error('Failed to start application:' + error);
         process.exit(1);
     }
 }
 startServer();
+/**
+ * when the server sucessfully starts, it listen on port and then the routes take the lead on how the server behave
+ * depending on what request arrive to the backend.
+ */ 
