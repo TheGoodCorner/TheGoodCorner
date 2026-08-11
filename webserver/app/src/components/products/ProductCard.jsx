@@ -5,9 +5,8 @@ import { useUIStore } from '../../stores/uiStore';
 import { PlusCircle } from 'lucide-react'
 
 export default function ProductCard({ product }) {
-
   const { addToCart } = useCartStore()
-  const { openUi  } = useUIStore()
+  const { openUi } = useUIStore()
 
   const handleAddToCart = () => {
     addToCart(product)
@@ -16,16 +15,20 @@ export default function ProductCard({ product }) {
 
   return (
       <div className="card">
-        <div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
-          <img
-          src={product.imageUrl}
-          alt={product.name}
-          loading="lazy"
-          className="max-w-full h-auto"
-          />
-        </div>
+        <Link to={`/products/${product.id}`}>
+          <div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
+            <img
+              src={product.imageUrl}
+              alt={product.name}
+              loading="lazy"
+              className="max-w-full h-auto"
+            />
+          </div>
+        </Link>
         <div className="card-body">
-          <h3 className="card-title">{product.name}</h3>
+          <Link to={`/products/${product.id}`} className="hover:text-[var(--color-primary)] transition-colors">
+            <h3 className="card-title">{product.name}</h3>
+          </Link>
           <p className="card-text">{product.category}</p>
           <p className="card-price">{product.price.toFixed(2)}€</p>
           <Button icon={PlusCircle} onClick={handleAddToCart} title="add to cart" aria-label="add to cart">
