@@ -92,7 +92,7 @@ export function CartPopover() {
               title="Aller au paiment"
               aria-label="Aller au paiment"
             >
-              Faut payer maintenant
+             Procéder au paiement
             </Button>
           </div>
         )}
