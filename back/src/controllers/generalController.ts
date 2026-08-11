@@ -86,7 +86,6 @@ const generalController =
 		const decoded = verifyAcessToken(token);
 		const { email } = decoded;
 		
-		// ⚠️ IMPORTANT : ajouter await sinon vous retournez une Promise
 		const user = await prisma.user.findUnique({where: {email}});
 		
 		return res.status(200).json({status: 'OK', data: user});
