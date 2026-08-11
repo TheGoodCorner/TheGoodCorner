@@ -4,12 +4,18 @@ export async function loginRequest(email, password) {
   // axios retourne ce que le serveur renvoie (data) + des metadonnee
   // En destructurant '{ data }' on garde que ce qui nous interesse (les donnees renvoyer par le back)
   const { data } = await apiClient.post('/auth/login', { email, password });
-  return data;
+  return {
+    user: data.data,
+    token: data.accessToken,
+  };
 }
 
 export async function registerRequest(email, password, username) {
   const { data } = await apiClient.post('/auth/register', { email, password, username });
-  return data;
+    return {
+      user: data.data,
+      token: data.accessToken,
+    };
 }
 
 // Appelé au chargement de l'app (voir authStore.initAuth) et par l'intercepteur
@@ -17,7 +23,10 @@ export async function registerRequest(email, password, username) {
 // automatiquement avec la requête (withCredentials) — rien à lui passer ici.
 export async function refreshRequest() {
   const { data } = await apiClient.post('/auth/refresh');
-  return data;
+  return {
+    user: data.data,
+    token: data.accessToken,
+  };
 }
 
 export async function logoutRequest() {

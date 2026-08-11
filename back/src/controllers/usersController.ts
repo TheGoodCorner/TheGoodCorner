@@ -70,8 +70,22 @@ const userController =
 			if (!passMatch)
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential'}));
 			
-			console.log(`User logged in`);
-			return res.status(200).json({status: 'OK', message: 'User logged in !', data: { email: req.body.email, password: password}});
+			const {accessToken, refreshToken} = generateTokens(existingUser.id, existingUser.email);
+			const hashedRefreshToken = hashIt(refreshToken);
+			await saveRefreshToken(existingUser.id, hashedRefreshToken);
+
+			res.cookie('refreshToken', refreshToken, {
+				httpOnly: true,
+				secure: process.env.NODE_ENV === 'production',
+				sameSite: 'strict',
+				maxAge: 7 * 24 * 60 * 60 * 1000,
+			});
+			return res.status(200).json({
+				status: 'OK', 
+				message: 'User logged in !', 
+				accessToken,
+				data: { email: existingUser.email, username: existingUser.username }
+			});
 		}
 		catch (error){
 			console.error(error);
