@@ -1,9 +1,13 @@
 import { create } from 'zustand'
+import {
+  fetchProductByIdRequest,
+  createProductRequest,
+  updateProductRequest,
+  deleteProductRequest,
+} from '../api/productApi'
 
 // Données de démonstration en attendant le backend. Quand l'API existera,
-// appelle fetchProducts() une fois quelque part (ex. dans App.jsx comme
-// initAuth) : ça remplacera ce mock par les vraies données, sans rien
-// changer côté composants.
+// appelle fetchProducts()
 const mockProducts = [
   { id: 0, imageUrl: "/Images_db_test/image_0.jpg", name: "Gants de Boxe Yokkao Elite", category: "Professional", price: 85, description: "Gants haut de gamme conçus pour la compétition, cuir véritable et rembourrage optimisé pour la protection des poings.", owner: "Max", ownerRating: 4.8, ownerReviewCount: 42 },
   { id: 1, imageUrl: "/Images_db_test/image_1.jpg", name: "Gants d'Entraînement Basic", category: "Training", price: 35, description: "Parfaits pour débuter, ces gants offrent un bon compromis entre confort et durabilité pour vos séances régulières.", owner: "Khalid", ownerRating: 4.5, ownerReviewCount: 28 },
@@ -24,6 +28,13 @@ export const useProductStore = create((set, get) => ({
   products: mockProducts,
   loading: false,
   error: null,
+  
+  // Produit de la fiche détail, indépendant de `products` — son propre
+  // cycle de chargement, potentiellement plus riche en champs.
+  currentProduct: null,
+  currentProductLoading: false,
+  currentProductError: null,
+  
   filters: {
     search: '',
     selectedCategory: '',
@@ -41,6 +52,70 @@ export const useProductStore = create((set, get) => ({
       set({ error: error.message, loading: false });
     }
   },
+  // GET /products/:id — toujours appelé au montage de la fiche, même si
+  // une version "light" est déjà en cache dans `products` : c'est le seul
+  // moyen d'obtenir les champs propres au détail (avis, stock...) et une
+  // donnée à jour.
+  fetchProductById: async (id) => {
+    set({ currentProductLoading: true, currentProductError: null });
+    try {
+      const data = await fetchProductByIdRequest(id);
+      set({ currentProduct: data, currentProductLoading: false });
+      return data;
+    } catch (err) {
+      set({ currentProductError: err.message, currentProductLoading: false });
+    }
+  },
+
+  // POST /products
+  createProduct: async (productData) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await createProductRequest(productData);
+      set((state) => ({ products: [...state.products, data], loading: false }));
+      return data;
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      throw err;
+    }
+  },
+
+  // PUT /products/:id
+  updateProduct: async (id, updates) => {
+    set({ loading: true, error: null });
+    try {
+      const data = await updateProductRequest(id, updates);
+      set((state) => ({
+        products: state.products.map((p) => (String(p.id) === String(id) ? data : p)),
+        currentProduct:
+          state.currentProduct && String(state.currentProduct.id) === String(id)
+            ? data
+            : state.currentProduct,
+        loading: false,
+      }));
+      return data;
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      throw err;
+    }
+  },
+
+  // DELETE /products/:id
+  deleteProduct: async (id) => {
+    set({ loading: true, error: null });
+    try {
+      await deleteProductRequest(id);
+      set((state) => ({
+        products: state.products.filter((p) => String(p.id) !== String(id)),
+        loading: false,
+      }));
+    } catch (err) {
+      set({ error: err.message, loading: false });
+      throw err;
+    }
+  },
+
+
 
   getFilteredProducts: () => {
     const { products, filters } = get()
@@ -56,7 +131,8 @@ export const useProductStore = create((set, get) => ({
     set({
       filters: { search: '', selectedCategory: '', minPrice: 0, maxPrice: 200 },
     }),
-
+  // Lecture locale instantanée (mock ou liste déjà chargée) — sert de
+  // placeholder pendant que fetchProductById va chercher la version complète.
   getProductById: (id) => {
     return get().products.find((p) => String(p.id) === String(id));
   },

@@ -1,8 +1,12 @@
 import React from 'react';
 import { Button } from '../components/UI/Button';
 import { UserRoundPen } from 'lucide-react';
+import { useProductStore } from '../stores/productStore';
+import { ProductForm } from '../components/products/ProductForm';
 
 function Profile() {
+
+  const {createProduct} = useProductStore()
   return (
     <div className="container">
       <section className='hero-section bg-white rounded-3xl p-8 shadow-lg'>
@@ -34,6 +38,7 @@ function Profile() {
             Modifier le profil
           </Button>
         </div>
+        <ProductForm/>
       </section>
     </div>
   );

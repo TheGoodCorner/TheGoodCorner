@@ -55,7 +55,14 @@ function App() {
       if (!initializing && isAuthenticated && !user) {
         useUserStore.getState().fetchUser();
       }
-    }, []);    
+    }, []);
+
+    useEffect(() => {
+      const { products } = useProductStore.getState();
+      if (products.length === 0) {
+        useProductStore.getState().fetchProducts();
+      }
+    }, []);
     
   return (
     <Router>
