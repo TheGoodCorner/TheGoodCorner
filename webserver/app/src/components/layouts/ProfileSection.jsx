@@ -1,12 +1,14 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useUserStore } from '../../stores/userStore'
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
 import { Dropdown } from '../UI/Dropdown';
 import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
 
 function ProfileSection() {
-  const { isAuthenticated, user, logout, initializing } = useAuthStore();
+  const { isAuthenticated, logout, initializing } = useAuthStore();
+  const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
   // Le temps que initAuth() (appelé une fois dans App.jsx) tranche entre

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '../api/authApi'
 import { useCartStore } from './cartStore'
+import { useUserStore } from './userStore'
 
 // Plus de `persist` ici, volontairement : l'access token ne doit jamais être
 // écrit sur disque (localStorage/sessionStorage), même chiffré. Il vit
@@ -66,8 +67,7 @@ export const useAuthStore = create((set) => ({
     // "utilisateur" viendra du serveur et ce clearCart() disparaîtra au
     // profit d'un simple refetch.
     useCartStore.getState().clearCart()
-    // const { logout: logoutUser } = useUserStore.getState();
-    // logoutUser();
+    useUserStore.getState().logout()
   },
 
   setToken: (token) => set({ token }),
