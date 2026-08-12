@@ -56,6 +56,7 @@ export function useProductForm() {
       name: form.name.trim(),
       image: form.image,
       price: parseFloat(form.price),
+      category: form.category.trim(),
       description: form.description.trim(),
       quantity: 1,
     });

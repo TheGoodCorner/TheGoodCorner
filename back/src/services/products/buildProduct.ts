@@ -5,7 +5,7 @@ import { ProductCrInput } from '../../interfaces/interfaces.js';
 export const buildProduct = ({ body, file, userId}: ProductCrInput): Prisma.ProductCreateInput =>{
 	const { name, price, quantity, category} = body;
 	if (!name || price === undefined || price === null || !category) {
-		throw new Error('Name, price, and CategoryId are required.');
+		throw new Error('Name, price, and category are required.');
 	}
 
 	const parsedPrice = typeof price === 'number' ? price : parseInt(price, 10);
