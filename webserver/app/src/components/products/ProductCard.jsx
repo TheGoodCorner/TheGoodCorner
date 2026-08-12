@@ -57,7 +57,7 @@ export default function ProductCard({ product }) {
       <Link to={`/products/${product.id}`}>
         <div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
           <img
-            src={product.imageUrl}
+            src={product.image}
             alt={product.name}
             loading="lazy"
             className="max-w-full h-auto"

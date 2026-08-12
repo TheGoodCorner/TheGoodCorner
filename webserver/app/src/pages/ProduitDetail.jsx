@@ -109,7 +109,7 @@ function ProductDetail() {
           {/* Image */}
           <div className="flex items-center justify-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)] p-8">
             <img
-              src={product.imageUrl}
+              src={product.image}
               alt={product.name}
               className="max-w-full h-auto rounded-[var(--radius-md)]"
             />

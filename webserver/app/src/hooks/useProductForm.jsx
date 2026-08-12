@@ -12,7 +12,7 @@ export function useProductForm() {
 
   const [form, setForm] = useState({
     name: '',
-    imageUrl: '',
+    image: null,
     price: '',
     category: '',
     description: '',
@@ -21,16 +21,19 @@ export function useProductForm() {
   const [isShaking, setIsShaking] = useState(false);
 
   const handleChange = (field) => (e) => {
-    setForm((f) => ({ ...f, [field]: e.target.value }));
+    if (field === 'image') {
+      setForm((f) => ({ ...f, [field]: e.target.files?.[0] || null }));
+    } else {
+      setForm((f) => ({ ...f, [field]: e.target.value }));
+    }
     if (error) setError(null);
   };
 
   const validate = () => {
     if (!form.name.trim()) return 'Le nom du produit est requis.';
-    if (!form.imageUrl.trim()) return 'Ajoute une URL pour l\'image.';
+    if (!form.image) return 'Ajoute une image.';
     if (!form.price || isNaN(parseFloat(form.price))) return 'Le prix doit être un nombre valide.';
     if (parseFloat(form.price) <= 0) return 'Le prix doit être supérieur à 0.';
-    if (!form.category.trim()) return 'Sélectionne une catégorie.';
     if (!form.description.trim()) return 'Ajoute une description.';
     if (form.description.length < 10) return 'La description doit faire au moins 10 caractères.';
     return null;
@@ -51,10 +54,10 @@ export function useProductForm() {
 
     const success = await createProduct({
       name: form.name.trim(),
-      imageUrl: form.imageUrl.trim(),
+      image: form.image,
       price: parseFloat(form.price),
-      category: form.category.trim(),
       description: form.description.trim(),
+      quantity: 1,
     });
 
     setSubmitting(false);
@@ -62,9 +65,8 @@ export function useProductForm() {
     if (success) {
       setForm({
         name: '',
-        imageUrl: '',
+        image: null,
         price: '',
-        category: '',
         description: '',
       });
       onSuccess?.();
