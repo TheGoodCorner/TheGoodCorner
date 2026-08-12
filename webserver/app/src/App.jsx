@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
 import { useCartStore } from './stores/cartStore';
@@ -14,7 +13,6 @@ import Footer from './components/layouts/Footer';
 import Home from './pages/Home';
 import Products from './pages/Produits';
 import ProductDetail from './pages/ProduitDetail';
-import Cart from './pages/Panier';
 import Login from './pages/Login';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
