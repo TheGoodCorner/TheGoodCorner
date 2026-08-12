@@ -1,4 +1,3 @@
-import {Request, Response} from 'express'
 import { Prisma } from '@prisma/client';
 import { ProductCrInput } from '../../interfaces/interfaces.js';
 

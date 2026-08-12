@@ -1,8 +1,9 @@
 import { PrismaClient } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
-import { findUserByEmail, createDbUser } from "../services/manageUsers.js";
+import { findUserByEmail, findUserByUsername, createDbUser, saveRefreshToken, findReturnUser } from "../services/users/utilsUsers.js";
 import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
-import { saveRefreshToken } from '../services/manageUsers.js';
+import { buildUser } from "../services/users/buildUser.js";
+import { userUpdate } from "../services/users/updateUser.js";
 const prisma = new PrismaClient; // get the prisma client instance
 const BASIC_COOKIE = {
     httpOnly: true,
@@ -12,33 +13,32 @@ const BASIC_COOKIE = {
 const userController = {
     createUser: async (req, res) => {
         try {
-            const password = req.body.password;
-            const email = req.body.email;
-            const username = req.body.username;
-            if (!email || !password || !username)
-                return res.status(400).json({ status: 'ERROR', message: 'Email, password, and name are required' });
-            const existingUser = await findUserByEmail(email);
+            const newUser = buildUser(req);
+            const existingUser = await findUserByEmail(newUser.email);
             if (existingUser)
                 return res.status(400).json({ status: 'ERROR', message: 'Email already exists' });
-            const newuser = await createDbUser({
-                email: email,
-                password: hashIt(password),
-                username: username,
-            });
-            const { accessToken, refreshToken } = generateTokens(newuser.id, newuser.email);
+            const existingUsername = await findUserByUsername(newUser.username);
+            if (existingUsername)
+                return (res.status(400).json({ status: 'ERROR', message: 'Username already taken' }));
+            newUser.password = hashIt(newUser.password);
+            const savedUser = await createDbUser(newUser);
+            const { accessToken, refreshToken } = generateTokens(savedUser.id, savedUser.email);
             const hashedRefreshToken = hashIt(refreshToken);
-            await saveRefreshToken(newuser.id, hashedRefreshToken);
+            await saveRefreshToken(savedUser.id, hashedRefreshToken);
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'strict',
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
+            const { password, ...sanitizedUser } = savedUser;
             console.log(`User created`);
-            return res.status(201).json({ status: 'OK', message: 'User created !', accessToken, data: { email: req.body.email, name: req.body.name, username: req.body.username } });
+            return res.status(201).json({ status: 'OK', message: 'User created !', accessToken, data: sanitizedUser });
         }
         catch (error) {
             console.error(error);
+            if (error.message && error.message.includes('required'))
+                return res.status(400).json({ status: 'ERROR', message: error.message });
             return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     },
@@ -112,20 +112,74 @@ const userController = {
         catch (error) {
             console.error(error);
             res.clearCookie('refreshToken', BASIC_COOKIE); // clear the token 
-            return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' + error }));
+            return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
+        }
+    },
+    getUser: async (req, res) => {
+        try {
+            const user = await findReturnUser(req.params.id);
+            if ('error' in user)
+                return (res.status(user.status).json({ message: user.error }));
+            console.log(`Found User ${user.id}`);
+            return (res.status(200).json({ status: 'OK', data: user }));
+        }
+        catch (error) {
+            console.error(error);
+            return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
+        }
+    },
+    removeUser: async (req, res) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId)
+                return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+            const dbUser = await findReturnUser(req.params.id);
+            if ('error' in dbUser)
+                return (res.status(dbUser.status).json({ message: dbUser.error }));
+            if (userId !== dbUser.id)
+                return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t delete someone else than yourself !' });
+            const deletedUser = await prisma.user.delete({
+                where: { id: dbUser.id },
+            });
+            console.log(`User deleted ${deletedUser.id}`);
+            return (res.status(200).json({ status: 'OK' }));
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
+        }
+    },
+    updateUser: async (req, res) => {
+        try {
+            const userId = req.user?.id;
+            if (!userId)
+                return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+            const paramId = parseInt(req.params.id, 10);
+            if (isNaN(paramId))
+                return (res.status(400).json({ status: 'ERROR', message: 'Invalid user ID' }));
+            if (userId !== paramId)
+                return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t update someone else than yourself !' });
+            const dbUser = await findReturnUser(req.params.id);
+            if ('error' in dbUser)
+                return (res.status(dbUser.status).json({ message: dbUser.error }));
+            const updateData = userUpdate({
+                body: req.body,
+                file: req.file,
+            });
+            if (updateData.password && typeof updateData.password === 'string')
+                updateData.password = hashIt(updateData.password);
+            const updatedUser = await prisma.user.update({
+                where: { id: dbUser.id },
+                data: updateData,
+            });
+            const { password, ...sanitizedUser } = updatedUser;
+            console.log(`User updated ! ${sanitizedUser.id}`);
+            return (res.status(200).json({ status: 'OK', data: sanitizedUser }));
+        }
+        catch (error) {
+            console.log(error);
+            res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     }
-    // removeUser: async (req:Request, res:Response) =>{
-    // 	try {
-    // 	}
-    // 	catch (error) {
-    // 	}
-    // },
-    // updateUser: async (req:Request, res:Response) =>{
-    // 	try {
-    // 	}
-    // 	catch (error) {
-    // 	}
-    // }
 };
 export default userController;

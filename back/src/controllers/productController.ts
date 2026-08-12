@@ -4,7 +4,6 @@ import {AuthenticatedRequest} from "../interfaces/interfaces.js";
 import { buildProduct} from "../services/products/buildProduct.js";
 import { productUpdate} from "../services/products/updateProduct.js";
 import { findReturnProduct} from "../services/products/utilsProducts.js";
-import { parse } from "node:path";
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a product inside the prisma database by taking the request and sending the json object
@@ -31,13 +30,12 @@ const ProductController =
 	},
 	updateProduct: async (req: AuthenticatedRequest <{id: string}>, res: Response) => {
 		const userId = req.user?.id;
-			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+		if (!userId)
+			return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
 		const product = await findReturnProduct(req.params.id);
-		if ('error' in product){
+		if ('error' in product)
 			return(res.status(product.status).json({message: product.error}));
-		}
-		if (Number(userId) !== product.userId) 
+		if (userId !== product.userId) 
 			return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
 		const productId = parseInt(req.params.id, 10);
 		const updatedProduct = await prisma.product.update({
@@ -59,14 +57,14 @@ const ProductController =
 			if ('error' in product){
 				return(res.status(product.status).json({message: product.error}));
 			}
-			if (Number(userId) !== product.userId) 
+			if (userId !== product.userId) 
 				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
 			const productId = parseInt(req.params.id, 10);
 			const deletedProduct = await prisma.product.delete({
 				where: { id: productId },
 			});
 			console.log(`User deleted product ID ${deletedProduct.id}`);
-				return (res.status(200).json({ status: 'OK', data: product }));
+			return (res.status(200).json({ status: 'OK'}));
 		}
 		catch (error)
 		{

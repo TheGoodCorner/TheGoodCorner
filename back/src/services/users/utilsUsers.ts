@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import prisma from "./db.js";
+import prisma from "../db.js";
 import 'dotenv/config';
+import { Request, Response } from 'express';
 
 const prismaInstance = new PrismaClient();
 
@@ -12,6 +13,11 @@ const prismaInstance = new PrismaClient();
 export const findUserByEmail = async (email: string) =>
 {
 	return (await prisma.user.findUnique({where: {email}}));
+}
+
+export const findUserByUsername = async (username: string) =>
+{
+	return (await prisma.user.findUnique({where: {username}}));
 }
 
 /**
@@ -42,4 +48,30 @@ export const saveRefreshToken = async (userId:number, hashedToken:string) =>{
 		}
 	});
 	console.log(`refresh token added to db`);
+}
+
+export const getUserById = async (req: Request< { id:string}>, res: Response) =>
+{
+	try{
+		const result = await findReturnUser(req.params.id);
+		if (`error` in result)
+			return (res.status(result.status).json({message: result.error}))
+		return (res.status(200).json(result));
+	}
+	catch (error){
+		console.error(error);
+		return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
+	}
+}
+export const findReturnUser = async (id: string) => {
+	const userId = parseInt(id, 10);
+	if (isNaN(userId))
+		return { error: "Invalid userId, must be an integer.", status: 400 };
+	const user = await prisma.user.findUnique({
+		where: {id: userId}
+	});
+	if (!user)
+		return { error: "user not found.", status: 400 };
+	console.log(`object found !`);
+	return (user);
 }

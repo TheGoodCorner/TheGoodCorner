@@ -30,10 +30,9 @@ const ProductController = {
         if (!userId)
             return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
         const product = await findReturnProduct(req.params.id);
-        if ('error' in product) {
+        if ('error' in product)
             return (res.status(product.status).json({ message: product.error }));
-        }
-        if (Number(userId) !== product.userId)
+        if (userId !== product.userId)
             return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
         const productId = parseInt(req.params.id, 10);
         const updatedProduct = await prisma.product.update({
@@ -55,14 +54,14 @@ const ProductController = {
             if ('error' in product) {
                 return (res.status(product.status).json({ message: product.error }));
             }
-            if (Number(userId) !== product.userId)
+            if (userId !== product.userId)
                 return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
             const productId = parseInt(req.params.id, 10);
             const deletedProduct = await prisma.product.delete({
                 where: { id: productId },
             });
             console.log(`User deleted product ID ${deletedProduct.id}`);
-            return (res.status(200).json({ status: 'OK', data: product }));
+            return (res.status(200).json({ status: 'OK' }));
         }
         catch (error) {
             console.log(error);

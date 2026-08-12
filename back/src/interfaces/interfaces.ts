@@ -37,3 +37,27 @@ export interface AuthenticatedRequest<
 > extends Request<P, ResBody, ReqBody, ReqQuery> {
 	user?: tokenPayload;
 }
+
+export interface UserCrInput {
+	body: {
+		email: string;
+		username: string;
+		password: string;
+		name?: string | undefined;
+		bio?: string | undefined;
+		locationId?: string | number | undefined;
+	};
+	file?: Express.Multer.File | undefined;
+}
+
+export interface UserUpdate {
+	body: {
+		email?: string | undefined;
+		username?: string | undefined;
+		password?: string | undefined;
+		name?: string | undefined;
+		bio?: string | undefined;
+		locationId?: string | number | undefined;
+	};
+	file?: Express.Multer.File | undefined;
+}
