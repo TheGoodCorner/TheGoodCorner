@@ -52,7 +52,8 @@ model Product {
 
   userId Int
   name String
-  price Int
+  price Float
+  description String
   author    User    @relation(fields: [userId], references: [id]) 
   categoryId  Int
   category    Category    @relation(fields: [categoryId], references: [id]) 

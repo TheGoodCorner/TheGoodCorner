@@ -11,6 +11,7 @@ export interface ProductCrInput {
 	body: {
 		name?: string | undefined;
 		price?: string | number | undefined;
+		description?: string | undefined;
 		quantity?: string | number | undefined;
 		category?: string | undefined;
 	};
