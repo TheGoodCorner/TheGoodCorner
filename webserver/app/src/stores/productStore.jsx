@@ -25,7 +25,7 @@ const mockProducts = [
 
 
 export const useProductStore = create((set, get) => ({
-  products: mockProducts,
+  products: null,
   loading: false,
   error: null,
   
@@ -73,7 +73,8 @@ export const useProductStore = create((set, get) => ({
     try {
       const data = await createProductRequest(productData);
       set((state) => ({ products: [...state.products, data], loading: false }));
-      return data;
+   const updatedState = get();
+    console.log("Produits après ajout:", updatedState.products);      return data;
     } catch (err) {
       set({ error: err.message, loading: false });
       throw err;

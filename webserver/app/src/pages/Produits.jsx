@@ -9,11 +9,11 @@ function Products() {
   const setFilters = useProductStore((state) => state.setFilters);
   const getFilteredProducts = useProductStore((state) => state.getFilteredProducts);
 
-  const categories = ['All', ...new Set(products.map((p) => p.category))];
+  const categories = ['All', ...new Set(products.map((p) => p.category.name))];
   const filteredProducts = getFilteredProducts();
 
   const handleCategoryChange = (category) => {
-    setFilters({ selectedCategory: category === 'All' ? '' : category });
+    setFilters({ selectedCategory: category === 'All' ? '' : category.name });
   };
 
   console.log(products);

@@ -30,7 +30,11 @@ const generalController =
 	getProductsPage: async (_req: Request, res: Response) =>
 	{
 		try{
-			const products = await prisma.product.findMany();
+			const products = await prisma.product.findMany(
+				{include: {category: true}}
+			);
+			console.log("✅ Réponse Prisma:", products);
+			console.log("🔍 Premier produit:", products[0]);
 			return(res.status(200).json({status: 'OK', data:products}));
 		}
 		catch(error){
