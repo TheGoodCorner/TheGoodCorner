@@ -6,6 +6,8 @@ import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { buildUser } from "../services/users/buildUser.js";
 import { userUpdate } from "../services/users/updateUser.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
+import { match } from "node:assert";
+import { boundedChannel } from "node:diagnostics_channel";
 
 const prisma = new PrismaClient; // get the prisma client instance
 const BASIC_COOKIE = {
@@ -19,6 +21,11 @@ const userController =
 	createUser: async (req: Request, res: Response) =>
 	{
 		try {
+			const allowedDomains: string[] = [ 'gmail.com', 'hotmail.com', 'yahoo.com', 'laposte.net'];
+			const domain:string = req.body.email.split('@')[1];
+			if (!domain || !allowedDomains.includes(domain.toLowerCase()))
+				return res.status(400).json({ status: 'ERROR', message: 'l\'extension de mail est incorrecte !'});
+
 			const newUser = buildUser(req);
 
 			const existingUser = await findUserByEmail(newUser.email);
@@ -57,11 +64,11 @@ const userController =
 			const password = req.body.password;
 			const email = req.body.email;
 			if (!password || !email)
-				return (res.status(400).json({ status: 'ERROR', message: 'Email and password cannot be omitted'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'L\'email et le mot de passe sont obligatoire !'}));
 
 			const existingUser = await findUserByEmail(email);
 			if (!existingUser)
-				return (res.status(400).json({ status: 'ERROR', message: 'Email not registered on our site'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'L\'email n\'existe pas sur notre site !'}));
 			
 			const passMatch = comparePassword(password, existingUser.password);
 			if (!passMatch)
@@ -78,12 +85,7 @@ const userController =
 				maxAge: 7 * 24 * 60 * 60 * 1000,
 			});
 			console.log(`User logged in`);
-			return res.status(200).json({
-				status: 'OK', 
-				message: 'User logged in !', 
-				accessToken,
-				data: { email: existingUser.email, username: existingUser.username }
-			});
+			return res.status(200).json({status: 'OK', message: 'User logged in !', accessToken, data: { email: existingUser.email, password: hashIt(existingUser.password)}});
 		}
 		catch (error){
 			console.error(error);
@@ -98,9 +100,11 @@ const userController =
 			const hashedToken = hashIt(refreshToken); // hash it to delete it in database (matching data)
 			await prisma.refreshToken.deleteMany({where: { hashedToken }}); // delete it
 			}
+			console.log(`User logged out`);
 			res.clearCookie('refreshToken', BASIC_COOKIE); // reset the refreshToken cookie to BASIC_COOKIE value
 			return (res.status(200).json({ status: 'OK', message: 'User logged out successfully' }));
 		}
+
 		catch (error){
 			console.error(error);
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error }));
@@ -125,6 +129,7 @@ const userController =
 			}
 
 			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
+			console.log(`User refreshed`);
 			return res.status(200).json({status: 'OK', message: 'Token refreshed successfully',  accessToken,});
 		}
 		catch (error){

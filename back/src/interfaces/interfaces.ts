@@ -1,9 +1,10 @@
 import * as core from 'express-serve-static-core';
 import { Request} from "express";
 
-export interface tokenPayload{
+export interface userTokenPayload{
 	id:number;
 	email:string;
+	username:string;
 }
 
 export interface ProductCrInput {
@@ -11,7 +12,7 @@ export interface ProductCrInput {
 		name?: string | undefined;
 		price?: string | number | undefined;
 		quantity?: string | number | undefined;
-		CategoryId?: string | number | undefined;
+		category?: string | undefined;
 	};
 	file?: Express.Multer.File | undefined;
 	userId: string | number;
@@ -35,7 +36,7 @@ export interface AuthenticatedRequest<
 	ReqBody = any,
 	ReqQuery = core.Query
 > extends Request<P, ResBody, ReqBody, ReqQuery> {
-	user?: tokenPayload;
+	user?: userTokenPayload;
 }
 
 export interface UserCrInput {

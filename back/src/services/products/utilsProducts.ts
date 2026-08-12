@@ -20,6 +20,7 @@ export const getProductById = async (req: Request<{id: string}>, res: Response) 
 		return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 	}
 }
+
 export const findReturnProduct = async (id: string) => {
 	const productId = parseInt(id, 10);
 	if (isNaN(productId))

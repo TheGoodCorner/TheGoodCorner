@@ -1,8 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../services/db.js';
 import { buildProduct } from '../services/products/buildProduct.js';
 import 'dotenv/config';
+import { hashIt } from '../utils/securityUtils.js';
+import { generateTokens } from '../utils/jsonWebTokens.js';
+import { saveRefreshToken } from '../services/users/utilsUsers.js';
 // import generated prisma binaries containing scheme tables as methods/objects
-const prisma = new PrismaClient;
 // get an instance of the database object from prisma
 /**
  * return a random int between max and min (on call)
@@ -30,11 +32,8 @@ const firstNamePool = ['john', 'terry', 'larry', 'suzette', 'maxime', 'ratatouil
 const lastNamePool = ['dubougnon', 'carpenterie', 'leland', 'frondeur', 'leboucher', 'creped', 'poudriere', 'camelier', 'fraise'];
 const domainPool = ['@gmail.com', '@yahoo.fr', '@laposte.net', '@screemer.net'];
 const productNamePool = ['Mechanical Keyboard', 'Gaming Mouse', '27-inch Monitor', 'Noise Canceling Headphones', 'USB-C Hub', 'Desk Mat', 'Ergonomic Chair'];
-const defaultCategories = [
-    { id: 1, name: 'Electronics' },
-    { id: 2, name: 'Home & Office' },
-    { id: 3, name: 'Gaming & Tech' },
-];
+const imagePool = Array.from({ length: 12 }, (_, i) => `images_db_test/image_${i}.jpg`);
+const defaultCategories = ['Professionnal', 'Training', 'Combat', 'Cardio'];
 /**
  * simple for loop that create a dummy randomized user and then push it to the array
  * @param undefined array
@@ -64,9 +63,9 @@ async function main() {
         console.log('Seeding categories...');
         for (const category of defaultCategories) {
             await prisma.category.upsert({
-                where: { id: category.id },
+                where: { name: category },
                 update: {},
-                create: category,
+                create: { name: category },
             });
         }
         console.log('Seeding users...');
@@ -74,18 +73,26 @@ async function main() {
             data: randomUsers,
             skipDuplicates: true,
         });
-        const users = await prisma.user.findMany({ select: { id: true } });
+        const users = await prisma.user.findMany({ select: { id: true, email: true } });
         console.log('Seeding products...');
         const productCreatePromises = [];
         for (const user of users) {
-            const productCount = getRandomInt(1, 4); // 1 to 4 products per user
+            const { refreshToken } = generateTokens(user.id, user.email);
+            const hashedRefreshToken = hashIt(refreshToken);
+            await saveRefreshToken(user.id, hashedRefreshToken);
+            const productCount = getRandomInt(1, 4);
+            const selectedCategory = getRandomElement(defaultCategories);
+            const selectedImage = getRandomElement(imagePool);
             for (let i = 0; i < productCount; i++) {
                 const productInput = buildProduct({
                     body: {
                         name: `${getRandomElement(productNamePool)} #${getRandomInt(10, 99)}`,
                         price: getRandomInt(20, 500),
                         quantity: getRandomInt(1, 10),
-                        CategoryId: getRandomElement(defaultCategories).id,
+                        category: selectedCategory,
+                    },
+                    file: {
+                        filename: selectedImage,
                     },
                     userId: user.id,
                 });
@@ -105,3 +112,4 @@ async function main() {
         await prisma.$disconnect();
     }
 }
+main();

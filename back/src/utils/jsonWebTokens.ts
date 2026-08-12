@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 import 'dotenv/config';
-import { tokenPayload } from '../interfaces/interfaces.js';
+import { userTokenPayload } from '../interfaces/interfaces.js';
 
 // take the screts from .env to store them in thoses variables
 const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET || 'access_secret_pass'
@@ -23,10 +23,10 @@ export const generateTokens = (userID : number, email: string) =>{
 	}
 }
 
-export const verifyAcessToken = (token:string): tokenPayload =>{
-	return (jwt.verify(token, ACCESS_SECRET) as tokenPayload);
+export const verifyAcessToken = (token:string): userTokenPayload =>{
+	return (jwt.verify(token, ACCESS_SECRET) as userTokenPayload);
 }
 
-export const verifyRefreshToken = (token:string): tokenPayload =>{
-	return (jwt.verify(token, REFRESH_SECRET) as tokenPayload);
+export const verifyRefreshToken = (token:string): userTokenPayload =>{
+	return (jwt.verify(token, REFRESH_SECRET) as userTokenPayload);
 }

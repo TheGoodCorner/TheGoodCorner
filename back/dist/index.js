@@ -9,9 +9,10 @@ import userRouter from './routes/users.js';
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['*']
+    origin: 'https://localhost:4443',
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    credentials: true
 }));
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
