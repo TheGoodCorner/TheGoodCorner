@@ -1,7 +1,5 @@
 import prisma from "../services/db.js";
 import { comparePassword } from "../utils/securityUtils.js";
-import { verifyAcessToken } from "../utils/jsonWebTokens.js";
-// import express dependancies for request handling
 /**
  * generalController object creation with methods
  */
@@ -21,10 +19,6 @@ const generalController = {
     getMessagesPage: (req, res) => {
         void req;
         res.status(200).json({ status: 'OK', message: 'messages page !' });
-    },
-    getProfilPage: (req, res) => {
-        void req;
-        res.status(200).json({ status: 'OK', message: 'profil page !' });
     },
     getProductsPage: async (_req, res) => {
         try {
@@ -56,27 +50,16 @@ const generalController = {
     },
     userProfile: async (req, res) => {
         try {
-            // ✅ Lire le token depuis le header Authorization
-            const authHeader = req.headers.authorization;
-            if (!authHeader || !authHeader.startsWith('Bearer ')) {
-                return res.status(400).json({
-                    status: 'ERROR',
-                    message: 'Token manquant ou invalide'
-                });
-            }
-            // Extraire le token (enlever "Bearer ")
-            const token = authHeader.slice(7);
-            // Vérifier et décoder le token
-            const decoded = verifyAcessToken(token);
-            const { email } = decoded;
-            const user = await prisma.user.findUnique({ where: { email } });
-            return res.status(200).json({ status: 'OK', data: user });
+            if (!req.user)
+                return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
+            // puisque'on utilise une authenticatedRequest on peut direct prendre le user appended dessus.
+            const user = req.user;
+            const email = user.email;
+            const founduser = await prisma.user.findUnique({ where: { email } });
+            return (res.status(200).json({ status: 'OK', data: founduser }));
         }
         catch (error) {
-            return res.status(400).json({
-                status: 'ERROR',
-                message: 'Invalid or expired refresh token: qwqwqwq'
-            });
+            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     }
 };
