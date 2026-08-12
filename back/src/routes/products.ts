@@ -7,7 +7,7 @@ const productRouter = Router();
 
 productRouter.post('/products', AuthenticateToken , uploadMiddleware.single('image'), productController.createProduct);
 productRouter.get('/products/:id', getProductById);
-productRouter.put('/products/:id', AuthenticateToken, productController.updateProduct);
+productRouter.put('/products/:id', AuthenticateToken, uploadMiddleware.single('image'), productController.updateProduct);
 productRouter.delete('/products/:id', AuthenticateToken, productController.deleteProduct);
 
 export default productRouter;
