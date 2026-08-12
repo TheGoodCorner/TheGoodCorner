@@ -16,6 +16,7 @@ function Products() {
     setFilters({ selectedCategory: category === 'All' ? '' : category });
   };
 
+  console.log(products);
   return (
     <div className='bg-[var(--color-bg)]'>
     <div className="products-container bg-[var(--color-bg)]">

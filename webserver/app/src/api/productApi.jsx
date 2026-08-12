@@ -27,7 +27,9 @@ export async function createProductRequest(productData) {
   const { data } = await apiClient.post('/products', formData, {
     headers: { 'Content-Type': undefined },
   });
-  return data;
+  console.log("reponse de lapi zebi direct: ", data);
+  console.log("reponse de lapi zebi direct: ", data.data);
+  return data.data;
 }
 
 // PUT /products/:id — AuthenticateToken, PAS d'upload middleware sur cette
