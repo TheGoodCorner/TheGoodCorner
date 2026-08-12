@@ -15,7 +15,7 @@ export const buildProduct = ({ body, file, userId }) => {
         author: {
             connect: { id: parsedUserId }, // Matches 'authorId Int'
         },
-        Category: {
+        category: {
             connect: { id: parsedCategoryId }, // Matches 'CategoryId Int'
         },
     };

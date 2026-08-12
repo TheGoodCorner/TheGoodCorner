@@ -8,7 +8,7 @@ export const productUpdate = ({ body, file }) => {
         data.quantity = typeof body.quantity === 'number' ? body.quantity : parseInt(body.quantity, 10);
     if (body.CategoryId !== undefined) {
         const catId = typeof body.CategoryId === 'number' ? body.CategoryId : parseInt(body.CategoryId, 10);
-        data.Category = { connect: { id: catId } };
+        data.category = { connect: { id: catId } };
     }
     if (file)
         data.imageUrl = `/uploads/${file.filename}`;

@@ -39,7 +39,7 @@ const userController = {
         }
         catch (error) {
             console.error(error);
-            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
+            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     },
     login: async (req, res) => {
@@ -54,8 +54,22 @@ const userController = {
             const passMatch = comparePassword(password, existingUser.password);
             if (!passMatch)
                 return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential' }));
+            const { accessToken, refreshToken } = generateTokens(existingUser.id, existingUser.email);
+            const hashedRefreshToken = hashIt(refreshToken);
+            await saveRefreshToken(existingUser.id, hashedRefreshToken);
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'strict',
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            });
             console.log(`User logged in`);
-            return res.status(200).json({ status: 'OK', message: 'User logged in !', data: { email: req.body.email, password: password } });
+            return res.status(200).json({
+                status: 'OK',
+                message: 'User logged in !',
+                accessToken,
+                data: { email: existingUser.email, username: existingUser.username }
+            });
         }
         catch (error) {
             console.error(error);

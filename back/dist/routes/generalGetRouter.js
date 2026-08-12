@@ -14,4 +14,5 @@ generalGetRouter.get('/paiement', controller.getPaiementPage);
 generalGetRouter.get('/messages', controller.getMessagesPage);
 generalGetRouter.get('/profil', controller.getProfilPage);
 generalGetRouter.get(`/signup`, controller.getSignUpPage);
+generalGetRouter.get(`/user/profile`, controller.userProfile);
 export default generalGetRouter;

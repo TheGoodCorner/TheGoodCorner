@@ -41,5 +41,5 @@ export const saveRefreshToken = async (userId:number, hashedToken:string) =>{
 			expiresAt,
 		}
 	});
-	console.log(`refresh token added to db` + token);
+	console.log(`refresh token added to db`);
 }

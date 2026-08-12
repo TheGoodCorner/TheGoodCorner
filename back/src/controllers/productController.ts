@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
-import {AuthenticatedRequest} from "../services/middlewareAuthenticateToken.js";
+import {AuthenticatedRequest} from "../interfaces/interfaces.js";
 import { buildProduct} from "../services/products/buildProduct.js";
 import { productUpdate} from "../services/products/updateProduct.js";
 import { findReturnProduct} from "../services/products/utilsProducts.js";
@@ -37,7 +37,7 @@ const ProductController =
 		if ('error' in product){
 			return(res.status(product.status).json({message: product.error}));
 		}
-		if (Number(userId) !== product.UserID) 
+		if (Number(userId) !== product.userId) 
 			return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
 		const productId = parseInt(req.params.id, 10);
 		const updatedProduct = await prisma.product.update({
@@ -59,7 +59,7 @@ const ProductController =
 			if ('error' in product){
 				return(res.status(product.status).json({message: product.error}));
 			}
-			if (Number(userId) !== product.UserID) 
+			if (Number(userId) !== product.userId) 
 				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You do not own this product' });
 			const productId = parseInt(req.params.id, 10);
 			const deletedProduct = await prisma.product.delete({

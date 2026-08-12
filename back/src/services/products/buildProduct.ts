@@ -1,17 +1,8 @@
 import {Request, Response} from 'express'
 import { Prisma } from '@prisma/client';
+import { ProductCrInput } from '../../interfaces/interfaces.js';
 
 
-interface ProductCrInput {
-	body: {
-		name?: string | undefined;
-		price?: string | number | undefined;
-		quantity?: string | number | undefined;
-		CategoryId?: string | number | undefined;
-	};
-	file?: Express.Multer.File | undefined;
-	userId: string | number;
-}
 export const buildProduct = ({ body, file, userId}: ProductCrInput): Prisma.ProductCreateInput =>{
 	const { name, price, quantity, CategoryId} = body;
 	if (!name || price === undefined || price === null || !CategoryId) {
@@ -31,7 +22,7 @@ export const buildProduct = ({ body, file, userId}: ProductCrInput): Prisma.Prod
 		author: {
 			connect: { id: parsedUserId }, // Matches 'authorId Int'
 		},
-		Category: {
+		category: {
 			connect: { id: parsedCategoryId }, // Matches 'CategoryId Int'
 		},
 	};

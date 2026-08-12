@@ -15,17 +15,29 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
+
   email     String   @unique
-  name      String?
   username  String   @unique
   password  String
-  Product  Product[]
-  RefreshToken RefreshToken[]
+
+  name      String?
+  avatar    String?
+  bio       String?
+
+  sellerRating Float? @default(0)
+  sellerReviewCount Int? @default(0)
+
+  product  Product[]
+  locationId Int?
+  location   Location? @relation(fields: [locationId], references: [id])
+  refreshToken RefreshToken[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model RefreshToken{
   id        String   @id @default(uuid())
+
   hashedToken String @unique
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -37,28 +49,34 @@ model RefreshToken{
 
 model Product {
   id        Int      @id @default(autoincrement())
-  UserID Int
+
+  userId Int
   name String
   price Int
-  author    User    @relation(fields: [UserID], references: [id]) 
-  CategoryId  Int
-  Category    Category    @relation(fields: [CategoryId], references: [id]) 
+  author    User    @relation(fields: [userId], references: [id]) 
+  categoryId  Int
+  category    Category    @relation(fields: [categoryId], references: [id]) 
   imageUrl  String?
   quantity Int? @default(1)
 }
 
 model Category {
   id        Int      @id @default(autoincrement())
-  Product Product[]
+
   name String
+  product Product[]
 }
 
 model Location {
   id        Int      @id @default(autoincrement())
+
+  users   User[]
+
   country String
   region String
   city String
   street String
   house_number Int
+
   additionnal_infos String?
 }
