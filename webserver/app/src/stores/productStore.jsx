@@ -25,7 +25,7 @@ const mockProducts = [
 
 
 export const useProductStore = create((set, get) => ({
-  products: null,
+  products: mockProducts,
   loading: false,
   error: null,
   

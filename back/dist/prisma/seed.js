@@ -34,6 +34,7 @@ const domainPool = ['@gmail.com', '@yahoo.fr', '@laposte.net', '@screemer.net'];
 const productNamePool = ['Mechanical Keyboard', 'Gaming Mouse', '27-inch Monitor', 'Noise Canceling Headphones', 'USB-C Hub', 'Desk Mat', 'Ergonomic Chair'];
 const imagePool = Array.from({ length: 12 }, (_, i) => `images_db_test/image_${i}.jpg`);
 const defaultCategories = ['Professionnal', 'Training', 'Combat', 'Cardio'];
+const descriptionPool = [' A rather Professionnal Tool !', ' This one is more for Training purpose ', 'This is for the real Combat enjoyer !', ' Ideal for some Cardio routines !'];
 /**
  * simple for loop that create a dummy randomized user and then push it to the array
  * @param undefined array
@@ -82,6 +83,7 @@ async function main() {
             await saveRefreshToken(user.id, hashedRefreshToken);
             const productCount = getRandomInt(1, 4);
             const selectedCategory = getRandomElement(defaultCategories);
+            const selectedDescription = getRandomElement(descriptionPool);
             const selectedImage = getRandomElement(imagePool);
             for (let i = 0; i < productCount; i++) {
                 const productInput = buildProduct({
@@ -89,6 +91,7 @@ async function main() {
                         name: `${getRandomElement(productNamePool)} #${getRandomInt(10, 99)}`,
                         price: getRandomInt(20, 500),
                         quantity: getRandomInt(1, 10),
+                        description: selectedDescription,
                         category: selectedCategory,
                     },
                     file: {

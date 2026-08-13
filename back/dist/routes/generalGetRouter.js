@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import controller from '../controllers/generalController.js';
-import { AuthenticateToken } from '../services/middlewareAuthenticateToken.js';
 const generalGetRouter = Router();
 /**
  * ensemble de get routes normalement gerees par le frontend en static serving via react
@@ -14,5 +13,5 @@ generalGetRouter.get('/products', controller.getProductsPage);
 generalGetRouter.get('/paiement', controller.getPaiementPage);
 generalGetRouter.get('/messages', controller.getMessagesPage);
 generalGetRouter.get(`/signup`, controller.getSignUpPage);
-generalGetRouter.get(`/user/profile`, AuthenticateToken, controller.userProfile);
+// generalGetRouter.get(`/user/profile`, AuthenticateToken, controller.userProfile)
 export default generalGetRouter;

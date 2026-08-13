@@ -22,7 +22,8 @@ export const findReturnProduct = async (id) => {
     if (isNaN(productId))
         return { error: "Invalid ID, must be an integer.", status: 400 };
     const product = await prisma.product.findUnique({
-        where: { id: productId }
+        where: { id: productId },
+        include: { category: true, author: true },
     });
     if (!product)
         return { error: "Product not found.", status: 400 };
