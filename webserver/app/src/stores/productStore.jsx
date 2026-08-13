@@ -22,7 +22,7 @@ export const useProductStore = create((set, get) => ({
     search: '',
     selectedCategory: '',
     minPrice: 0,
-    maxPrice: 200,
+    maxPrice: Infinity,
   },
 
   fetchProducts: async () => {
