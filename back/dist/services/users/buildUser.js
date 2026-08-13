@@ -3,7 +3,7 @@ export const buildUser = ({ body }) => {
     if (!email || !password || !username)
         throw new Error('Email, password, and username are required.');
     return {
-        email,
+        email: email.toLocaleLowerCase(),
         username,
         password,
     };

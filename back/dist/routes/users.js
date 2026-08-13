@@ -11,6 +11,6 @@ userRouter.post(`/auth/login`, userController.login);
 userRouter.post(`/auth/logout`, userController.logout);
 userRouter.post(`/auth/refresh`, userController.refresh);
 userRouter.get(`/user/:id`, userController.getUser);
-userRouter.delete(`/user/:id`, AuthenticateToken, userController.removeUser);
 userRouter.put(`/user/:id`, AuthenticateToken, uploadMiddleware.single('image'), userController.updateUser);
+userRouter.delete(`/user/:id`, AuthenticateToken, userController.removeUser);
 export default userRouter;

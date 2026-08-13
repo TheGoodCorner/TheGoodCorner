@@ -23,10 +23,13 @@ model User {
   name      String?
   avatar    String?
   bio       String?
+  phoneNumber String?
 
   sellerRating Float? @default(0)
   sellerReviewCount Int? @default(0)
   sellerReviews  String[]
+  sellerEliteStatus Boolean? @default(false)
+  sellerEliteStatusCatchPhrase String?
 
   product  Product[]
   locationId Int?
@@ -78,7 +81,7 @@ model Location {
   region String
   city String
   street String
-  house_number Int
+  houseNumber Int
 
   additionnal_infos String?
 }

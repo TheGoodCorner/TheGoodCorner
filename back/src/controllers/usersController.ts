@@ -164,9 +164,7 @@ const userController =
 	removeUser: async (req:AuthenticatedRequest<{ id:string }>, res:Response) =>
 	{
 		try {
-			const userId = req.user?.id;
-			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+			const userId = req.user!.id;
 			const dbUser = await findReturnUser(req.params.id);
 			if ('error' in dbUser)
 				return(res.status(dbUser.status).json({message: dbUser.error}));
@@ -186,9 +184,7 @@ const userController =
 	updateUser: async (req:AuthenticatedRequest<{ id:string }>, res:Response) =>
 	{
 		try {
-			const userId = req.user?.id;
-			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+			const userId = req.user!.id;
 			const paramId = parseInt(req.params.id, 10);
 			if (isNaN(paramId))
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid user ID' }));
@@ -205,7 +201,7 @@ const userController =
 				updateData.password = hashIt(updateData.password);
 			const updatedUser = await prisma.user.update({
 				where: { id: dbUser.id },
-				data: updateData,
+				data: updateData, include: { product:true, location: true}
 			});
 			const { password, ...sanitizedUser } = updatedUser;
 			console.log(`User updated ! ${sanitizedUser.id}`);

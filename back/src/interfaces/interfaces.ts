@@ -48,11 +48,23 @@ export interface UserCrInput {
 	};
 }
 
+export interface Location{
+	country: string;
+	region: string;
+	city: string;
+	street: string;
+	house_number: number;
+	additionnal_infos?: string | null;
+}
+
 export interface UserUpdate {
 	body: UserCrInput['body'] & {
 		name?: string | undefined;
 		bio?: string | undefined;
-		locationId?: string | number | undefined;
+		location?: Location;
+		phoneNumber?: string | undefined;
+		sellerEliteStatus?: boolean;
+		sellerEliteStatusCatchPhrase?: string | undefined;
 	};
 	file?: Express.Multer.File | undefined;
 }

@@ -9,7 +9,7 @@ export const buildUser = ({ body }: UserCrInput): Prisma.UserCreateInput => {
 		throw new Error('Email, password, and username are required.');
 
 	return {
-		email,
+		email: email.toLocaleLowerCase(),
 		username,
 		password,
 	};
