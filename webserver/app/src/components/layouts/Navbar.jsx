@@ -3,7 +3,7 @@ import { useThemeStore } from '../../stores/themeStore'
 import { useCartStore } from '../../stores/cartStore'
 import { useUIStore } from '../../stores/uiStore';
 import { Button } from '../UI/Button';
-import ProfileSection from './ProfileSection'
+import ProfileDropdown from '../profile/ProfileDropdown'
 import { Moon, Sun, ShoppingCart } from 'lucide-react'
 
 function Navbar() {
@@ -33,7 +33,7 @@ function Navbar() {
             <li><Link to="/contact" className="navbar-link">Messagerie</Link></li>
           </ul>
           <div className="navbar-actions">
-            <ProfileSection />
+            <ProfileDropdown />
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ import Avatar from '../UI/Avatar';
 import { Dropdown } from '../UI/Dropdown';
 import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
 
-function ProfileSection() {
+function ProfileDropdown() {
   const { isAuthenticated, logout, initializing } = useAuthStore();
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
@@ -73,4 +73,4 @@ function ProfileSection() {
   );
 }
 
-export default ProfileSection;
+export default ProfileDropdown;
