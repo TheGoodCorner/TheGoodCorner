@@ -45,18 +45,11 @@ export interface UserCrInput {
 		email: string;
 		username: string;
 		password: string;
-		name?: string | undefined;
-		bio?: string | undefined;
-		locationId?: string | number | undefined;
 	};
-	file?: Express.Multer.File | undefined;
 }
 
 export interface UserUpdate {
-	body: {
-		email?: string | undefined;
-		username?: string | undefined;
-		password?: string | undefined;
+	body: UserCrInput['body'] & {
 		name?: string | undefined;
 		bio?: string | undefined;
 		locationId?: string | number | undefined;
