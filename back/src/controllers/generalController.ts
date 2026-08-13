@@ -33,8 +33,7 @@ const generalController =
 			const products = await prisma.product.findMany(
 				{include: {category: true}}
 			);
-			console.log("✅ Réponse Prisma:", products);
-			console.log("🔍 Premier produit:", products[0]);
+			console.log('all product got sucessfully returned');
 			return(res.status(200).json({status: 'OK', data:products}));
 		}
 		catch(error){
@@ -71,7 +70,7 @@ const generalController =
 		const user = req.user;
 		const email = user.email;
 		const founduser = await prisma.user.findUnique({where: {email}});
-
+		console.log("user profile loaded");
 		return (res.status(200).json({status: 'OK', data: founduser}));
 	}
 	catch(error)

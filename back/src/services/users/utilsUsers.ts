@@ -12,12 +12,16 @@ const prismaInstance = new PrismaClient();
  */
 export const findUserByEmail = async (email: string) =>
 {
-	return (await prisma.user.findUnique({where: {email}}));
+	return (await prisma.user.findUnique({
+		where: {email},
+		include: {product:true, location:true}}));
 }
 
 export const findUserByUsername = async (username: string) =>
 {
-	return (await prisma.user.findUnique({where: {username}}));
+	return (await prisma.user.findUnique({
+		where: {username},
+		include: {product:true, location:true}}));
 }
 
 /**
@@ -27,7 +31,9 @@ export const findUserByUsername = async (username: string) =>
  */
 export const createDbUser = async (data: Prisma.UserCreateInput) =>
 {
-	return (await prisma.user.create({data}));
+	return (await prisma.user.create({
+		data,
+		include: {product:true, location:true}}));
 }
 
 /**
@@ -68,7 +74,7 @@ export const findReturnUser = async (id: string) => {
 	if (isNaN(userId))
 		return { error: "Invalid userId, must be an integer.", status: 400 };
 	const user = await prisma.user.findUnique({
-		where: {id: userId}
+		where: {id: userId},
 	});
 	if (!user)
 		return { error: "user not found.", status: 400 };

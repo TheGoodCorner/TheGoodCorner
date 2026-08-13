@@ -17,6 +17,7 @@ FROM node:26-alpine AS runner
 WORKDIR /app
 
 COPY ./conf/back_setup.sh /usr/local/bin/back_setup.sh
+COPY ./conf/Images_db_test /app/uploads/
 RUN chmod +x /usr/local/bin/back_setup.sh
 
 COPY --from=builder /app/package*.json ./

@@ -48,14 +48,14 @@ const userController = {
     },
     login: async (req, res) => {
         try {
-            const password = req.body.password;
+            const reqPassword = req.body.password;
             const email = req.body.email;
-            if (!password || !email)
+            if (!reqPassword || !email)
                 return (res.status(400).json({ status: 'ERROR', message: 'L\'email et le mot de passe sont obligatoire !' }));
             const existingUser = await findUserByEmail(email);
             if (!existingUser)
                 return (res.status(400).json({ status: 'ERROR', message: 'L\'email n\'existe pas sur notre site !' }));
-            const passMatch = comparePassword(password, existingUser.password);
+            const passMatch = comparePassword(reqPassword, existingUser.password);
             if (!passMatch)
                 return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential' }));
             const { accessToken, refreshToken } = generateTokens(existingUser.id, existingUser.email);
@@ -68,11 +68,12 @@ const userController = {
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
             console.log(`User logged in`);
-            return res.status(200).json({ status: 'OK', message: 'User logged in !', accessToken, data: { email: existingUser.email, password: hashIt(existingUser.password) } });
+            const { password, ...sanitizedUser } = existingUser;
+            return res.status(200).json({ status: 'OK', message: 'User logged in !', accessToken, data: sanitizedUser });
         }
         catch (error) {
             console.error(error);
-            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' + error });
+            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     },
     logout: async (req, res) => {
@@ -107,8 +108,15 @@ const userController = {
                 return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
             }
             const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
+            const userObject = await prisma.user.findUnique({
+                where: { id: decodedPayload.id },
+                include: { product: true, location: true }
+            });
+            if (!userObject)
+                throw new Error("user not found");
+            const { password, ...sanitizedUser } = userObject;
             console.log(`User refreshed`);
-            return res.status(200).json({ status: 'OK', message: 'Token refreshed successfully', accessToken, });
+            return res.status(200).json({ status: 'OK', message: 'Token refreshed successfully', accessToken, data: sanitizedUser });
         }
         catch (error) {
             console.error(error);

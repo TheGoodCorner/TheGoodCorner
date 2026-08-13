@@ -8,10 +8,16 @@ const prismaInstance = new PrismaClient();
  * @returns said user promise
  */
 export const findUserByEmail = async (email) => {
-    return (await prisma.user.findUnique({ where: { email } }));
+    return (await prisma.user.findUnique({
+        where: { email },
+        include: { product: true, location: true }
+    }));
 };
 export const findUserByUsername = async (username) => {
-    return (await prisma.user.findUnique({ where: { username } }));
+    return (await prisma.user.findUnique({
+        where: { username },
+        include: { product: true, location: true }
+    }));
 };
 /**
  * add a user's data to the prisma database using a data object (prisma.UsersCreateInput)
@@ -19,7 +25,10 @@ export const findUserByUsername = async (username) => {
  * @returns user promise
  */
 export const createDbUser = async (data) => {
-    return (await prisma.user.create({ data }));
+    return (await prisma.user.create({
+        data,
+        include: { product: true, location: true }
+    }));
 };
 /**
  * save a refresh token to the database, adding a 7 dats expiry date to it
@@ -56,7 +65,7 @@ export const findReturnUser = async (id) => {
     if (isNaN(userId))
         return { error: "Invalid userId, must be an integer.", status: 400 };
     const user = await prisma.user.findUnique({
-        where: { id: userId }
+        where: { id: userId },
     });
     if (!user)
         return { error: "user not found.", status: 400 };

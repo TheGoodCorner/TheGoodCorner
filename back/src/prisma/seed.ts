@@ -41,7 +41,7 @@ const firstNamePool:string[] = ['john', 'terry', 'larry' , 'suzette', 'maxime', 
 const lastNamePool:string[] = ['dubougnon', 'carpenterie' , 'leland' ,'frondeur', 'leboucher', 'creped', 'poudriere', 'camelier', 'fraise' ];
 const domainPool:string[] = ['@gmail.com', '@yahoo.fr', '@laposte.net', '@screemer.net'];
 const productNamePool = ['Mechanical Keyboard', 'Gaming Mouse', '27-inch Monitor', 'Noise Canceling Headphones', 'USB-C Hub', 'Desk Mat', 'Ergonomic Chair'];
-const imagePool: string[] = Array.from({ length: 12 }, (_, i) => `images_db_test/image_${i}.jpg`);
+const imagePool: string[] = Array.from({ length: 12 }, (_, i) => `uploads/image_${i}.jpg`);
 const defaultCategories = ['Professionnal', 'Training', 'Combat', 'Cardio'];
 const descriptionPool = [' A rather Professionnal Tool !', ' This one is more for Training purpose ', 'This is for the real Combat enjoyer !', ' Ideal for some Cardio routines !'];
 

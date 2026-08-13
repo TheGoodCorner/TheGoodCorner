@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
 import prisma from './services/db.js';
 import productRouter from './routes/products.js';
 import generalRouter from './routes/generalGetRouter.js';
@@ -17,6 +18,7 @@ app.use(cors({
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
+app.use('/uploads', express.static(path.resolve('uploads'))); // allow static file serving for images 
 app.use('/', generalRouter); // general routes
 app.use('/', productRouter); // product routes
 app.use('/', userRouter); // Users routes
