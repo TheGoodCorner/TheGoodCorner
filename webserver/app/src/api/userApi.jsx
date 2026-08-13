@@ -7,7 +7,7 @@ import { apiClient } from './client';
 // à récupérer ton propre profil complet (voir authStore.jsx).
 export async function fetchUserRequest(id) {
   const { data } = await apiClient.get(`/user/${id}`);
-  return data;
+  return data.data;
 }
 
 // PUT /user/:id — AuthenticateToken + upload d'image (uploadMiddleware) :
@@ -26,7 +26,7 @@ export async function updateUserRequest(id, updates) {
   const { data } = await apiClient.put(`/user/${id}`, formData, {
     headers: { 'Content-Type': undefined },
   });
-  return data;
+  return data.data;
 }
 
 // DELETE /user/:id — AuthenticateToken
