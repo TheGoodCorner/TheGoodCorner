@@ -1,28 +1,11 @@
 import { create } from 'zustand'
 import {
+  fetchAllProducts,
   fetchProductByIdRequest,
   createProductRequest,
   updateProductRequest,
   deleteProductRequest,
 } from '../api/productApi'
-
-// Données de démonstration déjà au format du contrat (contrat-api.md) :
-// category/author imbriqués, imageUrl, stock. Pas de `description` — cette
-// colonne n'existe pas sur Product côté Prisma pour l'instant.
-// const mockProducts = [
-//   { id: 0, name: "Gants de Boxe Yokkao Elite", price: 85, imageUrl: "/Images_db_test/image_0.jpg", stock: 5, category: { id: 1, name: "Professional" }, author: { id: 1, username: "Max", avatar: null, sellerRating: 4.8, sellerReviewCount: 165, createdAt: "2021-01-15T00:00:00.000Z" } },
-//   { id: 13, name: "Gants d'Entraînement Basic", price: 35, imageUrl: "/Images_db_test/image_1.jpg", stock: 12, category: { id: 2, name: "Training" }, author: { id: 2, username: "Khalid", avatar: null, sellerRating: 4.3, sellerReviewCount: 124, createdAt: "2022-06-03T00:00:00.000Z" } },
-//   { id: 2, name: "Gants Muay Thai Premium", price: 65, imageUrl: "/Images_db_test/image_2.jpg", stock: 8, category: { id: 3, name: "Combat" }, author: { id: 3, username: "Thomas", avatar: null, sellerRating: 4.7, sellerReviewCount: 141, createdAt: "2020-11-20T00:00:00.000Z" } },
-//   { id: 3, name: "Gants de Compétition Pro", price: 120, imageUrl: "/Images_db_test/image_3.jpg", stock: 3, category: { id: 1, name: "Professional" }, author: { id: 1, username: "Max", avatar: null, sellerRating: 4.8, sellerReviewCount: 165, createdAt: "2021-01-15T00:00:00.000Z" } },
-//   { id: 4, name: "Gants pour Débutants", price: 25, imageUrl: "/Images_db_test/image_4.jpg", stock: 20, category: { id: 4, name: "Cardio" }, author: { id: 2, username: "Khalid", avatar: null, sellerRating: 4.3, sellerReviewCount: 124, createdAt: "2022-06-03T00:00:00.000Z" } },
-//   { id: 5, name: "Gants d'Entraînement Intensif", price: 50, imageUrl: "/Images_db_test/image_5.jpg", stock: 9, category: { id: 2, name: "Training" }, author: { id: 3, username: "Thomas", avatar: null, sellerRating: 4.7, sellerReviewCount: 141, createdAt: "2020-11-20T00:00:00.000Z" } },
-//   { id: 6, name: "Gants Loisir Confort", price: 30, imageUrl: "/Images_db_test/image_6.jpg", stock: 15, category: { id: 4, name: "Cardio" }, author: { id: 1, username: "Max", avatar: null, sellerRating: 4.8, sellerReviewCount: 165, createdAt: "2021-01-15T00:00:00.000Z" } },
-//   { id: 7, name: "Gants Boxe Anglaise", price: 95, imageUrl: "/Images_db_test/image_7.jpg", stock: 4, category: { id: 1, name: "Professional" }, author: { id: 2, username: "Khalid", avatar: null, sellerRating: 4.3, sellerReviewCount: 124, createdAt: "2022-06-03T00:00:00.000Z" } },
-//   { id: 8, name: "Gants d'Entraînement Légers", price: 40, imageUrl: "/Images_db_test/image_8.jpg", stock: 11, category: { id: 2, name: "Training" }, author: { id: 3, username: "Thomas", avatar: null, sellerRating: 4.7, sellerReviewCount: 141, createdAt: "2020-11-20T00:00:00.000Z" } },
-//   { id: 9, name: "Gants Kickboxing", price: 70, imageUrl: "/Images_db_test/image_9.jpg", stock: 6, category: { id: 3, name: "Combat" }, author: { id: 1, username: "Max", avatar: null, sellerRating: 4.8, sellerReviewCount: 165, createdAt: "2021-01-15T00:00:00.000Z" } },
-//   { id: 10, name: "Gants Sparring", price: 55, imageUrl: "/Images_db_test/image_10.jpg", stock: 7, category: { id: 2, name: "Training" }, author: { id: 2, username: "Khalid", avatar: null, sellerRating: 4.3, sellerReviewCount: 124, createdAt: "2022-06-03T00:00:00.000Z" } },
-//   { id: 11, name: "Gants Ultra Premium", price: 150, imageUrl: "/Images_db_test/image_11.jpg", stock: 2, category: { id: 1, name: "Professional" }, author: { id: 3, username: "Thomas", avatar: null, sellerRating: 4.7, sellerReviewCount: 141, createdAt: "2020-11-20T00:00:00.000Z" } },
-// ];
 
 export const useProductStore = create((set, get) => ({
   products: [],
