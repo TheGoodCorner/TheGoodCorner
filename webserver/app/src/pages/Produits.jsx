@@ -9,6 +9,7 @@ function Products() {
   const filters = useProductStore((state) => state.filters);
   const setFilters = useProductStore((state) => state.setFilters);
   const getFilteredProducts = useProductStore((state) => state.getFilteredProducts);
+  const fetchAllProducts = useProductStore((state) => state.fetchProducts);
 
   const categories = ['All', ...new Set(products.map((p) => p.category?.name).filter(Boolean))];
   const filteredProducts = getFilteredProducts();
@@ -17,6 +18,7 @@ function Products() {
     setFilters({ selectedCategory: categoryName === 'All' ? '' : categoryName });
   };
 
+  // fetchAllProducts();
   return (
     <div className='bg-[var(--color-bg)]'>
     <div className="products-container bg-[var(--color-bg)]">

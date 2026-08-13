@@ -1,5 +1,15 @@
 import { apiClient } from './client';
 
+
+
+//GET /products   TOUS LES PRODUITS
+export async function fetchAllProducts() {
+  const {data} = await apiClient.get('/products');
+  console.log("response brut: ", data)
+  console.log("response apres .data: ", data.data)
+  return data.data;
+}
+
 // GET /products/:id — publique, pas besoin d'auth (cohérent avec la route,
 // pas de AuthenticateToken dessus côté backend)
 export async function fetchProductByIdRequest(id) {
