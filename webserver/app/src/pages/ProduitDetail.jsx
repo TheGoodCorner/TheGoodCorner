@@ -137,10 +137,12 @@ function ProductDetail() {
                   variant="ghost"
                   size="sm"
                   icon={Plus}
-                  onClick={() => setQuantity((q) => q + 1)}
+                  onClick={() => setQuantity((q) => Math.min(product.quantity, q + 1))}
+                  disabled={quantity >= product.quantity}
                   aria-label="Augmenter la quantité"
                 />
               </div>
+              <span className="text-xs text-[var(--color-text-muted)]">({product.quantity} En stock)</span>
             </div>
 
             <Button
@@ -148,10 +150,11 @@ function ProductDetail() {
               variant="primary"
               size="lg"
               onClick={handleAddToCart}
-              title="Ajouter au panier"
+              disabled={product.quantity === 0}
+              title={product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
               aria-label="Ajouter au panier"
             >
-              Ajouter au panier
+              {product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
             </Button>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
+import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
 import { getInitials, getAvatarColor } from '../../utils/avatar';
 import { PlusCircle, Star } from 'lucide-react'
@@ -8,7 +9,8 @@ import { PlusCircle, Star } from 'lucide-react'
 export default function ProductCard({ product }) {
   const { addToCart } = useCartStore()
   const { openUi } = useUIStore()
-  const authorName = product.author?.username;
+  const { user } = useUserStore()
+
 
   const handleAddToCart = () => {
     // Item panier volontairement "plat" : pas besoin de category/author
@@ -28,14 +30,14 @@ export default function ProductCard({ product }) {
     <div className="card">
       <div className="card-header">
         <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold ${getAvatarColor(authorName)}`}>
-            {getInitials(authorName)}
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold ${getAvatarColor(author.name)}`}>
+            {getInitials(author.name)}
           </div>
-          <span className="text-xs font-medium text-gray-600">{authorName || 'Vendeur inconnu'}</span>
+          <span className="text-xs font-medium text-gray-600">{author.name || 'Vendeur inconnu'}</span>
           <div className="flex items-center gap-1 ml-3">
             <Star size={15} className='text-[var(--color-primary)]' fill='var(--color-primary)'/>
-            <span className="text-xs font-medium text-gray-700">{product.author?.sellerRating ?? '—'}</span>
-            <span className="text-xs text-gray-500">({product.author?.sellerReviewCount ?? 0})</span>
+            <span className="text-xs font-medium text-gray-700">{author?.sellerRating ?? '—'}</span>
+            <span className="text-xs text-gray-500">({author?.sellerReviewCount ?? 0})</span>
           </div>
         </div>
       </div>

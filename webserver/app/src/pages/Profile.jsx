@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { Button } from '../components/UI/Button';
-import { UserRoundPen, Star, MapPin, Phone, Shield, Award, TrendingUp, MessageCircle } from 'lucide-react';
+import { UserRoundPen, Star, MapPin, Phone, Shield, Award, TrendingUp, MessageCircle, Mail } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { ProductForm } from '../components/products/ProductForm';
+import { useUserStore } from '../stores/userStore';
 
-const StarRating = ({ rating = 5, size = 18 }) => (
+const StarRating = ({ rating = 0, size = 18, maxStars = 5 }) => (
   <div className='flex gap-1'>
-    {Array.from({ length: rating }).map((_, i) => (
-      <Star key={i} size={size} className='fill-yellow-400 text-green-400' />
+    {Array.from({ length: maxStars }).map((_, i) => (
+      <Star 
+        key={i} 
+        size={size} 
+        className={i < Math.ceil(rating) ? 'fill-yellow-400 text-green-500' : 'fill-gray-300 text-gray-300'}
+      />
     ))}
   </div>
 );
+
 
 const InfoCard = ({ icon: Icon, label, value }) => (
   <div className='flex items-start gap-3'>
@@ -20,7 +26,7 @@ const InfoCard = ({ icon: Icon, label, value }) => (
         {label}
       </p>
       <p className='text-sm font-medium text-[var(--color-text)] mt-0.5'>
-        {value}
+        {value || 'Non renseigné'}
       </p>
     </div>
   </div>
@@ -83,45 +89,31 @@ const REVIEWS = [
     content: 'Très beau meuble, légère différence de couleur par rapport aux photos mais conforme à la description.',
     product: 'Commode 4 tiroirs'
   },
-  {
-    id: 4,
-    author: 'Pierre Gonzalez',
-    rating: 5,
-    date: 'Il y a 1 mois',
-    content: 'Transaction parfaite. Le vendeur est à l\'écoute et répond rapidement aux questions. À bientôt !',
-    product: 'Fauteuil club'
-  },
-  {
-    id: 5,
-    author: 'Céline Rousseau',
-    rating: 4,
-    date: 'Il y a 3 jours',
-    content: 'Très satisfaite de mon achat. La qualité est au rendez-vous, même si le délai de livraison a été un peu plus long que prévu. Bon rapport qualité-prix.',
-    product: 'Lampe de sol vintage'
-  },
-  {
-    id: 6,
-    author: 'Nicolas Bertrand',
-    rating: 5,
-    date: 'Il y a 1 semaine',
-    content: 'Excellente expérience ! Produit impeccable, bien emballé et le vendeur a été très réactif. Je recommande sans hésiter pour tous vos achats de mobilier.',
-    product: 'Étagère bois massif'
-  },
-  {
-    id: 7,
-    author: 'Amélie Lemoine',
-    rating: 5,
-    date: 'Il y a 5 jours',
-    content: 'Superbe découverte ! Exactement ce que je cherchais. Le vendeur a pris le temps de répondre à toutes mes questions avant l\'achat. Top !',
-    product: 'Miroir rond années 60'
-  }
 ];
 
 function Profile() {
+  const { user } = useUserStore();
   const { createProduct } = useProductStore();
-  
-  // Par défaut afficher 3 avis, puis tous après clique
   const [showAllReviews, setShowAllReviews] = useState(false);
+
+  // Formater la date de création
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('fr-FR', { 
+      year: 'numeric', 
+      month: 'long'
+    });
+  };
+
+  // Déterminer le nom d'affichage
+  const displayName = user?.name || user?.username || 'Utilisateur';
+  
+  // Déterminer la note (sellerRating par défaut 0), a mettre en const (let pour tester)
+  let userRating = user?.sellerRating || 0;
+  userRating = 3;
+  // Nombre d'avis du vendeur
+  const reviewCount = user?.sellerReviewCount || 0;
+
+  // Affichage des avis
   const reviewsToDisplay = showAllReviews ? REVIEWS : REVIEWS.slice(0, 3);
 
   return (
@@ -133,24 +125,28 @@ function Profile() {
           <div className='flex items-start justify-between gap-6 mb-8'>
             <div className='flex gap-5 flex-1'>
               {/* Avatar */}
-              <div className='w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg' />
+              <div className='w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl'>
+                {displayName.charAt(0).toUpperCase()}
+              </div>
               
               {/* Infos principales */}
               <div className='flex-1 min-w-0'>
                 <div className='flex items-center gap-3 mb-2'>
                   <h1 className='text-2xl sm:text-3xl font-bold text-[var(--color-text)]'>
-                    Jean Dupont
+                    {displayName}
                   </h1>
                   <Shield size={20} className='text-[var(--color-primary)] flex-shrink-0' />
                 </div>
                 
                 <div className='flex items-center gap-2 mb-3'>
-                  <StarRating rating={5} size={18} />
-                  <span className='text-xs text-[var(--color-text-muted)] font-medium'>4.8 (127 avis)</span>
+                  <StarRating rating={userRating} size={18} maxStars={5}/>
+                  <span className='text-xs text-[var(--color-text-muted)] font-medium'>
+                    {userRating.toFixed(1)} ({reviewCount} avis)
+                  </span>
                 </div>
                 
                 <p className='text-sm text-[var(--color-text-muted)]'>
-                  Vendeur professionnel depuis 2021 • En ligne
+                  Vendeur depuis {formatDate(user?.createdAt)} • En ligne
                 </p>
               </div>
             </div>
@@ -169,44 +165,44 @@ function Profile() {
           {/* Grille d'infos */}
           <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 pb-8 border-b border-[var(--color-border)]'>
             <InfoCard 
-              icon={MapPin}
-              label='Localisation'
-              value='Paris, France'
+              icon={Mail}
+              label='Email'
+              value={user?.email}
             />
             <InfoCard 
               icon={Phone}
               label='Téléphone'
-              value='+33 6 12 34 56 78'
+              value='+33 6 12 34 56 78  (fausse donee)'
             />
             <InfoCard 
               icon={Award}
               label='Produits publiés'
-              value='47'
+              value={user?.product?.length || 0}
             />
             <InfoCard 
               icon={TrendingUp}
               label='Taux de vente'
-              value='89%'
+              value='89%  (fausse donee)'
             />
             <InfoCard 
               icon={MapPin}
-              label='Membre depuis'
-              value='Janvier 2021'
+              label='Localisation'
+              value={user?.location?.name || 'Non renseigné'}
             />
             <InfoCard 
               icon={Star}
               label='Note moyenne'
-              value='4.8/5.0'
+              value={userRating > 0 ? `${userRating.toFixed(1)}/5.0` : 'Aucune note'}
             />
             <InfoCard 
               icon={Shield}
               label='Paiements'
-              value='Sécurisés'
+              value='Sécurisés  (fausse donee)'
             />
             <InfoCard 
               icon={Award}
               label='Statut'
-              value='Vendeur Elite'
+              value={reviewCount > 20 ? 'Vendeur Elite' : 'Vendeur'}
             />
           </div>
 
@@ -216,67 +212,63 @@ function Profile() {
               À propos
             </h3>
             <p className='text-sm text-[var(--color-text)] leading-relaxed max-w-2xl'>
-              Spécialiste en mobilier vintage et contemporain depuis plus de 5 ans. 
-              Je sélectionne chaque pièce avec soin pour vous offrir des produits de qualité. 
-              Livraison rapide et service client réactif.
+              {user?.bio || 'Aucune description fournie'}
             </p>
           </div>
         </div>
       </section>
 
       {/* SECTION MES AVIS */}
-      <section className='border-b border-[var(--color-border)] bg-[var(--color-bg)]'>
-        <div className='px-6 sm:px-8 lg:px-12 py-16'>
-          <div className='max-w-4xl'>
-            {/* Header section */}
-            <div className='flex items-center gap-3 mb-8'>
-              <MessageCircle size={28} className='text-[var(--color-primary)]' />
-              <div>
-                <h2 className='text-3xl sm:text-4xl font-bold text-[var(--color-text)]'>
-                  Mes avis
-                </h2>
-                <p className='text-sm text-[var(--color-text-muted)] mt-1'>
-                  {REVIEWS.length} avis des clients
-                </p>
+      {reviewCount > 0 && (
+        <section className='border-b border-[var(--color-border)] bg-[var(--color-bg)]'>
+          <div className='px-6 sm:px-8 lg:px-12 py-16'>
+            <div className='max-w-4xl'>
+              <div className='flex items-center gap-3 mb-8'>
+                <MessageCircle size={28} className='text-[var(--color-primary)]' />
+                <div>
+                  <h2 className='text-3xl sm:text-4xl font-bold text-[var(--color-text)]'>
+                    Mes avis
+                  </h2>
+                  <p className='text-sm text-[var(--color-text-muted)] mt-1'>
+                    {REVIEWS.length} avis des clients
+                  </p>
+                </div>
               </div>
+
+              <div className='grid gap-4'>
+                {reviewsToDisplay.map(review => (
+                  <ReviewCard
+                    key={review.id}
+                    author={review.author}
+                    rating={review.rating}
+                    date={review.date}
+                    content={review.content}
+                    product={review.product}
+                  />
+                ))}
+              </div>
+
+              {!showAllReviews && REVIEWS.length > 3 && (
+                <button 
+                  onClick={() => setShowAllReviews(true)}
+                  className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
+                >
+                  Voir tous les avis ({REVIEWS.length})
+                </button>
+              )}
+
+              {showAllReviews && REVIEWS.length > 3 && (
+                <button 
+                  onClick={() => setShowAllReviews(false)}
+                  className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
+                >
+                  Voir moins d'avis
+                </button>
+              )}
             </div>
-
-            {/* Grille des avis */}
-            <div className='grid gap-4'>
-              {reviewsToDisplay.map(review => (
-                <ReviewCard
-                  key={review.id}
-                  author={review.author}
-                  rating={review.rating}
-                  date={review.date}
-                  content={review.content}
-                  product={review.product}
-                />
-              ))}
-            </div>
-
-            {/* Voir plus - Affiche seulement si avis cachés */}
-            {!showAllReviews && REVIEWS.length > 3 && (
-              <button 
-                onClick={() => setShowAllReviews(true)}
-                className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
-              >
-                Voir tous les avis ({REVIEWS.length})
-              </button>
-            )}
-
-            {/* Voir moins - Affiche seulement si tous les avis affichés */}
-            {showAllReviews && REVIEWS.length > 3 && (
-              <button 
-                onClick={() => setShowAllReviews(false)}
-                className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
-              >
-                Voir moins d'avis
-              </button>
-            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* SECTION FORMULAIRE PRODUIT */}
       <section className='bg-[var(--color-surface)]'>
@@ -287,7 +279,7 @@ function Profile() {
                 Ajouter un produit
               </h2>
               <p className='text-[var(--color-text-muted)]'>
-                Remplisse les informations pour créer un nouveau produit
+                Remplire les informations pour créer un nouveau produit
               </p>
             </div>
             <ProductForm />
