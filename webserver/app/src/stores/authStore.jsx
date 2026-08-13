@@ -3,17 +3,14 @@ import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '..
 import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
 
-// Plus de `persist` ici, volontairement : l'access token ne doit jamais être
-// écrit sur disque (localStorage/sessionStorage), même chiffré. Il vit
-// uniquement en mémoire JS, donc disparaît à chaque refresh de page — c'est
-// `initAuth` qui restaure la session via le cookie refresh httpOnly (que ce
-// store ne voit et ne touche jamais directement).
+// Ne gère que l'authentification (token, statut) — l'identité de la
+// personne (profil) vit exclusivement dans userStore, pour n'avoir qu'une
+// seule source de vérité. Voir userStore.setUser(), alimenté ici juste
+// après login/register/refresh.
 export const useAuthStore = create((set) => ({
-  // État
-  user: null,
   token: null,
   isAuthenticated: false,
-  initializing: true, // true pendant la tentative de reconnexion silencieuse au démarrage
+  initializing: true,
   loading: false,
   error: null,
 
@@ -21,7 +18,11 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const { user, token } = await loginRequest(email, password)
-      set({ user, token, isAuthenticated: true, loading: false })
+      set({token, isAuthenticated: true, loading: false })
+      // login renvoie déjà le profil complet : on le pousse directement
+      // dans userStore, pas de fetch séparé (GET /user/:id est publique et
+      // ne renverrait que la version publique).
+      useUserStore.getState().setUser(user)
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -33,7 +34,8 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const { user, token } = await registerRequest(email, password, username)
-      set({ user, token, isAuthenticated: true, loading: false })
+      set({token, isAuthenticated: true, loading: false })
+      useUserStore.getState().setUser(user)
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -41,14 +43,11 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  // Appelé une seule fois au montage de App.jsx. Le cookie refresh httpOnly
-  // part automatiquement avec la requête : si la session est encore valide,
-  // l'utilisateur est reconnecté sans avoir rien à faire, alors même
-  // qu'aucun token n'a jamais été stocké côté client.
   initAuth: async () => {
     try {
       const { user, token } = await refreshRequest()
-      set({ user, token, isAuthenticated: true, initializing: false })
+      set({token, isAuthenticated: true, initializing: false })
+      useUserStore.getState().setUser(user)
     } catch {
       set({ user: null, token: null, isAuthenticated: false, initializing: false })
     }
@@ -58,14 +57,9 @@ export const useAuthStore = create((set) => ({
     try {
       await logoutRequest()
     } catch {
-      // Même si l'appel échoue (backend down, réseau...), on déconnecte
-      // quand même côté client — pas la peine de bloquer l'utilisateur.
+      // Même si l'appel échoue, on déconnecte quand même côté client.
     }
     set({ user: null, token: null, isAuthenticated: false, error: null })
-    //cartStore n'est pas (encore) scopé par utilisateur côté
-    // backend, donc on le vide explicitement ici. À terme, le panier
-    // "utilisateur" viendra du serveur et ce clearCart() disparaîtra au
-    // profit d'un simple refetch.
     useCartStore.getState().clearCart()
     useUserStore.getState().logout()
   },

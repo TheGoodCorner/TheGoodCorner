@@ -5,10 +5,9 @@ import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
 import { Button } from '../components/UI/Button';
+import { getInitials, getAvatarColor } from '../utils/avatar';
 import ProductCard from '../components/products/ProductCard';
 
-// Squelette qui reprend la même grille que la vraie page, pour éviter
-// tout saut de mise en page quand la vraie donnée arrive.
 function ProductDetailSkeleton() {
   return (
     <div className="container py-10 animate-pulse">
@@ -27,8 +26,6 @@ function ProductDetailSkeleton() {
   );
 }
 
-
-
 function ProductDetail() {
   const { id } = useParams();
 
@@ -43,27 +40,16 @@ function ProductDetail() {
 
   const [quantity, setQuantity] = useState(1);
 
-  // Toujours refetch au changement d'id : c'est la seule source qui a les
-  // champs complets, même si une version light traîne déjà dans le cache.
   useEffect(() => {
-      fetchProductById(id);
-    }, [id, fetchProductById]);
+    fetchProductById(id);
+  }, [id, fetchProductById]);
 
-  // Priorité au produit "frais" du serveur — mais seulement s'il correspond
-  // bien à l'id de la page actuelle (sinon, en navigant vers une autre
-  // fiche, on afficherait un instant l'ancien produit). À défaut, on
-  // retombe sur le cache local pour un affichage instantané pendant que
-  // le fetch est en vol.
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
 
-  // Rien à montrer et pas encore d'erreur confirmée : on est en train de
-  // charger (que le flag loading ait déjà eu le temps de passer à true ou non).
   if (!product && !currentProductError) {
     return <ProductDetailSkeleton />;
   }
-
-
 
   if (!product) {
     return (
@@ -76,19 +62,28 @@ function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    addToCart({ ...product, quantity });
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+      quantity,
+    });
     openUi('cart-popover');
   };
 
   const relatedProducts = allProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
+    .filter((p) => p.category?.id === product.category?.id && p.id !== product.id)
     .slice(0, 4);
 
-    const mock = false;
+  const authorName = product.author?.username;
+  const memberSince = product.author?.createdAt
+    ? new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(product.author.createdAt))
+    : null;
+
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-10">
-        {/* Fil d'ariane */}
         <nav className="text-sm text-[var(--color-text-muted)] mb-6 flex items-center gap-2">
           <Link to="/" className="hover:text-[var(--color-primary)] transition-colors">Accueil</Link>
           <span>/</span>
@@ -106,29 +101,26 @@ function ProductDetail() {
         </Link>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Image */}
           <div className="flex items-center justify-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)] p-8">
             <img
-              src={product.image}
+              src={product.imageUrl}
               alt={product.name}
               className="max-w-full h-auto rounded-[var(--radius-md)]"
             />
           </div>
 
-          {/* Infos */}
           <div className="flex flex-col">
             <span className="text-sm font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">
-              {product.category}
+              {product.category?.name || 'Non catégorisé'}
             </span>
             <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">{product.name}</h1>
             <p className="text-3xl font-bold text-[var(--color-primary)] mb-6">
-              {product.price.toFixed(2)} €
+              {product.price?.toFixed(2) ?? '—'} €
             </p>
             <p className="text-[var(--color-text-muted)] leading-relaxed mb-8">
               {product.description || "Description à venir."}
             </p>
 
-            {/* Sélecteur de quantité */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-medium text-[var(--color-text)]">Quantité</span>
               <div className="flex items-center gap-1 bg-[var(--color-surface-hover)] rounded-[var(--radius-md)] px-2">
@@ -164,49 +156,31 @@ function ProductDetail() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="my-16 border-t border-[var(--color-border)]"></div>
-        {/* Section Informations */}
+
         <section className="mb-16">
-        <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
-        <div className="flex items-center justify-between gap-4">
+          <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-            {/* Avatar */}
-            <div className="w-16 h-16 rounded-full flex-shrink-0 overflow-hidden">
-                {mock ? (
-                <img
-                    src={avatarUrl}
-                    alt={userName}
-                    className="w-full h-full object-cover"
-                />
-                ) : (
-                <div className={`w-full h-full flex items-center justify-center bg-[var(--color-primary)]`}>
-                    <span className="text-xl font-bold text-white">A</span>
-                </div>
-                )}
-            </div>
-            {/* Infos vendeur */}
-            <div>
+              <div className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white ${getAvatarColor(authorName)}`}>
+                {getInitials(authorName)}
+              </div>
+              <div>
                 <h4 className="text-lg font-semibold text-[var(--color-text)] mb-2">
-                {product.owner}
+                  {authorName || 'Vendeur inconnu'}
                 </h4>
                 <div className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                <Calendar size={16} />
-                <span>Membre depuis janvier 2026</span>
+                  <Calendar size={16} />
+                  <span>{memberSince ? `Membre depuis ${memberSince}` : 'Nouveau membre'}</span>
                 </div>
+              </div>
             </div>
-            </div>
-            <Button
-            variant="outline"
-            size="md"
-            icon={MessageCircle}
-            onClick={() => {}}
-            >
-            Contacter le vendeur
+            <Button variant="outline" size="md" icon={MessageCircle} onClick={() => {}}>
+              Contacter le vendeur
             </Button>
-        </div>
+          </div>
         </section>
-        {/* Produits similaires */}
+
         {relatedProducts.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">Produits similaires</h2>

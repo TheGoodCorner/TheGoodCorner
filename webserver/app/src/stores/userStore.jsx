@@ -1,40 +1,57 @@
 // src/stores/userStore.jsx
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { fetchUserRequest, updateUserRequest } from '../api/userApi';
+import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
 
 export const useUserStore = create(
   persist(
-    (set) => ({
-      // ====== STATE ======
-      user: null,           // { id, name, email, addresses, preferences, ... }
+    (set, get) => ({
+      // Ton propre profil (complet, privé) — jamais rempli par un fetch
+      // direct : GET /user/:id est publique, donc incapable de renvoyer
+      // email/location même pour ton propre id. Rempli par authStore via
+      // setUser(), juste après login/register/refresh, qui renvoient déjà
+      // le profil complet.
+      user: null,
       loading: false,
       error: null,
 
-      // ====== ACTIONS ======
+      // Profil PUBLIC d'un autre utilisateur consulté (ex: future page
+      // vendeur) — séparé de `user` pour ne jamais écraser ton propre
+      // profil avec la version publique de quelqu'un d'autre.
+      viewedUser: null,
+      viewedUserLoading: false,
+      viewedUserError: null,
 
-      // Charger les données utilisateur (token géré par l'intercepteur)
-      fetchUser: async () => {
-        set({ loading: true, error: null });
+      // GET /user/:id — profil PUBLIC d'un utilisateur donné.
+      fetchUser: async (id) => {
+        set({ viewedUserLoading: true, viewedUserError: null });
         try {
-          const data = await fetchUserRequest();
-          set({ user: data, error: null });
+          const data = await fetchUserRequest(id);
+          set({ viewedUser: data, viewedUserLoading: false });
+          return data;
         } catch (err) {
-          set({ 
-            error: err.message,
-            user: null,
-          });
+          set({ viewedUserError: err.message, viewedUserLoading: false });
           console.error('fetchUser error:', err);
-        } finally {
-          set({ loading: false });
         }
       },
 
-      // Mettre à jour le profil utilisateur
+      // Appelé par authStore juste après login/register/refresh : ces
+      // routes renvoient déjà le profil complet, pas besoin de le
+      // redemander.
+      setUser: (user) => set({ user }),
+
+      // PUT /user/:id — met à jour TON profil. L'id vient du user déjà en
+      // store, pas besoin de le repasser à chaque appel.
       updateProfile: async (updates) => {
+        const id = get().user?.id;
+        if (!id) {
+          const err = new Error('Impossible de mettre à jour : utilisateur non chargé.');
+          set({ error: err.message });
+          throw err;
+        }
         set({ loading: true, error: null });
         try {
-          const data = await updateUserRequest(updates);
+          const data = await updateUserRequest(id, updates);
           set({ user: data, error: null });
           return data;
         } catch (err) {
@@ -46,20 +63,33 @@ export const useUserStore = create(
         }
       },
 
-      // Vider les données utilisateur (logout)
-      logout: () => {
-        set({ user: null, error: null, loading: false });
+      // DELETE /user/:id — supprime TON compte.
+      deleteAccount: async () => {
+        const id = get().user?.id;
+        if (!id) return;
+        set({ loading: true, error: null });
+        try {
+          await removeUserRequest(id);
+          set({ user: null, loading: false });
+        } catch (err) {
+          set({ error: err.message, loading: false });
+          console.error('deleteAccount error:', err);
+          throw err;
+        }
       },
 
-      // Réinitialiser l'erreur
+      logout: () => {
+        set({ user: null, error: null, loading: false, viewedUser: null });
+      },
+
       clearError: () => {
         set({ error: null });
       },
     }),
     {
-      name: 'user-store', // Clé localStorage
+      name: 'user-store',
       partialize: (state) => ({
-        user: state.user, // Persiste SEULEMENT le user
+        user: state.user, // Persiste SEULEMENT ton propre profil
       }),
     }
   )

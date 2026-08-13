@@ -43,18 +43,7 @@ function App() {
       initAuth()
     }, [initAuth])
 
-    useEffect(() => {
-      const { isAuthenticated, initializing } = useAuthStore.getState();
-      const { user } = useUserStore.getState();
-      // Uniquement si :
-      // - pas en cours d'initialisation du token
-      // - utilisateur authentifié
-      // - pas de données utilisateur déjà chargées
-      if (!initializing && isAuthenticated && !user) {
-        useUserStore.getState().fetchUser();
-      }
-    }, []);
-
+    console.log("Fetch de TOUT les produits en db")
     useEffect(() => {
       const { products } = useProductStore.getState();
       if (products.length === 0) {

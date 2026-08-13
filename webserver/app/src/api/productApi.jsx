@@ -27,8 +27,8 @@ export async function createProductRequest(productData) {
   const { data } = await apiClient.post('/products', formData, {
     headers: { 'Content-Type': undefined },
   });
-  console.log("reponse de lapi zebi direct: ", data);
-  console.log("reponse de lapi zebi direct: ", data.data);
+  console.log("reponse de lapi brut: ", data);
+  console.log("reponse de lapi apres .data: ", data.data);
   return data.data;
 }
 

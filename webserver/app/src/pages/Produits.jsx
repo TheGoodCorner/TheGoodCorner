@@ -5,18 +5,18 @@ import ProductCard from '../components/products/ProductCard';
 
 function Products() {
   const products = useProductStore((state) => state.products);
+  const loading = useProductStore((state) => state.loading);
   const filters = useProductStore((state) => state.filters);
   const setFilters = useProductStore((state) => state.setFilters);
   const getFilteredProducts = useProductStore((state) => state.getFilteredProducts);
 
-  const categories = ['All', ...new Set(products.map((p) => p.category.name))];
+  const categories = ['All', ...new Set(products.map((p) => p.category?.name).filter(Boolean))];
   const filteredProducts = getFilteredProducts();
 
-  const handleCategoryChange = (category) => {
-    setFilters({ selectedCategory: category === 'All' ? '' : category.name });
+  const handleCategoryChange = (categoryName) => {
+    setFilters({ selectedCategory: categoryName === 'All' ? '' : categoryName });
   };
 
-  console.log(products);
   return (
     <div className='bg-[var(--color-bg)]'>
     <div className="products-container bg-[var(--color-bg)]">
@@ -95,7 +95,15 @@ function Products() {
 
         <main className="products-main">
           <div className="products-grid">
-            {filteredProducts.length > 0 ? (
+            {loading ? (
+              Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-[var(--color-surface-hover)] rounded-lg animate-pulse" />
+              ))
+            ) : products.length === 0 ? (
+              <p className="no-products text-[var(--color-text-muted)]">
+                Aucun produit disponible pour le moment. Revenez bientôt !
+              </p>
+            ) : filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))

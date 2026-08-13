@@ -56,9 +56,12 @@ export function useProductForm() {
       name: form.name.trim(),
       image: form.image,
       price: parseFloat(form.price),
+      // TODO: le backend attend categoryId (int, FK vers Category), pas un nom
+      // — bloqué tant qu'il n'y a pas de route pour lister les vraies
+      // catégories. Le dropdown envoie pour l'instant un slug arbitraire.
       category: form.category.trim(),
-      description: form.description.trim(),
-      quantity: 1,
+      description: form.description.trim(), // pas de colonne cote prisma (a voir)
+      stock: 1,
     });
 
     setSubmitting(false);
