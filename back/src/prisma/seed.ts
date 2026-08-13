@@ -5,7 +5,6 @@ import 'dotenv/config';
 import { hashIt } from '../utils/securityUtils.js';
 import { generateTokens, verifyRefreshToken, verifyAcessToken} from '../utils/jsonWebTokens.js'
 import { saveRefreshToken } from '../services/users/utilsUsers.js';
-import { create } from 'node:domain';
 // import generated prisma binaries containing scheme tables as methods/objects
 
 // get an instance of the database object from prisma
@@ -22,6 +21,10 @@ const getRandomInt = (min: number, max:number) :number =>
 	return (Math.floor(Math.random() * (max - min + 1) + min));
 }
 
+const getRandomFloat = (min: number, max: number, decimals: number = 1): number => {
+	const val = Math.random() * (max - min) + min;
+	return parseFloat(val.toFixed(decimals));
+};
 /**
  * return a ramdom element from an array using a random determined array index
  * @param array : string[]
@@ -39,11 +42,11 @@ const getRandomElement = <T>(array: T[]): T =>
 // just basic strings[] datastructures
 const firstNamePool:string[] = ['john', 'terry', 'larry' , 'suzette', 'maxime', 'ratatouille', 'solange', 'gims', 'acer' ];
 const lastNamePool:string[] = ['dubougnon', 'carpenterie' , 'leland' ,'frondeur', 'leboucher', 'creped', 'poudriere', 'camelier', 'fraise' ];
-const domainPool:string[] = ['@gmail.com', '@yahoo.fr', '@laposte.net', '@screemer.net'];
+const domainPool: string[] = [ 'gmail.com', 'hotmail.com', 'yahoo.com', 'laposte.net'];
 const productNamePool = ['Gants de Boxe Yokkao Elite', 'Gants d\'Entraînement Basique', 'Gants Muay Thai Premium', 'Gants de Compétition Pro', 'Gants pour Débutants', 'Gants d\'Entraînement Intensif', 'Gants Loisir Confort', 'Gants Boxe Anglaise', 'Gants d\'Entraînement Légers', 'Gants Kickboxing', 'Gants Sparring', 'Gants Ultra Premium'];
 const imagePool: string[] = Array.from({ length: 12 }, (_, i) => `uploads/image_${i}.jpg`);
 const defaultCategories = ['Professional', 'Training', 'Combat', 'Cardio'];
-const descriptionPool = ['Gants haut de gamme conçus pour la compétition, cuir véritable et rembourrage optimisé pour la protection des poings.', 'Parfaits pour débuter, ces gants offrent un bon compromis entre confort et durabilité pour vos séances régulières', 'TConçus spécifiquement pour le Muay Thai, avec un poignet renforcé et une mousse haute densité pour absorber les chocs.', 'Le choix des compétiteurs exigeants : finitions soignées, maintien optimal du poignet et amorti premium.', 'Légers et confortables, idéaux pour découvrir la boxe cardio sans se ruiner.', 'Pensés pour les séances intenses, avec une ventilation renforcée et un rembourrage résistant.', 'Un confort optimal pour vos entraînements loisir, sans compromis sur la protection.', 'Spécialement conçus pour la boxe anglaise, avec une prise en main précise et un excellent maintien du poignet.', 'Légers et souples, parfaits pour travailler la vitesse et la technique.', 'Robustes et bien rembourrés, conçus pour encaisser les échanges intenses du kickboxing.', 'Un amorti généreux pour protéger votre partenaire d\'entraînement autant que vous-même.', 'Le nec plus ultra : cuir premium, finitions artisanales et performance de niveau professionnel.'];
+const descriptionPool = ['Gants haut de gamme conçus pour la compétition, cuir véritable et rembourrage optimisé pour la protection des poings.', 'Parfaits pour débuter, ces gants offrent un bon compromis entre confort et durabilité pour vos séances régulières', 'Conçus spécifiquement pour le Muay Thai, avec un poignet renforcé et une mousse haute densité pour absorber les chocs.', 'Le choix des compétiteurs exigeants : finitions soignées, maintien optimal du poignet et amorti premium.', 'Légers et confortables, idéaux pour découvrir la boxe cardio sans se ruiner.', 'Pensés pour les séances intenses, avec une ventilation renforcée et un rembourrage résistant.', 'Un confort optimal pour vos entraînements loisir, sans compromis sur la protection.', 'Spécialement conçus pour la boxe anglaise, avec une prise en main précise et un excellent maintien du poignet.', 'Légers et souples, parfaits pour travailler la vitesse et la technique.', 'Robustes et bien rembourrés, conçus pour encaisser les échanges intenses du kickboxing.', 'Un amorti généreux pour protéger votre partenaire d\'entraînement autant que vous-même.', 'Le nec plus ultra : cuir premium, finitions artisanales et performance de niveau professionnel.'];
 const bioPool = ['Incapable de reculer. Pur produit du combat sans concession.', 'Spécialiste du KO au premier reprise. Pas le temps de bavarder.','Ancien adepte de la rue, aujourd\'hui maître du ring.','Calme au pesage, tempête sur le canvas.','Ne jure que par le travail au corps et la pression constante.','L\'art de l\'esquive et du contre parfait. Toujours intouchable.','Un mental d\'acier et des poings en béton armé.','Toujours là pour assurer le spectacle et faire rugir la foule.','Un style imprévisible. Capable de retourner un combat en une seconde.','Méthodique, froid et chirurgical. Une vraie machine.','La passion du noble art poussée à son paroxysme.','Encaisse tout, ne fatigue jamais. Un vrai cauchemar sur le long terme.'];
 const locationPool = [
   { city: 'Paris', region: 'Île-de-France', country: 'France', street: 'Rue du Faubourg Saint-Antoine', house_number: 42 },
@@ -55,13 +58,17 @@ const locationPool = [
   { city: 'Toulouse', region: 'Occitanie', country: 'France', street: 'Rue Pargaminières', house_number: 12 },
   { city: 'Nantes', region: 'Pays de la Loire', country: 'France', street: 'Rue de la Paix', house_number: 7 }
 ];
+const sellerReviewsPool : string[] = ['Vendeur ultra réactif, matériel comme neuf et emballage au top !','Article conforme à la description, livraison rapide. Je recommande sans hésiter.','Les gants sont super confortables mais le colis a mis un peu de temps à arriver.','Parfait ! Transaction fluide, vendeur très sérieux et courtois.','Produit conforme mais l\'odeur du cuir neuf était un peu forte au déballage.','Super qualité d\'équipement, vendeur passionné et de bon conseil !','Envoi soigné et rapide. Le matériel encaisse bien les entraînements intensifs.','Très bonne communication, le vendeur a répondu à toutes mes questions.'];
+
+
 /**
  * simple for loop that create a dummy randomized user and then push it to the array
  * @param undefined array
  * @param map builtin function
  * @return an initialized User
  */
-
+// seller review 
+// review count
 const randomUsers: Prisma.UserCreateInput[] = [];
 for (let i = 0; i < 4; i++) {
 	const firstName: string = getRandomElement(firstNamePool);
@@ -70,13 +77,16 @@ for (let i = 0; i < 4; i++) {
 	const email: string = `${username}${getRandomElement(domainPool)}`;
 	const bio: string = getRandomElement(bioPool);
 	const randomLocation = locationPool[Math.floor(Math.random() * locationPool.length)]
-
+	const sellerReviews = [getRandomElement(sellerReviewsPool)];
 	randomUsers.push({
 		email,
 		name: `${firstName} ${lastName}`,
-		password: `pass_${getRandomInt(0, 999)}`,
+		password: hashIt( `pass_${getRandomInt(0, 999)}`),
 		username,
 		bio: bio,
+		sellerReviews,
+		sellerRating: getRandomFloat(0, 5),
+		sellerReviewCount: getRandomInt(0, 50),
 		location: {
 			create: randomLocation!
 	}
