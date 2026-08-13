@@ -13,10 +13,11 @@
     "db:migrate:prod": "dotenv -e .env -- npx prisma migrate deploy",
     "db:studio": "dotenv -e .env -- npx prisma studio --schema=./src/prisma/schema.prisma",
     "db:migrate": "dotenv -e .env -- npx prisma migrate dev --schema=./src/prisma/schema.prisma",
-    "db:reset": "dotenv -e .env -- npx prisma migrate reset --schema=./src/prisma/schema.prisma",
+    "db:reset": "dotenv -e .env -- npx prisma migrate reset --force --schema=./src/prisma/schema.prisma",
     "db:adjust": "dotenv -e .env -- npx prisma db push --schema=./src/prisma/schema.prisma",
     "db:generate": "dotenv -e .env -- npx prisma generate --schema=./src/prisma/schema.prisma",
-    "db:populate": "tsx src/prisma/seed.ts"
+    "db:populate": "tsx src/prisma/seed.ts",
+	"db:resetPopulate": "dotenv -e .env npm run db:reset -- -y && npm run db:populate"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

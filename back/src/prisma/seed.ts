@@ -53,7 +53,7 @@ const descriptionPool = [' A rather Professionnal Tool !', ' This one is more fo
  */
 
 const randomUsers: Prisma.UserCreateInput[] = [];
-for (let i = 0; i < 10; i++) {
+for (let i = 0; i < 5; i++) {
 	const firstName: string = getRandomElement(firstNamePool);
 	const lastName: string = getRandomElement(lastNamePool);
 	const username: string = `${firstName}_${getRandomInt(100, 999)}`;
@@ -98,7 +98,7 @@ async function main() {
 		const { refreshToken } = generateTokens(user.id, user.email);
 		const hashedRefreshToken = hashIt(refreshToken);
 		await saveRefreshToken(user.id, hashedRefreshToken);
-		const productCount = getRandomInt(1, 4);
+		const productCount = getRandomInt(1, 2);
 		const selectedCategory = getRandomElement(defaultCategories);
 		const selectedDescription = getRandomElement(descriptionPool);
 		const selectedImage = getRandomElement(imagePool);
@@ -109,7 +109,7 @@ async function main() {
 		  body: {
 			name: `${getRandomElement(productNamePool)} #${getRandomInt(10, 99)}`,
 			price: getRandomInt(20, 500),
-			quantity: getRandomInt(1, 10),
+			quantity: getRandomInt(1, 3),
 			description: selectedDescription,
 			category: selectedCategory,
 		  },
