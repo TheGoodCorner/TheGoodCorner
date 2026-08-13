@@ -31,7 +31,7 @@ const generalController =
 	{
 		try{
 			const products = await prisma.product.findMany(
-				{include: {category: true}}
+				{include: {category: true, author:true}}
 			);
 			console.log('all product got sucessfully returned');
 			return(res.status(200).json({status: 'OK', data:products}));
