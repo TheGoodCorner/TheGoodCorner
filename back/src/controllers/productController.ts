@@ -77,3 +77,18 @@ const ProductController =
 	
 }
 export default ProductController;
+
+// const updatedProduct = await prisma.product.updateMany({
+//   where: {
+//     id: productId,
+//     stock: { gte: requestedQuantity }, // Ensures stock is strictly >= requested quantity
+//   },
+//   data: {
+//     stock: { decrement: requestedQuantity },
+//   },
+// });
+
+// if (updatedProduct.count === 0) {
+//   // Stock was bought by someone else a fraction of a second earlier
+//   return res.status(400).json({ error: "Item went out of stock during checkout!" });
+// }
