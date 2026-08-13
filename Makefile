@@ -103,7 +103,6 @@ re: clean all
 
 back:
 
-	cp -r webserver/app/public/Images_db_test ./back/conf
 	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)back container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT) 2>/dev/null; \
