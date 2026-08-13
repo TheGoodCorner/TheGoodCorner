@@ -21,7 +21,7 @@ app.use(cors({ // allow cors (cross origin ressource sharing) protocols on all i
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
-app.use('/uploads', express.static(path.resolve('uploads'))); // allow static file serving for images 
+app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
 
 app.use('/', generalRouter); // general routes
 app.use('/', productRouter); // product routes
