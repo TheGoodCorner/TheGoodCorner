@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
-import { useUserStore } from '../../stores/userStore';
 import { useUIStore } from '../../stores/uiStore';
 import { getInitials, getAvatarColor } from '../../utils/avatar';
 import { PlusCircle, Star } from 'lucide-react'
@@ -9,9 +8,8 @@ import { PlusCircle, Star } from 'lucide-react'
 export default function ProductCard({ product }) {
   const { addToCart } = useCartStore()
   const { openUi } = useUIStore()
-  const { user } = useUserStore()
 
-
+  const author = product.author
   const handleAddToCart = () => {
     // Item panier volontairement "plat" : pas besoin de category/author
     // imbriqués une fois dans le panier, et ça évite toute collision avec

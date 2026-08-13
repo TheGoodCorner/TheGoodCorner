@@ -64,33 +64,6 @@ const ReviewCard = ({ author, avatar, rating, date, content, product }) => (
   </div>
 );
 
-const REVIEWS = [
-  {
-    id: 1,
-    author: 'Marie Dubois',
-    rating: 5,
-    date: 'Il y a 2 semaines',
-    content: 'Produit exactement comme décrit, super qualité. Emballage impeccable et livraison rapide. Je recommande vivement !',
-    product: 'Chaise vintage années 70'
-  },
-  {
-    id: 2,
-    author: 'Thomas Lefevre',
-    rating: 5,
-    date: 'Il y a 1 mois',
-    content: 'Vendeur très professionnel. Excellente communication et produit de très haute qualité. 10/10',
-    product: 'Table basse marbre'
-  },
-  {
-    id: 3,
-    author: 'Sophie Martin',
-    rating: 4,
-    date: 'Il y a 3 semaines',
-    content: 'Très beau meuble, légère différence de couleur par rapport aux photos mais conforme à la description.',
-    product: 'Commode 4 tiroirs'
-  },
-];
-
 function Profile() {
   const { user } = useUserStore();
   const { createProduct } = useProductStore();
@@ -104,18 +77,26 @@ function Profile() {
     });
   };
 
-  // Déterminer le nom d'affichage
   const displayName = user?.name || user?.username || 'Utilisateur';
-  
-  // Déterminer la note (sellerRating par défaut 0), a mettre en const (let pour tester)
-  let userRating = user?.sellerRating || 0;
-  userRating = 3;
-  // Nombre d'avis du vendeur
+  const userRating = user?.sellerRating || 0;
   const reviewCount = user?.sellerReviewCount || 0;
 
-  // Affichage des avis
-  const reviewsToDisplay = showAllReviews ? REVIEWS : REVIEWS.slice(0, 3);
+  const formatReviews = (reviews) => {
+    if (!Array.isArray(reviews)) return [];
+    
+    return reviews.map((content, index) => ({
+      id: index,
+      author: 'Client vérifié',
+      rating: userRating,
+      date: formatDate(user?.updatedAt || new Date().toISOString()),
+      content: typeof content === 'string' ? content : '',
+      product: null
+    }));
+  };
 
+  const sellerReviews = formatReviews(user?.sellerReviews || []);
+  const reviewsToDisplay = showAllReviews ? sellerReviews : sellerReviews.slice(0, 3);
+  
   return (
     <div className='min-h-screen bg-[var(--color-bg)]'>
       {/* SECTION PROFIL */}
@@ -230,7 +211,7 @@ function Profile() {
                     Mes avis
                   </h2>
                   <p className='text-sm text-[var(--color-text-muted)] mt-1'>
-                    {REVIEWS.length} avis des clients
+                    {reviewCount} avis des clients
                   </p>
                 </div>
               </div>
@@ -248,16 +229,16 @@ function Profile() {
                 ))}
               </div>
 
-              {!showAllReviews && REVIEWS.length > 3 && (
+              {!showAllReviews && reviewCount > 3 && (
                 <button 
                   onClick={() => setShowAllReviews(true)}
                   className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
                 >
-                  Voir tous les avis ({REVIEWS.length})
+                  Voir tous les avis ({reviewCount})
                 </button>
               )}
 
-              {showAllReviews && REVIEWS.length > 3 && (
+              {showAllReviews && reviewCount > 3 && (
                 <button 
                   onClick={() => setShowAllReviews(false)}
                   className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
