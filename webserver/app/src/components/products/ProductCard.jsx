@@ -28,10 +28,10 @@ export default function ProductCard({ product }) {
     <div className="card">
       <div className="card-header">
         <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold ${getAvatarColor(author.name)}`}>
-            {getInitials(author.name)}
+          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold ${getAvatarColor(author.username)}`}>
+            {getInitials(author.username)}
           </div>
-          <span className="text-xs font-medium text-gray-600">{author.name || 'Vendeur inconnu'}</span>
+          <span className="text-xs font-medium text-gray-600">{author.username || 'Vendeur inconnu'}</span>
           <div className="flex items-center gap-1 ml-3">
             <Star size={15} className='text-[var(--color-primary)]' fill='var(--color-primary)'/>
             <span className="text-xs font-medium text-gray-700">{author?.sellerRating ?? '—'}</span>
