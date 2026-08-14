@@ -1,15 +1,34 @@
 import { LucideIcon } from 'lucide-react';
 
-export const InfoCard = ({ icon: Icon, label, value }) => (
+export const InfoCard = ({
+  icon: Icon,
+  label,
+  value,
+  editable = false,
+  isEditing = false,
+  onChange,
+  type = 'text',
+  placeholder = 'Non renseigné',
+}) => (
   <div className='flex items-start gap-3'>
     <Icon size={20} className='text-[var(--color-primary)] flex-shrink-0 mt-0.5' />
-    <div className='min-w-0'>
+    <div className='min-w-0 flex-1'>
       <p className='text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide'>
         {label}
       </p>
-      <p className='text-sm font-medium text-[var(--color-text)] mt-0.5'>
-        {value || 'Non renseigné'}
-      </p>
+      {editable && isEditing ? (
+        <input
+          type={type}
+          value={value ?? ''}
+          onChange={onChange}
+          placeholder={placeholder}
+          className='w-full mt-0.5 text-sm font-medium text-[var(--color-text)] bg-transparent border-b border-dashed border-[var(--color-border)] focus:outline-none focus:border-solid focus:border-[var(--color-primary)] transition-colors py-0.5'
+        />
+      ) : (
+        <p className='text-sm font-medium text-[var(--color-text)] mt-0.5'>
+          {value || placeholder}
+        </p>
+      )}
     </div>
   </div>
 );

@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
-import { Button } from '../components/UI/Button';
-import { UserRoundPen, Star, MapPin, Phone, Shield, Award, TrendingUp, MessageCircle, Mail } from 'lucide-react';
-import { useProductStore } from '../stores/productStore';
+import { MessageCircle } from 'lucide-react';
 import { ProductForm } from '../components/products/ProductForm';
-import { useUserStore } from '../stores/userStore';
+import { useProfileEditForm } from '../hooks/useProfileEditForm';
 import { ProfilHeader } from '../components/profile/ProfilHeader';
 import { ProfilInfos } from '../components/profile/ProfilInfos';
+import { ReviewCard } from '../components/reviews/ReviewCard';
 
 function Profile() {
-  const { user } = useUserStore();
-  const { createProduct } = useProductStore();
   const [showAllReviews, setShowAllReviews] = useState(false);
+
+  const {
+    user,
+    isEditing,
+    form,
+    submitting,
+    error,
+    startEditing,
+    cancelEditing,
+    handleChange,
+    save,
+  } = useProfileEditForm();
 
   // Formater la date de création
   const formatDate = (dateString) => {
@@ -51,11 +60,28 @@ function Profile() {
             userRating={userRating}
             reviewCount={reviewCount}
             formatDate={formatDate}
+            isEditing={isEditing}
+            submitting={submitting}
+            onEdit={startEditing}
+            onCancel={cancelEditing}
+            onSave={save}
           />
+
+          {isEditing && error && (
+            <div className='mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
+              <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+                {error}
+              </p>
+            </div>
+          )}
+
           <ProfilInfos 
             user={user}
             userRating={userRating}
             reviewCount={reviewCount}
+            isEditing={isEditing}
+            form={form}
+            onFieldChange={handleChange}
           />
         </div>
       </section>

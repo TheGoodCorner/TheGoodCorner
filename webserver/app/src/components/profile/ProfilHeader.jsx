@@ -1,9 +1,20 @@
 import React from 'react';
 import { Button } from '../UI/Button';
-import { UserRoundPen, Shield } from 'lucide-react';
+import { UserRoundPen, Shield, Check, X } from 'lucide-react';
 import { StarRating } from '../UI/StarRating';
 
-export function ProfilHeader({ user, displayName, userRating, reviewCount, formatDate }) {
+export function ProfilHeader({
+  user,
+  displayName,
+  userRating,
+  reviewCount,
+  formatDate,
+  isEditing,
+  submitting,
+  onEdit,
+  onCancel,
+  onSave,
+}) {
   return (
     <div className='flex items-start justify-between gap-6 mb-8'>
       <div className='flex gap-5 flex-1'>
@@ -34,15 +45,39 @@ export function ProfilHeader({ user, displayName, userRating, reviewCount, forma
         </div>
       </div>
 
-      {/* Bouton modifier */}
-      <Button 
-        className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] px-5 py-2 rounded-lg transition-colors flex-shrink-0'
-        variant='secondary'
-        icon={UserRoundPen}
-        iconPosition='right'
-      >  
-        Modifier
-      </Button>
+      {/* Bouton modifier, ou Annuler/Sauvegarder pendant l'édition */}
+      {isEditing ? (
+        <div className='flex items-center gap-2 flex-shrink-0'>
+          <Button
+            onClick={onCancel}
+            variant='outline'
+            icon={X}
+            disabled={submitting}
+          >
+            Annuler
+          </Button>
+          <Button
+            onClick={onSave}
+            className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] px-5 py-2 rounded-lg transition-colors'
+            variant='secondary'
+            icon={Check}
+            iconPosition='right'
+            loading={submitting}
+          >
+            Sauvegarder
+          </Button>
+        </div>
+      ) : (
+        <Button 
+          onClick={onEdit}
+          className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] px-5 py-2 rounded-lg transition-colors flex-shrink-0'
+          variant='secondary'
+          icon={UserRoundPen}
+          iconPosition='right'
+        >  
+          Modifier
+        </Button>
+      )}
     </div>
   );
 }

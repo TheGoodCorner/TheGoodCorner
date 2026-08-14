@@ -2,7 +2,7 @@ import React from 'react';
 import { InfoCard } from '../UI/InfoCard';
 import { Mail, Phone, Award, TrendingUp, MapPin, Star, Shield } from 'lucide-react';
 
-export function ProfilInfos({ user, userRating, reviewCount }) {
+export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, onFieldChange }) {
   return (
     <>
       {/* Grille d'infos */}
@@ -10,7 +10,11 @@ export function ProfilInfos({ user, userRating, reviewCount }) {
         <InfoCard 
           icon={Mail}
           label='Email'
-          value={user?.email}
+          value={isEditing ? form.email : user?.email}
+          editable
+          isEditing={isEditing}
+          onChange={onFieldChange('email')}
+          type='email'
         />
         <InfoCard 
           icon={Phone}
@@ -30,7 +34,10 @@ export function ProfilInfos({ user, userRating, reviewCount }) {
         <InfoCard 
           icon={MapPin}
           label='Localisation'
-          value={user?.location?.name || 'Non renseigné'}
+          value={isEditing ? form.location : (user?.location?.name || 'Non renseigné')}
+          editable
+          isEditing={isEditing}
+          onChange={onFieldChange('location')}
         />
         <InfoCard 
           icon={Star}
@@ -40,7 +47,7 @@ export function ProfilInfos({ user, userRating, reviewCount }) {
         <InfoCard 
           icon={Shield}
           label='Paiements'
-          value='Sécurisés  (fausse donee)'
+          value='Sécurisés  (fausse donnee)'
         />
         <InfoCard 
           icon={Award}
@@ -54,9 +61,19 @@ export function ProfilInfos({ user, userRating, reviewCount }) {
         <h3 className='text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3'>
           À propos
         </h3>
-        <p className='text-sm text-[var(--color-text)] leading-relaxed max-w-2xl'>
-          {user?.bio || 'Aucune description fournie'}
-        </p>
+        {isEditing ? (
+          <textarea
+            value={form.bio}
+            onChange={onFieldChange('bio')}
+            rows={4}
+            placeholder='Parle un peu de toi...'
+            className='w-full max-w-2xl text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors'
+          />
+        ) : (
+          <p className='text-sm text-[var(--color-text)] leading-relaxed max-w-2xl'>
+            {user?.bio || 'Aucune description fournie'}
+          </p>
+        )}
       </div>
     </>
   );

@@ -45,7 +45,7 @@ export const useUserStore = create(
       updateProfile: async (updates) => {
         const id = get().user?.id;
         if (!id) {
-          const err = new Error('Impossible de mettre à jour : utilisateur non chargé.');
+          const err = new Error('Impossible de mettre à jour : Aucun user connecter.');
           set({ error: err.message });
           throw err;
         }
