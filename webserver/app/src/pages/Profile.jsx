@@ -18,6 +18,7 @@ function Profile() {
     startEditing,
     cancelEditing,
     handleChange,
+    handleLocationChange,
     save,
   } = useProfileEditForm();
 
@@ -82,6 +83,7 @@ function Profile() {
             isEditing={isEditing}
             form={form}
             onFieldChange={handleChange}
+            onLocationFieldChange={handleLocationChange}
           />
         </div>
       </section>
