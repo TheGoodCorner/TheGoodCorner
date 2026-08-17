@@ -164,10 +164,18 @@ function ProductDetail() {
         <section className="mb-16">
           <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white ${getAvatarColor(authorName)}`}>
-                {getInitials(authorName)}
-              </div>
+            <Link to={`/profile/${product.author?.id}`} className="flex items-center gap-4 hover:opacity-80 transition-opacity">
+              {product.author?.avatar ? (
+                  <img
+                    src={product.author.avatar}
+                    alt={authorName}
+                    className="w-16 h-16 rounded-full flex-shrink-0 object-cover"
+                  />
+                ) : (
+                <div className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white ${getAvatarColor(authorName)}`}>
+                  {getInitials(authorName)}
+                </div>
+              )}
               <div>
                 <h4 className="text-lg font-semibold text-[var(--color-text)] mb-2">
                   {authorName || 'Vendeur inconnu'}
@@ -177,7 +185,7 @@ function ProductDetail() {
                   <span>{memberSince ? `Membre depuis ${memberSince}` : 'Nouveau membre'}</span>
                 </div>
               </div>
-            </div>
+            </Link>
             <Button variant="outline" size="md" icon={MessageCircle} onClick={() => {}}>
               Contacter le vendeur
             </Button>

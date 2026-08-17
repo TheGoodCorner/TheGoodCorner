@@ -5,8 +5,6 @@ import { apiClient } from './client';
 //GET /products   TOUS LES PRODUITS
 export async function fetchAllProducts() {
   const {data} = await apiClient.get('/products');
-  console.log("response brut: ", data)
-  console.log("response apres .data: ", data.data)
   return data.data;
 }
 
@@ -21,7 +19,6 @@ export async function fetchProductByIdRequest(id) {
 // On construit le FormData ici pour que le reste de l'app manipule un objet
 // JS normal, comme pour updateUserRequest.
 export async function createProductRequest(productData) {
-  console.log(productData);
   const formData = new FormData();
   Object.entries(productData).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -37,8 +34,6 @@ export async function createProductRequest(productData) {
   const { data } = await apiClient.post('/products', formData, {
     headers: { 'Content-Type': undefined },
   });
-  console.log("reponse de lapi brut: ", data);
-  console.log("reponse de lapi apres .data: ", data.data);
   return data.data;
 }
 
