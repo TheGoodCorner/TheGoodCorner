@@ -70,10 +70,10 @@ const reviewController =
 			res.status(500).json({status: 'ERROR', message: 'internal server error', error: "Unknown error"});
 		}
 	},
-	updateReview: async (req:AuthenticatedRequest<{ id:string }>, res:Response) => {
+	updateReview: async (req:AuthenticatedRequest<{ id:string, reviewId: string }>, res:Response) => {
 		try {
 			const userId = req.user!.id;
-			const reviewedId = parseInt(req.params.id, 10);
+			const reviewedId = parseInt(req.params.reviewId, 10);
 			const { reviews, reviewRating } = req.body;
 			
 			if (isNaN(reviewedId))
@@ -129,10 +129,10 @@ const reviewController =
 			res.status(500).json({status: 'ERROR', message: 'internal server error', error: "Unknown error"});
 		}
 	},
-	deleteReview: async (req:AuthenticatedRequest<{ id:string }>, res:Response) => {
+	deleteReview: async (req:AuthenticatedRequest<{ id:string, reviewId: string }>, res:Response) => {
 		try {
 			const userId = req.user!.id;
-			const reviewedId = parseInt(req.params.id, 10);
+			const reviewedId = parseInt(req.params.reviewId, 10);
 			
 			if (isNaN(reviewedId))
 				return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
