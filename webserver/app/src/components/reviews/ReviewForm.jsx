@@ -3,7 +3,7 @@ import { useReviewStore } from "../../stores/reviewStore";
 import { useUserStore } from "../../stores/userStore";
 import { Button } from "../UI/Button";
 
-export function ReviewForm() {
+export function ReviewForm(id) {
   const [reviewText, setReviewText] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +23,7 @@ export function ReviewForm() {
     setLoading(true);
     
 	try {
-      await createReview(user.id, { text: reviewText });
+      await createReview(id, { reviews: reviewText, reviewRating: 3 });
       setReviewText("");
     } catch (error) {
       console.error("Erreur:", error);

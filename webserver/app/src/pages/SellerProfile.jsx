@@ -243,7 +243,7 @@ function SellerProfile() {
         )}
       </div>
       <div className="mt-12 pt-8 border-t border-[var(--color-border)]" />
-      <ReviewForm />
+      <ReviewForm id={id}/>
     </div>
   );
 }
