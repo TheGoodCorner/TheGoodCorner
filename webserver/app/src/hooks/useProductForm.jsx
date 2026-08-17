@@ -15,6 +15,7 @@ export function useProductForm() {
     image: null,
     price: '',
     category: '',
+    customCategory: '',
     description: '',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -34,6 +35,7 @@ export function useProductForm() {
     if (!form.image) return 'Ajoute une image.';
     if (!form.price || isNaN(parseFloat(form.price))) return 'Le prix doit être un nombre valide.';
     if (parseFloat(form.price) <= 0) return 'Le prix doit être supérieur à 0.';
+	if (form.category === 'other' && !form.customCategory.trim()) return 'Précise la catégorie personnalisée.';
     if (!form.description.trim()) return 'Ajoute une description.';
     if (form.description.length < 10) return 'La description doit faire au moins 10 caractères.';
     return null;
@@ -52,6 +54,7 @@ export function useProductForm() {
 
     setSubmitting(true);
 
+	const finalCategory = form.category === 'other'? form.customCategory.trim(): form.category.trim();
     const success = await createProduct({
       name: form.name.trim(),
       image: form.image,
@@ -59,7 +62,7 @@ export function useProductForm() {
       // TODO: le backend attend categoryId (int, FK vers Category), pas un nom
       // — bloqué tant qu'il n'y a pas de route pour lister les vraies
       // catégories. Le dropdown envoie pour l'instant un slug arbitraire.
-      category: form.category.trim(),
+      category: finalCategory,
       description: form.description.trim(), // pas de colonne cote prisma (a voir)
       stock: 1,
     });
@@ -71,6 +74,8 @@ export function useProductForm() {
         name: '',
         image: null,
         price: '',
+		category: '',
+        customCategory: '',
         description: '',
       });
       onSuccess?.();

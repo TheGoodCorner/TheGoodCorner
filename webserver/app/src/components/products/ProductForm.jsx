@@ -2,13 +2,13 @@ import { useProductForm } from '../../hooks/useProductForm';
 import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
 import { FileInput } from '../UI/FileInput';
-import { Package, Image, DollarSign, Tag, FileText } from 'lucide-react';
+import { Package, Image, DollarSign, Tag, FileText, PlusCircle } from 'lucide-react';
 
 const CATEGORIES = [
-  { value: 'furniture', label: 'Mobilier' },
-  { value: 'electronics', label: 'Électronique' },
-  { value: 'clothing', label: 'Vêtements' },
-  { value: 'food', label: 'Alimentation' },
+  { value: 'Training', label: 'Entrainement' },
+  { value: 'Professionnal', label: 'Professionnel' },
+  { value: 'Combat', label: 'combat' },
+  { value: 'Cardio', label: 'cardio' },
   { value: 'other', label: 'Autre' },
 ];
 
@@ -62,7 +62,22 @@ export function ProductForm({ onSuccess }) {
           </div>
         </div>
       </div>
-
+	{/* Champ affiché uniquement si "Autre" est sélectionné */}
+        {form.category === 'other' && (
+        <div className='animate-in fade-in slide-in-from-top-2 duration-200'>
+          <FormField
+            id='custom-category'
+            label='Précise la catégorie personnalisée'
+            icon={PlusCircle}
+            type='text'
+            value={form.customCategory || ''}
+            onChange={handleChange('customCategory')}
+            placeholder='Ex: Équipements de frappe'
+            disabled={submitting}
+            required
+          />
+        </div>
+      )}
       {/* Ligne 2: Prix + Image */}
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
         <FormField

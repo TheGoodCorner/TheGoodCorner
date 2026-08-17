@@ -16,7 +16,7 @@ export function ReviewForm({id}) {
       return;
     }
     if (!reviewText.trim()) {
-      setError("Veuillez écrire un avis");
+    //   setError("Veuillez écrire un avis");
       return;
     }
 
