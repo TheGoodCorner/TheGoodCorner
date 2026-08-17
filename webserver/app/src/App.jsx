@@ -16,6 +16,7 @@ import ProductDetail from './pages/ProduitDetail';
 import Login from './pages/Login';
 import Contact from './pages/Contact';
 import Profile from './pages/Profile';
+import SellerProfile from './pages/SellerProfile';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -62,6 +63,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id" element={<SellerProfile />} />
         </Route>
 
         {/* Routes sans Navbar/Footer */}
