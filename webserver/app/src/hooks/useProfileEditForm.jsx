@@ -6,15 +6,9 @@ import { useUserStore } from '../stores/userStore';
  * état d'édition, valeurs des champs modifiables, sauvegarde via
  * userStore.updateProfile (PUT /user/:id).
  *
- * Champs branchés : email, téléphone, bio, et l'adresse complète (location).
- * Le backend attend `location` comme un objet JSON stringifié dans le
- * FormData (voir updateUser.ts côté API) avec les clés country / region /
- * city / street / house_number / additionnal_infos.
- *
- * Attention à l'asymétrie lecture/écriture sur l'adresse : l'API renvoie
- * `location.houseNumber` (camelCase, cf. schema Prisma) mais attend
- * `house_number` (snake_case) en écriture — d'où le mapping explicite
- * dans buildFormFromUser.
+ * Champs branchés : email, téléphone, bio, adresse complète (location),
+ * et l'avatar (upload via multer, voir userController.ts —
+ * uploadMiddleware.single('image')).
  */
 function buildFormFromUser(user) {
   return {
@@ -33,6 +27,7 @@ function buildFormFromUser(user) {
 }
 
 const LOCATION_REQUIRED_FIELDS = ['country', 'region', 'city', 'street', 'house_number'];
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 Mo — ajuste si ton uploadMiddleware a une autre limite
 
 export function useProfileEditForm() {
   const user = useUserStore((state) => state.user);
@@ -45,6 +40,11 @@ export function useProfileEditForm() {
   const [submitting, setSubmitting] = useState(false);
   const [validationError, setValidationError] = useState(null);
 
+  // Fichier avatar en attente + son URL de prévisualisation (blob: local,
+  // tant que rien n'est encore sauvegardé).
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState(null);
+
   // Tant qu'on n'édite pas, le formulaire reste synchro avec le profil
   // (user qui arrive après le refresh initial, ou juste après une
   // sauvegarde réussie).
@@ -52,8 +52,15 @@ export function useProfileEditForm() {
     if (!isEditing) setForm(buildFormFromUser(user));
   }, [user, isEditing]);
 
+  const resetAvatarSelection = () => {
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setAvatarFile(null);
+    setAvatarPreview(null);
+  };
+
   const startEditing = () => {
     setForm(buildFormFromUser(user));
+    resetAvatarSelection();
     setValidationError(null);
     clearStoreError();
     setIsEditing(true);
@@ -61,6 +68,7 @@ export function useProfileEditForm() {
 
   const cancelEditing = () => {
     setForm(buildFormFromUser(user));
+    resetAvatarSelection();
     setValidationError(null);
     clearStoreError();
     setIsEditing(false);
@@ -78,24 +86,37 @@ export function useProfileEditForm() {
     if (storeError) clearStoreError();
   };
 
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // permet de reprendre le même fichier plus tard si besoin
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setValidationError('Le fichier doit être une image (PNG ou JPEG).');
+      return;
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      setValidationError('Image trop lourde (5 Mo max).');
+      return;
+    }
+
+    if (avatarPreview) URL.revokeObjectURL(avatarPreview);
+    setValidationError(null);
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
   const save = async () => {
     if (!form.email.trim()) {
       setValidationError("L'email ne peut pas être vide.");
       return;
     }
 
-    // Même règle que le backend (userUpdate.ts) : optionnel, mais si
-    // renseigné, exactement 10 chiffres. Vérifié ici pour éviter un
-    // aller-retour réseau sur un format évidemment invalide.
+    // Même règle que le backend (updateUser.ts) : optionnel, mais si
+    // renseigné, exactement 10 chiffres.
     const phoneDigits = form.phoneNumber.replace(/\D/g, '');
     if (form.phoneNumber.trim() !== '' && phoneDigits.length !== 10) {
       setValidationError('Numéro de téléphone invalide (10 chiffres requis).');
-      return;
-    }
-
-    const additionnal_infos = form.location.additionnal_infos;
-    if (additionnal_infos.length > 50) {
-      setValidationError('Pas plus de 50 caractères pour le complément d\'adresse')
       return;
     }
 
@@ -133,11 +154,19 @@ export function useProfileEditForm() {
         });
       }
 
+      if (avatarFile) {
+        // La clé DOIT être `image` : c'est le nom attendu par
+        // uploadMiddleware.single('image') côté route PUT /user/:id.
+        payload.image = avatarFile;
+      }
+
       await updateProfile(payload);
+      resetAvatarSelection();
       setIsEditing(false);
     } catch {
-      // Erreur déjà posée dans userStore.error par updateProfile — le
-      // backend renvoie un message clair (400/409) au lieu d'une 500.
+      // Erreur déjà posée dans userStore.error par updateProfile — on
+      // garde la photo sélectionnée pour ne pas faire tout re-choisir en
+      // cas d'échec dû à un autre champ.
     } finally {
       setSubmitting(false);
     }
@@ -149,10 +178,12 @@ export function useProfileEditForm() {
     form,
     submitting,
     error: validationError || storeError,
+    avatarSrc: avatarPreview || user?.avatar,
     startEditing,
     cancelEditing,
     handleChange,
     handleLocationChange,
+    handleAvatarChange,
     save,
   };
 }

@@ -15,10 +15,12 @@ function Profile() {
     form,
     submitting,
     error,
+    avatarSrc,
     startEditing,
     cancelEditing,
     handleChange,
     handleLocationChange,
+    handleAvatarChange,
     save,
   } = useProfileEditForm();
 
@@ -63,6 +65,8 @@ function Profile() {
             formatDate={formatDate}
             isEditing={isEditing}
             submitting={submitting}
+            avatarSrc={avatarSrc}
+            onAvatarChange={handleAvatarChange}
             onEdit={startEditing}
             onCancel={cancelEditing}
             onSave={save}

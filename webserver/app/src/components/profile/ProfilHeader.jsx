@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '../UI/Button';
-import { UserRoundPen, Shield, Check, X } from 'lucide-react';
+import { UserRoundPen, Shield, Check, X, Camera } from 'lucide-react';
 import { StarRating } from '../UI/StarRating';
 
 export function ProfilHeader({
@@ -11,16 +11,56 @@ export function ProfilHeader({
   formatDate,
   isEditing,
   submitting,
+  avatarSrc,
+  onAvatarChange,
   onEdit,
   onCancel,
   onSave,
 }) {
+  // Retombe sur le dégradé + initiale si l'image casse (404, url
+  // invalide...) — même logique que UI/Avatar.jsx.
+  const [imgFailed, setImgFailed] = useState(false);
+  useEffect(() => {
+    setImgFailed(false);
+  }, [avatarSrc]);
+
+  const showImage = Boolean(avatarSrc) && !imgFailed;
+
   return (
     <div className='flex items-start justify-between gap-6 mb-8'>
       <div className='flex gap-5 flex-1'>
         {/* Avatar */}
-        <div className='w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl'>
-          {displayName.charAt(0).toUpperCase()}
+        <div className='relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0'>
+          <div className='w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl'>
+            {showImage ? (
+              <img
+                src={avatarSrc}
+                alt={displayName}
+                onError={() => setImgFailed(true)}
+                className='w-full h-full object-cover'
+              />
+            ) : (
+              displayName.charAt(0).toUpperCase()
+            )}
+          </div>
+
+          {isEditing && (
+            <label
+              htmlFor='avatar-upload'
+              className='absolute -bottom-1 -right-1 flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] shadow-md border-2 border-[var(--color-surface)] cursor-pointer hover:bg-[var(--color-primary-hover)] transition-colors'
+              title='Changer la photo de profil'
+            >
+              <Camera size={14} aria-hidden='true' />
+              <input
+                id='avatar-upload'
+                type='file'
+                accept='.png,.jpeg,.jpg,image/png,image/jpeg'
+                onChange={onAvatarChange}
+                className='sr-only'
+                aria-label='Changer la photo de profil'
+              />
+            </label>
+          )}
         </div>
         
         {/* Infos principales */}
