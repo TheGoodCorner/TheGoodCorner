@@ -44,10 +44,8 @@ function App() {
       initAuth()
     }, [initAuth])
 
-    console.log("Fetch de TOUT les produits en db")
     useEffect(() => {
       const { products } = useProductStore.getState();
-      console.log("produits dans productStore:", products)
       if (products.length === 0) {
         useProductStore.getState().fetchProducts();
       }

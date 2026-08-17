@@ -29,7 +29,6 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const data = await fetchAllProducts();
-      console.log("response apres .json(): ", data)
       set({ products: data, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
@@ -56,8 +55,8 @@ export const useProductStore = create((set, get) => ({
     try {
       const data = await createProductRequest(productData);
       set((state) => ({ products: [...state.products, data], loading: false }));
-   const updatedState = get();
-    console.log("Produits après ajout:", updatedState.products);      return data;
+      const updatedState = get();
+      return data;
     } catch (err) {
       set({ error: err.message, loading: false });
       throw err;

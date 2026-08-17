@@ -6,6 +6,7 @@ import { Button } from '../components/UI/Button';
 import { StarRating } from '../components/UI/StarRating';
 import { ReviewCard } from '../components/reviews/ReviewCard';
 import ProductCard from '../components/products/ProductCard';
+import { ReviewForm } from '../components/reviews/ReviewForm';
 
 function SellerProfileSkeleton() {
   return (
@@ -241,6 +242,8 @@ function SellerProfile() {
           </div>
         )}
       </div>
+      <div className="mt-12 pt-8 border-t border-[var(--color-border)]" />
+      <ReviewForm />
     </div>
   );
 }

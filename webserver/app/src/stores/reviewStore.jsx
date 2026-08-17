@@ -11,20 +11,16 @@ import {
 export const useReviewStore = create(
   persist(
     (set, get) => ({
-      // Tous les avis QUE TU AS ÉCRITS (privé, complet) — rempli par
-      // fetchUserReviews() pour récupérer tous tes avis, ou mis à jour
-      // après créer/modifier/supprimer.
       reviews: [],
       loading: false,
       error: null,
 
 
-      // GET /user/reviews — TOUS tes avis (privé). L'id vient du user
-      // connecté (depuis authStore ou userStore).
-      fetchUserReviews: async (userId) => {
+      // GET /user/reviews — TOUS tes avis (privé).
+      fetchUserReviews: async (id) => {
         set({ loading: true, error: null });
         try {
-          const data = await fetchUserReviewsRequest(userId);
+          const data = await fetchUserReviewsRequest(id);
           set({ reviews: data, loading: false });
           return data;
         } catch (err) {
@@ -33,12 +29,12 @@ export const useReviewStore = create(
         }
       },
 
-      // POST /reviews — crée un nouvel avis. Ajoute l'avis créé à ton
+      // POST crée un nouvel avis. Ajoute l'avis créé au
       // tableau `reviews` immédiatement.
-      createReview: async (productId, reviewData) => {
+      createReview: async (id, reviewData) => {
         set({ loading: true, error: null });
         try {
-          const newReview = await createReviewRequest(productId, reviewData);
+          const newReview = await createReviewRequest(id, reviewData);
           set((state) => ({
             reviews: [...state.reviews, newReview],
             loading: false,
@@ -51,12 +47,12 @@ export const useReviewStore = create(
         }
       },
 
-      // PUT /reviews/:id — met à jour ton avis. L'id de l'avis est passé
-      // explicitement ; ne peut modifier que tes propres avis.
-      updateReview: async (reviewId, updates) => {
+      // PUT met à jour l avis. L'id de l'avis est passé
+      // explicitement, ne peut modifier que tes propres avis.
+      updateReview: async (id, reviewId, updates) => {
         set({ loading: true, error: null });
         try {
-          const updatedReview = await updateReviewRequest(reviewId, updates);
+          const updatedReview = await updateReviewRequest(id, reviewId, updates);
           set((state) => ({
             reviews: state.reviews.map((r) =>
               r.id === reviewId ? updatedReview : r
@@ -71,11 +67,11 @@ export const useReviewStore = create(
         }
       },
 
-      // DELETE /reviews/:id — supprime ton avis.
-      deleteReview: async (reviewId) => {
+      // DELETE supprime l'avis
+      deleteReview: async (id, reviewId) => {
         set({ loading: true, error: null });
         try {
-          await deleteReviewRequest(reviewId);
+          await deleteReviewRequest(id, reviewId);
           set((state) => ({
             reviews: state.reviews.filter((r) => r.id !== reviewId),
             loading: false,
@@ -88,7 +84,7 @@ export const useReviewStore = create(
       },
 
       clearError: () => {
-        set({ error: null, productReviewsError: null });
+        set({ error: null });
       },
 
       logout: () => {
