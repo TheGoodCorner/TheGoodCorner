@@ -16,7 +16,7 @@ const ProductController = {
                 return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
             const newProduct = await prisma.product.create({
                 data: buildProduct({ body: req.body, file: req.file, userId }),
-                include: { category: true, author: true },
+                include: { category: true, author: true }, // needs to delete password
             });
             console.log(`User created an object`);
             return (res.status(201).json({ status: 'OK', data: newProduct }));
@@ -71,3 +71,16 @@ const ProductController = {
     },
 };
 export default ProductController;
+// const updatedProduct = await prisma.product.updateMany({
+//   where: {
+//     id: productId,
+//     stock: { gte: requestedQuantity }, // Ensures stock is strictly >= requested quantity
+//   },
+//   data: {
+//     stock: { decrement: requestedQuantity },
+//   },
+// });
+// if (updatedProduct.count === 0) {
+//   // Stock was bought by someone else a fraction of a second earlier
+//   return res.status(400).json({ error: "Item went out of stock during checkout!" });
+// }

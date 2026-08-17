@@ -20,6 +20,6 @@ export const buildProduct = ({ body, file, userId }) => {
                 where: { name: category },
                 create: { name: category }
             }
-        }
+        },
     };
 };

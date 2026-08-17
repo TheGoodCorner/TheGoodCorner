@@ -5,6 +5,7 @@ import prisma from './services/db.js';
 import productRouter from './routes/products.js';
 import generalRouter from './routes/generalGetRouter.js';
 import userRouter from './routes/users.js';
+import reviewsRouter from './routes/reviews.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
@@ -18,9 +19,11 @@ app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
 app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
-app.use('/', generalRouter); // general routes
-app.use('/', productRouter); // product routes
-app.use('/', userRouter); // Users routes
+const rootPath = '/';
+app.use(rootPath, generalRouter); // general routes
+app.use(rootPath, productRouter); // product routes
+app.use(rootPath, userRouter); // Users routes
+app.use(rootPath, reviewsRouter); // Users routes
 // app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors

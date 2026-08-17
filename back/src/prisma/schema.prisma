@@ -27,7 +27,8 @@ model User {
 
   sellerRating Float? @default(0)
   sellerReviewCount Int? @default(0)
-  sellerReviews  String[]
+  authoredReviews Review[] @relation("AuthoredReviews")
+  receivedReviews Review[] @relation("ReceivedReviews")
   sellerEliteStatus Boolean? @default(false)
   sellerEliteStatusCatchPhrase String?
 
@@ -54,10 +55,10 @@ model RefreshToken{
 model Product {
   id        Int      @id @default(autoincrement())
 
-  userId Int
   name String
   price Float
   description String
+  userId Int
   author    User    @relation(fields: [userId], references: [id]) 
   categoryId  Int
   category    Category    @relation(fields: [categoryId], references: [id]) 
@@ -84,4 +85,24 @@ model Location {
   houseNumber Int
 
   additionnal_infos String?
+}
+
+model Review{
+  id        Int      @id @default(autoincrement())
+  
+  reviewRating Int
+  reviews    String
+
+  authorId Int
+  reviewAuthor      User      @relation("AuthoredReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  reviewedUserId Int
+  reviewedUser      User      @relation("ReceivedReviews",fields: [reviewedUserId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+  deletedAt  DateTime?
+  modifiedAt  DateTime @updatedAt
+
+  @@unique([authorId, reviewedUserId])
+  @@index([reviewedUserId])
+  @@index([authorId])
 }

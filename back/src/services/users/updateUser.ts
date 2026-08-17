@@ -60,5 +60,6 @@ export const userUpdate = ({ body, file }: UserUpdate): Prisma.UserUpdateInput =
 	}
 	if (file)
 		data.avatar = `/uploads/${file.filename}`;
+	data.updatedAt = new Date();
 	return data;
 };

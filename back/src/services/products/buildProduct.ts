@@ -25,6 +25,7 @@ export const buildProduct = ({ body, file, userId}: ProductCrInput): Prisma.Prod
 			connectOrCreate: {
 				where: { name: category },
 				create: { name: category }
-		}}
+		}},
+		
 	};
 }

@@ -20,7 +20,7 @@ const ProductController =
 				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
 			const newProduct = await prisma.product.create({
 				data: buildProduct({body: req.body, file: req.file, userId}),
-				include: {category: true, author: true},
+				include: {category: true, author: true}, // needs to delete password
 			});
 			console.log(`User created an object`);
 			return (res.status(201).json({ status: 'OK', data: newProduct }));

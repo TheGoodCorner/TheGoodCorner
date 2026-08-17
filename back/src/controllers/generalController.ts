@@ -38,7 +38,7 @@ const generalController =
 		}
 		catch(error){
 			console.log(` an error ocurred inside the productPage getter` + error);
-			res.status(500).json({status: 'ERROR', message: 'failed to retrieve product', error: "Unknown error"});
+			res.status(500).json({status: 'ERROR', message: 'Internal server error'});
 		}
 	},
 	getSignUpPage: async (req: Request, res: Response) =>
