@@ -33,6 +33,16 @@ const reviewController =
 						reviews: reviews,
 						authorId:userId, 
 						reviewedUserId: reviewedId,
+					},
+					include: {
+						reviewAuthor: {
+							select:{
+								id:true,
+								username: true,
+								name:true,
+								avatar:true
+							}
+						}
 					}
 				})
 				const aggregated = await tx.review.aggregate({
@@ -86,6 +96,16 @@ const reviewController =
 						reviewRating: reviewRating,
 						reviews: reviews,
 						modifiedAt: new Date()
+					},
+					include: {
+						reviewAuthor: {
+							select:{
+								id:true,
+								username: true,
+								name:true,
+								avatar:true
+							}
+						}
 					}
 				})
 				const aggregated = await tx.review.aggregate({
@@ -126,7 +146,7 @@ const reviewController =
 			await prisma.$transaction(async (tx) => {
 				await tx.review.update({
 					where: {id: reviewedId},
-					data: {deletedAt: new Date()}
+					data: {deletedAt: new Date()},
 				})
 				const aggregated = await tx.review.aggregate({
 					where: { reviewedUserId: oldReview.reviewedUserId, deletedAt: null },

@@ -3,7 +3,7 @@ import { useReviewStore } from "../../stores/reviewStore";
 import { useUserStore } from "../../stores/userStore";
 import { Button } from "../UI/Button";
 
-export function ReviewForm(id) {
+export function ReviewForm({id}) {
   const [reviewText, setReviewText] = useState("");
   const [loading, setLoading] = useState(false);
 
