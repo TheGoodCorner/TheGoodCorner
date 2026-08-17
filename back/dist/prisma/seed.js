@@ -31,9 +31,12 @@ const getRandomElement = (array) => {
     const element = array[randomIndex];
     return array[randomIndex];
 };
+const shuffleArray = (array) => {
+    return [...array].sort(() => 0.5 - Math.random());
+};
 // just basic strings[] datastructures
-const firstNamePool = ['john', 'terry', 'larry', 'suzette', 'maxime', 'ratatouille', 'solange', 'gims', 'acer'];
-const lastNamePool = ['dubougnon', 'carpenterie', 'leland', 'frondeur', 'leboucher', 'creped', 'poudriere', 'camelier', 'fraise'];
+const firstNamePool = ['John', 'Terry', 'Larry', 'Suzette', 'Maxime', 'Ratatouille', 'Solange', 'Gims', 'Acer', 'Supermario', 'CuisineDuKekra', 'Gregoire', 'Paulanploie', 'Goldorak', 'Biereblonde', 'Bellebrune', 'Macaron'];
+const lastNamePool = ['Dubougnon', 'Carpenterie', 'Leland', 'Frondeur', 'Leboucher', 'Creped', 'Poudriere', 'Camelier', 'Fraise', 'MangeM****'];
 const domainPool = ['gmail.com', 'hotmail.com', 'yahoo.com', 'laposte.net'];
 const productNamePool = ['Gants de Boxe Yokkao Elite', 'Gants d\'Entraînement Basique', 'Gants Muay Thai Premium', 'Gants de Compétition Pro', 'Gants pour Débutants', 'Gants d\'Entraînement Intensif', 'Gants Loisir Confort', 'Gants Boxe Anglaise', 'Gants d\'Entraînement Légers', 'Gants Kickboxing', 'Gants Sparring', 'Gants Ultra Premium'];
 const imagePool = Array.from({ length: 12 }, (_, i) => `/image_${i}.jpg`);
@@ -60,14 +63,13 @@ const sellerReviewsPool = ['Vendeur ultra réactif, matériel comme neuf et emba
 // seller review 
 // review count
 const randomUsers = [];
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 15; i++) {
     const firstName = getRandomElement(firstNamePool);
     const lastName = getRandomElement(lastNamePool);
-    const username = `${firstName}_${getRandomInt(100, 999)}`;
-    const email = `${username}${getRandomElement(domainPool)}`;
+    const username = `${firstName}_${getRandomInt(1, 100)}`;
+    const email = `${username}@${getRandomElement(domainPool)}`;
     const bio = getRandomElement(bioPool);
     const randomLocation = locationPool[Math.floor(Math.random() * locationPool.length)];
-    const sellerReviews = [getRandomElement(sellerReviewsPool)];
     const randomPhone = [];
     for (let i = 0; i < 10; i++)
         randomPhone.push(String(getRandomInt(0, 9)));
@@ -77,9 +79,8 @@ for (let i = 0; i < 4; i++) {
         password: hashIt(`pass_${getRandomInt(0, 999)}`),
         username,
         bio: bio,
-        sellerReviews,
-        sellerRating: getRandomFloat(0, 5),
-        sellerReviewCount: getRandomInt(0, 50),
+        sellerRating: 0,
+        sellerReviewCount: 0,
         phoneNumber: randomPhone.join(''),
         location: {
             create: randomLocation
@@ -112,15 +113,15 @@ async function main() {
             const { refreshToken } = generateTokens(user.id, user.email);
             const hashedRefreshToken = hashIt(refreshToken);
             await saveRefreshToken(user.id, hashedRefreshToken);
-            const productCount = getRandomInt(1, 3);
-            const selectedCategory = getRandomElement(defaultCategories);
-            const selectedDescription = getRandomElement(descriptionPool);
-            const selectedImage = getRandomElement(imagePool);
+            const productCount = getRandomInt(1, 2);
             for (let i = 0; i < productCount; i++) {
+                const selectedCategory = getRandomElement(defaultCategories);
+                const selectedDescription = getRandomElement(descriptionPool);
+                const selectedImage = getRandomElement(imagePool);
                 const productInput = buildProduct({
                     body: {
                         name: `${getRandomElement(productNamePool)}`,
-                        price: getRandomInt(20, 500),
+                        price: getRandomInt(20, 600),
                         quantity: getRandomInt(1, 3),
                         description: selectedDescription,
                         category: selectedCategory,
@@ -136,6 +137,53 @@ async function main() {
             }
         }
         await Promise.all(productCreatePromises);
+        console.log('seeding reviews');
+        const foundUsers = await prisma.user.findMany({ select: { id: true } });
+        const reviewData = [];
+        for (const targetUser of foundUsers) {
+            const eligibleAuthors = foundUsers.filter((u) => u.id !== targetUser.id);
+            if (eligibleAuthors.length === 0)
+                continue;
+            const reviewCount = getRandomInt(1, Math.min(2, eligibleAuthors.length));
+            const selectedAuthors = shuffleArray(eligibleAuthors).slice(0, reviewCount);
+            for (const author of selectedAuthors) {
+                reviewData.push({
+                    authorId: author.id,
+                    reviewedUserId: targetUser.id,
+                    reviewRating: getRandomInt(1, 5),
+                    reviews: getRandomElement(sellerReviewsPool),
+                });
+            }
+        }
+        ;
+        if (reviewData.length > 0) {
+            await prisma.review.createMany({
+                data: reviewData,
+                skipDuplicates: true
+            });
+        }
+        ;
+        console.log('Synchronizing sellers ratings and review counts...');
+        const usersWithReviews = await prisma.user.findMany({
+            select: {
+                id: true,
+                receivedReviews: {
+                    select: { reviewRating: true }
+                }
+            }
+        });
+        for (const user of usersWithReviews) {
+            const count = user.receivedReviews.length;
+            const average = count > 0 ? user.receivedReviews.reduce((account, rev) => account + rev.reviewRating, 0) / count : 0;
+            await prisma.user.update({
+                where: { id: user.id },
+                data: {
+                    sellerReviewCount: count,
+                    sellerRating: Math.round(average * 10) / 10, // Arrondi à 1 décimale (ex: 4.5)
+                }
+            });
+        }
+        ;
         console.log('Seeding successful !');
     }
     catch (e) {

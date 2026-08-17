@@ -6,5 +6,6 @@ export const buildUser = ({ body }) => {
         email: email.toLocaleLowerCase(),
         username,
         password,
+        createdAt: Date()
     };
 };

@@ -52,5 +52,6 @@ export const userUpdate = ({ body, file }) => {
     }
     if (file)
         data.avatar = `/uploads/${file.filename}`;
+    data.updatedAt = Date();
     return data;
 };

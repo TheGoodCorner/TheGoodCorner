@@ -39,6 +39,11 @@ const getRandomElement = <T>(array: T[]): T =>
 	const element = array[randomIndex];
 	return array[randomIndex]!;
 }
+
+const shuffleArray = <T>(array: T[]): T[] => {
+  return [...array].sort(() => 0.5 - Math.random());
+};
+
 // just basic strings[] datastructures
 const firstNamePool:string[] = ['John', 'Terry', 'Larry' , 'Suzette', 'Maxime', 'Ratatouille', 'Solange', 'Gims', 'Acer', 'Supermario', 'CuisineDuKekra', 'Gregoire', 'Paulanploie', 'Goldorak', 'Biereblonde', 'Bellebrune', 'Macaron' ];
 const lastNamePool:string[] = ['Dubougnon', 'Carpenterie' , 'Leland' ,'Frondeur', 'Leboucher', 'Creped', 'Poudriere', 'Camelier', 'Fraise', 'MangeM****'];
@@ -76,7 +81,6 @@ for (let i = 0; i < 15; i++) {
 	const email: string = `${username}@${getRandomElement(domainPool)}`;
 	const bio: string = getRandomElement(bioPool);
 	const randomLocation = locationPool[Math.floor(Math.random() * locationPool.length)]
-	const sellerReviews = [getRandomElement(sellerReviewsPool)];
 	const randomPhone = [];
 	for (let i = 0; i < 10; i++)
 		randomPhone.push(String(getRandomInt(0, 9)));
@@ -86,9 +90,8 @@ for (let i = 0; i < 15; i++) {
 		password: hashIt( `pass_${getRandomInt(0, 999)}`),
 		username,
 		bio: bio,
-		sellerReviews,
-		sellerRating: getRandomFloat(0, 5),
-		sellerReviewCount: getRandomInt(0, 50),
+		sellerRating: 0,
+		sellerReviewCount: 0,
 		phoneNumber: randomPhone.join(''),
 		location: {
 			create: randomLocation!
@@ -160,6 +163,48 @@ async function main() {
 	  }
 	}
 	await Promise.all(productCreatePromises);
+	console.log('seeding reviews');
+	const foundUsers = await prisma.user.findMany({select: {id:true}});
+	const reviewData: Prisma.ReviewCreateManyInput[] = [];
+
+	for (const targetUser of foundUsers) {
+		const eligibleAuthors = foundUsers.filter((u) => u.id !== targetUser.id);
+		if (eligibleAuthors.length === 0) continue;
+		const reviewCount = getRandomInt(1, Math.min(2, eligibleAuthors.length));
+		const selectedAuthors = shuffleArray(eligibleAuthors).slice(0, reviewCount);
+		for (const author of selectedAuthors) {
+			reviewData.push({
+				authorId: author.id,
+				reviewedUserId: targetUser.id,
+				reviewRating: getRandomInt(1, 5),
+				reviews: getRandomElement(sellerReviewsPool),
+		});}};
+	if (reviewData.length > 0) {
+		await prisma.review.createMany({
+			data: reviewData,
+			skipDuplicates: true
+		})};
+	console.log('Synchronizing sellers ratings and review counts...');
+	const usersWithReviews = await prisma.user.findMany({
+		select:{
+			id:true,
+				receivedReviews: {
+					select: { reviewRating:true}
+				}
+			}
+		});
+	for (const user of usersWithReviews) {
+		const count = user.receivedReviews.length;
+		const average =
+	count > 0  ? user.receivedReviews.reduce((account, rev) => account + rev.reviewRating, 0) / count  : 0;
+
+		await prisma.user.update({
+		where: { id: user.id },
+		data: {
+		  sellerReviewCount: count,
+		  sellerRating: Math.round(average * 10) / 10, // Arrondi à 1 décimale (ex: 4.5)
+		}})
+	};
 	console.log('Seeding successful !');
   } catch (e) {
 	console.log('Error seeding the database', e);
