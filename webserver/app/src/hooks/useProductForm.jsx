@@ -70,7 +70,7 @@ export function useProductForm() {
 				// — bloqué tant qu'il n'y a pas de route pour lister les vraies
 				// catégories. Le dropdown envoie pour l'instant un slug arbitraire.
 				category: finalCategory,
-				description: form.description.trim(), // pas de colonne cote prisma (a voir)
+				description: form.description.trim(),
 				stock: 1,
 			});
 

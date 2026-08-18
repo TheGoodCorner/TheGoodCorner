@@ -5,7 +5,7 @@ import { useProfileEditForm } from "../hooks/useProfileEditForm";
 import { ProfilHeader } from "../components/profile/ProfilHeader";
 import { ProfilInfos } from "../components/profile/ProfilInfos";
 import { ReviewCard } from "../components/reviews/ReviewCard";
-import ProductCard from "../components/products/ProductCard"
+import ProductCard from "../components/products/ProductCard";
 
 function TabButton({ active, onClick, children }) {
   return (
@@ -13,8 +13,8 @@ function TabButton({ active, onClick, children }) {
       onClick={onClick}
       className={`pb-3 text-sm font-semibold border-b-2 transition-colors ${
         active
-          ? 'border-[var(--color-primary)] text-[var(--color-primary)]'
-          : 'border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]'
+          ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+          : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
       }`}
     >
       {children}
@@ -51,24 +51,6 @@ function Profile() {
   const displayName = user?.name || user?.username || "Utilisateur";
   const userRating = user?.sellerRating || 0;
   const reviewCount = user?.sellerReviewCount || 0;
-
-  const formatReviews = (reviews) => {
-    if (!Array.isArray(reviews)) return [];
-
-    return reviews.map((content, index) => ({
-      id: index,
-      author: "Client vérifié",
-      rating: userRating,
-      date: formatDate(user?.updatedAt || new Date().toISOString()),
-      content: typeof content === "string" ? content : "",
-      product: null,
-    }));
-  };
-
-  const sellerReviews = formatReviews(user?.sellerReviews || []);
-  const reviewsToDisplay = showAllReviews
-    ? sellerReviews
-    : sellerReviews.slice(0, 3);
 
   const [activeTab, setActiveTab] = useState("products");
 
@@ -130,7 +112,7 @@ function Profile() {
           active={activeTab === "reviews"}
           onClick={() => setActiveTab("reviews")}
         >
-          Avis ({user?.reviewCount || 0})
+          Avis ({reviewCount || 0})
         </TabButton>
       </div>
 
@@ -151,7 +133,8 @@ function Profile() {
               Vous n'avez aucun article en vente.
             </p>
             <p className="text-sm text-[var(--color-text-muted)]">
-              Poster votre premier produit en remplissant le formulaire ci-dessous.
+              Poster votre premier produit en remplissant le formulaire
+              ci-dessous.
             </p>
           </div>
         )
@@ -175,14 +158,17 @@ function Profile() {
               </div>
 
               <div className="grid gap-4">
-                {reviewsToDisplay.map((review) => (
+                {(showAllReviews
+                  ? user?.receivedReviews
+                  : user?.receivedReviews?.slice(0, 3)
+                )?.map((review) => (
                   <ReviewCard
                     key={review.id}
-                    author={review.author}
-                    rating={review.rating}
-                    date={review.date}
-                    content={review.content}
-                    product={review.product}
+                    author={review.reviewAuthor.username}
+                    avatar={review.reviewAuthor.avatar}
+                    rating={review.reviewRating}
+                    date={formatDate(review.createdAt)}
+                    content={review.reviews}
                   />
                 ))}
               </div>
