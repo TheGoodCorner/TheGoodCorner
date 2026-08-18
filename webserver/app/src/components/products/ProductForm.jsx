@@ -87,6 +87,7 @@ export function ProductForm({ onSuccess }) {
           type='number'
           step='0.01'
           min='0'
+		  max = '10000'
           value={form.price}
           onChange={handleChange('price')}
           placeholder='29.99'

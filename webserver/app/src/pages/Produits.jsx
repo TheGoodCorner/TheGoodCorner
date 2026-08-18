@@ -3,6 +3,7 @@ import { Filter, ChevronDown } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import ProductCard from '../components/products/ProductCard';
 import { useState } from 'react';
+import { useUserStore } from '../stores/userStore';
 
 const STANDARD_CATEGORIES = ['All', 'Training', 'Professional', 'Combat', 'Cardio'];
 
@@ -13,6 +14,8 @@ function Products() {
 	const setFilters = useProductStore((state) => state.setFilters);
 	const getFilteredProducts = useProductStore((state) => state.getFilteredProducts);
 	const fetchAllProducts = useProductStore((state) => state.fetchProducts);
+	const user = useUserStore((state) => state.user);
+    const currentUserId = user?.id;
 
 	const allCategories = products.map((p) => (typeof p.category === 'object' ? p.category?.name : p.category)).filter(Boolean);
 
@@ -25,7 +28,6 @@ function Products() {
 	const handleCategoryChange = (categoryName) => {
 		setFilters({ selectedCategory: categoryName === 'All' ? '' : categoryName });
 	};
-
 	return (
 		<div className='bg-[var(--color-bg)]'>
 			<div className="products-container bg-[var(--color-bg)]">
@@ -65,6 +67,19 @@ function Products() {
 										<span>{category}</span>
 									</label>
 								))}
+								{/* Nouvelle catégorie : Mes annonces */}
+								{Boolean(currentUserId) && products.some((p) => Number(p.userId) === Number(currentUserId)) && (<label className="filter-checkbox text-[var(--color-text)] flex items-center gap-2 cursor-pointer">
+									<input
+										type="radio"
+										name="category"
+										value="MyProducts"
+										checked={filters.selectedCategory === 'MyProducts'}
+										onChange={() => handleCategoryChange('MyProducts')}
+										className="accent-blue-600 cursor-pointer"
+									/>
+									<span className="font-medium text-blue-400">Mes annonces</span>
+								</label>)}
+
 								{/* Bouton Accordéon / Dropdown "Autre" */}
 								{customCategories.length > 0 && (
 									<div className="pt-1">
@@ -73,8 +88,8 @@ function Products() {
 											type="button"
 											onClick={() => setIsOtherOpen((prev) => !prev)}
 											className={`w-full flex items-center justify-between py-1.5 px-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${isCustomSelected
-													? 'bg-blue-600/20 text-blue-400 border border-blue-500/40'
-													: 'text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
+												? 'bg-blue-600/20 text-blue-400 border border-blue-500/40'
+												: 'text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
 												}`}
 										>
 											<span>
@@ -99,8 +114,8 @@ function Products() {
 															setIsOtherOpen(false);
 														}}
 														className={`w-full text-left px-2 py-1 rounded text-xs transition-colors cursor-pointer ${filters.selectedCategory === cat
-																? 'bg-blue-600 text-white font-semibold'
-																: 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
+															? 'bg-blue-600 text-white font-semibold'
+															: 'text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)]'
 															}`}
 													>
 														{cat}
