@@ -21,6 +21,16 @@ const reviewController = {
                         reviews: reviews,
                         authorId: userId,
                         reviewedUserId: reviewedId,
+                    },
+                    include: {
+                        reviewAuthor: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                avatar: true
+                            }
+                        }
                     }
                 });
                 const aggregated = await tx.review.aggregate({
@@ -51,7 +61,7 @@ const reviewController = {
     updateReview: async (req, res) => {
         try {
             const userId = req.user.id;
-            const reviewedId = parseInt(req.params.id, 10);
+            const reviewedId = parseInt(req.params.reviewId, 10);
             const { reviews, reviewRating } = req.body;
             if (isNaN(reviewedId))
                 return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
@@ -73,6 +83,16 @@ const reviewController = {
                         reviewRating: reviewRating,
                         reviews: reviews,
                         modifiedAt: new Date()
+                    },
+                    include: {
+                        reviewAuthor: {
+                            select: {
+                                id: true,
+                                username: true,
+                                name: true,
+                                avatar: true
+                            }
+                        }
                     }
                 });
                 const aggregated = await tx.review.aggregate({
@@ -99,7 +119,7 @@ const reviewController = {
     deleteReview: async (req, res) => {
         try {
             const userId = req.user.id;
-            const reviewedId = parseInt(req.params.id, 10);
+            const reviewedId = parseInt(req.params.reviewId, 10);
             if (isNaN(reviewedId))
                 return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
             const oldReview = await prisma.review.findFirst({
@@ -112,7 +132,7 @@ const reviewController = {
             await prisma.$transaction(async (tx) => {
                 await tx.review.update({
                     where: { id: reviewedId },
-                    data: { deletedAt: new Date() }
+                    data: { deletedAt: new Date() },
                 });
                 const aggregated = await tx.review.aggregate({
                     where: { reviewedUserId: oldReview.reviewedUserId, deletedAt: null },

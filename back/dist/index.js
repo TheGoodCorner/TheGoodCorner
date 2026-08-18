@@ -2,10 +2,13 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import prisma from './services/db.js';
+import http from 'http';
+import { initializeWebServer } from './services/messages/messageSocket.js';
 import productRouter from './routes/products.js';
 import generalRouter from './routes/generalGetRouter.js';
 import userRouter from './routes/users.js';
 import reviewsRouter from './routes/reviews.js';
+import messageRouter from './routes/messages.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
@@ -24,6 +27,9 @@ app.use(rootPath, generalRouter); // general routes
 app.use(rootPath, productRouter); // product routes
 app.use(rootPath, userRouter); // Users routes
 app.use(rootPath, reviewsRouter); // Users routes
+app.use(rootPath, messageRouter); // Users routes
+const socketServer = http.createServer(app);
+initializeWebServer(socketServer);
 // app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors
@@ -35,7 +41,7 @@ async function startServer() {
         console.log('Connected to db.');
         await new Promise((resolve, reject) => // same as above, block until promise is fulfilled (server started correctly on port)
          {
-            const server = app.listen(port, '0.0.0.0', () => {
+            const server = socketServer.listen(port, '0.0.0.0', () => {
                 console.log(`Serveur démarré sur http://localhost:${port}`);
                 resolve(); // resolve the promise
             });

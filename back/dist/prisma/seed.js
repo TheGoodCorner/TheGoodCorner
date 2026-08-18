@@ -94,6 +94,12 @@ for (let i = 0; i < 15; i++) {
  */
 async function main() {
     try {
+        console.log('Cleaning existing data...');
+        await prisma.review.deleteMany();
+        await prisma.product.deleteMany();
+        await prisma.location?.deleteMany().catch(() => { });
+        await prisma.user.deleteMany();
+        await prisma.category.deleteMany();
         console.log('Seeding categories...');
         for (const category of defaultCategories) {
             await prisma.category.upsert({

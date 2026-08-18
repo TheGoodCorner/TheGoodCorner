@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
 import { findUserByEmail, findUserByUsername, createDbUser, saveRefreshToken, findReturnUser } from "../services/users/utilsUsers.js";
 import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { buildUser } from "../services/users/buildUser.js";
-import { userUpdate } from "../services/users/updateUser.js";
+import { userUpdate, ValidationError } from "../services/users/updateUser.js";
 const prisma = new PrismaClient; // get the prisma client instance
 const BASIC_COOKIE = {
     httpOnly: true,
@@ -183,6 +183,16 @@ const userController = {
         }
         catch (error) {
             console.log(error);
+            if (error instanceof ValidationError) {
+                // Erreurs "métier" volontairement levées dans userUpdate() : domaine
+                // email refusé, adresse incomplète, téléphone invalide...
+                return res.status(400).json({ status: 'ERROR', message: error.message });
+            }
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+                const target = error.meta?.target || [];
+                const field = target.includes('email') ? 'email' : target.includes('username') ? "nom d'utilisateur" : 'valeur';
+                return res.status(409).json({ status: 'ERROR', message: `Ce ${field} est déjà utilisé par un autre compte.` });
+            }
             res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
         }
     }
