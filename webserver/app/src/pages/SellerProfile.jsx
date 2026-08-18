@@ -5,8 +5,8 @@ import { useUserStore } from '../stores/userStore';
 import { Button } from '../components/UI/Button';
 import { StarRating } from '../components/UI/StarRating';
 import { ReviewCard } from '../components/reviews/ReviewCard';
-import ProductCard from '../components/products/ProductCard';
 import { ReviewForm } from '../components/reviews/ReviewForm';
+import ProductCard from '../components/products/ProductCard';
 
 function SellerProfileSkeleton() {
   return (
@@ -100,22 +100,22 @@ function SellerProfile() {
 
   const displayName = viewedUser.name || viewedUser.username || 'Utilisateur';
   const userRating = viewedUser.sellerRating || 0;
-  const reviewCount = viewedUser.sellerReviewCount || 0;
-  const listings = viewedUser.product || [];
+  // Les produits embarqués dans GET /user/:id n'ont pas de champ `author`
+  // imbriqué (redondant, on est déjà sur la page de cet auteur) — on le
+  // reconstruit ici à partir de viewedUser pour que ProductCard (qui
+  // affiche vendeur + note) fonctionne sans changement côté back.
+  const listings = (viewedUser.product || []).map((product) => ({ ...product, author: viewedUser }));
   const memberSince = formatDate(viewedUser.createdAt);
   const showImage = Boolean(viewedUser.avatar) && !imgFailed;
 
-  const sellerReviews = Array.isArray(viewedUser.sellerReviews)
-    ? viewedUser.sellerReviews.map((content, index) => ({
-        id: index,
-        author: 'Client vérifié',
-        rating: userRating,
-        date: formatDate(viewedUser.updatedAt) || 'Date inconnue',
-        content: typeof content === 'string' ? content : '',
-        product: null,
-      }))
-    : [];
-  const reviewsToDisplay = showAllReviews ? sellerReviews : sellerReviews.slice(0, 3);
+  // Les avis sont déjà inclus dans viewedUser (receivedReviews) — pas
+  // besoin d'un fetch séparé. Filtre défensif sur les soft-deleted.
+  // NB: pas de reviewAuthor imbriqué ici (juste authorId), donc pas de
+  // vrai pseudo/avatar affichable pour l'instant — voir ReviewCard plus bas.
+  const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);
+  const alreadyReviewed = currentUser && activeReviews.some((r) => r.authorId === currentUser.id);
+  const canReview = Boolean(currentUser) && String(currentUser.id) !== String(id) && !alreadyReviewed;
+  const reviewsToDisplay = showAllReviews ? activeReviews : activeReviews.slice(0, 3);
 
   return (
     <div className="bg-[var(--color-bg)]">
@@ -153,7 +153,7 @@ function SellerProfile() {
               <div className="flex items-center gap-2 mb-3">
                 <StarRating rating={userRating} size={18} />
                 <span className="text-xs text-[var(--color-text-muted)] font-medium">
-                  {userRating > 0 ? `${userRating.toFixed(1)} (${reviewCount} avis)` : 'Aucune note'}
+                  {userRating > 0 ? `${userRating.toFixed(1)} (${activeReviews.length} avis)` : 'Aucune note'}
                 </span>
               </div>
 
@@ -186,7 +186,7 @@ function SellerProfile() {
             Annonces ({listings.length})
           </TabButton>
           <TabButton active={activeTab === 'reviews'} onClick={() => setActiveTab('reviews')}>
-            Avis ({reviewCount})
+            Avis ({activeReviews.length})
           </TabButton>
         </div>
 
@@ -204,46 +204,65 @@ function SellerProfile() {
               <p className="text-sm text-[var(--color-text-muted)]">Repasse plus tard pour voir ses prochains articles.</p>
             </div>
           )
-        ) : reviewCount > 0 ? (
-          <div className="grid gap-4 max-w-3xl">
-            {reviewsToDisplay.map((review) => (
-              <ReviewCard
-                key={review.id}
-                author={review.author}
-                rating={review.rating}
-                date={review.date}
-                content={review.content}
-                product={review.product}
-              />
-            ))}
-
-            {!showAllReviews && reviewCount > 3 && (
-              <button
-                onClick={() => setShowAllReviews(true)}
-                className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
-              >
-                Voir tous les avis ({reviewCount})
-              </button>
-            )}
-            {showAllReviews && reviewCount > 3 && (
-              <button
-                onClick={() => setShowAllReviews(false)}
-                className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
-              >
-                Voir moins d'avis
-              </button>
-            )}
-          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]">
-            <MessageCircle size={40} className="text-[var(--color-text-muted)] mb-4" />
-            <p className="font-semibold text-[var(--color-text)] mb-1">Aucun avis pour l'instant</p>
-            <p className="text-sm text-[var(--color-text-muted)]">Ce vendeur n'a pas encore reçu d'avis client.</p>
+          <div className="max-w-3xl">
+            {!currentUser && (
+              <div className="mb-6 p-4 bg-[var(--color-surface-hover)] rounded-[var(--radius-md)] text-sm text-[var(--color-text-muted)]">
+                <Link to="/authentication" className="text-[var(--color-primary)] font-medium hover:underline">
+                  Connecte-toi
+                </Link>{' '}
+                pour laisser un avis à ce vendeur.
+              </div>
+            )}
+
+            {canReview && <ReviewForm targetUserId={viewedUser.id} onSuccess={() => fetchUser(id)} />}
+
+            {currentUser && alreadyReviewed && (
+              <p className="text-sm text-[var(--color-text-muted)] mb-6">
+                Tu as déjà laissé un avis pour ce vendeur.
+              </p>
+            )}
+
+            {activeReviews.length > 0 ? (
+              <div className="grid gap-4">
+                {reviewsToDisplay.map((review) => (
+                  <ReviewCard
+                    key={review.id}
+                    avatar={review.reviewAuthor.avatar}
+                    author={review.reviewAuthor.username}
+                    rating={review.reviewRating}
+                    date={formatDate(review.createdAt)}
+                    content={review.reviews}
+                  />
+                ))}
+
+                {!showAllReviews && activeReviews.length > 3 && (
+                  <button
+                    onClick={() => setShowAllReviews(true)}
+                    className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
+                  >
+                    Voir tous les avis ({activeReviews.length})
+                  </button>
+                )}
+                {showAllReviews && activeReviews.length > 3 && (
+                  <button
+                    onClick={() => setShowAllReviews(false)}
+                    className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
+                  >
+                    Voir moins d'avis
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]">
+                <MessageCircle size={40} className="text-[var(--color-text-muted)] mb-4" />
+                <p className="font-semibold text-[var(--color-text)] mb-1">Aucun avis pour l'instant</p>
+                <p className="text-sm text-[var(--color-text-muted)]">Ce vendeur n'a pas encore reçu d'avis client.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
-      <div className="mt-12 pt-8 border-t border-[var(--color-border)]" />
-      <ReviewForm id={id}/>
     </div>
   );
 }

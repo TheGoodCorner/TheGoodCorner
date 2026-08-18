@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { useUserStore } from '../stores/userStore';
+
 import {
   fetchAllProducts,
   fetchProductByIdRequest,
@@ -61,7 +63,7 @@ export const useProductStore = create((set, get) => ({
       return data;
     } catch (err) {
       set({ error: err.message, loading: false });
-      throw err;
+      return null;
     }
   },
 
@@ -106,9 +108,16 @@ export const useProductStore = create((set, get) => ({
   // est désormais un objet { id, name } — comparaison sur .name.
   getFilteredProducts: () => {
     const { products, filters } = get()
+	const currentUser = useUserStore.getState().user;
     return products.filter((product) => {
+	  let myCategory = false;
+      if (filters.selectedCategory === 'MyProducts')
+	  {
+		  const productAuthorId = product.userId ?? product.sellerId ?? product.author?.id;
+			myCategory = product.author?.username === currentUser.username;
+	  }
       const matchSearch = product.name?.toLowerCase().includes(filters.search.toLowerCase())
-      const matchCategory = !filters.selectedCategory || product.category?.name === filters.selectedCategory
+       const matchCategory = !filters.selectedCategory || (filters.selectedCategory === 'MyProducts' ? myCategory : product.category?.name === filters.selectedCategory);
       const matchPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice
       return matchSearch && matchCategory && matchPrice
     })
