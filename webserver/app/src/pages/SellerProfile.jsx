@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Calendar, MessageCircle, PackageSearch, Shield, BadgeCheck } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/UI/Button';
 import { StarRating } from '../components/UI/StarRating';
 import { ReviewCard } from '../components/reviews/ReviewCard';
@@ -56,6 +57,7 @@ function SellerProfile() {
   const { id } = useParams();
   const navigate = useNavigate();
 
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const viewedUser = useUserStore((state) => state.viewedUser);
   const viewedUserLoading = useUserStore((state) => state.viewedUserLoading);
   const viewedUserError = useUserStore((state) => state.viewedUserError);
@@ -113,8 +115,9 @@ function SellerProfile() {
   // NB: pas de reviewAuthor imbriqué ici (juste authorId), donc pas de
   // vrai pseudo/avatar affichable pour l'instant — voir ReviewCard plus bas.
   const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);
-  const alreadyReviewed = currentUser && activeReviews.some((r) => r.authorId === currentUser.id);
-  const canReview = Boolean(currentUser) && String(currentUser.id) !== String(id) && !alreadyReviewed;
+  const alreadyReviewed = Boolean(currentUser && activeReviews.some((r) => r.authorId === currentUser.id));
+  const canReview = isAuthenticated && currentUser?.id && String(currentUser.id) !== String(id) && !alreadyReviewed;
+
   const reviewsToDisplay = showAllReviews ? activeReviews : activeReviews.slice(0, 3);
 
   return (
