@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import path from 'path';
 import prisma from './services/db.js';
 
 import productRouter from './routes/products.js'
