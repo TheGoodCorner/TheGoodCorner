@@ -74,7 +74,15 @@ export const findReturnUser = async (id: string) => {
 	if (isNaN(userId))
 		return ({ error: "Invalid userId, must be an integer.", status: 400 });
 	const user = await prisma.user.findUnique({
-		where: {id: userId}, include: {receivedReviews: true, product: {
+		where: {id: userId}, include: {receivedReviews: {
+			where: { deletedAt: null }, // filtre les avis soft-deleted côté back plutôt que côté front
+			orderBy: { createdAt: 'desc' },
+			include: {
+				reviewAuthor: {
+				select: { id: true, username: true, name: true, avatar: true },
+				},
+			},
+			}, product: {
 			include: {author: {
 				select: {
 					id:true,

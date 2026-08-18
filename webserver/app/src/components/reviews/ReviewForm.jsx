@@ -1,69 +1,56 @@
-import { useState } from "react";
-import { useReviewStore } from "../../stores/reviewStore";
-import { useUserStore } from "../../stores/userStore";
-import { Button } from "../UI/Button";
+import { useReviewForm } from '../../hooks/useReviewForm';
+import { StarRating } from '../UI/StarRating';
+import { Button } from '../UI/Button';
+import { Send } from 'lucide-react';
 
-export function ReviewForm({id}) {
-  const [reviewText, setReviewText] = useState("");
-  const [loading, setLoading] = useState(false);
+export function ReviewForm({ targetUserId, onSuccess }) {
+  const { rating, setRating, content, setContent, submitting, error, success, submit } = useReviewForm(targetUserId, onSuccess);
 
-  const { createReview } = useReviewStore();
-  const { user } = useUserStore();
-
-  const handleSubmitReview = async () => {
-    if (!user?.id) {
-      console.log("Connectez vous pour laisser un avis");
-      return;
-    }
-    if (!reviewText.trim()) {
-    //   setError("Veuillez écrire un avis");
-      return;
-    }
-
-    setLoading(true);
-    
-	try {
-      await createReview(id, { reviews: reviewText, reviewRating: 3 });
-      setReviewText("");
-    } catch (error) {
-      console.error("Erreur:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submit();
   };
 
-  return (
-    <div className="container">
-      <div className="max-w-3xl">
-        <div className="mb-4">
-          <h2 className="text-xl font-bold text-[var(--color-text)] mb-1">
-            Laisser un avis
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)]">
-            Partage ton expérience avec ce vendeur
-          </p>
-        </div>
-
-        <div className="space-y-3">
-          <textarea
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-            rows={4}
-            placeholder="Décris ton expérience avec ce vendeur..."
-            className="w-full text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] leading-relaxed bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all"
-          />
-
-          <div className="flex justify-end pb-5">
-            <Button
-              variant="primary"
-              onClick={handleSubmitReview}
-              disabled={loading}
-            >
-              {loading ? "Envoi en cours..." : "Publier mon avis"}
-            </Button>
-          </div>
-        </div>
+  if (success) {
+    return (
+      <div className="mb-6 p-4 bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-[var(--radius-md)]">
+        <p className="text-sm text-[var(--color-text)] font-medium">Merci, ton avis a été publié !</p>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="mb-8 p-4 sm:p-5 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] space-y-4" noValidate>
+      <div>
+        <h3 className="text-sm font-semibold text-[var(--color-text)] mb-1">Laisser un avis</h3>
+        <p className="text-xs text-[var(--color-text-muted)]">Partage ton expérience avec ce vendeur</p>
+      </div>
+
+      <div>
+        <p className="text-xs text-[var(--color-text-muted)] mb-1.5">Ta note</p>
+        <StarRating rating={rating} size={22} onRatingChange={setRating} />
+      </div>
+
+      <textarea
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        rows={4}
+        placeholder="Décris ton expérience avec ce vendeur..."
+        disabled={submitting}
+        className="w-full text-sm text-[var(--color-text)] placeholder-[var(--color-text-muted)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent resize-none transition-all disabled:opacity-60"
+      />
+
+      {error && (
+        <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
+          {error}
+        </p>
+      )}
+
+      <div className="flex justify-end">
+        <Button type="submit" variant="primary" icon={Send} loading={submitting}>
+          Publier mon avis
+        </Button>
+      </div>
+    </form>
   );
 }

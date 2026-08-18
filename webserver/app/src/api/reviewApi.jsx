@@ -9,7 +9,7 @@ export async function fetchUserReviewsRequest(id) {
 // POST /user/:id/reviews
 export async function createReviewRequest(id, reviewdata) {
   const { data } = await apiClient.post(`/user/${id}/reviews`, reviewdata)
-  return data.data
+  return data.data.createdReview;
 }
 
 // PUT /user/:id/reviews/:reviewid — AuthenticateToken
