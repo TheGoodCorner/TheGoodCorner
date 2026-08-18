@@ -74,7 +74,17 @@ export const findReturnUser = async (id: string) => {
 	if (isNaN(userId))
 		return ({ error: "Invalid userId, must be an integer.", status: 400 });
 	const user = await prisma.user.findUnique({
-		where: {id: userId}, include: {receivedReviews: true, product:true}
+		where: {id: userId}, include: {receivedReviews: true, product: {
+			include: {author: {
+				select: {
+					id:true,
+					username:true,
+					avatar:true,
+					sellerRating:true,
+					sellerReviewCount:true,
+				}
+			},category:true}
+		}}
 	});
 	if (!user)
 		return({ error: "user not found.", status: 400 });

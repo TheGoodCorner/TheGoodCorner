@@ -28,7 +28,7 @@ import './styles/tokens.css';
 function App() {
   const theme = useThemeStore((state) => state.theme)
   const initAuth = useAuthStore((state) => state.initAuth);
-
+  const initializing = useAuthStore((state) => state.initializing);
     // Synchronise le thème du store avec l'attribut data-theme sur <html>.
     // C'est ce que lisent les tokens (styles/tokens.css) pour que toute
     // l'app réagisse au thème depuis un seul et même endroit.
@@ -50,7 +50,9 @@ function App() {
         useProductStore.getState().fetchProducts();
       }
     }, []);
-    
+    if (initializing) {
+    return null; // ou un spinner global minimal
+  }
   return (
     <Router>
       <Routes>

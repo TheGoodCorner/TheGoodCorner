@@ -9,7 +9,7 @@ import {
 
 export const useProductStore = create((set, get) => ({
   products: [],
-  loading: false,
+  loading: true,
   error: null,
   
   // Produit de la fiche détail, indépendant de `products` — son propre
@@ -26,7 +26,9 @@ export const useProductStore = create((set, get) => ({
   },
 
   fetchProducts: async () => {
-    set({ loading: true, error: null });
+	if (get().products.length === 0) {
+      set({ loading: true });
+    }
     try {
       const data = await fetchAllProducts();
       set({ products: data, loading: false });

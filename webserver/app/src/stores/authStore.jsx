@@ -3,6 +3,8 @@ import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '..
 import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
 
+const SESSION_KEY = 'has_session';
+const hasInitialSession = typeof window !== 'undefined' && localStorage.getItem(SESSION_KEY) === 'true';
 // Ne gère que l'authentification (token, statut) — l'identité de la
 // personne (profil) vit exclusivement dans userStore, pour n'avoir qu'une
 // seule source de vérité. Voir userStore.setUser(), alimenté ici juste
@@ -10,7 +12,7 @@ import { useUserStore } from './userStore'
 export const useAuthStore = create((set) => ({
   token: null,
   isAuthenticated: false,
-  initializing: true,
+  initializing: hasInitialSession,
   loading: false,
   error: null,
 
@@ -18,6 +20,7 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const { user, token } = await loginRequest(email, password)
+	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       // login renvoie déjà le profil complet : on le pousse directement
       // dans userStore, pas de fetch séparé (GET /user/:id est publique et
@@ -34,6 +37,7 @@ export const useAuthStore = create((set) => ({
     set({ loading: true, error: null })
     try {
       const { user, token } = await registerRequest(email, password, username)
+	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       useUserStore.getState().setUser(user)
       return true
@@ -44,6 +48,11 @@ export const useAuthStore = create((set) => ({
   },
 
   initAuth: async () => {
+	const hasSession = localStorage.getItem(SESSION_KEY) === 'true'
+    if (!hasSession) {
+      set({ token: null, isAuthenticated: false, initializing: false })
+      return
+	}
     try {
       const { user, token } = await refreshRequest()
       set({token, isAuthenticated: true, initializing: false })
@@ -54,6 +63,7 @@ export const useAuthStore = create((set) => ({
   },
 
   logout: async () => {
+	localStorage.removeItem(SESSION_KEY)
     try {
       await logoutRequest()
     } catch {

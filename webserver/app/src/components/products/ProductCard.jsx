@@ -9,7 +9,7 @@ export default function ProductCard({ product }) {
 	const { addToCart } = useCartStore()
 	const { openUi } = useUIStore()
 
-	const author = product.author
+	const author = product?.author
 	const handleAddToCart = () => {
 		// Item panier volontairement "plat" : pas besoin de category/author
 		// imbriqués une fois dans le panier, et ça évite toute collision avec
@@ -47,13 +47,12 @@ export default function ProductCard({ product }) {
 				</div>
 			</div>
 
-			<Link to={`/products/${product.id}`}>
-				<div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
+			<Link to={`/products/${product.id}`} className="block overflow-hidden">
+				<div className="aspect-square w-full bg-[var(--color-surface-hover)] flex items-center justify-center overflow-hidden">
 					<img
 						src={product.imageUrl}
 						alt={product.name}
-						loading="lazy"
-						className="max-w-full h-auto"
+						className="w-full h-full object-cover"
 					/>
 				</div>
 			</Link>
