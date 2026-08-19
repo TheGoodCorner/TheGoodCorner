@@ -104,6 +104,10 @@ function SellerProfile() {
     await deleteReview(id, reviewId);
     await fetchUser(id);
   };
+  const handleUpdateReview = async (reviewId, updates) => {
+    await updateReview(id, reviewId, updates);
+    await fetchUser(id);
+  };
   // Évite d'afficher un instant le profil du vendeur précédent quand on
   // navigue d'une page vendeur à une autre (même logique que ProduitDetail).
   const isFresh = viewedUser && String(viewedUser.id) === String(id);
@@ -309,7 +313,7 @@ function SellerProfile() {
                     content={review.reviews}
                     authorId={review.authorId}
                     currentUserId={currentUser?.id}
-                    onEdit={() => console.log("Edit review !")}
+                    onSave={(updates) => handleUpdateReview(review.id, updates)}
                     onDelete={() => handleDeleteReview(review.id)}
                   />
                 ))}
