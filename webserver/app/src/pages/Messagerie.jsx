@@ -48,8 +48,6 @@ function Messagerie() {
 
   // ✅ Quand on sélectionne un utilisateur dans la modal
   const handleSelectUser = async (selectedUser) => {
-    console.log("Selecteduser: ", selectedUser)
-    console.log("Selecteduser.username: ", selectedUser.username)
     const conversation = {
       id: selectedUser.id,
       name: selectedUser.username,
@@ -94,9 +92,6 @@ function Messagerie() {
     if (!messageText.trim() || !selectedConversation) return;
 
     try {
-      console.log("selectedConversation:", selectedConversation)
-      console.log("selectedConversation.id:", selectedConversation.id)
-      console.log("content: ", messageText)
       await SendMessage(selectedConversation.id, messageText);
 
       // Recharger les messages
