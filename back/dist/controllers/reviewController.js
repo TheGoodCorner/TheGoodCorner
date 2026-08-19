@@ -97,13 +97,15 @@ const reviewController = {
                 });
                 const aggregated = await tx.review.aggregate({
                     where: { reviewedUserId: oldReview.reviewedUserId, deletedAt: null },
-                    _avg: { reviewRating: true }
+                    _avg: { reviewRating: true },
+                    _count: { id: true }
                 });
                 const updatedAverage = aggregated._avg.reviewRating ? parseFloat(aggregated._avg.reviewRating.toFixed(1)) : 0;
                 await tx.user.update({
                     where: { id: oldReview.reviewedUserId },
                     data: {
-                        sellerRating: updatedAverage
+                        sellerRating: updatedAverage,
+                        sellerReviewCount: aggregated._count.id
                     }
                 });
                 return (newReview);

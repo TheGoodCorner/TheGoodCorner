@@ -4,6 +4,7 @@ import { AuthenticateToken } from '../services/middlewareAuthenticateToken.js';
 const messageRouter = Router();
 messageRouter.post('/message/:recipientId', AuthenticateToken, messageController.sendMessage);
 messageRouter.get('/message/:recipientId', AuthenticateToken, messageController.fetchConversation);
+messageRouter.get('/message', AuthenticateToken, messageController.fetchAllConversations);
 messageRouter.put('/message/:messageId', AuthenticateToken, messageController.updateMessage);
 messageRouter.delete('/message/:messageId', AuthenticateToken, messageController.deleteMessage);
 export default messageRouter;

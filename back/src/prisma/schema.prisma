@@ -48,6 +48,7 @@ model Message {
   content    String   // Single message content
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
+  modifiedAt  DateTime? 
 
   senderId   Int
   sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)

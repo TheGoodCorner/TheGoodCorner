@@ -34,13 +34,9 @@ const generalController = {
                             bio: true,
                             sellerRating: true,
                             sellerReviewCount: true,
-                        }
-                    },
-                    receivedReviews: {
-                        where: { deletedAt: null },
-                        include: {
-                            reviewAuthor: {
-                                select: { id: true, username: true, name: true, avatar: true },
+                            receivedReviews: {
+                                where: { deletedAt: null },
+                                select: { reviewRating: true }
                             }
                         }
                     }
