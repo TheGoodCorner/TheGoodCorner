@@ -27,7 +27,7 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
 
   // Filtrer les utilisateurs selon la recherche
   const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isOpen) return null;
@@ -68,15 +68,15 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
                 >
                   <div className="user-avatar">
                     {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} />
+                      <img src={user.avatar} alt={user.username} />
                     ) : (
                       <div className="avatar-placeholder">
-                        {user.name.charAt(0).toUpperCase()}
+                        {user.username.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
                   <div className="user-info">
-                    <h3>{user.name}</h3>
+                    <h3>{user.username}</h3>
                     <p>{user.email}</p>
                   </div>
                   <span className="arrow">→</span>

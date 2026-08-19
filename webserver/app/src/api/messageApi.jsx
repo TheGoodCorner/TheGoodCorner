@@ -2,7 +2,9 @@ import { apiClient } from './client';
 
 export async function SendMessage(receiver_id, content)
 {
-    const { data } = await apiClient.post(`/message/${receiver_id}`, content)
+    const { data } = await apiClient.post(`/message/${receiver_id}`, {
+        content: content
+    })
     return data.data
 }
 
@@ -20,7 +22,9 @@ export async function GetAllMessages()
 
 export async function UpdateMessage(message_id, content)
 {
-    const { data } = await apiClient.put(`/message/${message_id}`, content)
+    const { data } = await apiClient.put(`/message/${message_id}`, {
+        content: content
+    })
     return data.data
 }
 

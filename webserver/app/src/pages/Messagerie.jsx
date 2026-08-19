@@ -48,10 +48,11 @@ function Messagerie() {
 
   // ✅ Quand on sélectionne un utilisateur dans la modal
   const handleSelectUser = async (selectedUser) => {
+    console.log("Selecteduser: ", selectedUser)
+    console.log("Selecteduser.username: ", selectedUser.username)
     const conversation = {
       id: selectedUser.id,
-      userId: selectedUser.id,
-      name: selectedUser.name,
+      name: selectedUser.username,
       avatar: selectedUser.avatar,
       lastMessage: "Démarrer une nouvelle conversation",
       timestamp: new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
@@ -62,7 +63,7 @@ function Messagerie() {
 
     // ✅ Charger les messages existants
     try {
-      const msgs = await GetMessage(user?.id, selectedUser.id);
+      const msgs = await GetMessage(selectedUser.id);
       setMessages(msgs || []);
     } catch (error) {
       console.error('Erreur lors du chargement des messages:', error);
@@ -70,7 +71,7 @@ function Messagerie() {
     }
 
     // ✅ Ajouter à la liste si nouveau
-    if (!conversations.find(c => c.userId === selectedUser.id)) {
+    if (!conversations.find(c => c.id === selectedUser.id)) {
       setConversations([conversation, ...conversations]);
     }
   };
@@ -80,7 +81,7 @@ function Messagerie() {
     setSelectedConversation(conversation);
 
     try {
-      const msgs = await GetMessage(user?.id, conversation.userId);
+      const msgs = await GetMessage(user?.id, conversation.id);
       setMessages(msgs || []);
     } catch (error) {
       console.error('Erreur lors du chargement des messages:', error);
@@ -93,10 +94,13 @@ function Messagerie() {
     if (!messageText.trim() || !selectedConversation) return;
 
     try {
-      await SendMessage(user?.id, selectedConversation.userId, messageText);
+      console.log("selectedConversation:", selectedConversation)
+      console.log("selectedConversation.id:", selectedConversation.id)
+      console.log("content: ", messageText)
+      await SendMessage(selectedConversation.id, messageText);
 
       // Recharger les messages
-      const msgs = await GetMessage(user?.id, selectedConversation.userId);
+      const msgs = await GetMessage(selectedConversation.id);
       setMessages(msgs || []);
 
       setMessageText('');

@@ -33,7 +33,6 @@ export class MessageService {
 	static async getConversationList(userId: number) {
 		const messages = await prisma.message.findMany({
 		where: {
-			deletedAt: null,
 			OR: [
 				{ senderId: userId },
 				{ receiverId: userId }
