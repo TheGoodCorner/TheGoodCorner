@@ -120,7 +120,13 @@ function Profile() {
         user?.product?.length > 0 ? (
           <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
             {user?.product?.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <ProductCard
+                key={product.id}
+                product={{
+                  ...product,
+                  author: user,
+                }}
+              />
             ))}
           </div>
         ) : (

@@ -30,7 +30,7 @@ function Navbar() {
           <ul className={`navbar-menu`}>
             <li><Link to="/" className="navbar-link">Accueil</Link></li>
             <li><Link to="/products" className="navbar-link">Produits</Link></li>
-            <li><Link to="/contact" className="navbar-link">Messagerie</Link></li>
+            <li><Link to="/messagerie" className="navbar-link">Messagerie</Link></li>
           </ul>
           <div className="navbar-actions">
             <ProfileDropdown />

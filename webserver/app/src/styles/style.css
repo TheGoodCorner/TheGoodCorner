@@ -528,3 +528,194 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+
+/* ========== MESSAGERIE ========== */
+
+.messagerie-container {
+  @apply flex flex-col h-screen bg-[var(--color-bg)];
+}
+
+.messagerie-header {
+  @apply px-6 py-6 bg-[var(--color-surface)] border-b border-[var(--color-border)];
+}
+
+.messagerie-header h1 {
+  @apply text-3xl font-bold text-[var(--color-text)] m-0;
+}
+
+.messagerie-header .subtitle {
+  @apply text-sm text-[var(--color-text-muted)] mt-2 m-0;
+}
+
+/* ========== CONTENU PRINCIPAL ========== */
+
+.messagerie-content {
+  @apply flex flex-1 overflow-hidden;
+}
+
+/* ========== SIDEBAR - CONVERSATIONS ========== */
+
+.messagerie-sidebar {
+  @apply w-80 bg-[var(--color-surface)] border-r border-[var(--color-border)] flex flex-col;
+}
+
+.sidebar-header {
+  @apply px-4 py-4 border-b border-[var(--color-border)];
+}
+
+.sidebar-header h2 {
+  @apply text-base font-semibold text-[var(--color-text)] m-0;
+}
+
+.conversations-list {
+  @apply flex-1 overflow-y-auto;
+}
+
+.conversation-item {
+  @apply flex items-center gap-3 px-3 py-3 cursor-pointer border-b border-[var(--color-border)] transition-smooth hover:bg-[var(--color-surface-hover)];
+}
+
+.conversation-item.active {
+  @apply bg-[var(--color-primary)] bg-opacity-10 border-l-4 border-l-[var(--color-primary)] pl-0;
+}
+
+.conversation-avatar {
+  @apply w-12 h-12 rounded-full bg-[var(--color-primary)] text-[var(--color-on-primary)] flex items-center justify-center font-semibold text-lg flex-shrink-0;
+}
+
+.conversation-info {
+  @apply flex-1 min-w-0;
+}
+
+.conversation-info h3 {
+  @apply text-sm font-semibold text-[var(--color-text)] m-0;
+}
+
+.last-message {
+  @apply text-xs text-[var(--color-text-muted)] mt-1 m-0 whitespace-nowrap overflow-hidden text-ellipsis;
+}
+
+.unread-badge {
+  @apply w-6 h-6 rounded-full bg-[var(--color-danger)] text-[var(--color-on-danger)] flex items-center justify-center text-xs font-bold flex-shrink-0 ml-2;
+}
+
+.empty-state {
+  @apply text-center text-[var(--color-text-muted)] py-8 px-4 text-sm;
+}
+
+/* ========== ZONE PRINCIPALE - CONVERSATION ========== */
+
+.messagerie-main {
+  @apply flex-1 flex flex-col bg-[var(--color-surface)];
+}
+
+.conversation-header {
+  @apply px-6 py-4 border-b border-[var(--color-border)];
+}
+
+.conversation-header h2 {
+  @apply text-lg font-semibold text-[var(--color-text)] m-0;
+}
+
+.conversation-meta {
+  @apply text-xs text-[var(--color-text-muted)] mt-1 m-0;
+}
+
+/* ========== ZONE DES MESSAGES ========== */
+
+.messages-container {
+  @apply flex-1 overflow-y-auto px-6 py-4 flex flex-col gap-3;
+}
+
+.message {
+  @apply flex mb-2;
+}
+
+.message.sent {
+  @apply justify-end;
+}
+
+.message.received {
+  @apply justify-start;
+}
+
+.message-bubble {
+  @apply max-w-xs px-4 py-3 rounded-[var(--radius-lg)] break-words;
+}
+
+.message.sent .message-bubble {
+  @apply bg-[var(--color-primary)] text-[var(--color-on-primary)];
+}
+
+.message.received .message-bubble {
+  @apply bg-[var(--color-surface-hover)] text-[var(--color-text)];
+}
+
+.message-bubble p {
+  @apply text-sm leading-relaxed m-0 mb-1;
+}
+
+.message-time {
+  @apply text-xs opacity-70 block text-right mt-1;
+}
+
+.empty-messages {
+  @apply text-center text-[var(--color-text-muted)] m-auto text-sm;
+}
+
+/* ========== ZONE DE SAISIE ========== */
+
+.message-input-area {
+  @apply flex gap-2 px-6 py-4 border-t border-[var(--color-border)] bg-[var(--color-surface-hover)];
+}
+
+.message-input {
+  @apply flex-1 px-3 py-2 border border-[var(--color-border)] rounded-[var(--radius-md)] bg-[var(--color-surface)] text-[var(--color-text)] text-sm resize-none outline-none transition-smooth;
+}
+
+.message-input:focus {
+  @apply border-[var(--color-primary)] ring-2 ring-[var(--color-primary)] ring-opacity-20;
+}
+
+.send-button {
+  @apply px-6 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-[var(--radius-md)] text-sm font-semibold cursor-pointer transition-smooth;
+}
+
+.send-button:hover {
+  @apply bg-[var(--color-primary-hover)];
+}
+
+.send-button:active {
+  @apply bg-[var(--color-primary-active)];
+}
+
+/* ========== ÉTAT VIDE ========== */
+
+.no-conversation {
+  @apply flex items-center justify-center h-full text-[var(--color-text-muted)] text-sm;
+}
+
+/* ========== RESPONSIVE ========== */
+
+@media (max-width: 768px) {
+  .messagerie-content {
+    @apply flex-col;
+  }
+
+  .messagerie-sidebar {
+    @apply w-full h-auto max-h-40 border-r-0 border-b border-[var(--color-border)];
+  }
+
+  .conversations-list {
+    @apply flex-row overflow-x-auto overflow-y-hidden;
+  }
+
+  .conversation-item {
+    @apply flex-shrink-0 w-32 flex-col border-b-0;
+  }
+
+  .message-bubble {
+    @apply max-w-sm;
+  }
+}
