@@ -14,7 +14,8 @@ export const findUserByEmail = async (email: string) =>
 {
 	return (await prisma.user.findUnique({
 		where: {email},
-		include: {product:true, location:true}}));
+		include: {product:true, location:true, receivedReviews:{
+			include: {reviewAuthor: true}}}}));
 }
 
 export const findUserByUsername = async (username: string) =>
@@ -33,7 +34,8 @@ export const createDbUser = async (data: Prisma.UserCreateInput) =>
 {
 	return (await prisma.user.create({
 		data,
-		include: {product:true, location:true}}));
+		include: {product:true, location:true, receivedReviews:{
+			include: {reviewAuthor: true}}}}));
 }
 
 /**

@@ -110,7 +110,7 @@ const userController = {
             const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
             const userObject = await prisma.user.findUnique({
                 where: { id: decodedPayload.id },
-                include: { product: true, location: true }
+                include: { product: true, location: true, receivedReviews: { include: { reviewAuthor: true } }, authoredReviews: true }
             });
             if (!userObject)
                 throw new Error("user not found");

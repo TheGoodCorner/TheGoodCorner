@@ -1,10 +1,26 @@
-import React, { useState } from 'react';
-import { MessageCircle } from 'lucide-react';
-import { ProductForm } from '../components/products/ProductForm';
-import { useProfileEditForm } from '../hooks/useProfileEditForm';
-import { ProfilHeader } from '../components/profile/ProfilHeader';
-import { ProfilInfos } from '../components/profile/ProfilInfos';
-import { ReviewCard } from '../components/reviews/ReviewCard';
+import React, { useState, useEffect } from "react";
+import { MessageCircle, PackageSearch } from "lucide-react";
+import { ProductForm } from "../components/products/ProductForm";
+import { useProfileEditForm } from "../hooks/useProfileEditForm";
+import { ProfilHeader } from "../components/profile/ProfilHeader";
+import { ProfilInfos } from "../components/profile/ProfilInfos";
+import { ReviewCard } from "../components/reviews/ReviewCard";
+import ProductCard from "../components/products/ProductCard";
+
+function TabButton({ active, onClick, children }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`pb-3 text-sm font-semibold border-b-2 transition-colors ${
+        active
+          ? "border-[var(--color-primary)] text-[var(--color-primary)]"
+          : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
 
 function Profile() {
   const [showAllReviews, setShowAllReviews] = useState(false);
@@ -26,38 +42,28 @@ function Profile() {
 
   // Formater la date de création
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', { 
-      year: 'numeric', 
-      month: 'long'
+    return new Date(dateString).toLocaleDateString("fr-FR", {
+      year: "numeric",
+      month: "long",
     });
   };
 
-  const displayName = user?.name || user?.username || 'Utilisateur';
+  const displayName = user?.name || user?.username || "Utilisateur";
   const userRating = user?.sellerRating || 0;
   const reviewCount = user?.sellerReviewCount || 0;
 
-  const formatReviews = (reviews) => {
-    if (!Array.isArray(reviews)) return [];
-    
-    return reviews.map((content, index) => ({
-      id: index,
-      author: 'Client vérifié',
-      rating: userRating,
-      date: formatDate(user?.updatedAt || new Date().toISOString()),
-      content: typeof content === 'string' ? content : '',
-      product: null
-    }));
-  };
+  const [activeTab, setActiveTab] = useState("products");
 
-  const sellerReviews = formatReviews(user?.sellerReviews || []);
-  const reviewsToDisplay = showAllReviews ? sellerReviews : sellerReviews.slice(0, 3);
-  
+  useEffect(() => {
+    setActiveTab("products");
+  }, []);
+
   return (
-    <div className='min-h-screen bg-[var(--color-bg)]'>
+    <div className="min-h-screen bg-[var(--color-bg)]">
       {/* SECTION PROFIL */}
-      <section className='border-b border-[var(--color-border)] bg-[var(--color-surface)]'>
-        <div className='px-6 sm:px-8 lg:px-12 py-8 sm:py-10'>
-         <ProfilHeader 
+      <section className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+        <div className="px-6 sm:px-8 lg:px-12 py-8 sm:py-10">
+          <ProfilHeader
             user={user}
             displayName={displayName}
             userRating={userRating}
@@ -73,14 +79,17 @@ function Profile() {
           />
 
           {isEditing && error && (
-            <div className='mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
-              <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+            <div className="mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
+              <p
+                className="text-sm text-[var(--color-danger)] font-medium"
+                role="alert"
+              >
                 {error}
               </p>
             </div>
           )}
 
-          <ProfilInfos 
+          <ProfilInfos
             user={user}
             userRating={userRating}
             reviewCount={reviewCount}
@@ -92,49 +101,91 @@ function Profile() {
         </div>
       </section>
 
-      {/* SECTION MES AVIS */}
-      {reviewCount > 0 && (
-        <section className='border-b border-[var(--color-border)] bg-[var(--color-bg)]'>
-          <div className='px-6 sm:px-8 lg:px-12 py-16'>
-            <div className='max-w-4xl'>
-              <div className='flex items-center gap-3 mb-8'>
-                <MessageCircle size={28} className='text-[var(--color-primary)]' />
+      <div className="flex justify-start ml-12 gap-10 pt-6">
+        <TabButton
+          active={activeTab === "products"}
+          onClick={() => setActiveTab("products")}
+        >
+          Mes Annonces ({user?.product?.length || 0})
+        </TabButton>
+        <TabButton
+          active={activeTab === "reviews"}
+          onClick={() => setActiveTab("reviews")}
+        >
+          Avis ({reviewCount || 0})
+        </TabButton>
+      </div>
+
+      {activeTab === "products" ? (
+        user?.product?.length > 0 ? (
+          <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
+            {user?.product?.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)]">
+            <PackageSearch
+              size={40}
+              className="text-[var(--color-text-muted)] mb-4"
+            />
+            <p className="font-semibold text-[var(--color-text)] mb-1">
+              Vous n'avez aucun article en vente.
+            </p>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              Poster votre premier produit en remplissant le formulaire
+              ci-dessous.
+            </p>
+          </div>
+        )
+      ) : reviewCount > 0 ? (
+        <section className="border-b border-[var(--color-border)] bg-[var(--color-bg)]">
+          <div className="px-6 sm:px-8 lg:px-12 py-16">
+            <div className="max-w-4xl">
+              <div className="flex items-center gap-3 mb-8">
+                <MessageCircle
+                  size={28}
+                  className="text-[var(--color-primary)]"
+                />
                 <div>
-                  <h2 className='text-3xl sm:text-4xl font-bold text-[var(--color-text)]'>
+                  <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)]">
                     Mes avis
                   </h2>
-                  <p className='text-sm text-[var(--color-text-muted)] mt-1'>
+                  <p className="text-sm text-[var(--color-text-muted)] mt-1">
                     {reviewCount} avis des clients
                   </p>
                 </div>
               </div>
 
-              <div className='grid gap-4'>
-                {reviewsToDisplay.map(review => (
+              <div className="grid gap-4">
+                {(showAllReviews
+                  ? user?.receivedReviews
+                  : user?.receivedReviews?.slice(0, 3)
+                )?.map((review) => (
                   <ReviewCard
                     key={review.id}
-                    author={review.author}
-                    rating={review.rating}
-                    date={review.date}
-                    content={review.content}
-                    product={review.product}
+                    author={review.reviewAuthor.username}
+                    avatar={review.reviewAuthor.avatar}
+                    rating={review.reviewRating}
+                    date={formatDate(review.createdAt)}
+                    content={review.reviews}
                   />
                 ))}
               </div>
 
               {!showAllReviews && reviewCount > 3 && (
-                <button 
+                <button
                   onClick={() => setShowAllReviews(true)}
-                  className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
+                  className="mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors"
                 >
                   Voir tous les avis ({reviewCount})
                 </button>
               )}
 
               {showAllReviews && reviewCount > 3 && (
-                <button 
+                <button
                   onClick={() => setShowAllReviews(false)}
-                  className='mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors'
+                  className="mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors"
                 >
                   Voir moins d'avis
                 </button>
@@ -142,17 +193,27 @@ function Profile() {
             </div>
           </div>
         </section>
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)]">
+          <MessageCircle
+            size={30}
+            className="text-[var(--color-text-muted)] mb-4"
+          />
+          <p className="font-semibold text-[var(--color-text)] mb-1">
+            Personne vous a laisser d'avis pour l'instant
+          </p>
+        </div>
       )}
 
       {/* SECTION FORMULAIRE PRODUIT */}
-      <section className='bg-[var(--color-surface)]'>
-        <div className='px-6 sm:px-8 lg:px-12 py-16'>
-          <div className='max-w-2xl'>
-            <div className='mb-10'>
-              <h2 className='text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2'>
+      <section className="bg-[var(--color-surface)]">
+        <div className="px-6 sm:px-8 lg:px-12 py-16">
+          <div className="max-w-2xl">
+            <div className="mb-10">
+              <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
                 Ajouter un produit
               </h2>
-              <p className='text-[var(--color-text-muted)]'>
+              <p className="text-[var(--color-text-muted)]">
                 Remplire les informations pour créer un nouveau produit
               </p>
             </div>

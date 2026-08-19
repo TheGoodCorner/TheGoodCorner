@@ -130,9 +130,8 @@ const reviewController = {
             if (oldReview.authorId !== userId)
                 return (res.status(400).json({ error: 'Vous ne pouvez pas supprimer l\'evaluation de quelqu\'un d\'autre' }));
             await prisma.$transaction(async (tx) => {
-                await tx.review.update({
+                await tx.review.delete({
                     where: { id: reviewedId },
-                    data: { deletedAt: new Date() },
                 });
                 const aggregated = await tx.review.aggregate({
                     where: { reviewedUserId: oldReview.reviewedUserId, deletedAt: null },

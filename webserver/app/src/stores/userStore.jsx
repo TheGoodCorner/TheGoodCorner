@@ -4,7 +4,6 @@ import { persist } from 'zustand/middleware';
 import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
 
 export const useUserStore = create(
-  persist(
     (set, get) => ({
       // Ton propre profil (complet, privé) — jamais rempli par un fetch
       // direct : GET /user/:id est publique, donc incapable de renvoyer
@@ -85,12 +84,5 @@ export const useUserStore = create(
       clearError: () => {
         set({ error: null });
       },
-    }),
-    {
-      name: 'user-store',
-      partialize: (state) => ({
-        user: state.user, // Persiste SEULEMENT ton propre profil
-      }),
-    }
-  )
+    })
 );

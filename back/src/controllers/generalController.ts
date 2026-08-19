@@ -38,9 +38,13 @@ const generalController =
 								bio: true,
 								sellerRating: true,
 								sellerReviewCount: true,
+								receivedReviews:{
+									where: { deletedAt: null },
+									select: { reviewRating: true }
+								}
 							}
 						}
-					}
+						}
 				}
 			);
 			console.log('all product got sucessfully returned');

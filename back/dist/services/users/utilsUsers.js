@@ -10,7 +10,9 @@ const prismaInstance = new PrismaClient();
 export const findUserByEmail = async (email) => {
     return (await prisma.user.findUnique({
         where: { email },
-        include: { product: true, location: true }
+        include: { product: true, location: true, receivedReviews: {
+                include: { reviewAuthor: true }
+            } }
     }));
 };
 export const findUserByUsername = async (username) => {
@@ -27,7 +29,9 @@ export const findUserByUsername = async (username) => {
 export const createDbUser = async (data) => {
     return (await prisma.user.create({
         data,
-        include: { product: true, location: true }
+        include: { product: true, location: true, receivedReviews: {
+                include: { reviewAuthor: true }
+            } }
     }));
 };
 /**
