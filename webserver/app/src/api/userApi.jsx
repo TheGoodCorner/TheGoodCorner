@@ -1,5 +1,12 @@
 import { apiClient } from './client';
 
+
+export async function GetAllUsers() {
+  const { data } = await apiClient.get("/user");
+  return data.data;
+}
+
+
 // GET /user/:id — PUBLIQUE (pas de AuthenticateToken côté backend). Renvoie
 // donc toujours la version publique du profil (username, avatar, bio,
 // sellerRating...), jamais email/location — même quand :id est le tien.
