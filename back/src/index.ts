@@ -30,8 +30,8 @@ const rootPath = '/';
 app.use(rootPath, generalRouter); // general routes
 app.use(rootPath, productRouter); // product routes
 app.use(rootPath, userRouter); // Users routes
-app.use(rootPath, reviewsRouter); // Users routes
-app.use(rootPath, messageRouter); // Users routes
+app.use(rootPath, reviewsRouter); // reviews routes
+app.use(rootPath, messageRouter); // message routes
 
 const socketServer = http.createServer(app);
 initializeWebServer(socketServer);
