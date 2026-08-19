@@ -22,7 +22,30 @@ const generalController = {
     },
     getProductsPage: async (_req, res) => {
         try {
-            const products = await prisma.product.findMany({ include: { category: true, author: true } });
+            const products = await prisma.product.findMany({
+                include: {
+                    category: true, author: {
+                        select: {
+                            id: true,
+                            username: true,
+                            name: true,
+                            email: true,
+                            avatar: true,
+                            bio: true,
+                            sellerRating: true,
+                            sellerReviewCount: true,
+                        }
+                    },
+                    receivedReviews: {
+                        where: { deletedAt: null },
+                        include: {
+                            reviewAuthor: {
+                                select: { id: true, username: true, name: true, avatar: true },
+                            }
+                        }
+                    }
+                }
+            });
             console.log('all product got sucessfully returned');
             return (res.status(200).json({ status: 'OK', data: products }));
         }

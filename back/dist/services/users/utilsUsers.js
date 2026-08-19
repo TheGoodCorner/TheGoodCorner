@@ -10,7 +10,9 @@ const prismaInstance = new PrismaClient();
 export const findUserByEmail = async (email) => {
     return (await prisma.user.findUnique({
         where: { email },
-        include: { product: true, location: true }
+        include: { product: true, location: true, receivedReviews: {
+                include: { reviewAuthor: true }
+            } }
     }));
 };
 export const findUserByUsername = async (username) => {
@@ -27,7 +29,9 @@ export const findUserByUsername = async (username) => {
 export const createDbUser = async (data) => {
     return (await prisma.user.create({
         data,
-        include: { product: true, location: true }
+        include: { product: true, location: true, receivedReviews: {
+                include: { reviewAuthor: true }
+            } }
     }));
 };
 /**
@@ -65,10 +69,29 @@ export const findReturnUser = async (id) => {
     if (isNaN(userId))
         return ({ error: "Invalid userId, must be an integer.", status: 400 });
     const user = await prisma.user.findUnique({
-        where: { id: userId },
+        where: { id: userId }, include: { receivedReviews: {
+                where: { deletedAt: null }, // filtre les avis soft-deleted côté back plutôt que côté front
+                orderBy: { createdAt: 'desc' },
+                include: {
+                    reviewAuthor: {
+                        select: { id: true, username: true, name: true, avatar: true },
+                    },
+                },
+            }, product: {
+                include: { author: {
+                        select: {
+                            id: true,
+                            username: true,
+                            avatar: true,
+                            sellerRating: true,
+                            sellerReviewCount: true,
+                        }
+                    }, category: true }
+            } }
     });
     if (!user)
         return ({ error: "user not found.", status: 400 });
     console.log(`object found !`);
-    return (user);
+    const { password, ...userNoPass } = user;
+    return (userNoPass);
 };

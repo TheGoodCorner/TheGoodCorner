@@ -15,11 +15,11 @@ export const ReviewCard = ({
   onEdit,
   onDelete,
 }) => {
-    console.log("🔍 ReviewCard Debug:");
-  console.log("  authorId:", authorId, "type:", typeof authorId);
-  console.log("  currentUserId:", currentUserId, "type:", typeof currentUserId);
+    // console.log("🔍 ReviewCard Debug:");	
+//   console.log("  authorId:", authorId, "type:", typeof authorId);
+//   console.log("  currentUserId:", currentUserId, "type:", typeof currentUserId);
   const isAuthor = currentUserId && authorId && String(currentUserId) === String(authorId);
-    console.log("  isAuthor:", isAuthor);
+    // console.log("  isAuthor:", isAuthor);
   return (
     <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-4 sm:p-5">
       {/* Header review */}

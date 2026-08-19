@@ -93,6 +93,7 @@ function SellerProfile() {
   }, [currentUser, id, navigate]);
 
   useEffect(() => {
+	if (!id) return;
     fetchUser(id);
     setActiveTab("listings");
     setShowAllReviews(false);

@@ -16,13 +16,29 @@ const ProductController = {
                 return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
             const newProduct = await prisma.product.create({
                 data: buildProduct({ body: req.body, file: req.file, userId }),
-                include: { category: true, author: true }, // needs to delete password
+                include: {
+                    category: true,
+                    author: {
+                        select: {
+                            id: true,
+                            username: true,
+                            name: true,
+                            email: true,
+                            avatar: true,
+                            bio: true,
+                            sellerRating: true,
+                            sellerReviewCount: true,
+                        }
+                    },
+                }
             });
             console.log(`User created an object`);
             return (res.status(201).json({ status: 'OK', data: newProduct }));
         }
         catch (error) {
             console.error(error);
+            if (error instanceof Error)
+                return res.status(400).json({ status: 'ERROR', message: error.message });
             return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
         }
     },
