@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient, Prisma } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
-import { findUserByEmail, findUserByUsername, createDbUser, saveRefreshToken, findReturnUser } from "../services/users/utilsUsers.js";
+import { findUserByEmail, findUserByUsername, createDbUser, saveRefreshToken, findReturnUser, findReturnAllUser } from "../services/users/utilsUsers.js";
 import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { buildUser } from "../services/users/buildUser.js";
 import { userUpdate, ValidationError } from "../services/users/updateUser.js";
@@ -126,7 +126,7 @@ const userController =
 			});
 			if (!storedToken || storedToken.expiresAt < new Date()) {
 				res.clearCookie('refreshToken', BASIC_COOKIE); // clear the invalid token
-				return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
+				return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 			}
 
 			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
@@ -143,7 +143,7 @@ const userController =
 		catch (error){
 			console.error(error);
 			res.clearCookie('refreshToken', BASIC_COOKIE); // clear the token 
-			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired refresh token' }));
+			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 		}
 	},
 	getUser: async (req:Request<{ id:string}>, res:Response) => 
@@ -161,6 +161,19 @@ const userController =
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error'}));
 		}
 	},
+	getAllUser: async (_req:Request, res:Response) => 
+	{
+		try {
+			const allUser = await findReturnAllUser();
+			console.log('fetch user ended successfully');
+			return (res.status(200).json({ status: 'OK', data: allUser }));
+		}
+		catch(error){
+			console.log('an error ocurred inside getAllUsers');
+			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error'}));
+		}
+	},
+
 	removeUser: async (req:AuthenticatedRequest<{ id:string }>, res:Response) =>
 	{
 		try {

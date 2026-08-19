@@ -2,6 +2,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import prisma from "../db.js";
 import 'dotenv/config';
 import { Request, Response } from 'express';
+import { emit } from 'node:cluster';
 
 const prismaInstance = new PrismaClient();
 
@@ -70,6 +71,32 @@ export const getUserById = async (req: Request< { id:string}>, res: Response) =>
 		console.error(error);
 		return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 	}
+}
+export const findReturnAllUser = async () => {
+	const allUsers = await prisma.user.findMany({
+		include: {
+			authoredReviews: {
+				include: {reviewAuthor:true, reviewedUser:true}
+			},
+			receivedReviews: {
+				include:{reviewAuthor:true, reviewedUser:true}
+			},
+			sentMessages: true,
+			receivedMessages: true,
+			product: {
+				include: {
+					author:true,
+					category:true
+				}
+			},
+			location: true,
+			refreshToken:true
+		}
+	})
+	if (!allUsers)
+		return ({error: 'couldn\'t fetch all users.', status : 400});
+	console.log("sucessfully fetched all users");
+	return (allUsers);
 }
 export const findReturnUser = async (id: string) => {
 	const userId = parseInt(id, 10);
