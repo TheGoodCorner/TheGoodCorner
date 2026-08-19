@@ -74,25 +74,39 @@ export const getUserById = async (req: Request< { id:string}>, res: Response) =>
 }
 export const findReturnAllUser = async () => {
 	const allUsers = await prisma.user.findMany({
-		include: {
-			authoredReviews: {
-				include: {reviewAuthor:true, reviewedUser:true}
-			},
-			receivedReviews: {
-				include:{reviewAuthor:true, reviewedUser:true}
-			},
-			sentMessages: true,
-			receivedMessages: true,
-			product: {
-				include: {
-					author:true,
-					category:true
-				}
-			},
-			location: true,
-			refreshToken:true
+	select: {
+	  id: true,
+	  email: true,
+	  name: true,
+	  authoredReviews: {
+		select: {
+			id: true,
+			content: true,
+			reviewAuthor: { select: { id: true, name: true } },
+			reviewedUser: { select: { id: true, name: true } }
 		}
-	})
+	  },
+	  receivedReviews: {
+		select: {
+			id: true,
+			content: true,
+			reviewAuthor: { select: { id: true, name: true } },
+			reviewedUser: { select: { id: true, name: true } }
+		}
+	  },
+		sentMessages: true,
+		receivedMessages: true,
+		product: {
+		select: {
+			id: true,
+			title: true,
+			category: true,
+			author: { select: { id: true, name: true } }
+		}
+	  },
+	  location: true
+ 	}
+  });
 	if (!allUsers)
 		return ({error: 'couldn\'t fetch all users.', status : 400});
 	console.log("sucessfully fetched all users");

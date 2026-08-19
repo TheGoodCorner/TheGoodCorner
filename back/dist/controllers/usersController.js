@@ -137,7 +137,7 @@ const userController = {
             return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
         }
     },
-    getAllUser: async (req, res) => {
+    getAllUser: async (_req, res) => {
         try {
             const allUser = await findReturnAllUser();
             console.log('fetch user ended successfully');

@@ -66,23 +66,37 @@ export const getUserById = async (req, res) => {
 };
 export const findReturnAllUser = async () => {
     const allUsers = await prisma.user.findMany({
-        include: {
+        select: {
+            id: true,
+            email: true,
+            name: true,
             authoredReviews: {
-                include: { reviewAuthor: true, reviewedUser: true }
+                select: {
+                    id: true,
+                    content: true,
+                    reviewAuthor: { select: { id: true, name: true } },
+                    reviewedUser: { select: { id: true, name: true } }
+                }
             },
             receivedReviews: {
-                include: { reviewAuthor: true, reviewedUser: true }
+                select: {
+                    id: true,
+                    content: true,
+                    reviewAuthor: { select: { id: true, name: true } },
+                    reviewedUser: { select: { id: true, name: true } }
+                }
             },
             sentMessages: true,
             receivedMessages: true,
             product: {
-                include: {
-                    author: true,
-                    category: true
+                select: {
+                    id: true,
+                    title: true,
+                    category: true,
+                    author: { select: { id: true, name: true } }
                 }
             },
-            location: true,
-            refreshToken: true
+            location: true
         }
     });
     if (!allUsers)
