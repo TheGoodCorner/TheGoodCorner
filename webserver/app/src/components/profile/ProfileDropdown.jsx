@@ -53,7 +53,7 @@ function ProfileDropdown() {
           <UserRound/>
             Mon Profil
         </Dropdown.Item>
-        <Dropdown.Item>
+        <Dropdown.Item as={Link} to="/messagerie">
           <MessageCircle/>
             Mes messages
         </Dropdown.Item>

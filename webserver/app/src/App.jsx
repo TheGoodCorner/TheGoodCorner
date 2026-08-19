@@ -14,7 +14,7 @@ import Home from './pages/Home';
 import Products from './pages/Produits';
 import ProductDetail from './pages/ProduitDetail';
 import Login from './pages/Login';
-import Contact from './pages/Contact';
+import Messagerie from './pages/Messagerie';
 import Profile from './pages/Profile';
 import SellerProfile from './pages/SellerProfile';
 import './styles/style.css';
@@ -61,7 +61,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="/messagerie" element={<Messagerie />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/profile/:id" element={<SellerProfile />} />
         </Route>
