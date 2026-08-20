@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Facebook, Twitter, Instagram, Linkedin, Youtube } from 'lucide-react'
 
 function Footer() {
   return (
@@ -21,7 +22,7 @@ function Footer() {
               <li><Link to="/">Accueil</Link></li>
               <li><Link to="/products">Produits</Link></li>
               <li><Link to="/profile">Profil</Link></li>
-              <li><Link to="/contact">Contact</Link></li>
+              <li><Link to="/messagerie">Mes Discussions</Link></li>
             </ul>
           </div>
 
@@ -39,9 +40,10 @@ function Footer() {
           <div className="footer-column">
             <h3 className="footer-title">Nous suivre</h3>
             <ul className="footer-links">
-              <li><a href="#facebook">Facebook</a></li>
-              <li><a href="#twitter">Twitter</a></li>
-              <li><a href="#instagram">Instagram</a></li>
+              <li><Facebook size={14}/><a href="#facebook">Facebook</a></li>
+              <li><Twitter size={14}/><a href="#twitter">Twitter</a></li>
+              <li><Instagram size={14}/><a href="#instagram">Instagram</a></li>
+              <li><Linkedin size={14}/><a href="#linkedin">Linkedin</a></li>
             </ul>
           </div>
         </div>
