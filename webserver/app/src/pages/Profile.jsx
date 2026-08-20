@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { MessageCircle, PackageSearch } from "lucide-react";
+import { Link } from 'react-router-dom'
+import { MessageCircle, PackageSearch, Lock } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
 import { ProfilHeader } from "../components/profile/ProfilHeader";
 import { ProfilInfos } from "../components/profile/ProfilInfos";
 import { ReviewCard } from "../components/reviews/ReviewCard";
 import ProductCard from "../components/products/ProductCard";
+import { useAuthStore } from "../stores/authStore";
 
 function TabButton({ active, onClick, children }) {
   return (
@@ -24,6 +26,8 @@ function TabButton({ active, onClick, children }) {
 
 function Profile() {
   const [showAllReviews, setShowAllReviews] = useState(false);
+  const { isAuthenticated, initializing } = useAuthStore()
+
 
   const {
     user,
@@ -57,6 +61,54 @@ function Profile() {
   useEffect(() => {
     setActiveTab("products");
   }, []);
+
+ if (initializing) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-[var(--color-bg)]">
+        <section className="border-b border-[var(--color-border)] bg-[var(--color-surface)]">
+          <div className="px-6 sm:px-8 lg:px-12 py-16 sm:py-20">
+            <div className="max-w-2xl mx-auto text-center">
+              <div className="flex justify-center mb-6">
+                <div className="p-4 bg-[var(--color-surface-hover)] rounded-full">
+                  <Lock size={40} className="text-[var(--color-text-muted)]" />
+                </div>
+              </div>
+              
+              <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-3">
+                Vous n'êtes pas connecté
+              </h1>
+              
+              <p className="text-[var(--color-text-muted)] mb-8 text-lg">
+                Connectez-vous pour accéder à votre page profil, gérer vos annonces et consulter vos avis.
+              </p>
+              <p className="text-[var(--color-text-muted)] mb-8 text-xs">
+                Bien tenté, petit fouineur !
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/authentication" className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-primary-text)] font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
+                  Se connecter
+                </Link>
+                <Link to="/authentication" className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors">
+                  Créer un compte
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[var(--color-bg)]">
