@@ -1,4 +1,4 @@
-import { Trash2, CreditCard, Store, Minus, Plus } from 'lucide-react';
+import { Trash2, CreditCard, Store, Minus, Plus, PackageOpen } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { Button } from '../components/UI/Button';
@@ -39,6 +39,9 @@ export function CartPopover() {
                     <p className="text-sm text-gray-600 text-[var(--color-text-muted)] mt-1">
                       {item.quantity} × {item.price.toFixed(2)} €
                     </p>
+                    <span className="text-[10px] text-[var(--color-text-muted)] mt-1 flex items-center gap-1">
+                      ({item.stock} disponible)
+                    </span>
                   </div>
                     <div className="flex items-center gap-2">
                       <div className="flex items-center gap-1 g-[var(--color-surface-hover)] rounded px-2">
@@ -57,6 +60,7 @@ export function CartPopover() {
                           size="sm"
                           icon={Plus}
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          disabled={item.quantity >= item.stock}
                           className="text-[var(--color-text)] hover:text-[var(--color-primary)]"
                           aria-label="Augmenter la quantité"
                         />

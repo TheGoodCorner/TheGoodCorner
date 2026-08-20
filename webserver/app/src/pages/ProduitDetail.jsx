@@ -68,6 +68,7 @@ function ProductDetail() {
       price: product.price,
       imageUrl: product.imageUrl,
       quantity,
+      stock: product.quantity,
     });
     openUi('cart-popover');
   };
