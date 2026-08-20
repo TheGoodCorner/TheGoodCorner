@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
+import { useUserStore } from './userStore' 
 
 export const useCartStore = create(
   persist(
@@ -7,8 +8,24 @@ export const useCartStore = create(
       cartItems: [],
       cartCount: 0,
       cartTotal: 0,
+      error: null,
+      
 
-      addToCart: (product) =>
+      addToCart: (product) => {
+
+        if (!product || !product.id || !product.price) {
+          set({ error: 'Produit invalide.' })
+          return false
+        }
+        const currentUser = useUserStore.getState().user        
+        // Vérifier si c'est le propre produit de l'utilisateur
+        if (product.authorId === currentUser?.id) {
+          set({ error: 'Vous ne pouvez pas ajouter votre propre produit au panier.' })
+          return false
+        }
+
+        set({ error: null })
+
         set((state) => {
           const existing = state.cartItems.find((item) => item.id === product.id)
           let newItems
@@ -28,7 +45,9 @@ export const useCartStore = create(
             cartCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
             cartTotal: newItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
           }
-        }),
+        })
+        return true
+      },
 
       removeFromCart: (productId) =>
         set((state) => {
@@ -58,6 +77,11 @@ export const useCartStore = create(
           cartCount: 0,
           cartTotal: 0,
         }),
+      
+      setError: (error) => set({ error }),
+      setError: (error) => set({ error }),
+      clearError: () => set({ error: null }),
+
     }),
     {
       name: 'cart-storage',

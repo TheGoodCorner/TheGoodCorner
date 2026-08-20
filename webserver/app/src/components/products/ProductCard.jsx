@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
@@ -6,25 +7,36 @@ import { getInitials, getAvatarColor } from '../../utils/avatar';
 import { PlusCircle, Star } from 'lucide-react'
 
 export default function ProductCard({ product }) {
-  const { addToCart } = useCartStore()
-  const { openUi } = useUIStore()
+  const addToCart = useCartStore((state) => state.addToCart)
+  const error = useCartStore((state) => state.error)
+  const clearError = useCartStore((state) => state.clearError)
+  const openUi = useUIStore((state) => state.openUi)
 
-  // Défensif : certains contextes (ex: listings d'un profil vendeur) ne
-  // fournissent pas encore de author imbriqué sur chaque produit.
+  // Défensif : certains contextes
   const author = product.author || {};
+  
   const handleAddToCart = () => {
-    // Item panier volontairement "plat" : pas besoin de category/author
-    // imbriqués une fois dans le panier, et ça évite toute collision avec
-    // product.stock (le stock disponible n'est pas la quantité voulue).
-    addToCart({
+    const success = addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
       quantity: 1,
+      authorId: product.author.id,
+      stock: product.quantity,
     })
+    if (!success) { return; }
     openUi('cart-popover')
   }
+
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => {
+      clearError();
+    }, 3000);
+
+    return () => clearTimeout(timer); // Cleanup si composant unmount ou error change
+  }, [error, clearError]);
 
   const sellerInfo = (
     <>
@@ -64,6 +76,14 @@ export default function ProductCard({ product }) {
           />
         </div>
       </Link>
+
+      {error && (
+        <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
+          <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+            {error}
+          </p>
+        </div>
+      )}
 
       <div className="card-body card-footer-compact">
         <Link to={`/products/${product.id}`} className="hover:text-[var(--color-primary)] transition-colors">

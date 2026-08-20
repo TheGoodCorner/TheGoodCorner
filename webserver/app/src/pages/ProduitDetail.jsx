@@ -36,6 +36,7 @@ function ProductDetail() {
   const fetchProductById = useProductStore((state) => state.fetchProductById);
   const allProducts = useProductStore((state) => state.products);
   const addToCart = useCartStore((state) => state.addToCart);
+  const error = useCartStore((state) => state.error);
   const openUi = useUIStore((state) => state.openUi);
 
   const [quantity, setQuantity] = useState(1);
@@ -62,14 +63,16 @@ function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    addToCart({
+    const succes = addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
       quantity,
       stock: product.quantity,
+      authorId: product.author.id
     });
+    if (!succes) { return; }
     openUi('cart-popover');
   };
 
@@ -121,6 +124,14 @@ function ProductDetail() {
             <p className="text-[var(--color-text-muted)] leading-relaxed mb-8">
               {product.description || "Description à venir."}
             </p>
+            
+            {error && (
+              <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
+                <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+                  {error}
+                </p>
+              </div>
+            )}
 
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-medium text-[var(--color-text)]">Quantité</span>
