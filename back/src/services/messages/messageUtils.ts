@@ -69,7 +69,7 @@ export class MessageService {
 	}
 	static async getMessage(messageId: number) {
 		return (await prisma.message.findUnique({
-			where: { id: messageId, deletedAt: null}, 
+			where: { id: messageId}, 
 			include: { sender: { select: { id:true, username:true, email:true, avatar:true }}}
 		}));
 	}

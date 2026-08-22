@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '../api/authApi'
 import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
+import { useMessageStore } from './messageStore'
+import { connectSocket, disconnectSocket } from '../socket'
 
 const SESSION_KEY = 'has_session';
 const hasInitialSession = typeof window !== 'undefined' && localStorage.getItem(SESSION_KEY) === 'true';
@@ -26,6 +28,7 @@ export const useAuthStore = create((set) => ({
       // dans userStore, pas de fetch séparé (GET /user/:id est publique et
       // ne renverrait que la version publique).
       useUserStore.getState().setUser(user)
+      connectSocket(user.id)
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -40,6 +43,7 @@ export const useAuthStore = create((set) => ({
 	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       useUserStore.getState().setUser(user)
+      connectSocket(user.id)
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -57,6 +61,7 @@ export const useAuthStore = create((set) => ({
       const { user, token } = await refreshRequest()
       set({token, isAuthenticated: true, initializing: false })
       useUserStore.getState().setUser(user)
+      connectSocket(user.id)
     } catch {
       set({ user: null, token: null, isAuthenticated: false, initializing: false })
     }
@@ -72,6 +77,8 @@ export const useAuthStore = create((set) => ({
     set({ user: null, token: null, isAuthenticated: false, error: null })
     useCartStore.getState().clearCart()
     useUserStore.getState().logout()
+    useMessageStore.getState().reset()
+    disconnectSocket()
   },
 
   setToken: (token) => set({ token }),

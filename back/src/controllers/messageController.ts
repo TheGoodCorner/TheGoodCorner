@@ -28,7 +28,7 @@ const messageController = {
 				const currentUserId = req.user!.id;
 				if (!currentUserId)
 					return res.status(400).json({ error: 'Missing currentUserId' });
-			const conversationList = MessageService.getConversationList(currentUserId);
+			const conversationList = await MessageService.getConversationList(currentUserId);
 			console.log('Messages successfully fetched');
 			return (res.status(200).json({ message: 'ConversationList sucessfully fetched', data: conversationList }));
 		}
