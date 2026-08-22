@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { SendMessage, GetMessage, GetAllMessages, UpdateMessage, DeleteMessage } from '../api/messageApi';
+import { useUserStore } from './userStore';
 
 /**
  * Store de la messagerie.
@@ -79,16 +80,10 @@ export const useMessageStore = create(
       sendMessage: async (conversationId, content) => {
         set({ sending: true, error: null });
         try {
-          const newMessage = await SendMessage(conversationId, content);
-          set((state) => {
-            const existing = state.messagesByConversation[conversationId] || [];
-            return {
-              messagesByConversation: { ...state.messagesByConversation, [conversationId]: [...existing, newMessage] },
-              sending: false,
-            };
-          });
-          get()._touchConversation(conversationId, newMessage);
-          return newMessage;
+          SendMessage(conversationId, content); // ← PAS d'await, pas d'assignment
+          // La réponse vient via le socket listener → receiveMessage()
+          set({ sending: false });
+          return; // ← Retourne sans newMessage
         } catch (err) {
           set({ error: err.message, sending: false });
           console.error('sendMessage error:', err);
@@ -175,7 +170,12 @@ export const useMessageStore = create(
       // --- Points d'entrée temps réel (appelés depuis src/socket.js) ---
 
       receiveMessage: (message) => {
-        const conversationId = message.senderId;
+        const currentUser = useUserStore.getState().user;
+        // Détermine l'ID de la conversation :
+        // c'est l'ID de l'autre personne (pas de soi-même)
+        const conversationId = message.senderId === currentUser?.id 
+          ? message.receiverId  // Je suis le sender → convo avec le receiver
+          : message.senderId;   // Je suis le receiver → convo avec le sender
         set((state) => {
           const existing = state.messagesByConversation[conversationId] || [];
           const alreadyKnown = existing.some((m) => m.id === message.id);
