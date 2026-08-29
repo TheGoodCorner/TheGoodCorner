@@ -91,8 +91,16 @@ export const useMessageStore = create(
         }
       },
 
-      // Prêt côté store, pas encore branché à l'UI.
       updateMessage: async (messageId, conversationId, content) => {
+        const previous = get().messagesByConversation[conversationId];
+        set((state) => ({
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [conversationId]: (state.messagesByConversation[conversationId] || []).map((m) =>
+              m.id === messageId ? { ...m, content, modifiedAt: new Date().toISOString() } : m
+            ),
+          },
+        }));
         try {
           const updated = await UpdateMessage(messageId, content);
           set((state) => ({
@@ -103,26 +111,28 @@ export const useMessageStore = create(
               ),
             },
           }));
-          return updated;
         } catch (err) {
-          console.error('updateMessage error:', err);
+          set((state) => ({
+            messagesByConversation: { ...state.messagesByConversation, [conversationId]: previous },
+          }));
           throw err;
         }
       },
 
       deleteMessage: async (messageId, conversationId) => {
+        const previous = get().messagesByConversation[conversationId];
+        set((state) => ({
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [conversationId]: (state.messagesByConversation[conversationId] || []).filter((m) => m.id !== messageId),
+          },
+        }));
         try {
           await DeleteMessage(messageId);
-          set((state) => ({
-            messagesByConversation: {
-              ...state.messagesByConversation,
-              [conversationId]: (state.messagesByConversation[conversationId] || []).filter(
-                (m) => m.id !== messageId
-              ),
-            },
-          }));
         } catch (err) {
-          console.error('deleteMessage error:', err);
+          set((state) => ({
+            messagesByConversation: { ...state.messagesByConversation, [conversationId]: previous },
+          }));
           throw err;
         }
       },

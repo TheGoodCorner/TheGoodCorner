@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MessageCircle, Plus, Send, Search, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Plus, Send, Search, ArrowLeft, Edit2, Trash2, Check, X } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
 import { useAuthStore } from '../stores/authStore';
 import { useMessageStore } from '../stores/messageStore';
@@ -37,10 +37,47 @@ function Messagerie() {
   const sendMessage = useMessageStore((state) => state.sendMessage);
   const sending = useMessageStore((state) => state.sending);
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
+  const updateMessage = useMessageStore((state) => state.updateMessage);
+  const deleteMessage = useMessageStore((state) => state.deleteMessage);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [search, setSearch] = useState('');
+  
+  const [editingMessageId, setEditingMessageId] = useState(null);
+  const [editingContent, setEditingContent] = useState('');
+
+  const startEditingMessage = (message) => {
+    setEditingMessageId(message.id);
+    setEditingContent(message.content);
+  };
+
+  const cancelEditingMessage = () => {
+    setEditingMessageId(null);
+    setEditingContent('');
+  };
+
+  const saveEditingMessage = async () => {
+    const trimmed = editingContent.trim();
+    const messageId = editingMessageId;
+    const original = activeMessages.find((m) => m.id === messageId)?.content;
+    setEditingMessageId(null);
+    // rien à faire si vide ou si le contenu n'a pas changé (évite un appel réseau inutile)
+    if (!trimmed || !activeConversationId || trimmed === original) return;
+    try {
+      await updateMessage(messageId, activeConversationId, trimmed);
+    } catch {
+      // rollback déjà appliqué dans le store
+    }
+  };
+
+  const handleDeleteMessage = async (messageId) => {
+    try {
+      await deleteMessage(messageId, activeConversationId);
+    } catch {
+      // rollback déjà appliqué dans le store
+    }
+  };
   // Sur mobile, on affiche soit la liste soit la conversation ouverte,
   // jamais les deux en même temps (pas assez de place).
   const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
@@ -251,8 +288,32 @@ function Messagerie() {
                   ) : (
                     activeMessages.map((message) => {
                       const isMine = String(message.senderId) === String(currentUser.id);
+                      const isEditingThis = editingMessageId === message.id;
+
                       return (
-                        <div key={message.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
+                        <div key={message.id} className={`group flex items-end gap-1.5 ${isMine ? 'justify-end' : 'justify-start'}`}>
+                          {isMine && !isEditingThis && (
+                            <div className="flex items-center gap-0.5 mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                icon={Edit2}
+                                iconOnly
+                                aria-label="Modifier le message"
+                                onClick={() => startEditingMessage(message)}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                icon={Trash2}
+                                iconOnly
+                                aria-label="Supprimer le message"
+                                onClick={() => handleDeleteMessage(message.id)}
+                                className="hover:text-[var(--color-danger)]"
+                              />
+                            </div>
+                          )}
+
                           <div
                             className={`max-w-[75%] sm:max-w-[60%] rounded-[var(--radius-lg)] px-4 py-2.5 ${
                               isMine
@@ -260,11 +321,35 @@ function Messagerie() {
                                 : 'bg-[var(--color-surface-hover)] text-[var(--color-text)] rounded-bl-sm'
                             }`}
                           >
-                            <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
-                            <p className={`text-[10px] mt-1 ${isMine ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
-                              {formatMessageTime(message.createdAt)}
-                              {message.modifiedAt ? ' · modifié' : ''}
-                            </p>
+                            {isEditingThis ? (
+                              <div className="flex items-center gap-2 min-w-[160px]">
+                                <input
+                                  type="text"
+                                  value={editingContent}
+                                  onChange={(e) => setEditingContent(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') saveEditingMessage();
+                                    if (e.key === 'Escape') cancelEditingMessage();
+                                  }}
+                                  autoFocus
+                                  className="flex-1 min-w-0 text-sm bg-transparent border-b border-white/40 focus:outline-none focus:border-white"
+                                />
+                                <button onClick={saveEditingMessage} aria-label="Valider" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+                                  <Check size={16} />
+                                </button>
+                                <button onClick={cancelEditingMessage} aria-label="Annuler" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+                                  <X size={16} />
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
+                                <p className={`text-[10px] mt-1 ${isMine ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
+                                  {formatMessageTime(message.createdAt)}
+                                  {message.modifiedAt ? ' · modifié' : ''}
+                                </p>
+                              </>
+                            )}
                           </div>
                         </div>
                       );

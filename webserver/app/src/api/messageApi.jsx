@@ -6,7 +6,7 @@ export async function SendMessage(receiver_id, content) {
     const userId = useUserStore.getState().user?.id;
     
     if (!userId) {
-        console.error('❌ Pas d\'userId trouvé');
+        console.error('Pas d\'userId trouvé');
         return;
     }
     socket.emit('send_direct_message', {
@@ -42,6 +42,5 @@ export async function UpdateMessage(message_id, content)
 
 export async function DeleteMessage(message_id)
 {
-    const { data } = await apiClient.delete(`/message/${message_id}`)
-    return data.data
+    await apiClient.delete(`/message/${message_id}`)
 }

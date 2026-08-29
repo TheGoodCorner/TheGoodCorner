@@ -34,8 +34,8 @@ app.use(rootPath, reviewsRouter); // reviews routes
 app.use(rootPath, messageRouter); // message routes
 
 const socketServer = http.createServer(app);
-initializeWebServer(socketServer);
-
+const io = initializeWebServer(socketServer);
+app.set('io', io);
 // app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors
