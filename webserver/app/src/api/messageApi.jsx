@@ -1,16 +1,14 @@
-import { useUserStore } from '../stores/userStore'; // Adapte le chemin
-import { socket } from '../socket'; // ← Importe le socket
+import { useUserStore } from '../stores/userStore';
+import { socket } from '../socket';
 import { apiClient } from './client';
 
 export async function SendMessage(receiver_id, content) {
-    const userId = useUserStore.getState().user?.id; // ← Récupère l'userId
+    const userId = useUserStore.getState().user?.id;
     
     if (!userId) {
         console.error('❌ Pas d\'userId trouvé');
         return;
     }
-    
-    console.log('🚀 Émission send_direct_message:', { userId, receiver_id, content });
     socket.emit('send_direct_message', {
         senderId: userId,
         receiverId: receiver_id,

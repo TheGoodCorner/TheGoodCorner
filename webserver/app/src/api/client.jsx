@@ -76,9 +76,11 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // 401 sur login/register (identifiants faux) ou refresh lui-même en
-    // échec (session vraiment terminée) : déconnexion, sans boucle.
-    if (error.response?.status === 401) {
+    const isLoginOrRegister = ['/auth/login', '/auth/register'].some((path) =>
+      originalRequest?.url?.includes(path)
+    );
+
+    if (error.response?.status === 401 && !isLoginOrRegister) {
       useAuthStore.getState().logout();
     }
 

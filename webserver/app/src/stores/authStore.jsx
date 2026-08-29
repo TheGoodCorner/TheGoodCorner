@@ -68,20 +68,20 @@ export const useAuthStore = create((set) => ({
   },
 
   logout: async () => {
-	localStorage.removeItem(SESSION_KEY)
-    try {
-      await logoutRequest()
-    } catch {
-      // Même si l'appel échoue, on déconnecte quand même côté client.
-    }
+    // Même si l'appel échoue, on déconnecte quand même côté client.
+    localStorage.removeItem(SESSION_KEY)
     set({ user: null, token: null, isAuthenticated: false, error: null })
     useCartStore.getState().clearCart()
     useUserStore.getState().logout()
     useMessageStore.getState().reset()
     disconnectSocket()
+    try {
+      await logoutRequest()
+    } catch {
+      // best-effort : côté client la session est déjà terminée
+    }
   },
 
   setToken: (token) => set({ token }),
-  setUser: (user) => set({ user }),
   setError: (error) => set({ error }),
 }))

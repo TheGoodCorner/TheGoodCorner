@@ -233,7 +233,16 @@ export const useMessageStore = create(
     {
       name: 'message-storage',
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ conversations: state.conversations }),
+      partialize: (state) => ({
+        conversations: state.conversations.map((c) => ({
+          interlocutor: {
+            id: c.interlocutor.id,
+            username: c.interlocutor.username,
+            avatar: c.interlocutor.avatar,
+          },
+          lastMessage: c.lastMessage,
+        })),
+      }),
     }
   )
 );

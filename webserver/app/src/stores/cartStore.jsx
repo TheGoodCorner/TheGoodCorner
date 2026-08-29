@@ -79,13 +79,17 @@ export const useCartStore = create(
         }),
       
       setError: (error) => set({ error }),
-      setError: (error) => set({ error }),
       clearError: () => set({ error: null }),
 
     }),
     {
       name: 'cart-storage',
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        cartItems: state.cartItems,
+        cartCount: state.cartCount,
+        cartTotal: state.cartTotal,
+      }),
     }
   )
 )
