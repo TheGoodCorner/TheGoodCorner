@@ -181,6 +181,8 @@ export const useMessageStore = create(
 
       receiveMessage: (message) => {
         const currentUser = useUserStore.getState().user;
+        if (!currentUser?.id)
+          return;
         // Détermine l'ID de la conversation :
         // c'est l'ID de l'autre personne (pas de soi-même)
         const conversationId = message.senderId === currentUser?.id 
