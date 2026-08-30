@@ -1,26 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { MessageCircle, Plus, Send, Search, ArrowLeft, Edit2, Trash2, Check, X } from 'lucide-react';
+import { MessageCircle, Plus } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
 import { useAuthStore } from '../stores/authStore';
 import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
-import Avatar from '../components/UI/Avatar';
 import SelectUserModal from '../components/chat/SelectUserModal';
-
-function formatMessageTime(dateString) {
-  if (!dateString) return '';
-  return new Date(dateString).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-}
-
-function formatConversationTime(dateString) {
-  if (!dateString) return '';
-  const date = new Date(dateString);
-  const isToday = date.toDateString() === new Date().toDateString();
-  return isToday
-    ? date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
-    : date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-}
+import ConversationsSidebar from '../components/chat/ConversationsSidebar';
+import ChatThread from '../components/chat/ChatThread';
 
 function Messagerie() {
   const currentUser = useUserStore((state) => state.user);
@@ -43,9 +29,23 @@ function Messagerie() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [search, setSearch] = useState('');
-  
+
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
+
+  // Sur mobile, on affiche soit la liste soit la conversation ouverte,
+  // jamais les deux en même temps (pas assez de place).
+  const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated && currentUser?.id) {
+      fetchConversations();
+    }
+  }, [isAuthenticated, currentUser?.id, fetchConversations]);
+
+  const activeConversation =
+    conversations.find((c) => String(c.interlocutor.id) === String(activeConversationId)) || null;
+  const activeMessages = activeConversationId ? messagesByConversation[activeConversationId] || [] : [];
 
   const startEditingMessage = (message) => {
     setEditingMessageId(message.id);
@@ -78,42 +78,6 @@ function Messagerie() {
       // rollback déjà appliqué dans le store
     }
   };
-  // Sur mobile, on affiche soit la liste soit la conversation ouverte,
-  // jamais les deux en même temps (pas assez de place).
-  const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
-
-  useEffect(() => {
-    if (isAuthenticated && currentUser?.id) {
-      fetchConversations();
-    }
-  }, [isAuthenticated, currentUser?.id, fetchConversations]);
-
-  if (initializing) {
-    return <div className="container py-16 text-center text-[var(--color-text-muted)]">Chargement...</div>;
-  }
-
-  if (!isAuthenticated || !currentUser?.id) {
-    return (
-      <div className="container py-16 text-center bg-[var(--color-bg)]">
-        <MessageCircle size={40} className="text-[var(--color-text-muted)] mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
-          Connecte-toi pour accéder à ta messagerie
-        </h1>
-        <p className="text-[var(--color-text-muted)] mb-6">
-          Retrouve ici toutes tes conversations avec les autres utilisateurs.
-        </p>
-        <Button to="/authentication" variant="primary">Se connecter</Button>
-      </div>
-    );
-  }
-
-  const activeConversation =
-    conversations.find((c) => String(c.interlocutor.id) === String(activeConversationId)) || null;
-  const activeMessages = activeConversationId ? messagesByConversation[activeConversationId] || [] : [];
-
-  const filteredConversations = search.trim()
-    ? conversations.filter((c) => c.interlocutor.username?.toLowerCase().includes(search.trim().toLowerCase()))
-    : conversations;
 
   const handleSelectConversation = (conversationId) => {
     setActiveConversation(conversationId);
@@ -137,6 +101,25 @@ function Messagerie() {
     }
   };
 
+  if (initializing) {
+    return <div className="container py-16 text-center text-[var(--color-text-muted)]">Chargement...</div>;
+  }
+
+  if (!isAuthenticated || !currentUser?.id) {
+    return (
+      <div className="container py-16 text-center bg-[var(--color-bg)]">
+        <MessageCircle size={40} className="text-[var(--color-text-muted)] mx-auto mb-4" />
+        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+          Connecte-toi pour accéder à ta messagerie
+        </h1>
+        <p className="text-[var(--color-text-muted)] mb-6">
+          Retrouve ici toutes tes conversations avec les autres utilisateurs.
+        </p>
+        <Button to="/authentication" variant="primary">Se connecter</Button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-8">
@@ -148,216 +131,36 @@ function Messagerie() {
         </div>
 
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-lg overflow-hidden h-[calc(100vh-14rem)] min-h-[480px] flex">
-          {/* Liste des conversations */}
-          <aside
-            className={`w-full sm:w-80 flex-shrink-0 border-r border-[var(--color-border)] flex-col ${
-              showThreadOnMobile ? 'hidden sm:flex' : 'flex'
-            }`}
-          >
-            <div className="p-3 border-b border-[var(--color-border)]">
-              <div className="relative">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Rechercher une conversation..."
-                  className="w-full pl-9 pr-3 py-2 text-sm rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors"
-                />
-              </div>
-            </div>
+          <ConversationsSidebar
+            conversations={conversations}
+            loading={conversationsLoading}
+            activeConversationId={activeConversationId}
+            search={search}
+            onSearchChange={setSearch}
+            onSelectConversation={handleSelectConversation}
+            onNewConversation={() => setShowUserModal(true)}
+            className={showThreadOnMobile ? 'hidden sm:flex' : 'flex'}
+          />
 
-            <div className="flex-1 overflow-y-auto">
-              {conversationsLoading ? (
-                <div className="p-3 space-y-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="h-16 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />
-                  ))}
-                </div>
-              ) : filteredConversations.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-center px-6 py-16">
-                  <p className="text-sm text-[var(--color-text-muted)] mb-4">Aucune conversation pour l'instant.</p>
-                  <Button variant="outline" size="sm" icon={Plus} onClick={() => setShowUserModal(true)}>
-                    Démarrer une discussion
-                  </Button>
-                </div>
-              ) : (
-                filteredConversations.map((conversation) => {
-                  const { interlocutor, lastMessage } = conversation;
-                  const isActive = String(interlocutor.id) === String(activeConversationId);
-                  return (
-                    <button
-                      key={interlocutor.id}
-                      onClick={() => handleSelectConversation(interlocutor.id)}
-                      className={`w-full flex items-center gap-3 p-3 text-left border-b border-[var(--color-border)] transition-colors ${
-                        isActive ? 'bg-[var(--color-surface-hover)]' : 'hover:bg-[var(--color-surface-hover)]'
-                      }`}
-                    >
-                      <Avatar src={interlocutor.avatar} alt={interlocutor.username} name={interlocutor.username} size={44} className="flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-sm font-medium text-[var(--color-text)] truncate">
-                            {interlocutor.username}
-                          </span>
-                          {lastMessage?.createdAt && (
-                            <span className="text-xs text-[var(--color-text-muted)] flex-shrink-0">
-                              {formatConversationTime(lastMessage.createdAt)}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-xs text-[var(--color-text-muted)] truncate mt-0.5">
-                          {lastMessage?.content || 'Nouvelle conversation'}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </aside>
-
-          {/* Fil de discussion */}
           <div className={`flex-1 flex-col ${showThreadOnMobile ? 'flex' : 'hidden sm:flex'}`}>
-            {!activeConversation ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
-                <MessageCircle size={40} className="text-[var(--color-text-muted)] mb-4" />
-                <p className="font-semibold text-[var(--color-text)] mb-1">Sélectionne une conversation</p>
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  Choisis une discussion dans la liste, ou démarre-en une nouvelle.
-                </p>
-              </div>
-            ) : (
-              <>
-                <div className="flex items-center gap-3 p-4 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-                  <button
-                    onClick={() => setShowThreadOnMobile(false)}
-                    className="sm:hidden text-[var(--color-text-muted)]"
-                    aria-label="Retour aux conversations"
-                  >
-                    <ArrowLeft size={18} />
-                  </button>
-                  <Link
-                    to={`/profile/${activeConversation.interlocutor.id}`}
-                    className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-                  >
-                    <Avatar
-                      src={activeConversation.interlocutor.avatar}
-                      alt={activeConversation.interlocutor.username}
-                      name={activeConversation.interlocutor.username}
-                      size="md"
-                    />
-                    <span className="font-semibold text-[var(--color-text)]">
-                      {activeConversation.interlocutor.username}
-                    </span>
-                  </Link>
-                </div>
-
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[var(--color-bg)]">
-                  {messagesLoading && activeMessages.length === 0 ? (
-                    <div className="space-y-3 animate-pulse">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div
-                          key={i}
-                          className={`h-10 w-2/3 rounded-[var(--radius-lg)] bg-[var(--color-surface-hover)] ${i % 2 ? 'ml-auto' : ''}`}
-                        />
-                      ))}
-                    </div>
-                  ) : activeMessages.length === 0 ? (
-                    <p className="text-center text-sm text-[var(--color-text-muted)] mt-8">
-                      Aucun message pour le moment — dis bonjour !
-                    </p>
-                  ) : (
-                    activeMessages.map((message) => {
-                      const isMine = String(message.senderId) === String(currentUser.id);
-                      const isEditingThis = editingMessageId === message.id;
-
-                      return (
-                        <div key={message.id} className={`group flex items-end gap-1.5 ${isMine ? 'justify-end' : 'justify-start'}`}>
-                          {isMine && !isEditingThis && (
-                            <div className="flex items-center gap-0.5 mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                icon={Edit2}
-                                iconOnly
-                                aria-label="Modifier le message"
-                                onClick={() => startEditingMessage(message)}
-                              />
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                icon={Trash2}
-                                iconOnly
-                                aria-label="Supprimer le message"
-                                onClick={() => handleDeleteMessage(message.id)}
-                                className="hover:text-[var(--color-danger)]"
-                              />
-                            </div>
-                          )}
-
-                          <div
-                            className={`max-w-[75%] sm:max-w-[60%] rounded-[var(--radius-lg)] px-4 py-2.5 ${
-                              isMine
-                                ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)] rounded-br-sm'
-                                : 'bg-[var(--color-surface-hover)] text-[var(--color-text)] rounded-bl-sm'
-                            }`}
-                          >
-                            {isEditingThis ? (
-                              <div className="flex items-center gap-2 min-w-[160px]">
-                                <input
-                                  type="text"
-                                  value={editingContent}
-                                  onChange={(e) => setEditingContent(e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') saveEditingMessage();
-                                    if (e.key === 'Escape') cancelEditingMessage();
-                                  }}
-                                  autoFocus
-                                  className="flex-1 min-w-0 text-sm bg-transparent border-b border-white/40 focus:outline-none focus:border-white"
-                                />
-                                <button onClick={saveEditingMessage} aria-label="Valider" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
-                                  <Check size={16} />
-                                </button>
-                                <button onClick={cancelEditingMessage} aria-label="Annuler" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
-                                  <X size={16} />
-                                </button>
-                              </div>
-                            ) : (
-                              <>
-                                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
-                                <p className={`text-[10px] mt-1 ${isMine ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
-                                  {formatMessageTime(message.createdAt)}
-                                  {message.modifiedAt ? ' · modifié' : ''}
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })
-                  )}
-                </div>
-
-                <form onSubmit={handleSendMessage} className="flex items-center gap-3 p-4 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-                  <input
-                    type="text"
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    placeholder="Écris un message..."
-                    disabled={sending}
-                    className="flex-1 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60"
-                  />
-                  <Button
-                    type="submit"
-                    variant="primary"
-                    icon={Send}
-                    iconOnly
-                    disabled={sending || !messageText.trim()}
-                    aria-label="Envoyer"
-                  />
-                </form>
-              </>
-            )}
+            <ChatThread
+              conversation={activeConversation}
+              messages={activeMessages}
+              messagesLoading={messagesLoading}
+              currentUserId={currentUser.id}
+              editingMessageId={editingMessageId}
+              editingContent={editingContent}
+              onEditingContentChange={setEditingContent}
+              onStartEdit={startEditingMessage}
+              onSaveEdit={saveEditingMessage}
+              onCancelEdit={cancelEditingMessage}
+              onDeleteMessage={handleDeleteMessage}
+              messageText={messageText}
+              onMessageTextChange={setMessageText}
+              onSendMessage={handleSendMessage}
+              sending={sending}
+              onBack={() => setShowThreadOnMobile(false)}
+            />
           </div>
         </div>
       </div>
