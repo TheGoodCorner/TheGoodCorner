@@ -4,8 +4,8 @@ import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
 import { useMessageStore } from './messageStore'
 import { connectSocket, disconnectSocket } from '../socket'
+import { SESSION_KEY } from '../utils/constants'
 
-const SESSION_KEY = 'has_session';
 const hasInitialSession = typeof window !== 'undefined' && localStorage.getItem(SESSION_KEY) === 'true';
 // Ne gère que l'authentification (token, statut) — l'identité de la
 // personne (profil) vit exclusivement dans userStore, pour n'avoir qu'une

@@ -1,6 +1,5 @@
 import { apiClient } from './client';
-
-const SESSION_KEY = 'has_session';
+import { SESSION_KEY } from '../utils/constants';
 
 export async function loginRequest(email, password) {
   // axios retourne ce que le serveur renvoie (data) + des metadonnee

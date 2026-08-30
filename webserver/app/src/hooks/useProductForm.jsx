@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useProductStore } from '../stores/productStore'; // À adapter selon ton store
+import { useProductStore } from '../stores/productStore';
+import { PRODUCT_PRICE_MAX } from '../utils/constants';
 
 /**
  * Encapsule la logique du formulaire de création produit :
@@ -25,8 +26,8 @@ export function useProductForm() {
 		let value = e.target.value;
 
 		if (field === 'price') {
-			if (Number(value) > 10000)
-				value = '10000';
+			if (Number(value) > PRODUCT_PRICE_MAX)
+				value = String(PRODUCT_PRICE_MAX);
 		}
 		if (field === 'image') {
 			setForm((f) => ({ ...f, [field]: e.target.files?.[0] || null }));
@@ -40,7 +41,7 @@ export function useProductForm() {
 		if (!form.name.trim()) return 'Le nom du produit est requis.';
 		if (!form.image) return 'Ajoute une image.';
 		if (!form.price || isNaN(parseFloat(form.price))) return 'Le prix doit être un nombre valide.';
-		if (parseFloat(form.price) <= 0 || parseFloat(form.price) > 10000) return 'Le prix doit être supérieur à 0 et inferieur a 10 000.';
+		if (parseFloat(form.price) <= 0 || parseFloat(form.price) > PRODUCT_PRICE_MAX) return 'Le prix doit être supérieur à 0 et inferieur a 10 000.';
 		if (form.category === 'other' && !form.customCategory.trim()) return 'Précise la catégorie personnalisée.';
 		if (!form.description.trim()) return 'Ajoute une description.';
 		if (form.description.length < 10) return 'La description doit faire au moins 10 caractères.';

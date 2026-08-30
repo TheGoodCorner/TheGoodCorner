@@ -1,5 +1,6 @@
 import { Search, Plus } from 'lucide-react';
 import { Button } from '../UI/Button';
+import { EmptyState } from '../UI/EmptyState';
 import ConversationListItem from './ConversationListItem';
 
 function ConversationsSidebar({
@@ -39,12 +40,15 @@ function ConversationsSidebar({
             ))}
           </div>
         ) : filteredConversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-center px-6 py-16">
-            <p className="text-sm text-[var(--color-text-muted)] mb-4">Aucune conversation pour l'instant.</p>
-            <Button variant="outline" size="sm" icon={Plus} onClick={onNewConversation}>
-              Démarrer une discussion
-            </Button>
-          </div>
+          <EmptyState
+            description="Aucune conversation pour l'instant."
+            action={
+              <Button variant="outline" size="sm" icon={Plus} onClick={onNewConversation}>
+                Démarrer une discussion
+              </Button>
+            }
+            className="h-full px-6 py-16"
+          />
         ) : (
           filteredConversations.map((conversation) => (
             <ConversationListItem

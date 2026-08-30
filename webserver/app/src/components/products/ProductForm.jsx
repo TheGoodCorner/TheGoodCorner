@@ -3,6 +3,7 @@ import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
 import { FileInput } from '../UI/FileInput';
 import { Package, Image, DollarSign, Tag, FileText, PlusCircle } from 'lucide-react';
+import { PRODUCT_PRICE_MAX } from '../../utils/constants';
 
 const CATEGORIES = [
   { value: 'Training', label: 'Entrainement' },
@@ -87,7 +88,7 @@ export function ProductForm({ onSuccess }) {
           type='number'
           step='0.01'
           min='0'
-		  max = '10000'
+          max = {PRODUCT_PRICE_MAX}
           value={form.price}
           onChange={handleChange('price')}
           placeholder='29.99'

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { useUserStore } from '../stores/userStore';
-
+import { PRODUCT_PRICE_MAX } from '../utils/constants';
 import {
   fetchAllProducts,
   fetchProductByIdRequest,
@@ -24,7 +24,7 @@ export const useProductStore = create((set, get) => ({
     search: '',
     selectedCategory: '',
     minPrice: 0,
-    maxPrice: 10000,
+    maxPrice: PRODUCT_PRICE_MAX,
   },
 
   fetchProducts: async () => {
@@ -123,7 +123,7 @@ export const useProductStore = create((set, get) => ({
 
   resetFilters: () =>
     set({
-      filters: { search: '', selectedCategory: '', minPrice: 0, maxPrice: 200 },
+      filters: { search: '', selectedCategory: '', minPrice: 0, maxPrice: PRODUCT_PRICE_MAX },
     }),
   // Lecture locale instantanée (liste déjà chargée) — sert de
   // placeholder pendant que fetchProductById va chercher la version complète.

@@ -17,6 +17,9 @@ import { ReviewCard } from "../components/reviews/ReviewCard";
 import { ReviewForm } from "../components/reviews/ReviewForm";
 import ProductCard from "../components/products/ProductCard";
 import Avatar from "../components/UI/Avatar";
+import { TabButton } from "../components/UI/TabButton";
+import { EmptyState } from "../components/UI/EmptyState";
+import { formatMonthYear } from "../utils/date";
 
 function SellerProfileSkeleton() {
   return (
@@ -35,36 +38,10 @@ function SellerProfileSkeleton() {
       <div className="h-10 w-64 bg-[var(--color-surface-hover)] rounded mb-8" />
       <div className="products-grid">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div
-            key={i}
-            className="aspect-[3/4] bg-[var(--color-surface-hover)] rounded-lg"
-          />
+          <div key={i} className="aspect-[3/4] bg-[var(--color-surface-hover)] rounded-lg" />
         ))}
       </div>
     </div>
-  );
-}
-
-function formatDate(dateString) {
-  if (!dateString) return null;
-  return new Date(dateString).toLocaleDateString("fr-FR", {
-    year: "numeric",
-    month: "long",
-  });
-}
-
-function TabButton({ active, onClick, children }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`pb-3 text-sm font-semibold border-b-2 transition-colors ${
-        active
-          ? "border-[var(--color-primary)] text-[var(--color-primary)]"
-          : "border-transparent text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-      }`}
-    >
-      {children}
-    </button>
   );
 }
 
@@ -84,8 +61,6 @@ function SellerProfile() {
   const [activeTab, setActiveTab] = useState("listings");
   const [showAllReviews, setShowAllReviews] = useState(false);
 
-  // C'est ton propre profil : direction la vue privée éditable plutôt que
-  // la vue publique.
   useEffect(() => {
     if (currentUser && String(currentUser.id) === String(id)) {
       navigate("/profile", { replace: true });
@@ -93,7 +68,7 @@ function SellerProfile() {
   }, [currentUser, id, navigate]);
 
   useEffect(() => {
-	if (!id) return;
+    if (!id) return;
     fetchUser(id);
     setActiveTab("listings");
     setShowAllReviews(false);
@@ -115,15 +90,9 @@ function SellerProfile() {
     if (viewedUserError) {
       return (
         <div className="container py-16 text-center">
-          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">
-            Vendeur introuvable
-          </h1>
-          <p className="text-[var(--color-text-muted)] mb-6">
-            Ce profil n'existe pas ou n'est plus disponible.
-          </p>
-          <Button to="/products" variant="primary">
-            Retour aux produits
-          </Button>
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Vendeur introuvable</h1>
+          <p className="text-[var(--color-text-muted)] mb-6">Ce profil n'existe pas ou n'est plus disponible.</p>
+          <Button to="/products" variant="primary">Retour aux produits</Button>
         </div>
       );
     }
@@ -132,52 +101,26 @@ function SellerProfile() {
 
   const displayName = viewedUser.name || viewedUser.username || "Utilisateur";
   const userRating = viewedUser.sellerRating || 0;
-  // Les produits embarqués dans GET /user/:id n'ont pas de champ `author`
-  // imbriqué (redondant, on est déjà sur la page de cet auteur) — on le
-  // reconstruit ici à partir de viewedUser pour que ProductCard (qui
-  // affiche vendeur + note) fonctionne sans changement côté back.
-  const listings = (viewedUser.product || []).map((product) => ({
-    ...product,
-    author: viewedUser,
-  }));
-  const memberSince = formatDate(viewedUser.createdAt);
-  const showImage = Boolean(viewedUser.avatar) && !imgFailed;
+  const listings = (viewedUser.product || []).map((product) => ({ ...product, author: viewedUser }));
+  const memberSince = formatMonthYear(viewedUser.createdAt);
 
-  // Les avis sont déjà inclus dans viewedUser (receivedReviews) — pas
-  // besoin d'un fetch séparé. Filtre défensif sur les soft-deleted.
-  // NB: pas de reviewAuthor imbriqué ici (juste authorId), donc pas de
-  // vrai pseudo/avatar affichable pour l'instant — voir ReviewCard plus bas.
-  const activeReviews = (viewedUser.receivedReviews || []).filter(
-    (r) => !r.deletedAt,
-  );
-  const alreadyReviewed = Boolean(
-    currentUser && activeReviews.some((r) => r.authorId === currentUser.id),
-  );
+  const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);
+  const alreadyReviewed = Boolean(currentUser && activeReviews.some((r) => r.authorId === currentUser.id));
   const canReview =
-    isAuthenticated &&
-    currentUser?.id &&
-    String(currentUser.id) !== String(id) &&
-    !alreadyReviewed;
+    isAuthenticated && currentUser?.id && String(currentUser.id) !== String(id) && !alreadyReviewed;
 
-  const reviewsToDisplay = showAllReviews
-    ? activeReviews
-    : activeReviews.slice(0, 3);
+  const reviewsToDisplay = showAllReviews ? activeReviews : activeReviews.slice(0, 3);
 
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-10">
-        <Link
-          to="/products"
-          className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors mb-6"
-        >
+        <Link to="/products" className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition-colors mb-6">
           <ArrowLeft size={16} strokeWidth={2.75} />
           Retour aux produits
         </Link>
 
-        {/* Carte vendeur */}
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-lg p-6 sm:p-8 mb-8">
           <div className="flex items-start gap-5">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl">
             <Avatar
               src={viewedUser.avatar}
               alt={displayName}
@@ -187,25 +130,17 @@ function SellerProfile() {
               variant="gradient"
               className="flex-shrink-0"
             />
-            </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">
-                  {displayName}
-                </h1>
-                <Shield
-                  size={20}
-                  className="text-[var(--color-primary)] flex-shrink-0"
-                />
+                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">{displayName}</h1>
+                <Shield size={20} className="text-[var(--color-primary)] flex-shrink-0" />
               </div>
 
               <div className="flex items-center gap-2 mb-3">
                 <StarRating rating={userRating} size={18} />
                 <span className="text-xs text-[var(--color-text-muted)] font-medium">
-                  {userRating > 0
-                    ? `${userRating.toFixed(1)} (${activeReviews.length} avis)`
-                    : "Aucune note"}
+                  {userRating > 0 ? `${userRating.toFixed(1)} (${activeReviews.length} avis)` : "Aucune note"}
                 </span>
               </div>
 
@@ -218,10 +153,7 @@ function SellerProfile() {
 
               {viewedUser.phoneNumber && (
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <BadgeCheck
-                    size={14}
-                    className="text-[var(--color-primary)]"
-                  />
+                  <BadgeCheck size={14} className="text-[var(--color-primary)]" />
                   Téléphone renseigné
                 </p>
               )}
@@ -235,18 +167,11 @@ function SellerProfile() {
           )}
         </div>
 
-        {/* Tabs */}
         <div className="border-b border-[var(--color-border)] flex gap-8 mb-8">
-          <TabButton
-            active={activeTab === "listings"}
-            onClick={() => setActiveTab("listings")}
-          >
+          <TabButton active={activeTab === "listings"} onClick={() => setActiveTab("listings")}>
             Annonces ({listings.length})
           </TabButton>
-          <TabButton
-            active={activeTab === "reviews"}
-            onClick={() => setActiveTab("reviews")}
-          >
+          <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")}>
             Avis ({activeReviews.length})
           </TabButton>
         </div>
@@ -259,27 +184,18 @@ function SellerProfile() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]">
-              <PackageSearch
-                size={40}
-                className="text-[var(--color-text-muted)] mb-4"
-              />
-              <p className="font-semibold text-[var(--color-text)] mb-1">
-                Ce vendeur n'a pas d'annonce en ligne
-              </p>
-              <p className="text-sm text-[var(--color-text-muted)]">
-                Repasse plus tard pour voir ses prochains articles.
-              </p>
-            </div>
+            <EmptyState
+              icon={PackageSearch}
+              title="Ce vendeur n'a pas d'annonce en ligne"
+              description="Repasse plus tard pour voir ses prochains articles."
+              className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]"
+            />
           )
         ) : (
           <div className="max-w-3xl">
             {!currentUser && (
               <div className="mb-6 p-4 bg-[var(--color-surface-hover)] rounded-[var(--radius-md)] text-sm text-[var(--color-text-muted)]">
-                <Link
-                  to="/authentication"
-                  className="text-[var(--color-primary)] font-medium hover:underline"
-                >
+                <Link to="/authentication" className="text-[var(--color-primary)] font-medium hover:underline">
                   Connecte-toi
                 </Link>{" "}
                 pour laisser un avis à ce vendeur.
@@ -287,10 +203,7 @@ function SellerProfile() {
             )}
 
             {canReview && (
-              <ReviewForm
-                targetUserId={viewedUser.id}
-                onSuccess={() => fetchUser(id)}
-              />
+              <ReviewForm targetUserId={viewedUser.id} onSuccess={() => fetchUser(id)} />
             )}
 
             {currentUser && alreadyReviewed && (
@@ -307,7 +220,7 @@ function SellerProfile() {
                     avatar={review.reviewAuthor.avatar}
                     author={review.reviewAuthor.username}
                     rating={review.reviewRating}
-                    date={formatDate(review.createdAt)}
+                    date={formatMonthYear(review.createdAt)}
                     content={review.reviews}
                     authorId={review.authorId}
                     currentUserId={currentUser?.id}
@@ -317,35 +230,23 @@ function SellerProfile() {
                 ))}
 
                 {!showAllReviews && activeReviews.length > 3 && (
-                  <button
-                    onClick={() => setShowAllReviews(true)}
-                    className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
-                  >
+                  <button onClick={() => setShowAllReviews(true)} className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left">
                     Voir tous les avis ({activeReviews.length})
                   </button>
                 )}
                 {showAllReviews && activeReviews.length > 3 && (
-                  <button
-                    onClick={() => setShowAllReviews(false)}
-                    className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left"
-                  >
+                  <button onClick={() => setShowAllReviews(false)} className="text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors text-left">
                     Voir moins d'avis
                   </button>
                 )}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-16 text-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]">
-                <MessageCircle
-                  size={40}
-                  className="text-[var(--color-text-muted)] mb-4"
-                />
-                <p className="font-semibold text-[var(--color-text)] mb-1">
-                  Aucun avis pour l'instant
-                </p>
-                <p className="text-sm text-[var(--color-text-muted)]">
-                  Ce vendeur n'a pas encore reçu d'avis client.
-                </p>
-              </div>
+              <EmptyState
+                icon={MessageCircle}
+                title="Aucun avis pour l'instant"
+                description="Ce vendeur n'a pas encore reçu d'avis client."
+                className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)]"
+              />
             )}
           </div>
         )}
