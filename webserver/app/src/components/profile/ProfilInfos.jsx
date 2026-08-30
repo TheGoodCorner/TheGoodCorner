@@ -109,7 +109,7 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
         <InfoCard 
           icon={Award}
           label='Produits publiés'
-          value={user?.product?.length || 0}
+          value={user?.product?.length || '0'}
         />
         <InfoCard 
           icon={TrendingUp}
