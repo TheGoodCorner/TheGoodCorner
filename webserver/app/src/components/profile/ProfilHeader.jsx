@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import { Button } from '../UI/Button';
 import { UserRoundPen, Shield, Check, X, Camera } from 'lucide-react';
 import { StarRating } from '../UI/StarRating';
+import Avatar from '../UI/Avatar';
 
 export function ProfilHeader({
   user,
@@ -17,33 +17,13 @@ export function ProfilHeader({
   onCancel,
   onSave,
 }) {
-  // Retombe sur le dégradé + initiale si l'image casse (404, url
-  // invalide...) — même logique que UI/Avatar.jsx.
-  const [imgFailed, setImgFailed] = useState(false);
-  useEffect(() => {
-    setImgFailed(false);
-  }, [avatarSrc]);
-
-  const showImage = Boolean(avatarSrc) && !imgFailed;
 
   return (
     <div className='flex items-start justify-between gap-6 mb-8'>
       <div className='flex gap-5 flex-1'>
         {/* Avatar */}
-        <div className='relative w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0'>
-          <div className='w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl'>
-            {showImage ? (
-              <img
-                src={avatarSrc}
-                alt={displayName}
-                onError={() => setImgFailed(true)}
-                className='w-full h-full object-cover'
-              />
-            ) : (
-              displayName.charAt(0).toUpperCase()
-            )}
-          </div>
-
+        <div className='relative flex-shrink-0'>
+          <Avatar src={avatarSrc} alt={displayName} name={displayName} size='xl' shape='square' variant='gradient' />
           {isEditing && (
             <label
               htmlFor='avatar-upload'

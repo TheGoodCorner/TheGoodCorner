@@ -5,7 +5,7 @@ import { useUserStore } from '../stores/userStore';
 import { useAuthStore } from '../stores/authStore';
 import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
-import { getInitials, getAvatarColor } from '../utils/avatar';
+import Avatar from '../components/UI/Avatar';
 import SelectUserModal from '../components/chat/SelectUserModal';
 
 function formatMessageTime(dateString) {
@@ -193,19 +193,7 @@ function Messagerie() {
                         isActive ? 'bg-[var(--color-surface-hover)]' : 'hover:bg-[var(--color-surface-hover)]'
                       }`}
                     >
-                      {interlocutor.avatar ? (
-                        <img
-                          src={interlocutor.avatar}
-                          alt={interlocutor.username}
-                          className="w-11 h-11 rounded-full object-cover flex-shrink-0"
-                        />
-                      ) : (
-                        <div
-                          className={`w-11 h-11 rounded-full flex-shrink-0 flex items-center justify-center text-white text-sm font-bold ${getAvatarColor(interlocutor.username)}`}
-                        >
-                          {getInitials(interlocutor.username)}
-                        </div>
-                      )}
+                      <Avatar src={interlocutor.avatar} alt={interlocutor.username} name={interlocutor.username} size={44} className="flex-shrink-0" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm font-medium text-[var(--color-text)] truncate">
@@ -252,19 +240,12 @@ function Messagerie() {
                     to={`/profile/${activeConversation.interlocutor.id}`}
                     className="flex items-center gap-3 hover:opacity-80 transition-opacity"
                   >
-                    {activeConversation.interlocutor.avatar ? (
-                      <img
-                        src={activeConversation.interlocutor.avatar}
-                        alt={activeConversation.interlocutor.username}
-                        className="w-10 h-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold ${getAvatarColor(activeConversation.interlocutor.username)}`}
-                      >
-                        {getInitials(activeConversation.interlocutor.username)}
-                      </div>
-                    )}
+                    <Avatar
+                      src={activeConversation.interlocutor.avatar}
+                      alt={activeConversation.interlocutor.username}
+                      name={activeConversation.interlocutor.username}
+                      size="md"
+                    />
                     <span className="font-semibold text-[var(--color-text)]">
                       {activeConversation.interlocutor.username}
                     </span>

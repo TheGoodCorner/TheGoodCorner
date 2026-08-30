@@ -5,7 +5,7 @@ import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
 import { Button } from '../components/UI/Button';
-import { getInitials, getAvatarColor } from '../utils/avatar';
+import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
 
 function ProductDetailSkeleton() {
@@ -177,17 +177,7 @@ function ProductDetail() {
           <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
           <div className="flex items-center justify-between gap-4">
             <Link to={`/profile/${product.author?.id}`} className="flex items-center gap-4 hover:opacity-80 transition-opacity">
-              {product.author?.avatar ? (
-                  <img
-                    src={product.author.avatar}
-                    alt={authorName}
-                    className="w-16 h-16 rounded-full flex-shrink-0 object-cover"
-                  />
-                ) : (
-                <div className={`w-16 h-16 rounded-full flex-shrink-0 flex items-center justify-center text-xl font-bold text-white ${getAvatarColor(authorName)}`}>
-                  {getInitials(authorName)}
-                </div>
-              )}
+              <Avatar src={product.author?.avatar} alt={authorName} name={authorName} size={64} className="flex-shrink-0" />
               <div>
                 <h4 className="text-lg font-semibold text-[var(--color-text)] mb-2">
                   {authorName || 'Vendeur inconnu'}

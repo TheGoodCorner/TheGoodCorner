@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { X, Search } from 'lucide-react';
 import { GetAllUsers } from '../../api/userApi';
 import { useUserStore } from '../../stores/userStore';
-import { getInitials, getAvatarColor } from '../../utils/avatar';
+import Avatar from '../UI/Avatar';
 
 function SelectUserModal({ isOpen, onClose, onSelectUser }) {
   const currentUser = useUserStore((state) => state.user);
@@ -90,13 +90,7 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
                 }}
                 className="w-full flex items-center gap-3 p-3 text-left border-b border-[var(--color-border)] last:border-b-0 hover:bg-[var(--color-surface-hover)] transition-colors"
               >
-                {user.avatar ? (
-                  <img src={user.avatar} alt={user.username} className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
-                ) : (
-                  <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-sm font-bold ${getAvatarColor(user.username)}`}>
-                    {getInitials(user.username)}
-                  </div>
-                )}
+                <Avatar src={user.avatar} alt={user.username} name={user.username} size="md" className="flex-shrink-0" />
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user.username}</p>
                   {user.name && <p className="text-xs text-[var(--color-text-muted)] truncate">{user.name}</p>}

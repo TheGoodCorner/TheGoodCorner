@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
-import { getInitials, getAvatarColor } from '../../utils/avatar';
 import { PlusCircle, Star } from 'lucide-react'
+import Avatar from '../UI/Avatar';
 
 export default function ProductCard({ product }) {
   const addToCart = useCartStore((state) => state.addToCart)
@@ -40,10 +40,8 @@ export default function ProductCard({ product }) {
 
   const sellerInfo = (
     <>
-      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold ${getAvatarColor(author.username)}`}>
-        {getInitials(author.username)}
-      </div>
-      <span className="text-xs font-medium text-gray-600">{author.username || 'Vendeur inconnu'}</span>
+      <Avatar src={author.avatar} name={author.username} size="xs" />
+      <span className="text-xs font-medium text-[var(--color-text)]">{author.username || 'Vendeur inconnu'}</span>
     </>
   );
 

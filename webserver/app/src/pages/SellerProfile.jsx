@@ -16,6 +16,7 @@ import { StarRating } from "../components/UI/StarRating";
 import { ReviewCard } from "../components/reviews/ReviewCard";
 import { ReviewForm } from "../components/reviews/ReviewForm";
 import ProductCard from "../components/products/ProductCard";
+import Avatar from "../components/UI/Avatar";
 
 function SellerProfileSkeleton() {
   return (
@@ -82,7 +83,6 @@ function SellerProfile() {
 
   const [activeTab, setActiveTab] = useState("listings");
   const [showAllReviews, setShowAllReviews] = useState(false);
-  const [imgFailed, setImgFailed] = useState(false);
 
   // C'est ton propre profil : direction la vue privée éditable plutôt que
   // la vue publique.
@@ -97,7 +97,6 @@ function SellerProfile() {
     fetchUser(id);
     setActiveTab("listings");
     setShowAllReviews(false);
-    setImgFailed(false);
   }, [id, fetchUser]);
 
   const handleDeleteReview = async (reviewId) => {
@@ -179,16 +178,15 @@ function SellerProfile() {
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-lg p-6 sm:p-8 mb-8">
           <div className="flex items-start gap-5">
             <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 rounded-2xl overflow-hidden bg-gradient-to-br from-[var(--color-primary)] to-blue-600 shadow-lg flex items-center justify-center text-white font-bold text-2xl">
-              {showImage ? (
-                <img
-                  src={viewedUser.avatar}
-                  alt={displayName}
-                  onError={() => setImgFailed(true)}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                displayName.charAt(0).toUpperCase()
-              )}
+            <Avatar
+              src={viewedUser.avatar}
+              alt={displayName}
+              name={displayName}
+              size="xl"
+              shape="square"
+              variant="gradient"
+              className="flex-shrink-0"
+            />
             </div>
 
             <div className="flex-1 min-w-0">

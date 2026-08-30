@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StarRating } from '../UI/StarRating';
-import { getInitials, getAvatarColor } from '../../utils/avatar';
+import Avatar from '../UI/Avatar';
 import { Button } from '../UI/Button';
 import { Edit2, Trash2, Check, X } from 'lucide-react';
 
@@ -63,19 +63,7 @@ export const ReviewCard = ({
       {/* Header review */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          {avatar ? (
-            <img
-              src={avatar}
-              alt={author}
-              className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
-            />
-          ) : (
-            <div
-              className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white text-sm font-bold ${getAvatarColor(author)}`}
-            >
-              {getInitials(author)}
-            </div>
-          )}
+          <Avatar src={avatar} alt={author} name={author} size="md" className="flex-shrink-0" />
           <div className="min-w-0">
             <p className="text-sm font-semibold text-[var(--color-text)] truncate">
               {author}

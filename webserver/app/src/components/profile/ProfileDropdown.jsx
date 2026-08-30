@@ -35,7 +35,7 @@ function ProfileDropdown() {
   return (
     <Dropdown>
       <Dropdown.Trigger as={Button} variant="ghost">
-        <Avatar src={user?.avatar} alt={user?.username || 'Profil'} size="sm" />
+        <Avatar src={user?.avatar} alt={user?.username || 'Profil'} name={user?.username} size="sm" />
         <span>{user?.username || 'Profil'}</span>
       </Dropdown.Trigger>
 
