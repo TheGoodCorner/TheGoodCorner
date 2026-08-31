@@ -3,7 +3,7 @@ import Avatar from '../UI/Avatar';
 import { Button } from '../UI/Button';
 import { formatConversationTime } from '../../utils/date';
 
-function ConversationListItem({ interlocutor, lastMessage, isActive, onClick, onDelete }) {
+function ConversationListItem({ interlocutor, lastMessage, unreadCount = 0, isActive, onClick, onDelete }) {
   return (
     <div
       className={`group flex items-center border-b border-[var(--color-border)] transition-colors ${
@@ -29,15 +29,20 @@ function ConversationListItem({ interlocutor, lastMessage, isActive, onClick, on
         </div>
       </button>
 
-      <Button
-        variant="ghost"
-        size="sm"
-        icon={Trash2}
-        iconOnly
-        aria-label={`Supprimer la conversation avec ${interlocutor.username}`}
-        onClick={onDelete}
-        className="mr-2 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--color-danger)]"
-      />
+      <div className="flex items-center gap-2 pr-3 flex-shrink-0">
+        {unreadCount > 0 && (
+          <span className="unread-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          icon={Trash2}
+          iconOnly
+          aria-label={`Supprimer la conversation avec ${interlocutor.username}`}
+          onClick={onDelete}
+          className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--color-danger)]"
+        />
+      </div>
     </div>
   );
 }

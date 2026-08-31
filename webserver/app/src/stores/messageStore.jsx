@@ -30,6 +30,7 @@ export const useMessageStore = create(
     (set, get) => ({
       conversations: [],
       hiddenConversationIds: [],
+      unreadCounts: {},
       conversationsLoading: false,
       conversationsError: null,
 
@@ -67,9 +68,17 @@ export const useMessageStore = create(
       },
 
       setActiveConversation: (conversationId) => {
-        set({ activeConversationId: conversationId });
+        set((state) => ({
+          activeConversationId: conversationId,
+          unreadCounts: { ...state.unreadCounts, [conversationId]: 0 },
+        }));
         get().fetchMessages(conversationId);
       },
+
+      // Appelé au démontage de la page Messagerie (voir pages/Messagerie.jsx)
+      // pour qu'un message reçu APRÈS avoir quitté la page compte bien comme
+      // non lu, même si cette conversation était la dernière ouverte.
+      clearActiveConversation: () => set({ activeConversationId: null }),
 
       // Masque une conversation de la sidebar sans toucher aux messages
       // (aucun endpoint de suppression de conversation côté back — voir
@@ -81,6 +90,7 @@ export const useMessageStore = create(
           hiddenConversationIds: state.hiddenConversationIds.includes(String(interlocutorId))
             ? state.hiddenConversationIds
             : [...state.hiddenConversationIds, String(interlocutorId)],
+          unreadCounts: { ...state.unreadCounts, [interlocutorId]: 0 },
           activeConversationId:
             String(state.activeConversationId) === String(interlocutorId) ? null : state.activeConversationId,
         }));
@@ -224,13 +234,24 @@ export const useMessageStore = create(
         const conversationId = message.senderId === currentUser?.id 
           ? message.receiverId  // Je suis le sender → convo avec le receiver
           : message.senderId;   // Je suis le receiver → convo avec le sender
+
+        // Un message compte comme "non lu" seulement si c'est moi le
+        // destinataire (pas l'écho de mes propres envois) ET que je ne suis
+        // pas déjà en train de regarder cette conversation.
+        const isIncoming = String(message.senderId) !== String(currentUser.id);
+        const isConversationOpen = String(get().activeConversationId) === String(conversationId);
+
         set((state) => {
           const existing = state.messagesByConversation[conversationId] || [];
           const alreadyKnown = existing.some((m) => m.id === message.id);
+          if (alreadyKnown) return state;
+
           return {
-            messagesByConversation: alreadyKnown
-              ? state.messagesByConversation
-              : { ...state.messagesByConversation, [conversationId]: [...existing, message] },
+            messagesByConversation: { ...state.messagesByConversation, [conversationId]: [...existing, message] },
+            unreadCounts:
+              isIncoming && !isConversationOpen
+                ? { ...state.unreadCounts, [conversationId]: (state.unreadCounts[conversationId] || 0) + 1 }
+                : state.unreadCounts,
           };
         });
         get()._touchConversation(conversationId, message);
@@ -272,6 +293,7 @@ export const useMessageStore = create(
         set({
           conversations: [],
           hiddenConversationIds: [],
+          unreadCounts: {},
           activeConversationId: null,
           messagesByConversation: {},
           error: null,
@@ -284,6 +306,7 @@ export const useMessageStore = create(
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         hiddenConversationIds: state.hiddenConversationIds,
+        unreadCounts: state.unreadCounts,
         conversations: state.conversations.map((c) => ({
           interlocutor: {
             id: c.interlocutor.id,

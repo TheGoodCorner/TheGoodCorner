@@ -16,6 +16,8 @@ function Messagerie() {
   const conversations = useMessageStore((state) => state.conversations);
   const hiddenConversationIds = useMessageStore((state) => state.hiddenConversationIds);
   const hideConversation = useMessageStore((state) => state.hideConversation);
+  const unreadCounts = useMessageStore((state) => state.unreadCounts);
+  const clearActiveConversation = useMessageStore((state) => state.clearActiveConversation);
   const conversationsLoading = useMessageStore((state) => state.conversationsLoading);
   const fetchConversations = useMessageStore((state) => state.fetchConversations);
   const activeConversationId = useMessageStore((state) => state.activeConversationId);
@@ -44,6 +46,16 @@ function Messagerie() {
       fetchConversations();
     }
   }, [isAuthenticated, currentUser?.id, fetchConversations]);
+
+  // Reset activeConversationId au démontage : sinon un message reçu après
+  // avoir quitté la page ne serait pas compté comme non lu, puisque
+  // receiveMessage() considère la conversation "déjà ouverte" tant que
+  // l'id traîne dans le store (voir isConversationOpen dans messageStore.jsx).
+  useEffect(() => {
+    return () => {
+      clearActiveConversation();
+    };
+  }, [clearActiveConversation]);
 
   const activeConversation =
     conversations.find((c) => String(c.interlocutor.id) === String(activeConversationId)) || null;
@@ -140,6 +152,7 @@ function Messagerie() {
           <ConversationsSidebar
             conversations={conversations}
             hiddenConversationIds={hiddenConversationIds}
+            unreadCounts={unreadCounts}
             loading={conversationsLoading}
             activeConversationId={activeConversationId}
             search={search}

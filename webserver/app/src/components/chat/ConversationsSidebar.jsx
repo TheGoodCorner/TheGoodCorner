@@ -6,6 +6,7 @@ import ConversationListItem from './ConversationListItem';
 function ConversationsSidebar({
   conversations,
   hiddenConversationIds,
+  unreadCounts,
   loading,
   activeConversationId,
   search,
@@ -61,6 +62,7 @@ function ConversationsSidebar({
               key={conversation.interlocutor.id}
               interlocutor={conversation.interlocutor}
               lastMessage={conversation.lastMessage}
+              unreadCount={unreadCounts[conversation.interlocutor.id] || 0}
               isActive={String(conversation.interlocutor.id) === String(activeConversationId)}
               onClick={() => onSelectConversation(conversation.interlocutor.id)}
               onDelete={() => onDeleteConversation(conversation.interlocutor.id)}
