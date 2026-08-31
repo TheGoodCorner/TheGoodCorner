@@ -1,9 +1,12 @@
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
+import { useUserStore } from '../stores/userStore';
+import { useAuthStore } from '../stores/authStore';
+import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
 import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
@@ -28,6 +31,7 @@ function ProductDetailSkeleton() {
 
 function ProductDetail() {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const cachedProduct = useProductStore((state) => state.getProductById(id));
   const currentProduct = useProductStore((state) => state.currentProduct);
@@ -38,6 +42,9 @@ function ProductDetail() {
   const addToCart = useCartStore((state) => state.addToCart);
   const error = useCartStore((state) => state.error);
   const openUi = useUIStore((state) => state.openUi);
+  const currentUser = useUserStore((state) => state.user);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const startConversationWith = useMessageStore((state) => state.startConversationWith);
 
   const [quantity, setQuantity] = useState(1);
 
@@ -74,6 +81,15 @@ function ProductDetail() {
     });
     if (!succes) { return; }
     openUi('cart-popover');
+  };
+
+  const handleContactSeller = () => {
+    if (!isAuthenticated) {
+      navigate('/authentication');
+      return;
+    }
+    startConversationWith(product.author);
+    navigate('/messagerie');
   };
 
   const relatedProducts = allProducts
@@ -188,9 +204,11 @@ function ProductDetail() {
                 </div>
               </div>
             </Link>
-            <Button variant="outline" size="md" icon={MessageCircle} onClick={() => {}}>
-              Contacter le vendeur
-            </Button>
+            {String(currentUser?.id) !== String(product.author?.id) && (
+              <Button variant="outline" size="md" icon={MessageCircle} onClick={handleContactSeller}>
+                Contacter le vendeur
+              </Button>
+            )}
           </div>
         </section>
 

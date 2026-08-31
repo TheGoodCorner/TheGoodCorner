@@ -29,6 +29,7 @@ export const useMessageStore = create(
   persist(
     (set, get) => ({
       conversations: [],
+      hiddenConversationIds: [],
       conversationsLoading: false,
       conversationsError: null,
 
@@ -46,7 +47,19 @@ export const useMessageStore = create(
         set({ conversationsLoading: true, conversationsError: null });
         try {
           const data = await GetAllMessages();
-          set({ conversations: Array.isArray(data) ? data : [], conversationsLoading: false });
+          const serverConversations = Array.isArray(data) ? data : [];
+          set((state) => {
+            // Garde les conversations "brouillon" tout juste créées côté
+            // client (bouton "Contacter le vendeur", "Nouvelle discussion")
+            // tant qu'aucun message réel n'a été échangé — le serveur ne
+            // les connaît pas encore, un fetch concurrent ne doit pas les
+            // effacer.
+            const serverIds = new Set(serverConversations.map((c) => String(c.interlocutor.id)));
+            const localDrafts = state.conversations.filter(
+              (c) => c.lastMessage === null && !serverIds.has(String(c.interlocutor.id))
+            );
+            return { conversations: [...localDrafts, ...serverConversations], conversationsLoading: false };
+          });
         } catch (err) {
           set({ conversationsError: err.message, conversationsLoading: false });
           console.error('fetchConversations error:', err);
@@ -56,6 +69,27 @@ export const useMessageStore = create(
       setActiveConversation: (conversationId) => {
         set({ activeConversationId: conversationId });
         get().fetchMessages(conversationId);
+      },
+
+      // Masque une conversation de la sidebar sans toucher aux messages
+      // (aucun endpoint de suppression de conversation côté back — voir
+      // messageApi.jsx). Réapparaît automatiquement au prochain message
+      // envoyé/reçu (voir _touchConversation) ou si on la rouvre via
+      // startConversationWith.
+      hideConversation: (interlocutorId) => {
+        set((state) => ({
+          hiddenConversationIds: state.hiddenConversationIds.includes(String(interlocutorId))
+            ? state.hiddenConversationIds
+            : [...state.hiddenConversationIds, String(interlocutorId)],
+          activeConversationId:
+            String(state.activeConversationId) === String(interlocutorId) ? null : state.activeConversationId,
+        }));
+      },
+
+      unhideConversation: (interlocutorId) => {
+        set((state) => ({
+          hiddenConversationIds: state.hiddenConversationIds.filter((id) => id !== String(interlocutorId)),
+        }));
       },
 
       // Toujours re-fetch (pas de cache) : les messages sont une donnée
@@ -140,6 +174,7 @@ export const useMessageStore = create(
       // Démarre (ou rouvre) une conversation avec un utilisateur choisi
       // dans SelectUserModal, avant même qu'un premier message soit envoyé.
       startConversationWith: (selectedUser) => {
+        get().unhideConversation(selectedUser.id);
         const exists = get().conversations.some((c) => String(c.interlocutor.id) === String(selectedUser.id));
         if (!exists) {
           const draft = { interlocutor: selectedUser, lastMessage: null };
@@ -153,6 +188,7 @@ export const useMessageStore = create(
       // les événements socket entrants. Fait remonter la conversation en
       // haut de liste (comme une vraie messagerie).
       _touchConversation: (conversationId, message) => {
+        get().unhideConversation(conversationId);
         set((state) => {
           const idx = state.conversations.findIndex((c) => String(c.interlocutor.id) === String(conversationId));
           const lastMessage = {
@@ -235,6 +271,7 @@ export const useMessageStore = create(
       reset: () =>
         set({
           conversations: [],
+          hiddenConversationIds: [],
           activeConversationId: null,
           messagesByConversation: {},
           error: null,
@@ -246,6 +283,7 @@ export const useMessageStore = create(
       name: 'message-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
+        hiddenConversationIds: state.hiddenConversationIds,
         conversations: state.conversations.map((c) => ({
           interlocutor: {
             id: c.interlocutor.id,

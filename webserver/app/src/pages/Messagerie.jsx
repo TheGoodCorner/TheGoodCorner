@@ -14,6 +14,8 @@ function Messagerie() {
   const initializing = useAuthStore((state) => state.initializing);
 
   const conversations = useMessageStore((state) => state.conversations);
+  const hiddenConversationIds = useMessageStore((state) => state.hiddenConversationIds);
+  const hideConversation = useMessageStore((state) => state.hideConversation);
   const conversationsLoading = useMessageStore((state) => state.conversationsLoading);
   const fetchConversations = useMessageStore((state) => state.fetchConversations);
   const activeConversationId = useMessageStore((state) => state.activeConversationId);
@@ -69,6 +71,10 @@ function Messagerie() {
     } catch {
       // rollback déjà appliqué dans le store
     }
+  };
+
+  const handleDeleteConversation = (interlocutorId) => {
+    hideConversation(interlocutorId);
   };
 
   const handleDeleteMessage = async (messageId) => {
@@ -133,12 +139,14 @@ function Messagerie() {
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-lg overflow-hidden h-[calc(100vh-14rem)] min-h-[480px] flex">
           <ConversationsSidebar
             conversations={conversations}
+            hiddenConversationIds={hiddenConversationIds}
             loading={conversationsLoading}
             activeConversationId={activeConversationId}
             search={search}
             onSearchChange={setSearch}
             onSelectConversation={handleSelectConversation}
             onNewConversation={() => setShowUserModal(true)}
+            onDeleteConversation={handleDeleteConversation}
             className={showThreadOnMobile ? 'hidden sm:flex' : 'flex'}
           />
 

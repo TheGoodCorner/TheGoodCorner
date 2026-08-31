@@ -5,17 +5,23 @@ import ConversationListItem from './ConversationListItem';
 
 function ConversationsSidebar({
   conversations,
+  hiddenConversationIds,
   loading,
   activeConversationId,
   search,
   onSearchChange,
   onSelectConversation,
   onNewConversation,
+  onDeleteConversation,
   className = '',
 }) {
+  const visibleConversations = conversations.filter(
+    (c) => !hiddenConversationIds.includes(String(c.interlocutor.id))
+  );
+
   const filteredConversations = search.trim()
-    ? conversations.filter((c) => c.interlocutor.username?.toLowerCase().includes(search.trim().toLowerCase()))
-    : conversations;
+    ? visibleConversations.filter((c) => c.interlocutor.username?.toLowerCase().includes(search.trim().toLowerCase()))
+    : visibleConversations;
 
   return (
     <aside className={`w-full sm:w-80 flex-shrink-0 border-r border-[var(--color-border)] flex-col ${className}`}>
@@ -57,6 +63,7 @@ function ConversationsSidebar({
               lastMessage={conversation.lastMessage}
               isActive={String(conversation.interlocutor.id) === String(activeConversationId)}
               onClick={() => onSelectConversation(conversation.interlocutor.id)}
+              onDelete={() => onDeleteConversation(conversation.interlocutor.id)}
             />
           ))
         )}
