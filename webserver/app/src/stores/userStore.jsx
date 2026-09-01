@@ -2,6 +2,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
+import { fetchPendingFriendRequestsRequest, fetchFriendsRequest } from '../api/friendApi';
+
 
 export const useUserStore = create(
     (set, get) => ({
@@ -21,6 +23,8 @@ export const useUserStore = create(
       viewedUserLoading: false,
       viewedUserError: null,
 
+      friends: null,
+      friendRequests: null,
       // GET /user/:id — profil PUBLIC d'un utilisateur donné.
       fetchUser: async (id) => {
         set({ viewedUserLoading: true, viewedUserError: null });
@@ -74,6 +78,24 @@ export const useUserStore = create(
           set({ error: err.message, loading: false });
           console.error('deleteAccount error:', err);
           throw err;
+        }
+      },
+
+      fetchPendingFriendRequests: async () => {
+        try {
+          const pendingRequests = await fetchPendingFriendRequestsRequest();
+          set({ friendRequests: pendingRequests.pendingReceived });
+        } catch (err) {
+          console.error('fetchPendingFriendRequests error:', err);
+        }
+      },
+
+      fetchFriends: async () => {
+        try {
+          const friends = await fetchFriendsRequest();
+          set({ friends: friends.friends });
+        } catch (err) {
+          console.error('fetchFriends error:', err);
         }
       },
 

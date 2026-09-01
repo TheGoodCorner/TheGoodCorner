@@ -36,6 +36,10 @@ model User {
 
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+
+  sentFriendRequests     FriendRequest[] @relation("Sender")
+  receivedFriendRequests FriendRequest[] @relation("Receiver")
+
   product  Product[]
   locationId Int?
   location   Location? @relation(fields: [locationId], references: [id])
@@ -43,6 +47,26 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model FriendRequest {
+  id        Int      @id @default(autoincrement())
+
+  senderId   Int
+  sender     User     @relation("Sender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  receiverId Int
+  receiver   User     @relation("Receiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  status    String   @default("PENDING") // "PENDING", "ACCEPTED", "REJECTED"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Évite les demandes en double
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
+}
+
 model Message {
   id         Int      @id @default(autoincrement())
   content    String   // Single message content
