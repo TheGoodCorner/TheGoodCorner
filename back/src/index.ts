@@ -10,6 +10,7 @@ import generalRouter from './routes/generalGetRouter.js';
 import userRouter from './routes/users.js';
 import reviewsRouter from './routes/reviews.js';
 import messageRouter from './routes/messages.js';
+import paymentRouter from './routes/payment.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 
 const app = express(); // server initialization
@@ -32,6 +33,7 @@ app.use(rootPath, productRouter); // product routes
 app.use(rootPath, userRouter); // Users routes
 app.use(rootPath, reviewsRouter); // reviews routes
 app.use(rootPath, messageRouter); // message routes
+app.use(rootPath, paymentRouter); // payment routes
 
 const socketServer = http.createServer(app);
 const io = initializeWebServer(socketServer);
@@ -41,6 +43,8 @@ app.set('io', io);
  * asynchronous function that start the backend server while checking for errors
  * @returns a void promise relative to the async nature of the function
  */
+console.log('here are the env var:  \n');
+console.log(process.env);
 async function startServer()
 {
 	try {

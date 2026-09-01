@@ -4,22 +4,12 @@ import { comparePassword } from "../utils/securityUtils.js";
  * generalController object creation with methods
  */
 const generalController = {
-    getHomePage: (req, res) => {
-        void req;
-        res.status(200).json({ status: 'OK', message: 'home page !' });
-    },
-    getLoginPage: (req, res) => {
-        void req;
-        res.status(200).json({ status: 'OK', message: 'login page !' });
-    },
-    getPaiementPage: (req, res) => {
-        void req;
-        res.status(200).json({ status: 'OK', message: 'payment page !' });
-    },
-    getMessagesPage: (req, res) => {
-        void req;
-        res.status(200).json({ status: 'OK', message: 'messages page !' });
-    },
+    // getPaiements: async (_req: Request, res: Response) =>
+    // {
+    // 	const paiements = await stripe.paymentIntents.list();
+    // 	console.log(paiements);
+    // 	res.status(200).json({status: 'OK', message: 'paiements page test !'});
+    // },
     getProductsPage: async (_req, res) => {
         try {
             const products = await prisma.product.findMany({
@@ -68,20 +58,20 @@ const generalController = {
             return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
         }
     },
-    userProfile: async (req, res) => {
-        try {
-            if (!req.user)
-                return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
-            // puisque'on utilise une authenticatedRequest on peut direct prendre le user appended dessus.
-            const user = req.user;
-            const email = user.email;
-            const founduser = await prisma.user.findUnique({ where: { email } });
-            console.log("user profile loaded");
-            return (res.status(200).json({ status: 'OK', data: founduser }));
-        }
-        catch (error) {
-            return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
-        }
-    }
+    // userProfile: async (req: AuthenticatedRequest, res: Response) => {
+    // 	try {
+    // 		if (!req.user)
+    // 			return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
+    // 		// puisque'on utilise une authenticatedRequest on peut direct prendre le user appended dessus.
+    // 		const user = req.user;
+    // 		const email = user.email;
+    // 		const founduser = await prisma.user.findUnique({ where: { email } });
+    // 		console.log("user profile loaded");
+    // 		return (res.status(200).json({ status: 'OK', data: founduser }));
+    // 	}
+    // 	catch (error) {
+    // 		return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
+    // 	}
+    // }
 };
 export default generalController;

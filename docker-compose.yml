@@ -19,10 +19,8 @@ services:
      context: ./back
      dockerfile: dockerfile
     container_name: back
-    environment:
-      POSTGRES_HOST: postgresql
-      DATABASE_URL: postgresql://GoodCorner:GoodCornerPass123@postgresql:5432/mydb?schema=public
-      NODE_ENV: production
+    env_file:
+      - ./back/.env
     secrets:
       - db_password
       - stripe_key

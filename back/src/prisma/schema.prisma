@@ -19,6 +19,7 @@ model User {
   email     String   @unique
   username  String   @unique
   password  String
+  stripeCustomerId String?   @unique
 
   name      String?
   avatar    String?
@@ -26,6 +27,7 @@ model User {
   phoneNumber String?
 
   budget Int @default(1000)
+  payment Payment[]
 
   sellerRating Float? @default(0)
   sellerReviewCount Int? @default(0)
@@ -44,11 +46,18 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Credentials {
-	id      Int     @id @default(autoincrement())
-	cardNumber Int 
-	cardCVC Int
-	expirationDate Int
+model Payment {
+  id        Int      @id @default(autoincrement())
+
+  stripeId String @unique
+  amount Int
+  currency String @default("eur")
+  status String
+  userId Int
+  user  User  @relation(fields: [userId], references: [id], onDelete:Cascade)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  @@index([userId])
 }
 
 model Message {
