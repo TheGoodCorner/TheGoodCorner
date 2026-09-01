@@ -25,6 +25,7 @@ services:
       NODE_ENV: production
     secrets:
       - db_password
+      - stripe_key
     networks:
       - Container_network
     volumes:
@@ -47,6 +48,7 @@ services:
       POSTGRES_DB: mydb
     secrets:
       - db_password
+      - stripe_key
     networks:
       - Container_network
     volumes:
@@ -64,6 +66,8 @@ networks:
 secrets:
   db_password:
     file: ./.secrets/password.txt
+  stripe_key:
+    file: ./.secrets/stripe.txt
 volumes:
   postgresql_data:
   uploads_data:

@@ -53,10 +53,22 @@ up:
 			echo -e "$(GREEN)Successfully copied password to .secrets folder.$(RESET)"; \
 			cp ../password.txt ./.secrets/password.txt; \
 		else \
-			echo -e "$(BLUE)Don't forget to fill out the secret password.txt file$(RESET)"; \
+			touch ./.secrets/password.txt; \
+			echo -e "$(BLUE)Fill a password for the containers db accessibility match it with the env one"\
+			echo -e "\nDon't forget to fill out the secret password.txt file$(RESET)"; \
 			exit 1; \
 		fi; \
-		touch ./.secrets/password.txt; \
+		if [ -f ./.secrets/stripe.txt ] && [ -s ./.secrets/stripe.txt ]; then \
+			echo -e "$(GREEN)Stripe file already exists in .secrets folder.$(RESET)"; \
+		elif [ -f ../stripe.txt ]; then \
+			echo -e "$(GREEN)Successfully copied stripe to .secrets folder.$(RESET)"; \
+			cp ../stripe.txt ./.secrets/stripe.txt; \
+		else \
+			touch ./.secrets/stripe.txt; \
+			echo -e "$(BLUE)You may find the secret key under stripe website by logging into admin account and under developper section get the secret key" \
+			echo -e "\nDon't forget to fill out the secret stripe.txt files$(RESET)"; \
+			exit 1; \
+		fi; \
 		if [ -f ./back/.env ]; then \
 			if grep -q "TODO" ./back/.env; then \
 				echo -e "$(BLUE)Please remove TODOs from ./back/.env before launching!$(RESET)"; \
