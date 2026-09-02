@@ -1,7 +1,7 @@
 import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
 
-const SOCKET_ORIGIN = (process.env.REACT_APP_API_URL || 'https://localhost:3000/api').replace(/\/api\/?$/, '');
+const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
 export const socket = io(SOCKET_ORIGIN, {
   autoConnect: false,

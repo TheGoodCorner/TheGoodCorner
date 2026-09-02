@@ -1,7 +1,8 @@
 // src/stores/userStore.jsx
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
+import { fetchPendingFriendRequestsRequest, fetchFriendsRequest } from '../api/friendApi';
+
 
 export const useUserStore = create(
     (set, get) => ({
@@ -14,13 +15,50 @@ export const useUserStore = create(
       loading: false,
       error: null,
 
-      // Profil PUBLIC d'un autre utilisateur consulté (ex: future page
-      // vendeur) — séparé de `user` pour ne jamais écraser ton propre
+      // Profil PUBLIC d'un autre utilisateur consulté (pour page sellerProfile)
+      // séparé de `user` pour ne jamais écraser ton propre
       // profil avec la version publique de quelqu'un d'autre.
       viewedUser: null,
       viewedUserLoading: false,
       viewedUserError: null,
 
+
+      friendRequests: null, // Demandes REÇUES
+      friendRequestsSent: null, //Demandes ENVOYÉES
+      friends: [
+    {
+      id: "mock-friend-1",
+      username: "alice_seller",
+      name: "Alice Dupont",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=alice_seller",
+      email: "alice@example.com",
+      createdAt: new Date("2024-01-15"),
+    },
+    {
+      id: "mock-friend-2",
+      username: "bob_vintage",
+      name: "Bob Martin",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=bob_vintage",
+      email: "bob@example.com",
+      createdAt: new Date("2024-02-20"),
+    },
+    {
+      id: "mock-friend-3",
+      username: "carole_design",
+      name: "Carole Bernard",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=carole_design",
+      email: "carole@example.com",
+      createdAt: new Date("2024-03-10"),
+    },
+    {
+      id: "mock-friend-4",
+      username: "david_tech",
+      name: "David Lefevre",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=david_tech",
+      email: "david@example.com",
+      createdAt: new Date("2024-03-25"),
+    },
+  ], // ✅ Ajouter : Liste d'amis
       // GET /user/:id — profil PUBLIC d'un utilisateur donné.
       fetchUser: async (id) => {
         set({ viewedUserLoading: true, viewedUserError: null });
@@ -74,6 +112,24 @@ export const useUserStore = create(
           set({ error: err.message, loading: false });
           console.error('deleteAccount error:', err);
           throw err;
+        }
+      },
+
+      fetchPendingFriendRequests: async () => {
+        try {
+          const pendingRequests = await fetchPendingFriendRequestsRequest();
+          set({ friendRequests: pendingRequests.pendingReceived });
+        } catch (err) {
+          console.error('fetchPendingFriendRequests error:', err);
+        }
+      },
+
+      fetchFriends: async () => {
+        try {
+          const friends = await fetchFriendsRequest();
+          set({ friends: friends.friends });
+        } catch (err) {
+          console.error('fetchFriends error:', err);
         }
       },
 

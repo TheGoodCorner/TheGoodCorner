@@ -12,6 +12,7 @@ import reviewsRouter from './routes/reviews.js';
 import messageRouter from './routes/messages.js';
 import paymentRouter from './routes/payment.js';
 import paymentController from './controllers/paymentController.js';
+import friendRouter from './routes/friends.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 
 const app = express(); // server initialization
@@ -37,6 +38,7 @@ app.use(rootPath, userRouter); // Users routes
 app.use(rootPath, reviewsRouter); // reviews routes
 app.use(rootPath, messageRouter); // message routes
 app.use(rootPath, paymentRouter); // payment routes
+app.use(rootPath, friendRouter);// friend routes
 
 const socketServer = http.createServer(app);
 const io = initializeWebServer(socketServer);
