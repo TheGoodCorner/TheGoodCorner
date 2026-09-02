@@ -23,7 +23,42 @@ export const useUserStore = create(
       viewedUserError: null,
 
 
-      friendRequests: null,
+      friendRequests: null, // Demandes REÇUES
+      friendRequestsSent: null, //Demandes ENVOYÉES
+      friends: [
+    {
+      id: "mock-friend-1",
+      username: "alice_seller",
+      name: "Alice Dupont",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=alice_seller",
+      email: "alice@example.com",
+      createdAt: new Date("2024-01-15"),
+    },
+    {
+      id: "mock-friend-2",
+      username: "bob_vintage",
+      name: "Bob Martin",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=bob_vintage",
+      email: "bob@example.com",
+      createdAt: new Date("2024-02-20"),
+    },
+    {
+      id: "mock-friend-3",
+      username: "carole_design",
+      name: "Carole Bernard",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=carole_design",
+      email: "carole@example.com",
+      createdAt: new Date("2024-03-10"),
+    },
+    {
+      id: "mock-friend-4",
+      username: "david_tech",
+      name: "David Lefevre",
+      avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=david_tech",
+      email: "david@example.com",
+      createdAt: new Date("2024-03-25"),
+    },
+  ], // ✅ Ajouter : Liste d'amis
       // GET /user/:id — profil PUBLIC d'un utilisateur donné.
       fetchUser: async (id) => {
         set({ viewedUserLoading: true, viewedUserError: null });

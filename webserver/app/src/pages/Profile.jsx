@@ -295,7 +295,7 @@ function Profile() {
                 iconSize={30}
                 title="Vous n'avez pas d'amis pour l'instant"
                 description="Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
-                className="py-16 bg-[var(--color-surface-hover)]"
+                className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
               />
             )}
           </div>
