@@ -149,8 +149,16 @@ const paymentController =
 			});
 
 			// Idempotency check: prevent duplicate deductions if Stripe resends the event
-			if (!transaction || transaction.status === 'SUCCEEDED')
+			if (!transaction)
+			{
+				console.log(`Webhook received for unknown transaction ${paymentIntent.id} (ignoring mock trigger).`);
 				return res.status(200).json({ received: true });
+			}
+			if (transaction.status === 'SUCCEEDED')
+			{
+				console.log(`Payment ${paymentIntent.id} already processed. Skipping.`);
+				return res.status(200).json({ received: true });
+			}
 
 			// Extract cart from metadata
 			const rawCart = paymentIntent.metadata?.cart;

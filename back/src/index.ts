@@ -24,7 +24,7 @@ app.use(cors({ // allow cors (cross origin ressource sharing) protocols on all i
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true
 }));
-app.post('/api/webhook', express.raw({ type: 'application/json' }), paymentController.stripeWebhook);
+app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), paymentController.stripeWebhook); // allow payment processing, do not move it
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
