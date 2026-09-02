@@ -69,6 +69,17 @@ up:
 			echo -e "\nDon't forget to fill out the secret stripe.txt files$(RESET)"; \
 			exit 1; \
 		fi; \
+		if [ -f ./.secrets/stripeWebhook.txt ] && [ -s ./.secrets/stripeWebhook.txt ]; then \
+			echo -e "$(GREEN)stripeWebhook file already exists in .secrets folder.$(RESET)"; \
+		elif [ -f ../stripeWebhook.txt ]; then \
+			echo -e "$(GREEN)Successfully copied stripeWebhook to .secrets folder.$(RESET)"; \
+			cp ../stripeWebhook.txt ./.secrets/stripeWebhook.txt; \
+		else \
+			touch ./.secrets/stripeWebhook.txt; \
+			echo -e "$(BLUE)You may find the secret key under stripeWebhook website by logging into admin account and under developper section get the secret key" \
+			echo -e "\nDon't forget to fill out the secret stripeWebhook.txt files$(RESET)"; \
+			exit 1; \
+		fi; \
 		if [ -f ./back/.env ]; then \
 			if grep -q "TODO" ./back/.env; then \
 				echo -e "$(BLUE)Please remove TODOs from ./back/.env before launching!$(RESET)"; \

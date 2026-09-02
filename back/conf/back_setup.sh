@@ -11,6 +11,15 @@ fi
 
 if [ -f "/run/secrets/stripe_key" ]; then
 	export STRIPE_KEY=$(cat /run/secrets/stripe_key)
+else
+	echo -e "StripeKey has not been found ! aborting !\n"
+	exit 1;
+fi
+if [ -f "/run/secrets/stripe_key" ]; then
+	export STRIPE_KEY=$(cat /run/secrets/stripe_key)
+else
+	echo -e "WebhookStripeKey has not been found ! aborting !\n"
+	exit 1;
 fi
 
 export DATABASE_URL="postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${DB_PORT}/${POSTGRES_DB}?schema=public"

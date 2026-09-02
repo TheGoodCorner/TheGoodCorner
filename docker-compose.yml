@@ -24,6 +24,7 @@ services:
     secrets:
       - db_password
       - stripe_key
+      - stripe_Webhook_key
     networks:
       - Container_network
     volumes:
@@ -32,6 +33,25 @@ services:
       postgresql:
         condition: service_healthy
     restart: always
+
+  stripe_listener:
+    image: stripe/stripe-cli:latest
+    container_name: stripe_listener
+    networks:
+      - Container_network
+    depends_on:
+      - back
+    secrets:
+      - stripe_Webhook_key
+      - stripe_key
+    entrypoint: ["/bin/sh", "-c"]
+    command: >
+      "exec stripe listen
+      --api-key $$(cat /run/secrets/stripe_key)
+      --forward-to back:3000/api/webhook
+      --webhook-secret $$(cat /run/secrets/stripe_Webhook_key)"
+    restart: always
+
 
 # enlever plus tard les ports d'acces
   postgresql:
@@ -46,7 +66,6 @@ services:
       POSTGRES_DB: mydb
     secrets:
       - db_password
-      - stripe_key
     networks:
       - Container_network
     volumes:
@@ -66,6 +85,8 @@ secrets:
     file: ./.secrets/password.txt
   stripe_key:
     file: ./.secrets/stripe.txt
+  stripe_Webhook_key:
+    file: ./.secrets/stripeWebhook.txt
 volumes:
   postgresql_data:
   uploads_data:

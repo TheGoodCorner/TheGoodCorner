@@ -11,6 +11,7 @@ import userRouter from './routes/users.js';
 import reviewsRouter from './routes/reviews.js';
 import messageRouter from './routes/messages.js';
 import paymentRouter from './routes/payment.js';
+import paymentController from './controllers/paymentController.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 
 const app = express(); // server initialization
@@ -23,6 +24,7 @@ app.use(cors({ // allow cors (cross origin ressource sharing) protocols on all i
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true
 }));
+app.post('/api/webhook', express.raw({ type: 'application/json' }), paymentController.stripeWebhook);
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
@@ -44,8 +46,6 @@ app.set('io', io);
  * asynchronous function that start the backend server while checking for errors
  * @returns a void promise relative to the async nature of the function
  */
-console.log('here are the env var:  \n');
-console.log(process.env);
 async function startServer()
 {
 	try {
