@@ -4,6 +4,7 @@
 
 NAME				= TheGoodCorner
 BACK_CONT			= back
+STRIPE_CONT			= stripe
 DATABASE_CONT		= postgresql
 WEB_SERVER_CONT		= webserver
 SRC_DIR				= srcs
@@ -89,6 +90,16 @@ clean:
 	@echo -e "$(BLUE)[DONE]$(RESET) Full clean complete.";
 
 re: clean all
+
+stripe:
+
+	@if [ $$(docker ps -q -f name=stripe | wc -l ) -gt 0 ]; then \
+		echo -e "$(RED)stripe container is already up refreshing. $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(STRIPE_CONT) 2>/dev/null; \
+	else \
+		echo -e "$(YELLOW)Starting $(STRIPE_CONT) $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d $(STRIPE_CONT) 2>/dev/null; \
+	fi
 
 back:
 

@@ -25,12 +25,12 @@ const paymentController =
 			if (productId.length !== quantity.length)
 				return res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' });
 
-			const quantityMap = new Map<string, number>();
+			const quantityMap = new Map<number, number>();
 			for (let i = 0; i < productId.length; i++) {
 				const qty = Number(quantity[i]);
 				if (isNaN(qty) || qty <= 0)
 					return res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' });
-				quantityMap.set(String(productId[i]), qty);
+				quantityMap.set(productId[i], qty);
 			}
 
 			const [user, products] = await Promise.all([
@@ -49,7 +49,7 @@ const paymentController =
 				return res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' });
 
 			const numericPrice = products.reduce((sum, item) => {
-				const itemQty = quantityMap.get(String(item.id)) || 0;
+				const itemQty = quantityMap.get(item.id) || 0;
 				return sum + (Number(item.price) * itemQty);
 			}, 0);
 
@@ -74,7 +74,7 @@ const paymentController =
 			}
 			const cartItems = products.map((prod) => ({
 				id: prod.id,
-				qty: quantityMap.get(String(prod.id)) || 1
+				qty: quantityMap.get(prod.id) || 1
 			}));
 			const stripesCentsConvertedAmount = Math.round(numericPrice * 100);
 			const stripePaymentIntent = await stripe.paymentIntents.create({
@@ -90,9 +90,10 @@ const paymentController =
 			try {
 				const newTransaction = await prisma.$transaction(async (tx) => {
 					for (const prods of products) {
-						const requestedQty = quantityMap.get(String(prods.id)) || 1;
+						const requestedQty = quantityMap.get(prods.id) || 1;
 						if (prods.quantity! < requestedQty)
-							return res.status(400).json({ status: 'ERROR', message: `Stock insuffisant pour le produit: ${prods.id}` });
+							throw new Error('OUT_OF_STOCK');
+
 					}
 					return tx.payment.create({
 						data: {
@@ -104,7 +105,13 @@ const paymentController =
 						}
 					});
 				});
-				throw new Error('OUT_OF_STOCK');
+				return res.status(201).json({
+					status: 'OK',
+					data: {
+						transaction: newTransaction,
+						clientSecret: stripePaymentIntent.client_secret
+					}
+				});
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
 				if (stockError.message === 'OUT_OF_STOCK') {

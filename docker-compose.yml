@@ -10,14 +10,14 @@ services:
     volumes:
       - uploads_data:/app/uploads
     ports:
-        - "8080:80"
-        - "4443:443"
+      - "8080:80"
+      - "4443:443"
     restart: always
 
   back:
     build:
-     context: ./back
-     dockerfile: dockerfile
+      context: ./back
+      dockerfile: dockerfile
     container_name: back
     env_file:
       - ./back/.env
@@ -30,23 +30,20 @@ services:
         condition: service_healthy
     restart: always
 
-  # stripe_listener:
-  #   image: stripe/stripe-cli:latest
-  #   container_name: stripe_listener
-  #   networks:
-  #     - Container_network
-  #   depends_on:
-  #     - back
-  #   entrypoint: ["stripe"]
-  #   command: >
-  #     listen
-  #     --api-key ${STRIPE_KEY}
-  #     --forward-to back:3000/api/webhook
-  #     --webhook-secret ${STRIPE_WEBHOOK_SECRET}
-  #   restart: always
+  stripe:
+    image: stripe/stripe-cli:latest
+    container_name: stripe
+    networks:
+      - Container_network
+    depends_on:
+      - back
+    env_file:
+      - ./back/.env
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["stripe listen --api-key \"$$STRIPE_KEY\" --forward-to back:3000/api/webhook --load-from-webhooks-api"]
+    restart: always
 
-
-# enlever plus tard les ports d'acces
+  # enlever plus tard les ports d'acces
   postgresql:
     build:
       context: ./database
@@ -61,7 +58,7 @@ services:
     volumes:
       - postgresql_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U GoodCorner -d mydb"]
+      test: [ "CMD-SHELL", "pg_isready -U GoodCorner -d mydb" ]
       interval: 2s
       timeout: 3s
       retries: 5
