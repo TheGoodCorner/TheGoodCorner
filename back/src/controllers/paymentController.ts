@@ -16,27 +16,41 @@ const paymentController =
 			const userId = req.user?.id;
 			if (!userId)
 				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
-			const { amount, stripeCurrency = 'eur' } = req.body;
-			const numericAmount = Number(amount);
+			const { stripeCurrency = 'eur', productId = [], quantity = [] } = req.body;
 
-			if (!numericAmount || isNaN(numericAmount) || numericAmount <= 0)
-				return res.status(400).json({ status: 'ERROR', message: 'montant invalide' });
-			const [user, product] = await Promise.all([
+			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
+				return res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' });
+			if (productId.length !== quantity.length)
+				return res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' });
+
+			const quantityMap = new Map<string, number>();
+			for (let i = 0; i < productId.length; i++) {
+				const qty = Number(quantity[i]);
+				if (isNaN(qty) || qty <= 0)
+					return res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' });
+				quantityMap.set(productId[i], qty);
+			}
+			const [user, products] = await Promise.all([
 				prisma.user.findUnique({ where: { id: userId } }),
-				prisma.product.findUnique({ where: { id: productId } })
+				prisma.product.findMany({
+					where: {
+						id: { in: productId }
+					}
+				})
 			]);
 			if (!user)
 				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
-			if (!product)
-				return res.status(404).json({ status: 'ERROR', message: 'Product not found' });
+			if (products.length !== productId.length)
+				return res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' });
 
-			if (user.budget < numericAmount) {
-				return res.status(400).json({
-					status: 'ERROR',
-					message: "L'utilisateur n'a plus assez de budget !",
-					currentBudget: user.budget
-				});
-			}
+			const numericPrice = products.reduce((sum, item) => {
+				const itemQty = quantityMap.get(item.id.toString()) || 0;
+				return sum + (Number(item.price) * itemQty);
+			}, 0);
+			if (numericPrice <= 0)
+				return res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' });
+			if (user.budget < numericPrice)
+				return res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget });
 			let customerId = user.stripeCustomerId;
 			if (!customerId) {
 				const customer = await stripe.customers.create({
@@ -51,40 +65,47 @@ const paymentController =
 				customerId = customer.id;
 			}
 
-			const stripesCentsConvertedAmount = Math.round(numericAmount * 100);
+			const stripesCentsConvertedAmount = Math.round(numericPrice * 100);
 			const stripePaymentIntent = await stripe.paymentIntents.create({
 				amount: stripesCentsConvertedAmount,
 				currency: stripeCurrency,
 				customer: customerId,
 				metadata: {
 					userId: userId.toString(),
-					productId: product.id.toString(),
-					amount: numericAmount.toString()
+					amount: numericPrice.toString()
 				}
 			});
 			try {
 				const newTransaction = await prisma.$transaction(async (tx) => {
-					const updatedProduct = await tx.product.updateMany({
-						where: {
-							id: product.id,
-							quantity: { gte: product.quantity as number }
-						},
-						data: {
-							quantity: { decrement: product.quantity as number }
-						}
-					});
-					if (updatedProduct.count === 0) {
-						throw new Error('OUT_OF_STOCK');
+					for (const prods of products) {
+						const requestedQty = quantityMap.get(prods.id.toString()) || 1;
+						const updatedProduct = await tx.product.updateMany({
+							where: {
+								id: prods.id,
+								quantity: { gte: requestedQty }
+							},
+							data: {
+								quantity: { decrement: requestedQty }
+							}
+						});
+						if (updatedProduct.count === 0)
+							throw new Error(`OUT_OF_STOCK`);
 					}
 					return tx.payment.create({
 						data: {
 							stripeId: stripePaymentIntent.id,
-							amount: numericAmount,
+							amount: numericPrice,
 							currency: stripeCurrency,
 							status: 'PENDING',
 							userId: userId,
-							productId: product.id,
-							quantity: product.quantity
+							// If your Payment model stores a list of items or references them:
+							items: {
+								create: products.map((prod) => ({
+									productId: prod.id,
+									quantity: quantityMap.get(prod.id.toString()) || 1,
+									price: prod.price
+								}))
+							}
 						}
 					});
 				});
@@ -95,70 +116,15 @@ const paymentController =
 						clientSecret: stripePaymentIntent.client_secret
 					}
 				});
-
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
-				if (stockError.message === 'OUT_OF_STOCK') 
-					return (res.status(400).json({	status: 'ERROR',	message: 'Item went out of stock during checkout!'}));
+				if (stockError.message === 'OUT_OF_STOCK')
+					return (res.status(400).json({ status: 'ERROR', message: 'Item went out of stock during checkout!' }));
 				throw stockError;
 			}
 		} catch (error: any) {
 			console.error('Erreur createTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
-		}
-	},
-	confirmTransaction: async (req: AuthenticatedRequest, res: Response) => {
-		try {
-			const userId = req.user?.id;
-			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
-
-			const transactionId = req.params.id as string; // This is the stripeId (e.g. pi_3MtwbL2eZvKYlo2C0XXXXXX)
-			if (!transactionId)
-				return res.status(400).json({ status: 'ERROR', message: 'Payment Intent ID is required' });
-			const transaction = await prisma.payment.findFirst({
-				where: {
-					stripeId: transactionId,
-					userId: userId
-				}
-			});
-			if (!transaction)
-				return res.status(404).json({ status: 'ERROR', message: 'Transaction not found' });
-			if (transaction.status !== 'PENDING')
-				return res.status(400).json({ status: 'ERROR', message: `Transaction is already in status ${transaction.status}` });
-			const paymentIntent = await stripe.paymentIntents.retrieve(transactionId);
-			if (paymentIntent.status === 'succeeded') {
-				const freshUser = await prisma.user.findUnique({ where: { id: userId } });
-				if (!freshUser || freshUser.budget < transaction.amount)
-					return (res.status(400).json({ status: 'ERROR', message: 'Budget insuffisant au moment de la confirmation' }));
-				const [updatedTransaction, updatedUser] = await prisma.$transaction([
-					prisma.payment.update({
-						where: { id: transaction.id },
-						data: { status: 'SUCCEEDED' }
-					}),
-					prisma.user.update({
-						where: { id: userId },
-						data: {
-							budget: {
-								decrement: Math.round(transaction.amount)
-							}
-						}
-					})
-				]);
-				console.log('a transaction has been confirmed');
-				return (res.status(200).json({ status: 'OK', message: 'Payment confirmed successfully', data: { transaction: updatedTransaction, remainingBudget: updatedUser.budget } }));
-			}
-			else {
-				await prisma.payment.update({
-					where: { id: transaction.id },
-					data: { status: paymentIntent.status.toUpperCase() }
-				});
-				console.log('a transaction status has been updated');
-				return (res.status(400).json({ status: 'ERROR', message: `Payment has not succeeded. Current status: ${paymentIntent.status}` }));
-			}
-		} catch (error: any) {
-			console.error('Erreur confirmTransaction:', error);
-			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}
 	},
 	getAllTransactions: async (req: AuthenticatedRequest, res: Response) => {
@@ -206,18 +172,17 @@ const paymentController =
 			const transactionId = req.params.id as string; // This is the stripeId (e.g. pi_3MtwbL2eZvKYlo2C0XXXXXX)
 			if (!transactionId)
 				return res.status(400).json({ status: 'ERROR', message: 'Payment Intent ID is required' });
-			const transaction = await prisma.payment.findFirst({
+			const Stripetransaction = await prisma.payment.findFirst({
 				where: {
-					stripeId: transactionId,
-					userId: userId
+					stripeId: transactionId
 				}
 			});
-			if (!transaction)
+			if (!Stripetransaction)
 				return res.status(404).json({ status: 'ERROR', message: 'Transaction not found' });
-			if (transaction.userId !== userId)
-				return res.status(404).json({ status: 'ERROR', message: 'can\'t check on others transactions' });
+			if (Stripetransaction.userId !== userId)
+				return res.status(403).json({ status: 'ERROR', message: "You do not have permission to view this transaction" });
 			console.log('an individual transaction has been returned with its corresponding user');
-			return res.status(200).json({ status: 'OK', data: transaction });
+			return res.status(200).json({ status: 'OK', data: Stripetransaction });
 		} catch (error: any) {
 			console.error('Erreur getTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
