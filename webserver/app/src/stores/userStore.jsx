@@ -1,6 +1,5 @@
 // src/stores/userStore.jsx
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
 import { fetchPendingFriendRequestsRequest, fetchFriendsRequest } from '../api/friendApi';
 
@@ -16,14 +15,14 @@ export const useUserStore = create(
       loading: false,
       error: null,
 
-      // Profil PUBLIC d'un autre utilisateur consulté (ex: future page
-      // vendeur) — séparé de `user` pour ne jamais écraser ton propre
+      // Profil PUBLIC d'un autre utilisateur consulté (pour page sellerProfile)
+      // séparé de `user` pour ne jamais écraser ton propre
       // profil avec la version publique de quelqu'un d'autre.
       viewedUser: null,
       viewedUserLoading: false,
       viewedUserError: null,
 
-      friends: null,
+
       friendRequests: null,
       // GET /user/:id — profil PUBLIC d'un utilisateur donné.
       fetchUser: async (id) => {

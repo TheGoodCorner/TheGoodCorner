@@ -4,15 +4,13 @@ import {
   acceptFriendRequestRequest,
   rejectFriendRequestRequest,
   deleteFriendRequestRequest,
-  fetchFriendsRequest,
-  fetchPendingFriendRequestsRequest,
-} from '../api/friendpApi';
+} from '../api/friendApi';
 import { useUserStore } from './userStore';
 
 // Ce store ne garde pas de liste d'amis/demandes en mémoire.
 // Les données viennent du userStore (currentUser.friends, currentUser.friendRequests).
 // Ce store déclenche les actions d'écriture et rafraîchit les données après.
-export const useFriendshipStore = create((set) => ({
+export const useFriendStore = create((set) => ({
   submitting: false,
   error: null,
 

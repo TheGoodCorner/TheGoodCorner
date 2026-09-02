@@ -3,7 +3,7 @@ import { useAuthStore } from '../stores/authStore';
 import { refreshRequest } from './authApi';
 
 export const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://localhost:3000/api',
+  baseURL: 'https://localhost:4443/api',
   headers: {
     'Content-Type': 'application/json',
   },

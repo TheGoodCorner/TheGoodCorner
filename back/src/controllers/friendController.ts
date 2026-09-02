@@ -61,11 +61,11 @@ const friendController = {
   // Accepter une demande
   acceptFriendRequest: async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const { id } = req.params;
+      const {id} = req.params;
       const userId = req.user!.id;
 
       const request = await prisma.friendRequest.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
       });
 
       if (!request || request.receiverId !== userId) {
@@ -73,7 +73,7 @@ const friendController = {
       }
 
       const updated = await prisma.friendRequest.update({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
         data: { status: 'ACCEPTED' },
       });
 
@@ -91,7 +91,7 @@ const friendController = {
       const userId = req.user!.id;
 
       const request = await prisma.friendRequest.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
       });
 
       if (!request || request.receiverId !== userId) {
@@ -99,7 +99,7 @@ const friendController = {
       }
 
       const updated = await prisma.friendRequest.update({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
         data: { status: 'REJECTED' },
       });
 
@@ -117,7 +117,7 @@ const friendController = {
       const userId = req.user!.id;
 
       const request = await prisma.friendRequest.findUnique({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
       });
 
       if (!request || (request.senderId !== userId && request.receiverId !== userId)) {
@@ -125,7 +125,7 @@ const friendController = {
       }
 
       await prisma.friendRequest.delete({
-        where: { id: parseInt(id) },
+        where: { id: parseInt(String(id)) },
       });
 
       res.status(204).send();
