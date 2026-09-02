@@ -105,6 +105,7 @@ const paymentController =
 						}
 					});
 				});
+				console.log('Transaction successfully created !');
 				return res.status(201).json({
 					status: 'OK',
 					data: {
@@ -114,9 +115,8 @@ const paymentController =
 				});
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
-				if (stockError.message === 'OUT_OF_STOCK') {
+				if (stockError.message === 'OUT_OF_STOCK')
 					return res.status(400).json({ status: 'ERROR', message: 'Item went out of stock during checkout!' });
-				}
 				throw stockError;
 			}
 		} catch (error: any) {
@@ -133,7 +133,7 @@ const paymentController =
 			event = stripe.webhooks.constructEvent(
 				req.body,
 				sig,
-				process.env.STRIPE_WEBHOOK_SECRET!
+				process.env.STRIPE_WEBHOOK!
 			);
 		} catch (err: any) {
 			console.error(`Webhook signature verification failed: ${err.message}`);
@@ -149,9 +149,8 @@ const paymentController =
 			});
 
 			// Idempotency check: prevent duplicate deductions if Stripe resends the event
-			if (!transaction || transaction.status === 'SUCCEEDED') {
+			if (!transaction || transaction.status === 'SUCCEEDED')
 				return res.status(200).json({ received: true });
-			}
 
 			// Extract cart from metadata
 			const rawCart = paymentIntent.metadata?.cart;
