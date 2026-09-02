@@ -15,21 +15,21 @@ const paymentController =
 		try {
 			const userId = req.user?.id;
 			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+				return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
 
 			const { stripeCurrency = 'eur', productId = [], quantity = [] } = req.body;
 
 			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
-				return res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' });
+				return (res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' }));
 
 			if (productId.length !== quantity.length)
-				return res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' });
+				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' }));
 
 			const quantityMap = new Map<number, number>();
 			for (let i = 0; i < productId.length; i++) {
 				const qty = Number(quantity[i]);
 				if (isNaN(qty) || qty <= 0)
-					return res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' });
+					return (res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' }));
 				quantityMap.set(productId[i], qty);
 			}
 
@@ -43,21 +43,21 @@ const paymentController =
 			]);
 
 			if (!user)
-				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
+				return (res.status(404).json({ status: 'ERROR', message: 'User not found' }));
 
 			if (products.length !== productId.length)
-				return res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' });
+				return (res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' }));
 
 			const numericPrice = products.reduce((sum, item) => {
 				const itemQty = quantityMap.get(item.id) || 0;
-				return sum + (Number(item.price) * itemQty);
+				return (sum + (Number(item.price) * itemQty));
 			}, 0);
 
 			if (numericPrice <= 0)
-				return res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' });
+				return (res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' }));
 
 			if (user.budget < numericPrice)
-				return res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget });
+				return (res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget }));
 
 			let customerId = user.stripeCustomerId;
 			if (!customerId) {
@@ -106,13 +106,7 @@ const paymentController =
 					});
 				});
 				console.log('Transaction successfully created !');
-				return res.status(201).json({
-					status: 'OK',
-					data: {
-						transaction: newTransaction,
-						clientSecret: stripePaymentIntent.client_secret
-					}
-				});
+				return (res.status(201).json({status: 'OK',data: {transaction: newTransaction, clientSecret: stripePaymentIntent.client_secret}}));
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
 				if (stockError.message === 'OUT_OF_STOCK')
@@ -137,7 +131,7 @@ const paymentController =
 			);
 		} catch (err: any) {
 			console.error(`Webhook signature verification failed: ${err.message}`);
-			return res.status(400).send(`Webhook Error: ${err.message}`);
+			return (res.status(400).send(`Webhook Error: ${err.message}`));
 		}
 		// Handle successful payment
 		if (event.type === 'payment_intent.succeeded') 
@@ -151,12 +145,12 @@ const paymentController =
 			if (!transaction)
 			{
 				console.log(`Webhook received for unknown transaction ${paymentIntent.id} (ignoring mock trigger).`);
-				return res.status(200).json({ received: true });
+				return (res.status(200).json({status: 'OK', received: true }));
 			}
 			if (transaction.status === 'SUCCEEDED')
 			{
 				console.log(`Payment ${paymentIntent.id} already processed. Skipping.`);
-				return res.status(200).json({ received: true });
+				return (res.status(200).json({status: 'OK', received: true }));
 			}
 
 			// Extract cart from metadata
@@ -192,7 +186,7 @@ const paymentController =
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
 			} catch (dbError:any) {
 				console.error('Error applying DB updates:', dbError);
-				return res.status(500).end(); // Let Stripe retry later
+				return (res.status(500).end()); // Let Stripe retry later
 			}
 		}
 
@@ -205,40 +199,29 @@ const paymentController =
 				data: { status: event.type === 'payment_intent.canceled' ? 'CANCELED' : 'FAILED' }
 			});
 		}
-		return res.status(200).json({ received: true });
+		return (res.status(200).json({status: 'OK', received: true }));
 	},
 	getAllTransactions: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user?.id;
 			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
-			const user = await prisma.user.findUnique({ where: { id: userId }, select: { sellerEliteStatus: true } });
+				return res.status(400).json({ status: 'ERROR', message: 'invalid UserId' });
+			const user = await prisma.user.findMany({ where: { id: userId },
+				 select: {	username:true,
+							email:true,
+							phoneNumber:true,
+							payment: {
+								orderBy: {createdAt: 'desc'},
+								take: 20,
+							},
+							budget: true,
+							avatar:true,
+							product:true,
+							}});
 			if (!user)
 				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
-			if (!user.sellerEliteStatus)
-				return res.status(403).json({ status: 'ERROR', message: 'User does not have the permissions to check on all transactions' });
-			const transactions = await prisma.payment.findMany({
-				include: {
-					user: {
-						select: {
-							id: true,
-							email: true,
-							username: true,
-							stripeCustomerId: true,
-							name: true,
-							avatar: true,
-							phoneNumber: true,
-							budget: true,
-							sellerRating: true,
-							sellerReviewCount: true,
-							location: true,
-							createdAt: true,
-						}
-					}
-				}
-			});
-			console.log('all transactions have been returned with their corresponding user');
-			return res.status(200).json({ status: 'OK', data: transactions })
+			console.log(`all 20 last transactions of ${userId}`);
+			return res.status(200).json({ status: 'OK', data: user })
 		} catch (error) {
 			console.error('Erreur getAllTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
