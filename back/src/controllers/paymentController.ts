@@ -156,7 +156,7 @@ const paymentController =
 					// 1. Decrement product stock
 					for (const item of cart) {
 						await tx.product.update({
-							where: { id: item.id },
+							where: { id: Number(item.id) },
 							data: { quantity: { decrement: item.qty } }
 						});
 					}
