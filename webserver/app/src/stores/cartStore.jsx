@@ -31,6 +31,14 @@ export const useCartStore = create(
           let newItems
 
           if (existing) {
+
+            const newQuantity = existing.quantity + (product.quantity || 1)
+            
+            if (newQuantity > existing.stock) {
+              set({ error: `Stock limité à ${existing.stock} unité(s)` })
+              return state
+            }
+
             newItems = state.cartItems.map((item) =>
               item.id === product.id
                 ? { ...item, quantity: item.quantity + (product.quantity || 1) }
@@ -61,9 +69,19 @@ export const useCartStore = create(
 
       updateQuantity: (productId, quantity) =>
         set((state) => {
-          const newItems = state.cartItems.map((item) =>
-            item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
-          )
+          const newItems = state.cartItems.map((item) => {
+            if (item.id === productId) {
+              // ✅ Limiter la quantité au stock disponible
+              const validQuantity = Math.max(1, Math.min(quantity, item.stock))
+              
+              if (quantity > item.stock) {
+                set({ error: `Stock limité à ${item.stock} unité(s)` })
+              }
+
+              return { ...item, quantity: validQuantity }
+            }
+            return item
+          })
           return {
             cartItems: newItems,
             cartCount: newItems.reduce((sum, item) => sum + item.quantity, 0),

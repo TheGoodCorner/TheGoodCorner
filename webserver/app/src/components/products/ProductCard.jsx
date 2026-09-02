@@ -45,6 +45,8 @@ export default function ProductCard({ product }) {
     </>
   );
 
+  const isInStock = product.quantity > 0;
+
   return (
     <div className="card">
       <div className="card-header">
@@ -88,8 +90,8 @@ export default function ProductCard({ product }) {
           <h3 className="card-title line-clamp-2">{product.name}</h3>
         </Link>
         <p className="card-price">{product.price?.toFixed(2) ?? '—'}€</p>
-        <Button icon={PlusCircle} onClick={handleAddToCart} title="add to cart" aria-label="add to cart" className="w-full">
-          Ajouter au panier
+        <Button icon={PlusCircle} onClick={handleAddToCart} disabled={!isInStock} title="add to cart" aria-label="add to cart" className="w-full">
+          {isInStock ? 'Ajouter au panier' : 'Rupture de stock'}
         </Button>
       </div>
     </div>
