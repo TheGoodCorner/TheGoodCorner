@@ -139,11 +139,10 @@ const paymentController =
 			console.error(`Webhook signature verification failed: ${err.message}`);
 			return res.status(400).send(`Webhook Error: ${err.message}`);
 		}
-
 		// Handle successful payment
-		if (event.type === 'payment_intent.succeeded') {
+		if (event.type === 'payment_intent.succeeded') 
+		{
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
 			const transaction = await prisma.payment.findFirst({
 				where: { stripeId: paymentIntent.id }
 			});
@@ -191,25 +190,21 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
-			} catch (dbError) {
+			} catch (dbError:any) {
 				console.error('Error applying DB updates:', dbError);
 				return res.status(500).end(); // Let Stripe retry later
 			}
 		}
 
 		// Handle failed or canceled payments
-		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') {
+		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') 
+		{
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
-			// Because we used Option 2, we never decremented stock in createTransaction. 
-			// We just need to update the payment status to keep our records accurate.
 			await prisma.payment.updateMany({
 				where: { stripeId: paymentIntent.id },
 				data: { status: event.type === 'payment_intent.canceled' ? 'CANCELED' : 'FAILED' }
 			});
 		}
-
-		// Acknowledge receipt to Stripe
 		return res.status(200).json({ received: true });
 	},
 	getAllTransactions: async (req: AuthenticatedRequest, res: Response) => {
