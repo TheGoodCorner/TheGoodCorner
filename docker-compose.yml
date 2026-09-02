@@ -31,7 +31,9 @@ services:
     restart: always
 
   stripe:
-    image: stripe/stripe-cli:latest
+    build:
+      context: ./stripe
+      dockerfile: dockerfile
     container_name: stripe
     networks:
       - Container_network
@@ -39,8 +41,6 @@ services:
       - back
     env_file:
       - ./back/.env
-    entrypoint: ["/bin/sh", "-c"]
-    command: ["stripe listen --api-key \"$$STRIPE_KEY\" --forward-to back:3000/api/webhook --load-from-webhooks-api"]
     restart: always
 
   # enlever plus tard les ports d'acces

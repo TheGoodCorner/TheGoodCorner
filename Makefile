@@ -132,4 +132,4 @@ webserver:
 		echo -e "$(GREEN)[DONE]$(RESET) $(WEB_SERVER_CONT) is running."; \
 	fi
 
-.PHONY: all up down back database webserver clean re
+.PHONY: all up down back database webserver stripe clean re
