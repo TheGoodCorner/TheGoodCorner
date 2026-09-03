@@ -20,32 +20,36 @@ export const useCartStore = create(
         const currentUser = useUserStore.getState().user        
         // Vérifier si c'est le propre produit de l'utilisateur
         if (product.authorId === currentUser?.id) {
-          set({ error: 'Vous ne pouvez pas ajouter votre propre produit au panier.' })
+          set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
           return false
         }
+		const maxStock = Number(product.stock ?? product.quantity) || 0;
+        const addCount = Number(product.quantity) || 1;
+      
+        const state = get(); // Récupère l'état actuel
+        const existing = state.cartItems.find((item) => item.id === product.id);
+        const currentCount = existing ? existing.quantity : 0;
+      
+        // 1. Bloquer si la quantité cumulée dépasse le stock disponible
+        if (currentCount + addCount > maxStock) {
+          set({
+            error: {message: `Stock insuffisant : vous avez déjà ${currentCount} article(s) dans le panier pour un stock de ${maxStock}.`, productId: product.id}
+          });
+          return false;
+        }
 
-        set({ error: null })
-
-        set((state) => {
-          const existing = state.cartItems.find((item) => item.id === product.id)
+        set((prevState) => {
+          const existing = prevState.cartItems.find((item) => item.id === product.id)
           let newItems
 
           if (existing) {
-
-            const newQuantity = existing.quantity + (product.quantity || 1)
-            
-            if (newQuantity > existing.stock) {
-              set({ error: `Stock limité à ${existing.stock} unité(s)` })
-              return state
-            }
-
-            newItems = state.cartItems.map((item) =>
+            newItems = prevState.cartItems.map((item) =>
               item.id === product.id
                 ? { ...item, quantity: item.quantity + (product.quantity || 1) }
                 : item
             )
           } else {
-            newItems = [...state.cartItems, { ...product, quantity: product.quantity || 1 }]
+            newItems = [...prevState.cartItems, { ...product, quantity: product.quantity || 1 }]
           }
 
           return {

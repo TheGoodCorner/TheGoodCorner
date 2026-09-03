@@ -4,6 +4,7 @@
 
 NAME				= TheGoodCorner
 BACK_CONT			= back
+STRIPE_CONT			= stripe
 DATABASE_CONT		= postgresql
 WEB_SERVER_CONT		= webserver
 SRC_DIR				= srcs
@@ -46,17 +47,6 @@ up:
 	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)TheGoodCorner is already up."; \
 	else \
-		mkdir -p .secrets; \
-		if [ -f ./.secrets/password.txt ] && [ -s ./.secrets/password.txt ]; then \
-			echo -e "$(GREEN)Password file already exists in .secrets folder.$(RESET)"; \
-		elif [ -f ../password.txt ]; then \
-			echo -e "$(GREEN)Successfully copied password to .secrets folder.$(RESET)"; \
-			cp ../password.txt ./.secrets/password.txt; \
-		else \
-			echo -e "$(BLUE)Don't forget to fill out the secret password.txt file$(RESET)"; \
-			exit 1; \
-		fi; \
-		touch ./.secrets/password.txt; \
 		if [ -f ./back/.env ]; then \
 			if grep -q "TODO" ./back/.env; then \
 				echo -e "$(BLUE)Please remove TODOs from ./back/.env before launching!$(RESET)"; \
@@ -101,6 +91,16 @@ clean:
 
 re: clean all
 
+stripe:
+
+	@if [ $$(docker ps -q -f name=stripe | wc -l ) -gt 0 ]; then \
+		echo -e "$(RED)stripe container is already up refreshing. $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(STRIPE_CONT) 2>/dev/null; \
+	else \
+		echo -e "$(YELLOW)Starting $(STRIPE_CONT) $(RESET)"; \
+		$(COMPOSE) -f $(CONF) up -d $(STRIPE_CONT) 2>/dev/null; \
+	fi
+
 back:
 
 	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
@@ -132,4 +132,4 @@ webserver:
 		echo -e "$(GREEN)[DONE]$(RESET) $(WEB_SERVER_CONT) is running."; \
 	fi
 
-.PHONY: all up down back database webserver clean re
+.PHONY: all up down back database webserver stripe clean re

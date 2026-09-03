@@ -10,21 +10,17 @@ services:
     volumes:
       - uploads_data:/app/uploads
     ports:
-        - "8080:80"
-        - "4443:443"
+      - "8080:80"
+      - "4443:443"
     restart: always
 
   back:
     build:
-     context: ./back
-     dockerfile: dockerfile
+      context: ./back
+      dockerfile: dockerfile
     container_name: back
-    environment:
-      POSTGRES_HOST: postgresql
-      DATABASE_URL: postgresql://GoodCorner:GoodCornerPass123@postgresql:5432/mydb?schema=public
-      NODE_ENV: production
-    secrets:
-      - db_password
+    env_file:
+      - ./back/.env
     networks:
       - Container_network
     volumes:
@@ -34,7 +30,20 @@ services:
         condition: service_healthy
     restart: always
 
-# enlever plus tard les ports d'acces
+  stripe:
+    build:
+      context: ./stripe
+      dockerfile: dockerfile
+    container_name: stripe
+    networks:
+      - Container_network
+    depends_on:
+      - back
+    env_file:
+      - ./back/.env
+    restart: always
+
+  # enlever plus tard les ports d'acces
   postgresql:
     build:
       context: ./database
@@ -42,17 +51,14 @@ services:
     container_name: postgresql
     ports:
       - "127.0.0.1:5432:5432"
-    environment:
-      POSTGRES_USER: GoodCorner
-      POSTGRES_DB: mydb
-    secrets:
-      - db_password
+    env_file:
+      - ./back/.env
     networks:
       - Container_network
     volumes:
       - postgresql_data:/var/lib/postgresql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U GoodCorner -d mydb"]
+      test: [ "CMD-SHELL", "pg_isready -U GoodCorner -d mydb" ]
       interval: 2s
       timeout: 3s
       retries: 5
@@ -61,9 +67,6 @@ services:
 networks:
   Container_network:
     driver: bridge
-secrets:
-  db_password:
-    file: ./.secrets/password.txt
 volumes:
   postgresql_data:
   uploads_data:

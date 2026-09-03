@@ -124,8 +124,9 @@ function Messagerie() {
   }
 
   if (!isAuthenticated || !currentUser?.id) {
-    return (
-      <div className="container py-16 text-center bg-[var(--color-bg)]">
+  return (
+    <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-[var(--color-bg)]">
+      <div className="container py-16 text-center">
         <MessageCircle size={40} className="text-[var(--color-text-muted)] mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
           Connecte-toi pour accéder à ta messagerie
@@ -135,8 +136,9 @@ function Messagerie() {
         </p>
         <Button to="/authentication" variant="primary">Se connecter</Button>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <div className="bg-[var(--color-bg)]">

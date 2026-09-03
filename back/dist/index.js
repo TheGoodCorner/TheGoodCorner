@@ -9,15 +9,20 @@ import generalRouter from './routes/generalGetRouter.js';
 import userRouter from './routes/users.js';
 import reviewsRouter from './routes/reviews.js';
 import messageRouter from './routes/messages.js';
+import paymentRouter from './routes/payment.js';
+import paymentController from './controllers/paymentController.js';
+import friendRouter from './routes/friends.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
+const origin_Url = process.env.CLIENT_URL;
 app.use(cors({
-    origin: 'https://localhost:4443',
+    origin: origin_Url,
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true
 }));
+app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), paymentController.stripeWebhook); // allow payment processing, do not move it
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
@@ -28,8 +33,11 @@ app.use(rootPath, productRouter); // product routes
 app.use(rootPath, userRouter); // Users routes
 app.use(rootPath, reviewsRouter); // reviews routes
 app.use(rootPath, messageRouter); // message routes
+app.use(rootPath, paymentRouter); // payment routes
+app.use(rootPath, friendRouter); // friend routes
 const socketServer = http.createServer(app);
-initializeWebServer(socketServer);
+const io = initializeWebServer(socketServer);
+app.set('io', io);
 // app.use(printRequest);
 /**
  * asynchronous function that start the backend server while checking for errors
@@ -42,7 +50,7 @@ async function startServer() {
         await new Promise((resolve, reject) => // same as above, block until promise is fulfilled (server started correctly on port)
          {
             const server = socketServer.listen(port, '0.0.0.0', () => {
-                console.log(`Serveur démarré sur http://localhost:${port}`);
+                console.log(`Serveur démarré sur :${origin_Url}`);
                 resolve(); // resolve the promise
             });
             server.on('error', (error) => {

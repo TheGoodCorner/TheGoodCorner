@@ -65,44 +65,48 @@ export const getUserById = async (req, res) => {
     }
 };
 export const findReturnAllUser = async () => {
-    const allUsers = await prisma.user.findMany({
-        select: {
-            id: true,
-            email: true,
-            name: true,
-            authoredReviews: {
-                select: {
-                    id: true,
-                    content: true,
-                    reviewAuthor: { select: { id: true, name: true } },
-                    reviewedUser: { select: { id: true, name: true } }
-                }
-            },
-            receivedReviews: {
-                select: {
-                    id: true,
-                    content: true,
-                    reviewAuthor: { select: { id: true, name: true } },
-                    reviewedUser: { select: { id: true, name: true } }
-                }
-            },
-            sentMessages: true,
-            receivedMessages: true,
-            product: {
-                select: {
-                    id: true,
-                    title: true,
-                    category: true,
-                    author: { select: { id: true, name: true } }
-                }
-            },
-            location: true
-        }
-    });
-    if (!allUsers)
-        return ({ error: 'couldn\'t fetch all users.', status: 400 });
-    console.log("sucessfully fetched all users");
-    return (allUsers);
+    try {
+        const allUsers = await prisma.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                username: true,
+                authoredReviews: {
+                    select: {
+                        id: true,
+                        reviews: true,
+                        reviewAuthor: { select: { id: true, name: true } },
+                        reviewedUser: { select: { id: true, name: true } }
+                    }
+                },
+                receivedReviews: {
+                    select: {
+                        id: true,
+                        reviews: true,
+                        reviewAuthor: { select: { id: true, name: true } },
+                        reviewedUser: { select: { id: true, name: true } }
+                    }
+                },
+                sentMessages: true,
+                receivedMessages: true,
+                product: {
+                    select: {
+                        id: true,
+                        name: true,
+                        category: true,
+                        author: { select: { id: true, name: true } }
+                    }
+                },
+                location: true
+            }
+        });
+        console.log("sucessfully fetched all users");
+        return (allUsers);
+    }
+    catch (error) {
+        console.log(error);
+        throw error;
+    }
 };
 export const findReturnUser = async (id) => {
     const userId = parseInt(id, 10);

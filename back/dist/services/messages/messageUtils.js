@@ -31,7 +31,6 @@ export class MessageService {
     static async getConversationList(userId) {
         const messages = await prisma.message.findMany({
             where: {
-                deletedAt: null,
                 OR: [
                     { senderId: userId },
                     { receiverId: userId }
@@ -66,7 +65,7 @@ export class MessageService {
     }
     static async getMessage(messageId) {
         return (await prisma.message.findUnique({
-            where: { id: messageId, deletedAt: null },
+            where: { id: messageId },
             include: { sender: { select: { id: true, username: true, email: true, avatar: true } } }
         }));
     }
