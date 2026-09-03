@@ -8,20 +8,20 @@
   "main": "dist/index.js",
   "scripts": {
     "prebuild": "npm install --no-audit --no-fund --loglevel=error",
-    "build": "dotenv -e .env -- npx prisma generate --schema=./src/prisma/schema.prisma && tsc",
+    "build": "dotenv -e .env -- prisma generate --schema=./src/prisma/schema.prisma && tsc",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "db:migrate:prod": "dotenv -e .env -- npx prisma migrate deploy",
-    "db:studio": "dotenv -e .env -- npx prisma studio --schema=./src/prisma/schema.prisma",
-    "db:migrate": "dotenv -e .env -- npx prisma migrate dev --schema=./src/prisma/schema.prisma",
-    "db:reset": "dotenv -e .env -- npx prisma migrate reset --force --schema=./src/prisma/schema.prisma",
-    "db:adjust": "dotenv -e .env -- npx prisma db push --schema=./src/prisma/schema.prisma",
-    "db:generate": "dotenv -e .env -- npx prisma generate --schema=./src/prisma/schema.prisma",
+    "db:migrate:prod": "dotenv -e .env -- prisma migrate deploy",
+    "db:studio": "dotenv -e .env -- prisma studio --schema=./src/prisma/schema.prisma",
+    "db:migrate": "dotenv -e .env -- prisma migrate dev --schema=./src/prisma/schema.prisma",
+    "db:reset": "dotenv -e .env -- prisma migrate reset --force --schema=./src/prisma/schema.prisma",
+    "db:adjust": "dotenv -e .env -- prisma db push --schema=./src/prisma/schema.prisma",
+    "db:generate": "dotenv -e .env -- prisma generate --schema=./src/prisma/schema.prisma",
     "db:populate": "tsx src/prisma/seed.ts",
     "db:resetPopulate": "dotenv -e .env npm run db:reset -- -y && npm run db:populate"
   },
   "dependencies": {
-    "@prisma/client": "^6.19.3",
+    "@prisma/client": "6.19.3",
     "@types/jsonwebtoken": "^9.0.10",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -41,8 +41,12 @@
     "@types/multer": "^2.2.0",
     "@types/node": "^26.1.2",
     "dotenv-cli": "^11.0.0",
-    "prisma": "^6.19.3",
+    "prisma": "6.19.3",
     "tsx": "^4.23.5",
     "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "@prisma/prisma-schema-wasm": "6.19.3",
+    "@prisma/engines": "6.19.3"
   }
 }
