@@ -8,7 +8,7 @@ import {
   fetchFriendsRequest,
 } from '../api/friendApi';
 
-export const useFriendStore = create((set) => ({
+export const useFriendStore = create((set, get) => ({
   // Amitié : liste d'amis acceptés + demandes en attente. `friends` et
   // `friendRequests` (reçues) existaient déjà ; `sentFriendRequests` est
   // nouveau — sans lui impossible d'afficher "mes demandes envoyées",
@@ -37,12 +37,35 @@ export const useFriendStore = create((set) => ({
   // l'expéditeur à ta liste d'amis.
   acceptFriendRequest: async (id) => {
     set({ submitting: true, error: null });
+    // Sauvegarder l'état précédent en cas d'erreur
+    const previousRequests = get().friendRequests;
+    
     try {
+      // ← OPTIMISTIC : retirer la demande IMMÉDIATEMENT du store
+      set((state) => ({
+        friendRequests: state.friendRequests.filter((req) => req.id !== id),
+      }));
+
       const accepted = await acceptFriendRequestRequest(id);
-      set({ submitting: false });
+      // Refetch pour s'assurer que tout est cohérent
+      const [receivedData, friendsData, acceptedData] = await Promise.all([
+        fetchFriendRequestsRequest({ status: 'PENDING', type: 'received' }),
+        fetchFriendsRequest(),
+        fetchFriendRequestsRequest({ status: 'ACCEPTED' }),
+      ]);      
+      const acceptedRequests = acceptedData || [];
+      const friends = (friendsData?.friends || []).map((friend) => {
+        const match = acceptedRequests.find(
+          (r) => r.sender?.id === friend.id || r.receiver?.id === friend.id
+        );
+        return { ...friend, friendRequestId: match?.id ?? null };
+      });
+      
+      set({ friendRequests: receivedData || [], friends, submitting: false });
       return accepted;
     } catch (err) {
-      set({ error: err.message, submitting: false });
+      // ← SI ERREUR : restaurer les demandes précédentes
+      set({ friendRequests: previousRequests, error: err.message, submitting: false });
       console.error('acceptFriendRequest error:', err);
       throw err;
     }
@@ -51,12 +74,20 @@ export const useFriendStore = create((set) => ({
   // PATCH .../reject — retire la demande de tes demandes reçues.
   rejectFriendRequest: async (id) => {
     set({ submitting: true, error: null });
+    const previousRequests = get().friendRequests;
     try {
+      // ← OPTIMISTIC : retirer immédiatement
+      set((state) => ({
+        friendRequests: state.friendRequests.filter((req) => req.id !== id),
+      }));
+      
       const rejected = await rejectFriendRequestRequest(id);
-      set({ submitting: false });
+      
+      const receivedData = await fetchFriendRequestsRequest({ status: 'PENDING', type: 'received' });
+      set({ friendRequests: receivedData || [], submitting: false });
       return rejected;
     } catch (err) {
-      set({ error: err.message, submitting: false });
+      set({ friendRequests: previousRequests, error: err.message, submitting: false });
       console.error('rejectFriendRequest error:', err);
       throw err;
     }
@@ -69,12 +100,35 @@ export const useFriendStore = create((set) => ({
   // concernée ne changera juste pas.
   deleteFriendRequest: async (id) => {
     set({ submitting: true, error: null });
+    const previousSent = get().sentFriendRequests;
+    const previousFriends = get().friends;
+    
     try {
+      // ← OPTIMISTIC : retirer immédiatement des deux listes
+      set((state) => ({
+        sentFriendRequests: state.sentFriendRequests.filter((req) => req.id !== id),
+        friends: state.friends.filter((f) => f.friendRequestId !== id),
+      }));
+      
       await deleteFriendRequestRequest(id);
-      set({ submitting: false });
-
+      
+      const [sentData, friendsData, acceptedData] = await Promise.all([
+        fetchFriendRequestsRequest({ status: 'PENDING', type: 'sent' }),
+        fetchFriendsRequest(),
+        fetchFriendRequestsRequest({ status: 'ACCEPTED' }),
+      ]);
+      
+      const acceptedRequests = acceptedData || [];
+      const friends = (friendsData?.friends || []).map((friend) => {
+        const match = acceptedRequests.find(
+          (r) => r.sender?.id === friend.id || r.receiver?.id === friend.id
+        );
+        return { ...friend, friendRequestId: match?.id ?? null };
+      });
+      
+      set({ sentFriendRequests: sentData || [], friends, submitting: false });
     } catch (err) {
-      set({ error: err.message, submitting: false });
+      set({ sentFriendRequests: previousSent, friends: previousFriends, error: err.message, submitting: false });
       console.error('deleteFriendRequest error:', err);
       throw err;
     }
@@ -85,8 +139,7 @@ export const useFriendStore = create((set) => ({
   fetchReceivedFriendRequests: async () => {
     try {
       const data = await fetchFriendRequestsRequest({ status: 'PENDING', type: 'received' });
-      console.log("data.received dans fetchReceivedFriendRequests:", data.received);
-      set({ friendRequests: data?.received || [] });
+      set({ friendRequests: data || [] });  // ← Juste remplacer, pas spread/concat
     } catch (err) {
       console.error('fetchReceivedFriendRequests error:', err);
     }
@@ -99,14 +152,11 @@ export const useFriendStore = create((set) => ({
   fetchSentFriendRequests: async () => {
     try {
       const data = await fetchFriendRequestsRequest({ status: 'PENDING', type: 'sent' });
-      console.log("data.sent dans fetchSentfriendreuests de store :", data.sent)
-      console.log("data dans fetchSentfriendreuests de store :", data)
-      set({ sentFriendRequests: data?.sent || [] });
+      set({ sentFriendRequests: data || [] });  // ← Idem
     } catch (err) {
       console.error('fetchSentFriendRequests error:', err);
     }
   },
-
     // GET /friends. La route ne renvoie que l'id de l'UTILISATEUR ami,
     // alors que "retirer un ami" (DELETE /friend-requests/:id) attend
     // l'id de la FriendRequest sous-jacente. On le retrouve en croisant
@@ -121,10 +171,7 @@ export const useFriendStore = create((set) => ({
           fetchFriendsRequest(),
           fetchFriendRequestsRequest({ status: 'ACCEPTED' }),
         ]);
-        const acceptedRequests = [
-          ...(acceptedData?.received || []),
-          ...(acceptedData?.sent || []),
-        ];
+        const acceptedRequests = acceptedData || []
         const friends = (friendsData?.friends || []).map((friend) => {
           const match = acceptedRequests.find(
             (r) => r.sender?.id === friend.id || r.receiver?.id === friend.id

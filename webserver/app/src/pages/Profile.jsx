@@ -48,19 +48,13 @@ function Profile() {
   const friends = useFriendStore((state) => state.friends);
   const receivedFriendRequests = useFriendStore((state) => state.friendRequests);
   const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
-
   const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest)
   const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
   const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest)
   const friendError = useFriendStore((state) => state.error)
   const { submitting: friendSubmitting, } = useFriendStore();
-  
-  console.log("receivedFriendRequests: ", receivedFriendRequests);
-  console.log("friends: ", friends);
-  console.log("sentFriendRequests: ", sentFriendRequests);
 
   const [activeTab, setActiveTab] = useState("products");
-  
   useEffect(() => {
     setActiveTab("products");
   }, []);
@@ -317,16 +311,18 @@ function Profile() {
                             variant="primary"
                             size="sm"
                             onClick={() => acceptFriendRequest(request.id)}
+                            disabled={submitting}
                           >
-                            Accepter
+                            {submitting ? "Chargement..." : "Accepter"}
                           </Button>
                           <Button
                             icon={X}
                             variant="outline"
                             size="sm"
                             onClick={() => rejectFriendRequest(request.id)}
+                            disabled={submitting}
                           >
-                            Refuser
+                            {submitting ? "Chargement..." : "Refuser"}
                           </Button>
                         </div>
                       </div>
@@ -368,8 +364,9 @@ function Profile() {
                           variant="ghost"
                           size="sm"
                           onClick={() => deleteFriendRequest(request.id)}
+                          disabled={submitting}
                         >
-                          Annuler
+                          {submitting ? "Chargement..." : "Annuler"}
                         </Button>
                       </div>
                     </div>
@@ -395,16 +392,16 @@ function Profile() {
                         <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
                         <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>
                       </div>
-                      <div className="flex jutify-end">
+                      <div className="flex justify-end">
                       <Button
                         icon={UserRoundX}
                         variant="ghost"
                         className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
                         onClick={() => deleteFriendRequest(friend.friendRequestId)}
-                        disabled={!friend.friendRequestId}
+                        disabled={!friend.friendRequestId || submitting}
                         title={!friend.friendRequestId ? "Introuvable, réessaie après rechargement" : undefined}
                       >
-                        Supprimer
+                        {submitting ? "Chargement..." : "Supprimer"}
                       </Button>
                       </div>
                     </div>
@@ -417,7 +414,7 @@ function Profile() {
                 iconSize={30}
                 title="Vous n'avez pas d'amis pour l'instant"
                 description="Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
-                className="bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
+                className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
               />
             )}
           </div>

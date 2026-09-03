@@ -1,6 +1,7 @@
 import prisma from "../services/db.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import { Response } from "express";
+import { stat } from "node:fs";
 
 const friendController = {
 	sendFriendRequest: async (req: AuthenticatedRequest, res: Response) => {
@@ -60,7 +61,7 @@ const friendController = {
 	getFriendRequests: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user!.id;
-			const { type } = req.query;
+			const { type, status } = req.query;
 
 			let where: any = {};
 			let include = { sender: { select: { id: true, username: true, avatar: true } }, receiver: { select: { id: true, username: true, avatar: true } } };
@@ -74,6 +75,11 @@ const friendController = {
 					OR: [{ senderId: userId }, { receiverId: userId }],
 				};
 			}
+
+			if (status){
+				where.status = status;
+			}
+
 			// no need to check for null here on findMany
 			const requests = await prisma.friendRequest.findMany({
 				where,
