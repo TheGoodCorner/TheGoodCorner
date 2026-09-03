@@ -54,6 +54,8 @@ export default function ProductCard({ product }) {
     </>
   );
 
+  const isInStock = product.quantity > 0;
+
   return (
     <div className="card">
       <div className="card-header">

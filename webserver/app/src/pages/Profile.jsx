@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack } from "lucide-react";
+import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack, Check, X } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
 import { ProfilHeader } from "../components/profile/ProfilHeader";
@@ -8,7 +8,6 @@ import { ProfilInfos } from "../components/profile/ProfilInfos";
 import { ReviewCard } from "../components/reviews/ReviewCard";
 import ProductCard from "../components/products/ProductCard";
 import { useAuthStore } from "../stores/authStore";
-import { useUserStore } from "../stores/userStore";
 import { useFriendStore } from "../stores/friendStore";
 import { TabButton } from "../components/UI/TabButton";
 import { EmptyState } from "../components/UI/EmptyState";
@@ -38,18 +37,33 @@ function Profile() {
   const displayName = user?.name || user?.username || "Utilisateur";
   const userRating = user?.sellerRating || 0;
   const reviewCount = user?.sellerReviewCount || 0;
-  const { friends } = useUserStore();
-  const { fsubmitting, ferror } = useFriendStore();
+
+  // Amitié : `friends`/`friendRequests`(reçues)/`sentFriendRequests`
+  // vivent dans userStore (comme avant), les actions d'écriture dans
+  // friendStore. On aliase submitting/error de friendStore car
+  // useProfileEditForm() a déjà déclaré ces deux noms plus haut — c'est
+  // d'ailleurs ce qui manquait à l'ancienne version (elle les
+  // déstructurait sous fsubmitting/ferror sans alias, donc toujours
+  // undefined).
+  const friends = useFriendStore((state) => state.friends);
+  const receivedFriendRequests = useFriendStore((state) => state.friendRequests);
+  const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
+  const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest)
+  const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
+  const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest)
+  const friendError = useFriendStore((state) => state.error)
+  const { submitting: friendSubmitting, } = useFriendStore();
 
   const [activeTab, setActiveTab] = useState("products");
-
   useEffect(() => {
     setActiveTab("products");
   }, []);
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      useUserStore.getState().fetchFriends();
+      useFriendStore.getState().fetchSentFriendRequests()
+      useFriendStore.getState().fetchReceivedFriendRequests()
+      useFriendStore.getState().fetchFriends();
     }
   }, [isAuthenticated, user?.id]);
 
@@ -158,6 +172,11 @@ function Profile() {
         </TabButton>
         <TabButton active={activeTab === "friends"} onClick={() => setActiveTab("friends")}>
           Mes amis ({friends?.length || 0})
+          {receivedFriendRequests?.length > 0 && (
+            <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-[var(--color-danger)] text-[var(--color-on-danger)] rounded-full align-middle">
+              {receivedFriendRequests.length}
+            </span>
+          )}
         </TabButton>
       </div>
 
@@ -247,21 +266,119 @@ function Profile() {
         <div className="px-6 sm:px-8 lg:px-12 py-16 bg-[var(--color-bg)]">
           <div className="max-w-4xl">
             <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-8">
-              Mes amis ({friends?.length || 0})
+              Amis
             </h2>
 
-            {fsubmitting && (
+            {friendSubmitting && (
               <div className="text-center py-8">
                 <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
               </div>
             )}
 
-            {ferror && (
+            {friendError && (
               <div className="mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
-                <p className="text-sm text-[var(--color-danger)] font-medium">{ferror}</p>
+                <p className="text-sm text-[var(--color-danger)] font-medium">{friendError}</p>
               </div>
             )}
 
+            {/* Demandes reçues */}
+            {receivedFriendRequests?.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
+                  Demandes reçues ({receivedFriendRequests.length})
+                </h3>
+                <div className="flex flex-col gap-3">
+                  {receivedFriendRequests.map((request) => (
+                    <div key={request.id} className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)]">
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          src={request.sender?.avatar}
+                          alt={request.sender?.username}
+                          name={request.sender?.username}
+                          size="md"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[var(--color-text)] truncate">
+                            {request.sender?.username}
+                          </p>
+                          <p className="text-xs text-[var(--color-text-muted)]">
+                            Souhaite devenir ami avec toi
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <Button
+                            icon={Check}
+                            variant="primary"
+                            size="sm"
+                            onClick={() => acceptFriendRequest(request.id)}
+                            disabled={submitting}
+                          >
+                            {submitting ? "Chargement..." : "Accepter"}
+                          </Button>
+                          <Button
+                            icon={X}
+                            variant="outline"
+                            size="sm"
+                            onClick={() => rejectFriendRequest(request.id)}
+                            disabled={submitting}
+                          >
+                            {submitting ? "Chargement..." : "Refuser"}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Demandes envoyées */}
+            {sentFriendRequests?.length > 0 && (
+              <div className="mb-10">
+                <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
+                  Demandes envoyées ({sentFriendRequests.length})
+                </h3>
+                <div className="flex flex-col gap-3">
+                  {sentFriendRequests.map((request) => (
+                    <div
+                      key={request.id}
+                      className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          src={request.receiver?.avatar}
+                          alt={request.receiver?.username}
+                          name={request.receiver?.username}
+                          size="md"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[var(--color-text)] truncate">
+                            {request.receiver?.username}
+                          </p>
+                          <p className="text-xs text-[var(--color-text-muted)]">
+                            En attente de réponse
+                          </p>
+                        </div>
+                        <Button
+                          icon={X}
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteFriendRequest(request.id)}
+                          disabled={submitting}
+                        >
+                          {submitting ? "Chargement..." : "Annuler"}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Liste d'amis */}
+            <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
+              Mes amis ({friends?.length || 0})
+            </h3>
             {friends && friends.length > 0 ? (
               <div className="flex flex-col gap-4">
                 {friends.map((friend) => (
@@ -275,14 +392,16 @@ function Profile() {
                         <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
                         <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>
                       </div>
-                      <div className="flex jutify-end">
+                      <div className="flex justify-end">
                       <Button
                         icon={UserRoundX}
-                        variant="gohst"
+                        variant="ghost"
                         className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
-                        onClick={() => useFriendStore.getState().deleteFriendRequest(friend.id)}
+                        onClick={() => deleteFriendRequest(friend.friendRequestId)}
+                        disabled={!friend.friendRequestId || submitting}
+                        title={!friend.friendRequestId ? "Introuvable, réessaie après rechargement" : undefined}
                       >
-                        Supprimer
+                        {submitting ? "Chargement..." : "Supprimer"}
                       </Button>
                       </div>
                     </div>
