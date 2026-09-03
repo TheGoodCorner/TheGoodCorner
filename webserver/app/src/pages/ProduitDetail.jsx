@@ -40,14 +40,13 @@ function ProductDetail() {
   const fetchProductById = useProductStore((state) => state.fetchProductById);
   const allProducts = useProductStore((state) => state.products);
   const addToCart = useCartStore((state) => state.addToCart);
-  const error = useCartStore((state) => state.error);
   const openUi = useUIStore((state) => state.openUi);
   const currentUser = useUserStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
 
   const [quantity, setQuantity] = useState(1);
-
+  const [localError, setLocalError] = useState(null);
   useEffect(() => {
     fetchProductById(id);
   }, [id, fetchProductById]);
@@ -79,9 +78,22 @@ function ProductDetail() {
       stock: product.quantity,
       authorId: product.author.id
     });
-    if (!succes) { return; }
+    if (succes) {
+    setLocalError(null);
     openUi('cart-popover');
+  } else {
+    const lastError = useCartStore.getState().error;
+    const message = typeof lastError === 'object' ? lastError?.message : lastError;
+    setLocalError(message || "Impossible d'ajouter cet article au panier.");
+  }
   };
+    useEffect(() => {
+      if (!localError) return;
+      const timer = setTimeout(() => {
+        setLocalError(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }, [localError]);
 
   const handleContactSeller = () => {
     if (!isAuthenticated) {
@@ -141,10 +153,10 @@ function ProductDetail() {
               {product.description || "Description à venir."}
             </p>
             
-            {error && (
+            {localError && (
               <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
                 <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
-                  {error}
+                  {typeof localError === 'object' ? localError.message : localError}
                 </p>
               </div>
             )}
