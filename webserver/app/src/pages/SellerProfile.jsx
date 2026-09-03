@@ -7,10 +7,16 @@ import {
   PackageSearch,
   Shield,
   BadgeCheck,
+  UserPlus,
+  UserMinus,
+  Check,
+  X,
+  Clock,
 } from "lucide-react";
 import { useUserStore } from "../stores/userStore";
 import { useAuthStore } from "../stores/authStore";
 import { useReviewStore } from "../stores/reviewStore";
+import { useFriendStore } from "../stores/friendStore";
 import { Button } from "../components/UI/Button";
 import { StarRating } from "../components/UI/StarRating";
 import { ReviewCard } from "../components/reviews/ReviewCard";
@@ -19,7 +25,6 @@ import ProductCard from "../components/products/ProductCard";
 import Avatar from "../components/UI/Avatar";
 import { TabButton } from "../components/UI/TabButton";
 import { EmptyState } from "../components/UI/EmptyState";
-import { FriendActionButton } from "../components/friends/FriendActionButton";
 import { formatMonthYear } from "../utils/date";
 
 function SellerProfileSkeleton() {
@@ -59,6 +64,16 @@ function SellerProfile() {
   const fetchUser = useUserStore((state) => state.fetchUser);
   const currentUser = useUserStore((state) => state.user);
 
+  const friends = useFriendStore((state) => state.friends);
+  const friendRequests = useFriendStore((state) => state.friendRequests);
+  const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
+
+  const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest)
+  const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
+  const sendFriendRequest = useFriendStore((state) => state.sendFriendRequest)
+  const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest)
+  const { submitting: friendSubmitting } = useFriendStore();
+
   const [activeTab, setActiveTab] = useState("listings");
   const [showAllReviews, setShowAllReviews] = useState(false);
 
@@ -74,6 +89,13 @@ function SellerProfile() {
     setActiveTab("listings");
     setShowAllReviews(false);
   }, [id, fetchUser]);
+
+  // Nécessaire pour savoir dans quel état est la relation avec CE vendeur
+  // (aucune / envoyée / reçue / amis) — voir friendStatus plus bas.
+  useEffect(() => {
+    if (isAuthenticated) {
+    }
+  }, [isAuthenticated, id]);
 
   const handleDeleteReview = async (reviewId) => {
     await deleteReview(id, reviewId);
@@ -105,6 +127,24 @@ function SellerProfile() {
   const listings = (viewedUser.product || []).map((product) => ({ ...product, author: viewedUser }));
   const memberSince = formatMonthYear(viewedUser.createdAt);
 
+  // Relation d'amitié avec ce vendeur, déduite des listes déjà en store
+  // (alimentées par le useEffect juste au-dessus) — pas de requête dédiée
+  // par profil visité.
+  const existingFriend = friends.find((f) => String(f.id) === String(viewedUser.id));
+  const receivedRequestFromViewedUser = friendRequests.find(
+    (r) => String(r.sender?.id) === String(viewedUser.id)
+  );
+  const sentRequestToViewedUser = sentFriendRequests.find(
+    (r) => String(r.receiver?.id) === String(viewedUser.id)
+  );
+  const friendStatus = existingFriend
+    ? "friends"
+    : receivedRequestFromViewedUser
+    ? "received"
+    : sentRequestToViewedUser
+    ? "sent"
+    : "none";
+
   const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);
   const alreadyReviewed = Boolean(currentUser && activeReviews.some((r) => r.authorId === currentUser.id));
   const canReview =
@@ -121,48 +161,109 @@ function SellerProfile() {
         </Link>
 
         <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] shadow-lg p-6 sm:p-8 mb-8">
-          <div className="flex items-start gap-5">
-            <Avatar
-              src={viewedUser.avatar}
-              alt={displayName}
-              name={displayName}
-              size="xl"
-              shape="square"
-              variant="gradient"
-              className="flex-shrink-0"
-            />
+          <div className="flex items-start justify-between gap-5">
+            <div className="flex items-start gap-5 flex-1 min-w-0">
+              <Avatar
+                src={viewedUser.avatar}
+                alt={displayName}
+                name={displayName}
+                size="xl"
+                shape="square"
+                variant="gradient"
+                className="flex-shrink-0"
+              />
 
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">{displayName}</h1>
-                <Shield size={20} className="text-[var(--color-primary)] flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-2">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">{displayName}</h1>
+                  <Shield size={20} className="text-[var(--color-primary)] flex-shrink-0" />
+                </div>
+
+                <div className="flex items-center gap-2 mb-3">
+                  <StarRating rating={userRating} size={18} />
+                  <span className="text-xs text-[var(--color-text-muted)] font-medium">
+                    {userRating > 0 ? `${userRating.toFixed(1)} (${activeReviews.length} avis)` : "Aucune note"}
+                  </span>
+                </div>
+
+                {memberSince && (
+                  <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)] mb-1">
+                    <Calendar size={14} />
+                    Membre depuis {memberSince}
+                  </p>
+                )}
+
+                {viewedUser.phoneNumber && (
+                  <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                    <BadgeCheck size={14} className="text-[var(--color-primary)]" />
+                    Téléphone renseigné
+                  </p>
+                )}
               </div>
+            </div>
 
-              <div className="flex items-center gap-2 mb-3">
-                <StarRating rating={userRating} size={18} />
-                <span className="text-xs text-[var(--color-text-muted)] font-medium">
-                  {userRating > 0 ? `${userRating.toFixed(1)} (${activeReviews.length} avis)` : "Aucune note"}
-                </span>
+            {/* Bouton d'amitié — masqué si pas connecté (idem section avis
+                un peu plus bas, pas de doublon de message de login ici). */}
+            {currentUser && (
+              <div className="flex-shrink-0">
+                {friendStatus === "friends" && (
+                  <Button
+                    icon={UserMinus}
+                    variant="outline"
+                    loading={friendSubmitting}
+                    onClick={() => deleteFriendRequest(existingFriend.friendRequestId)}
+                    disabled={!existingFriend.friendRequestId}
+                  >
+                    Amis · Retirer
+                  </Button>
+                )}
+
+                {friendStatus === "sent" && (
+                  <Button
+                    icon={Clock}
+                    variant="outline"
+                    loading={friendSubmitting}
+                    onClick={() => deleteFriendRequest(sentRequestToViewedUser.id)}
+                  >
+                    Demande envoyée · Annuler
+                  </Button>
+                )}
+
+                {friendStatus === "received" && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      icon={Check}
+                      variant="primary"
+                      loading={friendSubmitting}
+                      onClick={() => acceptFriendRequest(receivedRequestFromViewedUser.id)}
+                    >
+                      Accepter
+                    </Button>
+                    <Button
+                      icon={X}
+                      variant="outline"
+                      loading={friendSubmitting}
+                      onClick={() => rejectFriendRequest(receivedRequestFromViewedUser.id)}
+                      aria-label="Refuser la demande"
+                      title="Refuser la demande"
+                    />
+                  </div>
+                )}
+
+                {friendStatus === "none" && (
+                  <Button
+                    icon={UserPlus}
+                    variant="primary"
+                    loading={friendSubmitting}
+                    onClick={() => sendFriendRequest(viewedUser.id)}
+                  >
+                    Ajouter en ami
+                  </Button>
+                )}
               </div>
-
-              {memberSince && (
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)] mb-1">
-                  <Calendar size={14} />
-                  Membre depuis {memberSince}
-                </p>
-              )}
-
-              {viewedUser.phoneNumber && (
-                <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
-                  <BadgeCheck size={14} className="text-[var(--color-primary)]" />
-                  Téléphone renseigné
-                </p>
-              )}
-            </div>
-            <div className="flex-shrink-0">
-              <FriendActionButton userId={viewedUser.id} />
-            </div>
+            )}
           </div>
+
           {viewedUser.bio && (
             <p className="text-sm text-[var(--color-text)] leading-relaxed mt-6 pt-6 border-t border-[var(--color-border)]">
               {viewedUser.bio}

@@ -18,6 +18,15 @@ const friendController = {
           senderId,
           receiverId,
         },
+        include: {
+          receiver: {
+            select: {
+              id: true,
+              username : true,
+              avatar: true
+            }
+          }
+        }
       });
 
       res.status(201).json(friendRequest);
