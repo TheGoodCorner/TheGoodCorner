@@ -376,49 +376,55 @@ function Profile() {
             )}
 
             {/* Liste d'amis */}
-            <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-              Mes amis ({friends?.length || 0})
-            </h3>
-            {friends && friends.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {friends.map((friend) => (
-                  <div
-                    key={friend.id}
-                    className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 mb-2">
-                      <Avatar src={friend.avatar} alt={friend.username} name={friend.username} size="md"/>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
-                        <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>
-                      </div>
-                      <div className="flex justify-end">
-                      <Button
-                        icon={UserRoundX}
-                        variant="ghost"
-                        className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
-                        onClick={() => deleteFriendRequest(friend.friendRequestId)}
-                        disabled={!friend.friendRequestId || submitting}
-                        title={!friend.friendRequestId ? "Introuvable, réessaie après rechargement" : undefined}
-                      >
-                        {submitting ? "Chargement..." : "Supprimer"}
-                      </Button>
+            {friends && friends.length > 0 && (
+              <>
+                <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
+                  Mes amis ({friends.length})
+                </h3>
+                <div className="flex flex-col gap-4">
+                  {friends.map((friend) => (
+                    <div
+                      key={friend.id}
+                      className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                    >
+                      <div className="flex items-center gap-3 mb-2">
+                        <Avatar src={friend.avatar} alt={friend.username} name={friend.username} size="md"/>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
+                          <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>
+                        </div>
+                        <div className="flex justify-end">
+                          <Button
+                            icon={UserRoundX}
+                            variant="ghost"
+                            className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
+                            onClick={() => deleteFriendRequest(friend.friendRequestId)}
+                            disabled={!friend.friendRequestId || submitting}
+                            title={!friend.friendRequestId ? "Introuvable, réessaie après rechargement" : undefined}
+                          >
+                            {submitting ? "Chargement..." : "Supprimer"}
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                icon={HeartCrack}
-                iconSize={30}
-                title="Vous n'avez pas d'amis pour l'instant"
-                description="Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
-                className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
-              />
+                  ))}
+                </div>
+              </>
             )}
           </div>
+
+          {/* EmptyState - Complètement indépendant en dehors du max-w-4xl */}
+          {friends && friends.length === 0 && !receivedFriendRequests?.length && !sentFriendRequests?.length && (
+            <EmptyState
+              icon={HeartCrack}
+              iconSize={30}
+              title="Vous n'avez pas d'amis pour l'instant"
+              description="Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
+              className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
+            />
+          )}
         </div>
+
       )}
 
       <section className="bg-[var(--color-surface)]">

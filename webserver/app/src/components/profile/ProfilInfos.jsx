@@ -3,7 +3,7 @@ import { InfoCard } from '../UI/InfoCard';
 import { FormField } from '../UI/FormField';
 import { Dropdown } from '../UI/Dropdown';
 import {
-  Mail, Phone, Award, TrendingUp, MapPin, Star, Shield,
+  Mail, Phone, Award, TrendingUp, MapPin, Star, Wallet,
   Globe, Map, Building2, Route, Hash, FileText, ChevronDown,
 } from 'lucide-react';
 
@@ -123,9 +123,9 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
           value={userRating > 0 ? `${userRating.toFixed(1)}/5.0` : 'Aucune note'}
         />
         <InfoCard 
-          icon={Shield}
-          label='Paiements'
-          value='Sécurisés  (fausse donnee)'
+          icon={Wallet}
+          label='Portefeuille'
+          value={user?.budget}
         />
         <InfoCard 
           icon={Award}
