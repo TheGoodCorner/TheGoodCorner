@@ -8,7 +8,7 @@ import Stripe from 'stripe';
  * @param request
  * @returns promise containing the json object
  */
-const stripe = new Stripe(process.env.STRIPE_KEY || '');
+const stripe = new Stripe(process.env.PRIVATE_STRIPE_KEY || '');
 const paymentController =
 {
 	createTransaction: async (req: AuthenticatedRequest, res: Response) => {
@@ -80,7 +80,9 @@ const paymentController =
 			const stripePaymentIntent = await stripe.paymentIntents.create({
 				amount: stripesCentsConvertedAmount,
 				currency: stripeCurrency,
+				payment_method_types: ['card'],
 				customer: customerId,
+				automatic_payment_methods: { enabled: false },
 				metadata: {
 					userId: userId.toString(),
 					amount: numericPrice.toString(),
@@ -164,7 +166,7 @@ const paymentController =
 					for (const item of cart) {
 						await tx.product.update({
 							where: { id: Number(item.id) },
-							data: { quantity: { decrement: item.qty } }
+							data: { quantity: { decrement: item.qty } } // decremente
 						});
 					}
 

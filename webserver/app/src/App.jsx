@@ -19,6 +19,7 @@ import Profile from './pages/Profile';
 import SellerProfile from './pages/SellerProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import Checkout from './pages/Checkout';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -65,6 +66,7 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/messagerie" element={<Messagerie />} />
           <Route path="/profile" element={<Profile />} />
+		  <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
