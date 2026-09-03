@@ -1,4 +1,4 @@
-FROM stripe/stripe-cli:latest
+FROM docker.io/stripe/stripe-cli:latest
 
 COPY ./conf/stripe.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
