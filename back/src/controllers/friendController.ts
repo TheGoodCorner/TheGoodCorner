@@ -47,6 +47,32 @@ const friendController = {
 					console.log(`Reciprocal friend request detected: request ${existingRequest.id} auto-accepted between ${senderId} and ${parsedReceiverId}`);
 					return res.status(200).json({ message: 'Friend request reciprocated, you are now friends', data: accepted });
 				}
+				if (existingRequest.status === 'REJECTED') {
+					const friendRequest = await prisma.$transaction(async (tx) => {
+						// Supprimer l'ancienne demande rejetée
+						await tx.friendRequest.delete({
+							where: { id: existingRequest.id }
+						});
+						// Créer une nouvelle demande PENDING dans le sens demandé
+						return await tx.friendRequest.create({
+							data: {
+								senderId,
+								receiverId: parsedReceiverId,
+							},
+							include: {
+								receiver: {
+									select: {
+										id: true,
+										username: true,
+										avatar: true
+									}
+								}
+							}
+						});
+					});
+					console.log(`Old rejected request deleted. New friend request sent to ${parsedReceiverId}`);
+					return res.status(201).json({ message: 'Friend request sent (previous rejection cleared)', data: friendRequest });
+				}
 				return res.status(409).json({
 					error: existingRequest.status === 'ACCEPTED'
 						? 'You are already friends'
@@ -61,9 +87,9 @@ const friendController = {
 				include: {
 					receiver: {
 						select: {
-						id: true,
-						username : true,
-						avatar: true
+							id: true,
+							username: true,
+							avatar: true
 						}
 					}
 				}
