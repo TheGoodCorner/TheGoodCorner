@@ -49,8 +49,8 @@ services:
       context: ./database
       dockerfile: dockerfile
     container_name: postgresql
-    ports:
-      - "127.0.0.1:5432:5432"
+    #ports:
+    #  - "127.0.0.1:5432:5432"
     env_file:
       - ./back/.env
     networks:
