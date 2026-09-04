@@ -277,10 +277,21 @@ export const useMessageStore = create(
       handleMessageDeleted: ({ messageId }) => {
         set((state) => {
           const next = { ...state.messagesByConversation };
+          const newUnreadCounts = { ...state.unreadCounts };
           for (const cid of Object.keys(next)) {
-            next[cid] = next[cid].filter((m) => m.id !== messageId);
+            const msg = next[cid].find((m) => m.id === messageId);
+            if (msg) {
+              const currentUser = useUserStore.getState().user;
+              const isIncoming = String(msg.senderId) !== String(currentUser?.id);
+              const isConversationOpen = String(state.activeConversationId) === String(cid);
+              if (isIncoming && !isConversationOpen && newUnreadCounts[cid] > 0) {
+                newUnreadCounts[cid] = newUnreadCounts[cid] - 1;
+              }
+             next[cid] = next[cid].filter((m) => m.id !== messageId);
+            break;
+            }
           }
-          return { messagesByConversation: next };
+          return { messagesByConversation: next, unreadCounts: newUnreadCounts };
         });
       },
 
