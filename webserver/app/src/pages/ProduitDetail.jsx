@@ -47,9 +47,18 @@ function ProductDetail() {
 
   const [quantity, setQuantity] = useState(1);
   const [localError, setLocalError] = useState(null);
+
   useEffect(() => {
     fetchProductById(id);
   }, [id, fetchProductById]);
+
+  useEffect(() => {
+      if (!localError) return;
+      const timer = setTimeout(() => {
+        setLocalError(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }, [localError]);
 
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
@@ -87,13 +96,6 @@ function ProductDetail() {
     setLocalError(message || "Impossible d'ajouter cet article au panier.");
   }
   };
-    useEffect(() => {
-      if (!localError) return;
-      const timer = setTimeout(() => {
-        setLocalError(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }, [localError]);
 
   const handleContactSeller = () => {
     if (!isAuthenticated) {
