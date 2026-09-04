@@ -2,19 +2,50 @@ import prisma from "../services/db.js";
 const friendController = {
     sendFriendRequest: async (req, res) => {
         try {
-            const receiverId = req.body;
+            const { receiverId } = req.body;
             const senderId = req.user.id;
-            if (!receiverId)
+            console.log(req.body);
+            const parsedReceiverId = Number(receiverId);
+            if (!receiverId || Number.isNaN(parsedReceiverId))
                 return res.status(400).json({ error: 'Invalid receiver ID' });
-            if (receiverId === senderId)
+            if (parsedReceiverId === senderId)
                 return res.status(400).json({ error: 'You cannot send a friend request to yourself' });
+            const receiverExists = await prisma.user.findUnique({
+                where: { id: parsedReceiverId }
+            });
+            if (!receiverExists)
+                return res.status(404).json({ error: 'Receiver user not found' });
+            const existingRequest = await prisma.friendRequest.findFirst({
+                where: {
+                    OR: [
+                        { senderId, receiverId: parsedReceiverId },
+                        { senderId: parsedReceiverId, receiverId: senderId }
+                    ]
+                }
+            });
+            if (existingRequest) {
+                return res.status(409).json({
+                    error: existingRequest.status === 'ACCEPTED'
+                        ? 'You are already friends'
+                        : 'A friend request between you and this user already exists'
+                });
+            }
             const friendRequest = await prisma.friendRequest.create({
                 data: {
                     senderId,
-                    receiverId,
+                    receiverId: parsedReceiverId,
                 },
+                include: {
+                    receiver: {
+                        select: {
+                            id: true,
+                            username: true,
+                            avatar: true
+                        }
+                    }
+                }
             });
-            console.log(`A friend request has been sucessfully sent to ${receiverId}`);
+            console.log(`A friend request has been sucessfully sent to ${parsedReceiverId}`);
             return (res.status(201).json({ message: `sucessfully sent friend request`, data: friendRequest }));
         }
         catch (error) {
@@ -25,7 +56,7 @@ const friendController = {
     getFriendRequests: async (req, res) => {
         try {
             const userId = req.user.id;
-            const { type } = req.query;
+            const { type, status } = req.query;
             let where = {};
             let include = { sender: { select: { id: true, username: true, avatar: true } }, receiver: { select: { id: true, username: true, avatar: true } } };
             if (type === 'received') {
@@ -38,6 +69,9 @@ const friendController = {
                 where = {
                     OR: [{ senderId: userId }, { receiverId: userId }],
                 };
+            }
+            if (status) {
+                where.status = status;
             }
             // no need to check for null here on findMany
             const requests = await prisma.friendRequest.findMany({
@@ -54,19 +88,22 @@ const friendController = {
     },
     acceptFriendRequest: async (req, res) => {
         try {
-            const id = req.params;
+            const { id } = req.params;
             const userId = req.user.id;
-            if (!id || !userId)
+            const requestId = Number(id);
+            if (!id || !userId || Number.isNaN(requestId))
                 return res.status(400).json({ error: 'Invalid route ID or invalid userId' });
             const request = await prisma.friendRequest.findUnique({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestId },
             });
             if (!request)
-                return res.status(400).json({ error: 'friend request not found' });
+                return res.status(404).json({ error: 'friend request not found' });
             if (request.receiverId !== userId)
                 return res.status(403).json({ error: 'Not authorized' });
+            if (request.status !== 'PENDING')
+                return res.status(400).json({ error: `Cannot accept a request with status ${request.status}` });
             const updated = await prisma.friendRequest.update({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestId },
                 data: { status: 'ACCEPTED' },
             });
             console.log(`A friend request has been accepted by ${userId}`);
@@ -79,23 +116,26 @@ const friendController = {
     },
     rejectFriendRequest: async (req, res) => {
         try {
-            const id = req.params;
+            const { id } = req.params;
             const userId = req.user.id;
-            if (!id || !userId)
+            const requestId = Number(id);
+            if (!id || !userId || Number.isNaN(requestId))
                 return res.status(400).json({ error: 'Invalid route ID or invalid userId' });
             const request = await prisma.friendRequest.findUnique({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestId },
             });
             if (!request)
-                return res.status(400).json({ error: 'friend request not found' });
+                return res.status(404).json({ error: 'friend request not found' });
             if (request.receiverId !== userId)
                 return res.status(403).json({ error: 'Not authorized' });
+            if (request.status !== 'PENDING')
+                return res.status(400).json({ error: `Cannot reject a request with status ${request.status}` });
             const updated = await prisma.friendRequest.update({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestId },
                 data: { status: 'REJECTED' },
             });
             console.log(`A friend request has been rejected by ${userId}`);
-            return (res.status(200).json({ message: `a friend request has been rejected by ${userId}`, data: updated }));
+            return (res.status(200).json({ message: `a friend request has been rejected by ${requestId}`, data: updated }));
         }
         catch (error) {
             console.error(error);
@@ -104,19 +144,20 @@ const friendController = {
     },
     deleteFriendRequest: async (req, res) => {
         try {
-            const id = req.params;
+            const { id } = req.params;
             const userId = req.user.id;
-            if (!id || !userId)
+            const requestedId = Number(id);
+            if (!id || !userId || Number.isNaN(requestedId))
                 return res.status(400).json({ error: 'Invalid route ID or invalid userId' });
             const request = await prisma.friendRequest.findUnique({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestedId },
             });
             if (!request)
-                return res.status(400).json({ error: 'friend request not found' });
+                return res.status(404).json({ error: 'friend request not found' });
             if ((request.senderId !== userId && request.receiverId !== userId))
                 return res.status(403).json({ error: 'Not authorized' });
             await prisma.friendRequest.delete({
-                where: { id: parseInt(String(id)) },
+                where: { id: requestedId },
             });
             console.log(`A friend request has been deleted by ${userId}`);
             return (res.status(204).send());
@@ -130,7 +171,7 @@ const friendController = {
         try {
             const userId = req.user.id;
             if (!userId)
-                return res.status(400).json({ error: 'Invalid route ID or invalid userId' });
+                return res.status(404).json({ error: 'Invalid route ID or invalid userId' });
             const friends = await prisma.friendRequest.findMany({
                 where: {
                     status: 'ACCEPTED',

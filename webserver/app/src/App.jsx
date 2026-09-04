@@ -20,6 +20,7 @@ import SellerProfile from './pages/SellerProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Checkout from './pages/Checkout';
+import SuccessCheckout from './pages/SuccessCheckout';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -48,10 +49,7 @@ function App() {
     }, [initAuth])
 
     useEffect(() => {
-      const { products } = useProductStore.getState();
-      if (products.length === 0) {
-        useProductStore.getState().fetchProducts();
-      }
+      useProductStore.getState().fetchProducts();
     }, []);
     if (initializing) {
     return null; // ou un spinner global minimal
@@ -67,6 +65,7 @@ function App() {
           <Route path="/messagerie" element={<Messagerie />} />
           <Route path="/profile" element={<Profile />} />
 		  <Route path="/checkout" element={<Checkout />} />
+		  <Route path="/checkout/success" element={<SuccessCheckout />} />
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />

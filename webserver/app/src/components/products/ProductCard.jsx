@@ -117,11 +117,12 @@ export default function ProductCard({ product }) {
         <Button
           icon={PlusCircle}
           onClick={handleAddToCart}
-          title="Ajouter au panier"
+          disabled={!product.quantity || product.quantity <= 0}
+          title={product.quantity <= 0 ? "Rupture de stock" : "Ajouter au panier"}
           aria-label="Ajouter au panier"
           className="w-full"
         >
-          Ajouter au panier
+          {product.quantity > 0 ? "Ajouter au panier" : "Rupture de stock"}
         </Button>
       </div>
     </div>

@@ -108,7 +108,7 @@ const paymentController =
 					});
 				});
 				console.log('Transaction successfully created !');
-				return (res.status(201).json({status: 'OK',data: {transaction: newTransaction, clientSecret: stripePaymentIntent.client_secret}}));
+				return (res.status(201).json({ status: 'OK', data: { transaction: newTransaction, clientSecret: stripePaymentIntent.client_secret } }));
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
 				if (stockError.message === 'OUT_OF_STOCK')
@@ -136,49 +136,49 @@ const paymentController =
 			return (res.status(400).send(`Webhook Error: ${err.message}`));
 		}
 		// Handle successful payment
-		if (event.type === 'payment_intent.succeeded') 
-		{
+		if (event.type === 'payment_intent.succeeded') {
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
 			const transaction = await prisma.payment.findFirst({
 				where: { stripeId: paymentIntent.id }
 			});
 
 			// Idempotency check: prevent duplicate deductions if Stripe resends the event
-			if (!transaction)
-			{
+			if (!transaction) {
 				console.log(`Webhook received for unknown transaction ${paymentIntent.id} (ignoring mock trigger).`);
-				return (res.status(200).json({status: 'OK', received: true }));
+				return (res.status(200).json({ status: 'OK', received: true }));
 			}
-			if (transaction.status === 'SUCCEEDED')
-			{
+			if (transaction.status === 'SUCCEEDED') {
 				console.log(`Payment ${paymentIntent.id} already processed. Skipping.`);
-				return (res.status(200).json({status: 'OK', received: true }));
+				return (res.status(200).json({ status: 'OK', received: true }));
 			}
 
 			// Extract cart from metadata
 			const rawCart = paymentIntent.metadata?.cart;
-			const cart: Array<{ id: string; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
-			const amountToDeduct = Math.round(transaction.amount);
+			const cart: Array<{ id: number; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
+			const amountToDeduct = transaction.amount;
 
 			try {
 				await prisma.$transaction(async (tx) => {
-					// 1. Decrement product stock
+					// 1. Décrémentation du stock des produits
 					for (const item of cart) {
-						await tx.product.update({
+						const updatedProduct = await tx.product.update({
 							where: { id: Number(item.id) },
-							data: { quantity: { decrement: item.qty } } // decremente
+							data: { quantity: { decrement: Number(item.qty) } }
 						});
+						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
 					}
-
+					const user = await prisma.user.findUnique({
+						where: { id: transaction.userId }
+					})
+					if (user)
+						console.log(user.budget);
 					// 2. Decrement user budget securely
-					await tx.user.updateMany({
-						where: {
-							id: transaction.userId,
-							budget: { gte: amountToDeduct } // ensure they didn't spend it elsewhere in the last 2 minutes
-						},
+					const updatedUser = await tx.user.update({
+						where: { id: transaction.userId },
 						data: { budget: { decrement: amountToDeduct } }
 					});
-
+					if (updatedUser)
+						console.log('budget after ' + updatedUser.budget);
 					// 3. Mark payment as completed
 					await tx.payment.update({
 						where: { id: transaction.id },
@@ -186,40 +186,42 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
-			} catch (dbError:any) {
+			} catch (dbError: any) {
 				console.error('Error applying DB updates:', dbError);
 				return (res.status(500).end()); // Let Stripe retry later
 			}
 		}
 
 		// Handle failed or canceled payments
-		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') 
-		{
+		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') {
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
 			await prisma.payment.updateMany({
 				where: { stripeId: paymentIntent.id },
 				data: { status: event.type === 'payment_intent.canceled' ? 'CANCELED' : 'FAILED' }
 			});
 		}
-		return (res.status(200).json({status: 'OK', received: true }));
+		return (res.status(200).json({ status: 'OK', received: true }));
 	},
 	getAllTransactions: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user?.id;
 			if (!userId)
 				return res.status(400).json({ status: 'ERROR', message: 'invalid UserId' });
-			const user = await prisma.user.findMany({ where: { id: userId },
-				 select: {	username:true,
-							email:true,
-							phoneNumber:true,
-							payment: {
-								orderBy: {createdAt: 'desc'},
-								take: 20,
-							},
-							budget: true,
-							avatar:true,
-							product:true,
-							}});
+			const user = await prisma.user.findMany({
+				where: { id: userId },
+				select: {
+					username: true,
+					email: true,
+					phoneNumber: true,
+					payment: {
+						orderBy: { createdAt: 'desc' },
+						take: 20,
+					},
+					budget: true,
+					avatar: true,
+					product: true,
+				}
+			});
 			if (!user)
 				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
 			console.log(`all 20 last transactions of ${userId}`);
