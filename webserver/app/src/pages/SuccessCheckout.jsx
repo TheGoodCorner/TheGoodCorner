@@ -2,14 +2,42 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProductStore } from '../stores/productStore';
 import { useUserStore } from '../stores/userStore';
+import { motion } from 'framer-motion';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: 'easeOut',
+      staggerChildren: 0.1,
+      delayChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.4, ease: 'easeOut' },
+  },
+};
+
+const buttonVariants = {
+  initial: { scale: 1 },
+  hover: { scale: 1.02, transition: { duration: 0.2 } },
+  tap: { scale: 0.98 },
+};
 
 export default function SuccessCheckout() {
   const navigate = useNavigate();
   const fetchProducts = useProductStore((state) => state.fetchProducts);
-  const fetchUser = useUserStore((state) => state.fetchUser || state.fetchCurrentUser);
+  const fetchCurrentUser = useUserStore((state) => state.fetchCurrentUser);
 
   useEffect(() => {
-    // Petit délai pour laisser le temps au webhook Stripe d'écrire en base
     const timer = setTimeout(() => {
       if (fetchProducts) fetchProducts();
       if (fetchUser) fetchUser();
@@ -19,10 +47,21 @@ export default function SuccessCheckout() {
   }, [fetchProducts, fetchUser]);
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center bg-[var(--color-bg)] px-4 py-12">
-      <div className="max-w-md w-full bg-[#1e232d] border border-gray-800 rounded-2xl p-8 text-center shadow-xl">
-        {/* Icône de validation */}
-        <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6">
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="min-h-screen flex items-center justify-center px-4 py-12 bg-[var(--color-bg)]"
+    >
+      <motion.div className="max-w-md w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 text-center shadow-xl backdrop-blur-sm">
+        
+        {/* Icône de validation avec animation */}
+        <motion.div
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, type: 'spring', stiffness: 100 }}
+          className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6"
+        >
           <svg
             className="w-8 h-8"
             fill="none"
@@ -30,52 +69,88 @@ export default function SuccessCheckout() {
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
+            <motion.path
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2.5"
               d="M5 13l4 4L19 7"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
             />
           </svg>
-        </div>
+        </motion.div>
 
         {/* Titre & Message */}
-        <h1 className="text-2xl font-bold text-white mb-2">
-          Paiement réussi !
-        </h1>
-        <p className="text-gray-400 text-sm leading-relaxed mb-6">
-          Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation.
-        </p>
+        <motion.div variants={itemVariants}>
+          <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
+            Paiement réussi !
+          </h1>
+          <p className="text-[var(--color-text-muted)] text-sm leading-relaxed mb-6">
+            Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation.
+          </p>
+        </motion.div>
 
-        {/* Encadré d'information */}
-        <div className="bg-[#161a22] border border-gray-800 rounded-xl p-4 text-left mb-6 text-sm">
-          <div className="flex justify-between items-center py-1">
-            <span className="text-gray-400">Statut</span>
-            <span className="text-emerald-400 font-medium">Payé</span>
-          </div>
-          <div className="flex justify-between items-center py-1">
-            <span className="text-gray-400">Délai estimé</span>
-            <span className="text-gray-200">2 à 4 jours ouvrés</span>
-          </div>
-        </div>
+        {/* Encadré d'information avec animation staggered */}
+        <motion.div
+          variants={itemVariants}
+          className="bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-xl p-4 text-left mb-6 text-sm"
+        >
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.3 }}
+            className="flex justify-between items-center py-2"
+          >
+            <span className="text-[var(--color-text-muted)]">Statut</span>
+            <motion.span
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.5, type: 'spring' }}
+              className="text-emerald-400 font-semibold flex items-center gap-1"
+            >
+              <CheckCircle2 size={16} />
+              Payé
+            </motion.span>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.3 }}
+            className="flex justify-between items-center py-2"
+          >
+            <span className="text-[var(--color-text-muted)]">Délai estimé</span>
+            <span className="text-[var(--color-text)]">2 à 4 jours ouvrés</span>
+          </motion.div>
+        </motion.div>
 
         {/* Actions de navigation */}
-        <div className="flex flex-col gap-3">
-          <button
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-col gap-3"
+        >
+          <motion.button
             onClick={() => navigate('/profile')}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-xl transition duration-150 ease-in-out cursor-pointer shadow-sm"
+            whileHover="hover"
+            whileTap="tap"
+            variants={buttonVariants}
+            className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-semibold py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
           >
-            Retourner sur mon profil
-          </button>
-          
-          <button
+            <span>Retourner sur mon profil</span>
+            <ArrowRight size={18} />
+          </motion.button>
+
+          <motion.button
             onClick={() => navigate('/products')}
-            className="w-full bg-[#272d38] hover:bg-[#323946] text-gray-300 font-medium py-3 px-4 rounded-xl transition duration-150 ease-in-out cursor-pointer"
+            whileHover="hover"
+            whileTap="tap"
+            variants={buttonVariants}
+            className="w-full bg-[var(--color-surface-hover)] hover:bg-[var(--color-border)] text-[var(--color-text)] font-semibold py-3 px-4 rounded-xl transition-all border border-[var(--color-border)]"
           >
-            Retourner sur les produits du site
-          </button>
-        </div>
-      </div>
-    </div>
+            Retourner sur les produits
+          </motion.button>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
