@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useProductStore } from '../stores/productStore';
 import { useUserStore } from '../stores/userStore';
 import { motion } from 'framer-motion';
@@ -40,11 +41,11 @@ export default function SuccessCheckout() {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (fetchProducts) fetchProducts();
-      if (fetchUser) fetchUser();
-    }, 600);
+      if (fetchCurrentUser) fetchCurrentUser();
+    }, 800);
 
     return () => clearTimeout(timer);
-  }, [fetchProducts, fetchUser]);
+  }, [fetchProducts, fetchCurrentUser]);
 
   return (
     <motion.div
