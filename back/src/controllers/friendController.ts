@@ -30,6 +30,23 @@ const friendController = {
 				}
 			});
 			if (existingRequest) {
+				const isReciprocalPending =
+					existingRequest.status === 'PENDING' &&
+					existingRequest.senderId === parsedReceiverId &&
+					existingRequest.receiverId === senderId;
+
+				if (isReciprocalPending) {
+					const accepted = await prisma.friendRequest.update({
+						where: { id: existingRequest.id },
+						data: { status: 'ACCEPTED' },
+						include: {
+							sender: { select: { id: true, username: true, avatar: true } },
+							receiver: { select: { id: true, username: true, avatar: true } },
+						},
+					});
+					console.log(`Reciprocal friend request detected: request ${existingRequest.id} auto-accepted between ${senderId} and ${parsedReceiverId}`);
+					return res.status(200).json({ message: 'Friend request reciprocated, you are now friends', data: accepted });
+				}
 				return res.status(409).json({
 					error: existingRequest.status === 'ACCEPTED'
 						? 'You are already friends'
@@ -41,15 +58,15 @@ const friendController = {
 					senderId,
 					receiverId: parsedReceiverId,
 				},
-        include: {
-          receiver: {
-            select: {
-              id: true,
-              username : true,
-              avatar: true
-            }
-          }
-        }
+				include: {
+					receiver: {
+						select: {
+						id: true,
+						username : true,
+						avatar: true
+						}
+					}
+				}
 			});
 			console.log(`A friend request has been sucessfully sent to ${parsedReceiverId}`);
 			return (res.status(201).json({ message: `sucessfully sent friend request`, data: friendRequest }));

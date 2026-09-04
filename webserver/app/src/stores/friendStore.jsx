@@ -24,7 +24,13 @@ export const useFriendStore = create((set, get) => ({
     set({ submitting: true, error: null });
     try {
       const newRequest = await sendFriendRequestRequest(receiverId);
-      set((state) => ({ sentFriendRequests: [...state.sentFriendRequests, newRequest], submitting: false }));
+      if (newRequest?.status === 'ACCEPTED') {
+        await Promise.all([get().fetchFriends(), get().fetchReceivedFriendRequests()]);
+      } else {
+        set((state) => ({ sentFriendRequests: [...state.sentFriendRequests, newRequest] }));
+      }
+
+      set({submitting: false});
       return newRequest;
     } catch (err) {
       set({ error: err.message, submitting: false });

@@ -87,9 +87,6 @@ export const useUserStore = create(
           error: null,
           loading: false,
           viewedUser: null,
-          friends: [],
-          friendRequests: [],
-          sentFriendRequests: [],
         });
       },
 

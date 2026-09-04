@@ -1,4 +1,4 @@
-import { UserPlus, UserMinus, Check, X, Clock } from 'lucide-react';
+import { UserPlus, UserCheck, Check, X, Clock } from 'lucide-react';
 import { Button } from '../UI/Button';
 import { useFriendStore } from '../../stores/friendStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -42,15 +42,17 @@ export function FriendActionButton({ userId }) {
 
   if (friend) {
     return (
-      <Button
-        variant="outline"
-        icon={UserMinus}
-        loading={actionLoadingId === friend.friendRequestId}
-        disabled={!friend.friendRequestId}
-        onClick={() => deleteFriendRequest(friend.friendRequestId, { isFriend: true })}
-      >
-        Amis · Retirer
-      </Button>
+      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold 
+        bg-[var(--color-primary)] bg-opacity-20
+        border border-[var(--color-primary)] border-opacity-40
+        text-[var(--color-on-primary)]
+        uppercase tracking-wide
+        transition-all duration-150 
+        hover:bg-opacity-30 hover:gap-2.5">
+        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-on-primary)] animate-pulse"></div>
+        <UserCheck size={14} />
+        Amis
+      </span>
     );
   }
 
