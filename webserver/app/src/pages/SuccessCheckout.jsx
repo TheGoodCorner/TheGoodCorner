@@ -1,27 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
 import { useProductStore } from '../stores/productStore';
 import { useUserStore } from '../stores/userStore';
 
 export default function SuccessCheckout() {
   const navigate = useNavigate();
   const fetchProducts = useProductStore((state) => state.fetchProducts);
-  const fetchCurrentUser = useUserStore((state) => state.fetchCurrentUser); // ou ta méthode de reload du profil/budget
+  const fetchUser = useUserStore((state) => state.fetchUser || state.fetchCurrentUser);
 
   useEffect(() => {
-    // Petit délai pour laisser au webhook le temps d'écrire en DB
+    // Petit délai pour laisser le temps au webhook Stripe d'écrire en base
     const timer = setTimeout(() => {
       if (fetchProducts) fetchProducts();
-      if (fetchCurrentUser) fetchCurrentUser();
-    }, 800);
+      if (fetchUser) fetchUser();
+    }, 600);
 
     return () => clearTimeout(timer);
-  }, [fetchProducts, fetchCurrentUser]);
+  }, [fetchProducts, fetchUser]);
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="max-w-md w-full bg-[#1e232d] border border-gray-700/60 rounded-2xl p-8 text-center shadow-xl">
+    <div className="min-h-[75vh] flex items-center justify-center bg-[var(--color-bg)] px-4 py-12">
+      <div className="max-w-md w-full bg-[#1e232d] border border-gray-800 rounded-2xl p-8 text-center shadow-xl">
         {/* Icône de validation */}
         <div className="w-16 h-16 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg
@@ -64,9 +63,9 @@ export default function SuccessCheckout() {
         <div className="flex flex-col gap-3">
           <button
             onClick={() => navigate('/profile')}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-xl transition duration-150 ease-in-out shadow-sm cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-3 px-4 rounded-xl transition duration-150 ease-in-out cursor-pointer shadow-sm"
           >
-            Retourner sur mon profile
+            Retourner sur mon profil
           </button>
           
           <button
