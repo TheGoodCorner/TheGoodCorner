@@ -4,6 +4,7 @@ import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import { createPayment } from '../api/paymentApi';
 import { useCartStore } from '../stores/cartStore';
+import { useAuthStore } from '../stores/authStore';
 import CheckoutForm from '../components/checkout/checkoutForm';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -56,6 +57,7 @@ export default function Checkout() {
   console.log('RENDER CHECKOUT');
   const navigate = useNavigate();
   const { cartItems, clearCart, isHydrated } = useCartStore();
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   const [clientSecret, setClientSecret] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,12 @@ export default function Checkout() {
 
   const handleCheckout = async () => {
     try {
+
+        if (!isAuthenticated)
+        {
+            setError('Vous devez être connecté pour passer votre commande.');
+            return
+        }
       setLoading(true);
       setError(null);
 
@@ -249,15 +257,27 @@ export default function Checkout() {
           {/* Error Message */}
           <AnimatePresence>
             {error && (
-              <motion.div
+                <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-lg flex items-start gap-3"
-              >
+                >
                 <AlertCircle size={20} className="text-[var(--color-danger)] flex-shrink-0 mt-0.5" />
-                <p className="text-[var(--color-danger)] font-medium">{error}</p>
-              </motion.div>
+                <div className="flex-1">
+                    <p className="text-[var(--color-danger)] font-medium mb-3">{error}</p>
+                    {!isAuthenticated && (
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => navigate('/authentication')}
+                        className="px-4 py-2 bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white rounded-lg font-semibold text-sm transition-colors"
+                    >
+                        Se connecter
+                    </motion.button>
+                    )}
+                </div>
+                </motion.div>
             )}
           </AnimatePresence>
 
