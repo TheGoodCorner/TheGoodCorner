@@ -35,7 +35,6 @@ function ProductDetail() {
 
   const cachedProduct = useProductStore((state) => state.getProductById(id));
   const currentProduct = useProductStore((state) => state.currentProduct);
-  const currentProductLoading = useProductStore((state) => state.currentProductLoading);
   const currentProductError = useProductStore((state) => state.currentProductError);
   const fetchProductById = useProductStore((state) => state.fetchProductById);
   const allProducts = useProductStore((state) => state.products);
@@ -47,12 +46,27 @@ function ProductDetail() {
 
   const [quantity, setQuantity] = useState(1);
   const [localError, setLocalError] = useState(null);
+
   useEffect(() => {
     fetchProductById(id);
   }, [id, fetchProductById]);
 
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
+
+  useEffect(() => {
+    if (product) {
+      setQuantity(product.quantity === 0 ? 0 : 1);
+    }
+  }, [product?.quantity]);
+
+  useEffect(() => {
+    if (!localError) return;
+    const timer = setTimeout(() => {
+      setLocalError(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [localError]);
 
   if (!product && !currentProductError) {
     return <ProductDetailSkeleton />;
@@ -69,31 +83,25 @@ function ProductDetail() {
   }
 
   const handleAddToCart = () => {
-    const succes = addToCart({
+    const success = addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
       quantity,
       stock: product.quantity,
-      authorId: product.author.id
+      authorId: product.author?.id
     });
-    if (succes) {
-    setLocalError(null);
-    openUi('cart-popover');
-  } else {
-    const lastError = useCartStore.getState().error;
-    const message = typeof lastError === 'object' ? lastError?.message : lastError;
-    setLocalError(message || "Impossible d'ajouter cet article au panier.");
-  }
+
+    if (success) {
+      setLocalError(null);
+      openUi('cart-popover');
+    } else {
+      const lastError = useCartStore.getState().error;
+      const message = typeof lastError === 'object' ? lastError?.message : lastError;
+      setLocalError(message || "Impossible d'ajouter cet article au panier.");
+    }
   };
-    useEffect(() => {
-      if (!localError) return;
-      const timer = setTimeout(() => {
-        setLocalError(null);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }, [localError]);
 
   const handleContactSeller = () => {
     if (!isAuthenticated) {
@@ -112,6 +120,8 @@ function ProductDetail() {
   const memberSince = product.author?.createdAt
     ? new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(product.author.createdAt))
     : null;
+
+  const isOutOfStock = product.quantity === 0;
 
   return (
     <div className="bg-[var(--color-bg)]">
@@ -132,6 +142,7 @@ function ProductDetail() {
           Retour aux produits
         </Link>
 
+        {/* Grille principale produit */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex items-center justify-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)] p-8">
             <img
@@ -152,15 +163,16 @@ function ProductDetail() {
             <p className="text-[var(--color-text-muted)] leading-relaxed mb-8">
               {product.description || "Description à venir."}
             </p>
-            
+
             {localError && (
-              <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
-                <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+              <div className="p-4 mb-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
+                <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
                   {typeof localError === 'object' ? localError.message : localError}
                 </p>
               </div>
             )}
 
+            {/* Sélecteur de quantité */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-medium text-[var(--color-text)]">Quantité</span>
               <div className="flex items-center gap-1 bg-[var(--color-surface-hover)] rounded-[var(--radius-md)] px-2">
@@ -169,38 +181,44 @@ function ProductDetail() {
                   size="sm"
                   icon={Minus}
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || isOutOfStock}
                   aria-label="Diminuer la quantité"
                 />
-                <span className="w-8 text-center text-[var(--color-text)]">{quantity}</span>
+                <span className="w-8 text-center text-[var(--color-text)] font-medium">
+                  {isOutOfStock ? 0 : quantity}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   icon={Plus}
                   onClick={() => setQuantity((q) => Math.min(product.quantity, q + 1))}
-                  disabled={quantity >= product.quantity}
+                  disabled={quantity >= product.quantity || isOutOfStock}
                   aria-label="Augmenter la quantité"
                 />
               </div>
-              <span className="text-xs text-[var(--color-text-muted)]">({product.quantity} En stock)</span>
+              <span className={`text-xs ${isOutOfStock ? 'text-red-400 font-semibold' : 'text-[var(--color-text-muted)]'}`}>
+                {!isOutOfStock ? `(${product.quantity} en stock)` : '(Rupture de stock)'}
+              </span>
             </div>
 
+            {/* Bouton d'action panier */}
             <Button
               icon={ShoppingCart}
               variant="primary"
               size="lg"
               onClick={handleAddToCart}
-              disabled={product.quantity === 0}
-              title={product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
+              disabled={isOutOfStock}
+              title={isOutOfStock ? "Produit en rupture de stock" : "Ajouter au panier"}
               aria-label="Ajouter au panier"
             >
-              {product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
+              {isOutOfStock ? "Produit en rupture de stock" : "Ajouter au panier"}
             </Button>
           </div>
         </div>
 
         <div className="my-16 border-t border-[var(--color-border)]"></div>
 
+        {/* Section Vendeur */}
         <section className="mb-16">
           <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
           <div className="flex items-center justify-between gap-4">
@@ -224,6 +242,7 @@ function ProductDetail() {
           </div>
         </section>
 
+        {/* Produits similaires */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">Produits similaires</h2>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
@@ -8,29 +8,20 @@ import CheckoutForm from '../components/checkout/checkoutForm';
 
 loadStripe.setLoadParameters({ advancedFraudSignals: false });
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
-
+const ELEMENTS_OPTIONS = {
+  appearance: { theme: 'stripe' },
+};
 export default function Checkout() {
+    console.log("RENDER CHECKOUT");
     const navigate = useNavigate();
     const { cartItems, clearCart } = useCartStore();
 
     const [clientSecret, setClientSecret] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    const options = useMemo(() => {
-        if (!clientSecret) return null;
-        return {
-            clientSecret,
-            appearance: { theme: 'stripe' },
-			elements: {
-              wallets: {
-                link: 'never',
-              },
-            },
-        };
-    }, [clientSecret]);
-
     const total = cartItems?.reduce((acc, item) => acc + (item.price * (item.quantity || 1)), 0) || 0;
+
+
 
     const handleCheckout = async () => {
         try {
@@ -56,7 +47,7 @@ export default function Checkout() {
             }
         } catch (err) {
             console.error('Erreur lors du paiement :', err);
-            setError(err.response?.data?.message || 'Une erreur est survenue lors de la validation.');
+            setError(err.response?.data?.message || 'Le budget est insuffisant !');
         } finally {
             setLoading(false);
         }
@@ -66,7 +57,7 @@ export default function Checkout() {
         return (
             <div style={{ padding: '2rem', textAlign: 'center' }}>
                 <h2>Votre panier est vide</h2>
-                <button onClick={() => navigate('/produits')}>Continuer les achats</button>
+                <button onClick={() => navigate('/products')}>Continuer les achats</button>
             </div>
         );
     }
@@ -97,31 +88,20 @@ export default function Checkout() {
                 <button
                     onClick={handleCheckout}
                     disabled={loading}
-                    style={{
-                        width: '100%',
-                        padding: '12px',
-                        backgroundColor: '#0070f3',
-                        color: '#fff',
-                        border: 'none',
-                        borderRadius: '4px',
-                        cursor: loading ? 'not-allowed' : 'pointer',
-                        fontSize: '1rem'
-                    }}
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium"
                 >
                     {loading ? 'Traitement en cours...' : `Payer ${total.toFixed(2)} €`}
                 </button>
             ) : (
-                options && (
-                    <Elements stripe={stripePromise} options={options}>
-                        <CheckoutForm
-                            clientSecret={clientSecret}
-                            onSuccess={() => {
-                                if (clearCart) clearCart();
-                                navigate('/profile');
-                            }}
-                        />
-                    </Elements>
-                )
+                <Elements stripe={stripePromise} options={ELEMENTS_OPTIONS}>
+                    <CheckoutForm
+                        clientSecret={clientSecret}
+                        onSuccess={() => {
+                            if (clearCart) clearCart();
+                            navigate('/checkout/success');
+                        }}
+                    />
+                </Elements>
             )}
         </div>
     );

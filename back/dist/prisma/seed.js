@@ -100,6 +100,11 @@ async function main() {
         await prisma.location?.deleteMany().catch(() => { });
         await prisma.user.deleteMany();
         await prisma.category.deleteMany();
+        await prisma.payment.deleteMany();
+        await prisma.friendRequest.deleteMany();
+        await prisma.message.deleteMany();
+        await prisma.refreshToken.deleteMany();
+        await prisma.location.deleteMany();
         console.log('Seeding categories...');
         for (const category of defaultCategories) {
             await prisma.category.upsert({
@@ -190,6 +195,33 @@ async function main() {
             });
         }
         ;
+        console.log('Seeding friend requests and friends...');
+        const userIds = foundUsers.map((u) => u.id);
+        const existingPairs = new Set();
+        const friendRequestData = [];
+        for (const senderId of userIds) {
+            // Pick 2-4 potential connections per user
+            const potentialTargets = userIds.filter((id) => id !== senderId);
+            const targetCount = getRandomInt(1, Math.min(3, potentialTargets.length));
+            const chosenTargets = shuffleArray(potentialTargets).slice(0, targetCount);
+            for (const receiverId of chosenTargets) {
+                const pairKey = [Math.min(senderId, receiverId), Math.max(senderId, receiverId)].join(':');
+                if (existingPairs.has(pairKey))
+                    continue;
+                existingPairs.add(pairKey);
+                friendRequestData.push({
+                    senderId,
+                    receiverId,
+                    status: 'ACCEPTED',
+                });
+            }
+        }
+        if (friendRequestData.length > 0) {
+            await prisma.friendRequest.createMany({
+                data: friendRequestData,
+                skipDuplicates: true,
+            });
+        }
         console.log('Seeding successful !');
     }
     catch (e) {

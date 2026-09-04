@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useProductStore } from '../../stores/productStore';
 
+const CARD_OPTIONS = { hidePostalCode: false };
 export default function CheckoutForm({ onSuccess, clientSecret }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -37,7 +38,7 @@ export default function CheckoutForm({ onSuccess, clientSecret }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-6">
       <div style={{ padding: '12px', border: '1px solid #ccc', borderRadius: '4px' }}>
-        <CardElement options={{ hidePostalCode: false }} />
+        <CardElement options={CARD_OPTIONS} />
       </div>
       {errorMessage && (
         <p className="text-sm text-red-500 mt-2">{errorMessage}</p>
