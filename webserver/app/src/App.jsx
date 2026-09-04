@@ -64,8 +64,6 @@ function App() {
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/messagerie" element={<Messagerie />} />
           <Route path="/profile" element={<Profile />} />
-		  <Route path="/checkout" element={<Checkout />} />
-		  <Route path="/checkout/success" element={<SuccessCheckout />} />
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
@@ -74,6 +72,8 @@ function App() {
         {/* Routes sans Navbar/Footer */}
         <Route element={<AuthLayout />}>
           <Route path="/authentication" element={<Login />} />
+          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/checkout/success" element={<SuccessCheckout />} />
         </Route>
       </Routes>
     </Router>

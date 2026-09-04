@@ -9,6 +9,7 @@ export const useCartStore = create(
       cartCount: 0,
       cartTotal: 0,
       error: null,
+      isHydrated: false,
       
 
       addToCart: (product) => {
@@ -23,7 +24,7 @@ export const useCartStore = create(
           set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
           return false
         }
-		const maxStock = Number(product.stock ?? product.quantity) || 0;
+        const maxStock = Number(product.stock ?? product.quantity) || 0;
         const addCount = Number(product.quantity) || 1;
       
         const state = get(); // Récupère l'état actuel
@@ -112,6 +113,9 @@ export const useCartStore = create(
         cartCount: state.cartCount,
         cartTotal: state.cartTotal,
       }),
+      onRehydrateStorage: () => (state) => {
+        state.isHydrated = true;
+      },
     }
   )
 )
