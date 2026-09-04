@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useThemeStore } from '../../stores/themeStore'
 import { useCartStore } from '../../stores/cartStore'
+import { useMessageStore } from '../../stores/messageStore'
 import { useUIStore } from '../../stores/uiStore';
 import { Button } from '../UI/Button';
 import ProfileDropdown from '../profile/ProfileDropdown'
@@ -10,6 +11,8 @@ function Navbar() {
   const theme = useThemeStore((state) => state.theme)
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const cartCount = useCartStore((state) => state.cartCount)
+  const unreadCounts = useMessageStore((state) => state.unreadCounts)
+  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0)
   const openUi = useUIStore((state) => state.openUi)
 
   return (
@@ -44,6 +47,11 @@ function Navbar() {
           title="Notifications"
           aria-label="Notifications"
         />
+        {notificationCount > 0 && (
+          <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+            {notificationCount}
+          </div>
+        )}
       </div>
       <div className="relative">
         <Button
@@ -53,11 +61,11 @@ function Navbar() {
           title="Panier d'articles"
           aria-label="Panier d'articles"
         />
-      {cartCount > 0 && (
-        <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-          {cartCount}
-        </div>
-      )}
+        {cartCount > 0 && (
+          <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+            {cartCount}
+          </div>
+        )}
       </div>
       </div>
     </nav>
