@@ -36,16 +36,17 @@ const buttonVariants = {
 export default function SuccessCheckout() {
   const navigate = useNavigate();
   const fetchProducts = useProductStore((state) => state.fetchProducts);
-  const fetchCurrentUser = useUserStore((state) => state.fetchCurrentUser);
+  const fetchUser = useUserStore((state) => state.fetchUser);
+  const currentUser = useUserStore((state) => state.user);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (fetchProducts) fetchProducts();
-      if (fetchCurrentUser) fetchCurrentUser();
+      if (fetchUser) fetchUser(currentUser?.id);
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [fetchProducts, fetchCurrentUser]);
+  }, [fetchProducts, fetchUser]);
 
   return (
     <motion.div

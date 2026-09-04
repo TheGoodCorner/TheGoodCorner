@@ -20,8 +20,21 @@ export const useUserStore = create(
       viewedUserLoading: false,
       viewedUserError: null,
 
-      // GET /user/:id — profil PUBLIC d'un utilisateur donné.
+      // GET /user/:id — profil PUBLIC d'un utilisateur donné ou le user privee meme si meme id
       fetchUser: async (id) => {
+        const currentUser = get().user;
+
+        if (currentUser?.id === id) {
+          set({ loading: true, error: null });
+          try {
+            const data = await fetchUserRequest(id);
+            set({ user: data, loading: false });
+            return data;
+          } catch (err) {
+            set({ error: err.message, loading: false });
+            console.error('fetchUser for CurrentUser error:', err);
+          }
+        }
         set({ viewedUserLoading: true, viewedUserError: null });
         try {
           const data = await fetchUserRequest(id);
