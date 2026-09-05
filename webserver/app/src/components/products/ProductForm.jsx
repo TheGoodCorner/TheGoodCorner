@@ -2,7 +2,7 @@ import { useProductForm } from '../../hooks/useProductForm';
 import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
 import { FileInput } from '../UI/FileInput';
-import { Package, Image, DollarSign, Tag, FileText, PlusCircle } from 'lucide-react';
+import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
 import { PRODUCT_PRICE_MAX } from '../../utils/constants';
 
 const CATEGORIES = [
@@ -84,7 +84,7 @@ export function ProductForm({ onSuccess }) {
         <FormField
           id='price'
           label='Prix (€)'
-          icon={DollarSign}
+          icon={Euro}
           type='number'
           step='0.01'
           min='0'

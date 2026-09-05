@@ -61,6 +61,16 @@ const reviewController =
 				return (newReview);
 			});
 			console.log (`review creation successfull`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${reviewedId}`).emit('new_review', {
+					authorUsername: createdReview.reviewAuthor.username,
+					reviewedUserId: reviewedId,
+					reviewId: createdReview.id,
+					rating: createdReview.reviewRating,
+					review: createdReview,
+				});
+			}
 			return (res.status(201).json({message: 'Avis cree avec succes', data:{createdReview}}));
 		}
 		catch (error:any){

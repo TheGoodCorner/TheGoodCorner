@@ -44,10 +44,6 @@ function Profile() {
   const [activeTab, setActiveTab] = useState("products");
 
   useEffect(() => {
-    setActiveTab("products");
-  }, []);
-
-  useEffect(() => {
     if (isAuthenticated && user?.id) {
       useUserStore.getState().fetchFriends();
     }

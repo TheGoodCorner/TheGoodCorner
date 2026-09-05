@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
+import { useNotificationStore } from './stores/notificationStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
@@ -44,4 +45,8 @@ socket.on('message_updated', (message) => {
 
 socket.on('message_deleted', (payload) => {
   useMessageStore.getState().handleMessageDeleted(payload);
+});
+
+socket.on('new_review', (payload) => {
+  useNotificationStore.getState().addReviewNotification(payload);
 });

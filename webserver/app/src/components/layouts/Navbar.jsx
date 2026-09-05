@@ -8,6 +8,7 @@ import { Moon, Sun, ShoppingCart, Bell } from 'lucide-react'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { NotificationPopover } from '../../pages/NotificationPopover'
 import { useAuthStore } from '../../stores/authStore'
+import { useNotificationStore } from '../../stores/notificationStore'
 
 import ProfileDropdown from '../profile/ProfileDropdown'
 
@@ -16,7 +17,9 @@ function Navbar() {
   const toggleTheme = useThemeStore((state) => state.toggleTheme)
   const cartCount = useCartStore((state) => state.cartCount)
   const unreadCounts = useMessageStore((state) => state.unreadCounts)
-  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0)
+  const reviewNotifications = useNotificationStore((state) => state.reviewNotifications)
+  const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length
+  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount
   const openUi = useUIStore((state) => state.openUi)
   const toggleUi = useUIStore((state) => state.toggleUi)
   const closeUi = useUIStore((state) => state.closeUi)
