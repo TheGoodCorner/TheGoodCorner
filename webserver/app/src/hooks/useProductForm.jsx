@@ -86,7 +86,7 @@ export function useProductForm() {
 					customCategory: '',
 					description: '',
 				});
-				onSuccess?.();
+				onSuccess?.(success);
 			}
 		}
 		catch (err) {

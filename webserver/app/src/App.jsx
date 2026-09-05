@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
 import { useCartStore } from './stores/cartStore';
@@ -57,6 +63,7 @@ function App() {
   }
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Routes avec Navbar/Footer */}
         <Route element={<MainLayout />}>

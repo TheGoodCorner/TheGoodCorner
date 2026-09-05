@@ -59,6 +59,8 @@ export const useProductStore = create((set, get) => ({
     try {
       const data = await createProductRequest(productData);
       set((state) => ({ products: [...state.products, data], loading: false }));
+      const { user, setUser } = useUserStore.getState();
+      if (user) setUser({ ...user, product: [...(user.product ?? []), data] });
       return data;
     } catch (err) {
       set({ error: err.message, loading: false });

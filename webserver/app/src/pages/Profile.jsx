@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
@@ -19,6 +19,7 @@ import Avatar from "../components/UI/Avatar";
 function Profile() {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { isAuthenticated, initializing } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     user,
@@ -309,7 +310,7 @@ function Profile() {
                 Remplire les informations pour créer un nouveau produit
               </p>
             </div>
-            <ProductForm />
+            <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />
           </div>
         </div>
       </section>
