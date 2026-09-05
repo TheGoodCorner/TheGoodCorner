@@ -4,8 +4,11 @@ import { useCartStore } from '../../stores/cartStore'
 import { useMessageStore } from '../../stores/messageStore'
 import { useUIStore } from '../../stores/uiStore';
 import { Button } from '../UI/Button';
-import ProfileDropdown from '../profile/ProfileDropdown'
 import { Moon, Sun, ShoppingCart, Bell } from 'lucide-react'
+import { useClickOutside } from '../../hooks/useClickOutside'
+import { NotificationPopover } from '../../pages/NotificationPopover'
+
+import ProfileDropdown from '../profile/ProfileDropdown'
 
 function Navbar() {
   const theme = useThemeStore((state) => state.theme)
@@ -14,7 +17,11 @@ function Navbar() {
   const unreadCounts = useMessageStore((state) => state.unreadCounts)
   const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0)
   const openUi = useUIStore((state) => state.openUi)
-
+  const toggleUi = useUIStore((state) => state.toggleUi)
+  const closeUi = useUIStore((state) => state.closeUi)
+  const isNotifOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false
+  const notifRef = useClickOutside(() => closeUi('notification-popover'), isNotifOpen)
+  
   return (
     <nav className={`navbar navbar-${theme}`}>
       <Link to="/" className="navbar-logo">
@@ -40,8 +47,9 @@ function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-      <div className="relative">
+      <div className="relative" ref={notifRef}>
         <Button
+          onClick={() => {toggleUi('notification-popover')}}
           variant='ghost'
           icon={Bell}
           title="Notifications"
@@ -52,6 +60,7 @@ function Navbar() {
             {notificationCount}
           </div>
         )}
+        <NotificationPopover />
       </div>
       <div className="relative">
         <Button
