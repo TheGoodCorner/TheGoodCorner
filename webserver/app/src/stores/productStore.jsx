@@ -53,6 +53,14 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  addProduct: (product) => {
+    set((state) => {
+      const exists = state.products.some((p) => p.id === product.id);
+      if (exists) return state;
+      return { products: [...state.products, product] };
+    });
+  },
+
   // POST /products
   createProduct: async (productData) => {
     set({ loading: true, error: null });

@@ -2,6 +2,7 @@ import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
 import { useNotificationStore } from './stores/notificationStore';
 import { useUserStore } from './stores/userStore';
+import { useProductStore } from './stores/productStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
@@ -15,7 +16,7 @@ let registeredUserId = null;
 export function connectSocket(userId) {
   if (!userId)
     return;
-  
+
   if (!socket.connected) {
     socket.connect();
   }
@@ -46,6 +47,10 @@ socket.on('message_updated', (message) => {
 
 socket.on('message_deleted', (payload) => {
   useMessageStore.getState().handleMessageDeleted(payload);
+});
+
+socket.on('new_product', (product) => {
+  useProductStore.getState().addProduct(product);
 });
 
 socket.on('new_review', (payload) => {
