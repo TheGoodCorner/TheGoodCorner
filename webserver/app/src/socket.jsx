@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
 import { useNotificationStore } from './stores/notificationStore';
+import { useUserStore } from './stores/userStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
@@ -49,4 +50,12 @@ socket.on('message_deleted', (payload) => {
 
 socket.on('new_review', (payload) => {
   useNotificationStore.getState().addReviewNotification(payload);
+  const { user, setUser } = useUserStore.getState();
+  if (user) {
+    setUser({
+      ...user,
+      sellerReviewCount: (user.sellerReviewCount || 0) + 1,
+      receivedReviews: [payload.review, ...(user.receivedReviews || [])],
+    });
+  }
 });

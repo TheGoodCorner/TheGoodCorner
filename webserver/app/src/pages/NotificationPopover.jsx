@@ -30,7 +30,7 @@ export function NotificationPopover() {
   const handleReviewClick = () => {
     markAllRead();
     closeUi('notification-popover');
-    navigate(`/profile`);
+    navigate('/profile?tab=reviews');
   };
 
   return (

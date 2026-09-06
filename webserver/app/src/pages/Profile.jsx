@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
@@ -42,7 +42,9 @@ function Profile() {
   const { friends } = useUserStore();
   const { fsubmitting, ferror } = useFriendStore();
 
-  const [activeTab, setActiveTab] = useState("products");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'products';
+  const setActiveTab = (tab) => setSearchParams({ tab });
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
