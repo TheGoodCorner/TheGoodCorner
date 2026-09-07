@@ -57,7 +57,7 @@ function ProfileDropdown() {
           <MessageCircle/>
             Mes messages
         </Dropdown.Item>
-        <Dropdown.Item>
+        <Dropdown.Item as = {Link} to="/settings">
           <Settings/>
             Parametres
         </Dropdown.Item>

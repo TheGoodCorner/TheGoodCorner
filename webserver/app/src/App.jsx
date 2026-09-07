@@ -19,6 +19,7 @@ import Profile from './pages/Profile';
 import SellerProfile from './pages/SellerProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import Settings from './pages/Settings';
 import Checkout from './pages/Checkout';
 import SuccessCheckout from './pages/SuccessCheckout';
 import './styles/style.css';
@@ -67,6 +68,7 @@ function App() {
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
 
         {/* Routes sans Navbar/Footer */}
