@@ -3,6 +3,7 @@ import prisma from "../services/db.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import Stripe from 'stripe';
 import { findReturnUser } from "../services/users/utilsUsers.js";
+import productRouter from "../routes/products.js";
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a transaction inside the prisma database by taking the request and sending the json object
@@ -105,7 +106,9 @@ const paymentController =
 							currency: stripeCurrency,
 							status: 'PENDING',
 							userId: userId,
-						}
+							products: {
+								connect: productId.map((id: number) => ({ id })),
+						}}
 					});
 				});
 				console.log('Transaction successfully created !');
@@ -207,7 +210,7 @@ const paymentController =
 			const userId = req.user?.id;
 			if (!userId)
 				return res.status(400).json({ status: 'ERROR', message: 'invalid UserId' });
-			const user = await prisma.user.findMany({
+			const user = await prisma.user.findUnique({
 				where: { id: userId },
 				select: {
 					username: true,
@@ -216,6 +219,7 @@ const paymentController =
 					payment: {
 						orderBy: { createdAt: 'desc' },
 						take: 20,
+						include: {products:true}
 					},
 					budget: true,
 					avatar: true,

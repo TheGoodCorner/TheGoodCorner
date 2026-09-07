@@ -4,7 +4,7 @@ import { useUserStore } from '../../stores/userStore'
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
 import { Dropdown } from '../UI/Dropdown';
-import { LogOut, UserRound, MessageCircle, Settings} from 'lucide-react'
+import { LogOut, UserRound, MessageCircle, Settings, ShoppingCart} from 'lucide-react'
 
 function ProfileDropdown() {
   const { isAuthenticated, logout, initializing } = useAuthStore();

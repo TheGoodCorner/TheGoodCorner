@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import { createPayment } from '../api/paymentApi';
+import { apiClient } from '../api/client';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
 import CheckoutForm from '../components/checkout/checkoutForm';
@@ -15,6 +16,7 @@ import {
   AlertCircle,
   ArrowLeft,
   Package,
+  Wallet,
 } from 'lucide-react';
 
 loadStripe.setLoadParameters({ advancedFraudSignals: false });
@@ -34,7 +36,6 @@ const ELEMENTS_OPTIONS = {
   },
 };
 
-// Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -67,13 +68,41 @@ const buttonVariants = {
 export default function Checkout() {
   const navigate = useNavigate();
   const { cartItems, clearCart, isHydrated } = useCartStore();
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const storeUser = useAuthStore((state) => state.user ?? state.currentUser);
+
+  const [walletBudget, setWalletBudget] = useState(
+    storeUser?.budget ?? parseFloat(localStorage.getItem('wallet_balance') || '0')
+  );
 
   const [clientSecret, setClientSecret] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
   const total =
     cartItems?.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0) || 0;
+
+  // Récupération en temps réel du budget utilisateur
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const fetchBudget = async () => {
+      try {
+        const response = await apiClient.get('/transactions');
+        const resData = response.data?.data;
+        const currentBudget = Array.isArray(resData) ? resData[0]?.budget : resData?.budget;
+        if (currentBudget !== undefined && currentBudget !== null) {
+          setWalletBudget(Number(currentBudget));
+        }
+      } catch (err) {
+        console.error('Erreur récupération solde portefeuille:', err);
+      }
+    };
+
+    fetchBudget();
+  }, [isAuthenticated]);
+
+  const hasEnoughBudget = walletBudget >= total;
 
   if (!isHydrated) {
     return (
@@ -98,12 +127,10 @@ export default function Checkout() {
 
   const handleCheckout = async () => {
     try {
-
-        if (!isAuthenticated)
-        {
-            setError('Vous devez être connecté pour passer votre commande.');
-            return
-        }
+      if (!isAuthenticated) {
+        setError('Vous devez être connecté pour passer votre commande.');
+        return;
+      }
       setLoading(true);
       setError(null);
 
@@ -203,7 +230,7 @@ export default function Checkout() {
           className="bg-[var(--color-surface)] rounded-2xl border border-[var(--color-border)] p-8 shadow-lg backdrop-blur-sm"
         >
           {/* Items List */}
-          <motion.div className="mb-8">
+          <motion.div className="mb-6">
             <div className="flex items-center gap-2 mb-6">
               <Package size={24} className="text-[var(--color-primary)]" />
               <h2 className="text-lg font-semibold text-[var(--color-text)]">
@@ -242,10 +269,41 @@ export default function Checkout() {
             </div>
           </motion.div>
 
+          {/* Section Solde Portefeuille */}
+          {isAuthenticated && (
+            <motion.div
+              variants={itemVariants}
+              className="mb-6 p-4 rounded-xl border border-slate-800 bg-slate-900/60 flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-blue-600/10 text-blue-400">
+                  <Wallet size={20} />
+                </div>
+                <div>
+                  <span className="text-sm font-medium text-slate-300 block">
+                    Solde de votre portefeuille
+                  </span>
+                  {!hasEnoughBudget && (
+                    <span className="text-xs text-red-400 font-medium">
+                      Solde insuffisant pour finaliser cet achat
+                    </span>
+                  )}
+                </div>
+              </div>
+              <span
+                className={`text-lg font-bold font-mono ${
+                  hasEnoughBudget ? 'text-emerald-400' : 'text-red-400'
+                }`}
+              >
+                {Number(walletBudget).toFixed(2)} €
+              </span>
+            </motion.div>
+          )}
+
           {/* Divider */}
           <motion.div
             variants={itemVariants}
-            className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent my-8"
+            className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent my-6"
           />
 
           {/* Total */}
@@ -267,27 +325,27 @@ export default function Checkout() {
           {/* Error Message */}
           <AnimatePresence>
             {error && (
-                <motion.div
+              <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-6 p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-lg flex items-start gap-3"
-                >
+              >
                 <AlertCircle size={20} className="text-[var(--color-danger)] flex-shrink-0 mt-0.5" />
                 <div className="flex-1">
-                    <p className="text-[var(--color-danger)] font-medium mb-3">{error}</p>
-                    {!isAuthenticated && (
+                  <p className="text-[var(--color-danger)] font-medium mb-3">{error}</p>
+                  {!isAuthenticated && (
                     <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => navigate('/authentication')}
-                        className="px-4 py-2 bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white rounded-lg font-semibold text-sm transition-colors"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => navigate('/authentication')}
+                      className="px-4 py-2 bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white rounded-lg font-semibold text-sm transition-colors"
                     >
-                        Se connecter
+                      Se connecter
                     </motion.button>
-                    )}
+                  )}
                 </div>
-                </motion.div>
+              </motion.div>
             )}
           </AnimatePresence>
 
