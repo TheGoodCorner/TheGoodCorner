@@ -20,6 +20,7 @@ import SellerProfile from './pages/SellerProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Settings from './pages/Settings';
+import Orders from './pages/Orders';
 import Checkout from './pages/Checkout';
 import SuccessCheckout from './pages/SuccessCheckout';
 import './styles/style.css';
@@ -69,6 +70,7 @@ function App() {
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/orders" element={<Orders />} />
         </Route>
 
         {/* Routes sans Navbar/Footer */}

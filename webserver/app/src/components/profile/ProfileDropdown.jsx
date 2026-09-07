@@ -61,6 +61,10 @@ function ProfileDropdown() {
           <Settings/>
             Parametres
         </Dropdown.Item>
+		 <Dropdown.Item as = {Link} to="/orders">
+          <ShoppingCart/>
+            Mes Commandes
+        </Dropdown.Item>
 
         <Dropdown.Separator />
 
