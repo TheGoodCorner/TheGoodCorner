@@ -58,14 +58,18 @@ function Profile() {
   useEffect(() => {
     setActiveTab("products");
   }, []);
-
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      useFriendStore.getState().fetchSentFriendRequests()
-      useFriendStore.getState().fetchReceivedFriendRequests()
-      useFriendStore.getState().fetchFriends();
+      useFriendStore.getState().fetchReceivedFriendRequests();
+	  useAuthStore.getState().initAuth();
     }
   }, [isAuthenticated, user?.id]);
+  useEffect(() => {
+    if (isAuthenticated && user?.id && activeTab === "friends") {
+      useFriendStore.getState().fetchFriends();
+      useFriendStore.getState().fetchSentFriendRequests();
+    }
+  }, [isAuthenticated, user?.id, activeTab]);
 
   if (initializing) {
     return (

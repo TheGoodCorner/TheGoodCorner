@@ -166,19 +166,20 @@ const paymentController =
 							data: { quantity: { decrement: Number(item.qty) } }
 						});
 						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
+						if (updatedProduct.userId)
+						{
+							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
+							const updatedSellerBudget = await tx.user.update({
+								where: {id: updatedProduct.userId},
+								data: {budget: {increment: sellerGain}}
+							})
+						}
 					}
-					const user = await prisma.user.findUnique({
-						where: { id: transaction.userId }
-					})
-					if (user)
-						console.log(user.budget);
 					// 2. Decrement user budget securely
-					const updatedUser = await tx.user.update({
+					const updatedBuyerBudget = await tx.user.update({
 						where: { id: transaction.userId },
 						data: { budget: { decrement: amountToDeduct } }
 					});
-					if (updatedUser)
-						console.log('budget after ' + updatedUser.budget);
 					// 3. Mark payment as completed
 					await tx.payment.update({
 						where: { id: transaction.id },
@@ -191,7 +192,6 @@ const paymentController =
 				return (res.status(500).end()); // Let Stripe retry later
 			}
 		}
-
 		// Handle failed or canceled payments
 		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') {
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;

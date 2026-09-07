@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "\"back_end NodeJS/Typescript\"",
   "license": "ISC",
-  "author": "mchanlia/khalidkaf",
+  "author": "mchanlia",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "build": "dotenv -e .env -- prisma generate --schema=./src/prisma/schema.prisma && tsc",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "db:migrate:prod": "dotenv -e .env -- prisma migrate deploy",
+    "db:migrate:prod": "dotenv -e .env -- prisma migrate deploy --schema=./src/prisma/schema.prisma",
     "db:studio": "dotenv -e .env -- prisma studio --schema=./src/prisma/schema.prisma",
     "db:migrate": "dotenv -e .env -- prisma migrate dev --schema=./src/prisma/schema.prisma",
     "db:reset": "dotenv -e .env -- prisma migrate reset --force --schema=./src/prisma/schema.prisma",

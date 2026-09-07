@@ -64,7 +64,6 @@ const buttonVariants = {
 };
 
 export default function Checkout() {
-  console.log('RENDER CHECKOUT');
   const navigate = useNavigate();
   const { cartItems, clearCart, isHydrated } = useCartStore();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
