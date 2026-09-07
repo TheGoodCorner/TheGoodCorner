@@ -18,7 +18,8 @@ import {
 } from 'lucide-react';
 
 loadStripe.setLoadParameters({ advancedFraudSignals: false });
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
+const stripeKey = process.env.REACT_APP_STRIPE_PUBLIC_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 const ELEMENTS_OPTIONS = {
   appearance: {

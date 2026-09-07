@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../services/db.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import Stripe from 'stripe';
+import { findReturnUser } from "../services/users/utilsUsers.js";
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a transaction inside the prisma database by taking the request and sending the json object
@@ -166,12 +167,11 @@ const paymentController =
 							data: { quantity: { decrement: Number(item.qty) } }
 						});
 						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
-						if (updatedProduct.userId)
-						{
+						if (updatedProduct.userId) {
 							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
 							const updatedSellerBudget = await tx.user.update({
-								where: {id: updatedProduct.userId},
-								data: {budget: {increment: sellerGain}}
+								where: { id: updatedProduct.userId },
+								data: { budget: { increment: sellerGain } }
 							})
 						}
 					}
@@ -253,6 +253,33 @@ const paymentController =
 		} catch (error: any) {
 			console.error('Erreur getTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
+		}
+	},
+	topUp: async (req: AuthenticatedRequest, res: Response) => {
+		try {
+			const userId = Number(req.params.id);
+			const amount = Number(req.body.amount);
+			if (!userId || isNaN(userId))
+				return res.status(400).json({ message: 'Invalid userId', status: 400 });
+			if (Number.isNaN(amount) || amount <= 0 || amount > 100000)
+				return (res.status(403).json({ message: 'invalid parameter provided', Status: 400 }));
+			const user = await prisma.user.findUnique({
+				where: { id: userId }
+			})
+			if (!user)
+				return (res.status(404).json({ message: 'unable to find user', Status: 400 }));
+
+			const updatedUser = await prisma.user.update({
+				where: { id: userId },
+				data: { budget: { increment: amount } }
+			})
+
+			console.log(`successfully topped up : ${updatedUser.username}`);
+			return (res.status(200).json({ message: 'OK', newBudget: updatedUser.budget }));
+		}
+		catch (error) {
+			console.error('Erreur topUp:', error);
+			return (res.status(500).json({ message: 'internal server Error', Status: 500 }));
 		}
 	}
 }
