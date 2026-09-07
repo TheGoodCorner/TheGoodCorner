@@ -1,5 +1,6 @@
 import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
+import { useFriendStore } from './stores/friendStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
@@ -14,18 +15,20 @@ export function connectSocket(userId) {
   if (!userId)
     return;
   
-  if (!socket.connected) {
+  registeredUserId = userId;
+
+  if (socket.connected || socket.disconnected) {
+    socket.disconnect();
+  }
+  setTimeout(() => {
     socket.connect();
-  }
-  if (registeredUserId !== userId) {
-    socket.emit('register_user', userId);
-    registeredUserId = userId;
-  }
+  }, 100);
 }
 
 export function disconnectSocket() {
   registeredUserId = null;
-  if (socket.connected) socket.disconnect();
+  if (socket.connected)
+    socket.disconnect();
 }
 
 socket.on('connect', () => {
@@ -34,6 +37,7 @@ socket.on('connect', () => {
   }
 });
 
+// --- Messagerie ----
 socket.on('receive_direct_message', (message) => {
   useMessageStore.getState().receiveMessage(message);
 });
@@ -44,4 +48,18 @@ socket.on('message_updated', (message) => {
 
 socket.on('message_deleted', (payload) => {
   useMessageStore.getState().handleMessageDeleted(payload);
+});
+
+
+// --- Statut en ligne (amis) ---
+socket.on('online_users_list', (userIds) => {
+  useFriendStore.getState().setOnlineUsers(userIds);
+});
+
+socket.on('user_online', ({ userId }) => {
+  useFriendStore.getState().setUserOnline(userId);
+});
+
+socket.on('user_offline', ({ userId }) => {
+  useFriendStore.getState().setUserOffline(userId);
 });
