@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
@@ -21,8 +21,6 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Settings from './pages/Settings';
 import Orders from './pages/Orders';
-import Checkout from './pages/Checkout';
-import SuccessCheckout from './pages/SuccessCheckout';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -31,6 +29,9 @@ import './styles/tokens.css';
  * Le composant principal de l'application.
  * C'est le point d'entrée qui structure toute l'app.
  */
+const Checkout = lazy(() => import('./pages/Checkout'));
+const SuccessCheckout = lazy(() => import('./pages/SuccessCheckout'));
+
 function App() {
   const theme = useThemeStore((state) => state.theme)
   const initAuth = useAuthStore((state) => state.initAuth);
@@ -76,8 +77,8 @@ function App() {
         {/* Routes sans Navbar/Footer */}
         <Route element={<AuthLayout />}>
           <Route path="/authentication" element={<Login />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout/success" element={<SuccessCheckout />} />
+          <Route path="/checkout" element={ <Suspense fallback = {null}> <Checkout /> </Suspense>} />
+          <Route path="/checkout/success" element={<Suspense fallback = {null}> <SuccessCheckout /> </Suspense>} />
         </Route>
       </Routes>
     </Router>

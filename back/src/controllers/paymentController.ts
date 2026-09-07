@@ -80,11 +80,10 @@ const paymentController =
 			}));
 			const stripesCentsConvertedAmount = Math.round(numericPrice * 100);
 			const stripePaymentIntent = await stripe.paymentIntents.create({
+				payment_method_types: ['card'],
 				amount: stripesCentsConvertedAmount,
 				currency: stripeCurrency,
-				payment_method_types: ['card'],
 				customer: customerId,
-				automatic_payment_methods: { enabled: false },
 				metadata: {
 					userId: userId.toString(),
 					amount: numericPrice.toString(),

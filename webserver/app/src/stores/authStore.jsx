@@ -63,6 +63,8 @@ export const useAuthStore = create((set) => ({
       useUserStore.getState().setUser(user)
       connectSocket(user.id)
     } catch {
+		localStorage.removeItem(SESSION_KEY);
+		useUserStore.getState().setUser(null);
       set({ user: null, token: null, isAuthenticated: false, initializing: false })
     }
   },
