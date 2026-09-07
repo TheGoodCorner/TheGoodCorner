@@ -72,15 +72,17 @@ function ProductDetail() {
     return <ProductDetailSkeleton />;
   }
 
-  if (!product) {
-    return (
-      <div className="container py-16 text-center">
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Produit introuvable</h1>
-        <p className="text-[var(--color-text-muted)] mb-6">Ce produit n'existe pas ou n'est plus disponible.</p>
-        <Button to="/products" variant="primary">Retour aux produits</Button>
-      </div>
-    );
-  }
+  if (!product || Number(product.quantity) <= 0) {
+  return (
+    <div className="container py-16 text-center">
+      <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Produit indisponible</h1>
+      <p className="text-[var(--color-text-muted)] mb-6">
+        Ce produit est actuellement en rupture de stock ou n'est plus disponible.
+      </p>
+      <Button to="/products" variant="primary">Retour aux produits</Button>
+    </div>
+  );
+}
 
   const handleAddToCart = () => {
     const success = addToCart({
@@ -113,8 +115,9 @@ function ProductDetail() {
   };
 
   const relatedProducts = allProducts
-    .filter((p) => p.category?.id === product.category?.id && p.id !== product.id)
-    .slice(0, 4);
+    .filter((p) => p.category?.id === product.category?.id &&
+      p.id !== product.id &&
+      Number(p.quantity) > 0)
 
   const authorName = product.author?.username;
   const memberSince = product.author?.createdAt
@@ -197,7 +200,7 @@ function ProductDetail() {
                 />
               </div>
               <span className={`text-xs ${isOutOfStock ? 'text-red-400 font-semibold' : 'text-[var(--color-text-muted)]'}`}>
-                {!isOutOfStock ? `(${product.quantity} en stock)` : '(Rupture de stock)'}
+                {!isOutOfStock ? `(${product.quantity} en stock)` : '(Victime de son succès)'}
               </span>
             </div>
 
@@ -208,10 +211,10 @@ function ProductDetail() {
               size="lg"
               onClick={handleAddToCart}
               disabled={isOutOfStock}
-              title={isOutOfStock ? "Produit en rupture de stock" : "Ajouter au panier"}
+              title={isOutOfStock ? "Victime de son succès" : "Ajouter au panier"}
               aria-label="Ajouter au panier"
             >
-              {isOutOfStock ? "Produit en rupture de stock" : "Ajouter au panier"}
+              {isOutOfStock ? "Victime de son succès" : "Ajouter au panier"}
             </Button>
           </div>
         </div>

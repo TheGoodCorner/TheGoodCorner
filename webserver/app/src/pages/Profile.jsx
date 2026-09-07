@@ -191,6 +191,7 @@ function Profile() {
               <ProductCard
                 key={product.id}
                 product={{ ...product, author: user }}
+				allowOutOfStock={true}
               />
             ))}
           </div>

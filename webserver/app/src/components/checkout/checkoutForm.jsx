@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { useProductStore } from '../../stores/productStore';
+import { useAuthStore } from '../../stores/authStore';
 import { Wallet } from 'lucide-react';
 
 export default function CheckoutForm({ onSuccess }) {
@@ -44,6 +45,7 @@ export default function CheckoutForm({ onSuccess }) {
       onSuccess();
     }
   };
+  const currentUser = useAuthStore((state) => state.user ?? state.currentUser);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-6">
@@ -58,7 +60,7 @@ export default function CheckoutForm({ onSuccess }) {
 		  business: { name: 'TheGoodCorner' },
 		  fields: {
           billingDetails: {
-            email: 'never', // Stops Link autofill suggestions
+            email: currentUser?.email,
           }
         }}} />
       </div>

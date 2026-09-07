@@ -6,7 +6,10 @@ import { useUIStore } from '../../stores/uiStore';
 import { PlusCircle, Star } from 'lucide-react';
 import Avatar from '../UI/Avatar';
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, allowOutOfStock = false }) {
+
+	if (!product || (!allowOutOfStock && Number(product.quantity) <= 0))
+		return null;
   const addToCart = useCartStore((state) => state.addToCart);
   const openUi = useUIStore((state) => state.openUi);
 
@@ -16,8 +19,8 @@ export default function ProductCard({ product }) {
   const author = product?.author || {};
 
   const handleAddToCart = () => {
-    // On capture la valeur de retour (true ou false) dans 'success'
-    const success = addToCart({
+    // On capture la valeur de retour (true ou false) dans 'succèss'
+    const succèss = addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
@@ -27,7 +30,7 @@ export default function ProductCard({ product }) {
       stock: product.quantity,
     });
 
-    if (success) {
+    if (succèss) {
       setLocalError(null);
       openUi('cart-popover'); // S'ouvre uniquement en cas de succès
     } else {
@@ -118,11 +121,11 @@ export default function ProductCard({ product }) {
           icon={PlusCircle}
           onClick={handleAddToCart}
           disabled={!product.quantity || product.quantity <= 0}
-          title={product.quantity <= 0 ? "Rupture de stock" : "Ajouter au panier"}
+          title={product.quantity <= 0 ? "Victime de son succès" : "Ajouter au panier"}
           aria-label="Ajouter au panier"
           className="w-full"
         >
-          {product.quantity > 0 ? "Ajouter au panier" : "Rupture de stock"}
+          {product.quantity > 0 ? "Ajouter au panier" : "Victime de son succès"}
         </Button>
       </div>
     </div>
