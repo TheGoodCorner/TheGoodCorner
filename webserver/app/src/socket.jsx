@@ -68,6 +68,24 @@ socket.on('new_review', (payload) => {
   }
 });
 
+// --- Notifications amis ---
+socket.on('new_friend_request', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'request', ...payload });
+});
+
+socket.on('friend_request_accepted', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'accepted', ...payload });
+  const { user, setUser } = useUserStore.getState();
+  if (user) {
+    const newFriend = payload.acceptedBy;
+    setUser({ ...user, friends: [...(user.friends || []), newFriend] });
+  }
+});
+
+socket.on('friend_request_rejected', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'rejected', ...payload });
+});
+
 // --- Statut en ligne (amis) ---
 socket.on('online_users_list', (userIds) => {
   useFriendStore.getState().setOnlineUsers(userIds);

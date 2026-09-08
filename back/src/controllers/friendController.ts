@@ -85,16 +85,18 @@ const friendController = {
 					receiverId: parsedReceiverId,
 				},
 				include: {
-					receiver: {
-						select: {
-							id: true,
-							username: true,
-							avatar: true
-						}
-					}
+					sender: { select: { id: true, username: true, avatar: true } },
+					receiver: { select: { id: true, username: true, avatar: true } },
 				}
 			});
 			console.log(`A friend request has been sucessfully sent to ${parsedReceiverId}`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${parsedReceiverId}`).emit('new_friend_request', {
+					requestId: friendRequest.id,
+					sender: friendRequest.sender,
+				});
+			}
 			return (res.status(201).json({ message: `sucessfully sent friend request`, data: friendRequest }));
 		} catch (error) {
 			console.error(error);
@@ -156,8 +158,17 @@ const friendController = {
 			const updated = await prisma.friendRequest.update({
 				where: { id: requestId },
 				data: { status: 'ACCEPTED' },
+				include: {
+					receiver: { select: { id: true, username: true, avatar: true } },
+				},
 			});
 			console.log(`A friend request has been accepted by ${userId}`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${request.senderId}`).emit('friend_request_accepted', {
+					acceptedBy: updated.receiver,
+				});
+			}
 			return (res.status(200).json({ message: '', data: updated }));
 		} catch (error) {
 			console.error(error);
@@ -186,8 +197,17 @@ const friendController = {
 			const updated = await prisma.friendRequest.update({
 				where: { id: requestId },
 				data: { status: 'REJECTED' },
+				include: {
+					receiver: { select: { id: true, username: true, avatar: true } },
+				},
 			});
 			console.log(`A friend request has been rejected by ${userId}`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${request.senderId}`).emit('friend_request_rejected', {
+					rejectedBy: updated.receiver,
+				});
+			}
 			return (res.status(200).json({ message: `a friend request has been rejected by ${requestId}`, data: updated }));
 		} catch (error) {
 			console.error(error);

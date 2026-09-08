@@ -5,6 +5,7 @@ export const useNotificationStore = create(
   persist(
     (set) => ({
       reviewNotifications: [],
+      friendNotifications: [],
       notificationsEnabled: true,
 
       toggleNotifications: () =>
@@ -22,13 +23,23 @@ export const useNotificationStore = create(
         }));
       },
 
-      markAllRead: () => {
+      addFriendNotification: (notification) => {
         set((state) => ({
-          reviewNotifications: state.reviewNotifications.map((n) => ({ ...n, read: true })),
+          friendNotifications: [
+            { ...notification, id: Date.now(), read: false },
+            ...state.friendNotifications,
+          ],
         }));
       },
 
-      reset: () => set({ reviewNotifications: [] }),
+      markAllRead: () => {
+        set((state) => ({
+          reviewNotifications: state.reviewNotifications.map((n) => ({ ...n, read: true })),
+          friendNotifications: state.friendNotifications.map((n) => ({ ...n, read: true })),
+        }));
+      },
+
+      reset: () => set({ reviewNotifications: [], friendNotifications: [] }),
     }),
     {
       name: 'notification-storage',

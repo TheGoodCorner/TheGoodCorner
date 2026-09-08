@@ -18,10 +18,12 @@ function Navbar() {
   const cartCount = useCartStore((state) => state.cartCount);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
+  const friendNotifications = useNotificationStore((state) => state.friendNotifications);
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
 
   const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length;
-  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount;
+  const unreadFriendCount = (friendNotifications || []).filter((n) => !n.read).length;
+  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount + unreadFriendCount;
 
   const openUi = useUIStore((state) => state.openUi);
   const toggleUi = useUIStore((state) => state.toggleUi);
