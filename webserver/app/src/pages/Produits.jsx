@@ -61,11 +61,11 @@ function Products() {
 
 
   return (
-    <div className="bg-[var(--color-bg)]">
-      <div className="products-container bg-[var(--color-bg)]">
+    <div className="bg-transparent">
+      <div className="products-container bg-transparent">
         <div className="products-header text-[var(--color-text)]">
           <h1>Nos Produits</h1>
-          <p className="text-[var(--color-text-muted)]">
+          <p className="text-[var(--color-text)]">
             Retrouvez notre sélection de produits, de peer to peer
           </p>
         </div>
@@ -325,14 +325,14 @@ function Products() {
                     previousLinkClassName="px-2.5 py-2 flex items-center justify-center cursor-pointer"
                     nextClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors overflow-hidden"
                     nextLinkClassName="px-2.5 py-2 flex items-center justify-center cursor-pointer"
-                    breakClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text-muted)]"
+                    breakClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)]"
                     breakLinkClassName="px-3 py-2 block text-sm"
                     disabledClassName="opacity-30 pointer-events-none cursor-not-allowed"
                   />
                 </div>
               )}
             <div className="products-footer border-t border-[var(--color-border)] pt-4 mt-6">
-              <p className="text-[var(--color-text-muted)]">
+              <p className="text-[var(--color-text)]">
                 {filteredProducts.length} produit(s) trouvé(s)
               </p>
             </div>

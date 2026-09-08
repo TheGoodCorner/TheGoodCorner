@@ -34,7 +34,7 @@ function Home() {
 							))}
 						</div>
 					) : (
-						<p className="text-center text-[var(--color-text-muted)]">
+						<p className="text-center text-[var(--color-text)]">
 							Les premiers produits arrivent bientôt.
 						</p>
 					)}

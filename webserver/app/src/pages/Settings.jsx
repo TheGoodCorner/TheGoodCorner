@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
+import { useThemeStore } from '../stores/themeStore';
 import { apiClient } from '../api/client';
 
 const LANGUAGES = [
@@ -16,6 +17,10 @@ export default function Settings() {
 
   const token = useAuthStore((state) => state.token) || localStorage.getItem('token');
   const logout = useAuthStore((state) => state.logout);
+
+   const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const isDarkMode = theme === 'dark';
 
   const userId = useMemo(() => {
     if (!token) return null;
@@ -155,7 +160,6 @@ export default function Settings() {
           </div>
         )}
 
-        {/* 1. Sélection de la langue */}
         <div
           className="mb-6 pb-6"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -188,7 +192,40 @@ export default function Settings() {
           </select>
         </div>
 
-        {/* 2. Notifications */}
+        <div
+          className="mb-6 pb-6 flex items-center justify-between"
+          style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
+        >
+          <div>
+            <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+              Mode sombre
+            </h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+              {isDarkMode ? 'Thème sombre actif' : 'Thème clair actif'}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isDarkMode}
+            onClick={toggleTheme}
+            className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: isDarkMode ? 'var(--color-primary)' : 'var(--color-surface-hover)',
+              focusRingColor: 'var(--color-primary)',
+            }}
+          >
+            <span
+              className="inline-block h-5 w-5 rounded-full shadow-lg transition duration-200"
+              style={{
+                backgroundColor: 'var(--color-on-primary)',
+                transform: isDarkMode ? 'translateX(20px)' : 'translateX(0)',
+              }}
+            />
+          </button>
+        </div>
+
         <div
           className="mb-6 pb-6 flex items-center justify-between"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -223,7 +260,6 @@ export default function Settings() {
           </button>
         </div>
 
-        {/* 3. Developer Mode (Recharge Portefeuille) */}
         <div
           className="mb-8 pb-8"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -330,7 +366,6 @@ export default function Settings() {
           )}
         </div>
 
-        {/* 4. Danger Zone */}
         <div
           className="p-5 rounded-[var(--radius-lg)]"
           style={{

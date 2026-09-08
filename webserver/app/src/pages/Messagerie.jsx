@@ -125,13 +125,13 @@ function Messagerie() {
 
   if (!isAuthenticated || !currentUser?.id) {
   return (
-    <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-[var(--color-bg)]">
+    <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-transparent">
       <div className="container py-16 text-center">
-        <MessageCircle size={40} className="text-[var(--color-text-muted)] mx-auto mb-4" />
+        <MessageCircle size={40} className="text-[var(--color-text)] mx-auto mb-4" />
         <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
           Connecte-toi pour accéder à ta messagerie
         </h1>
-        <p className="text-[var(--color-text-muted)] mb-6">
+        <p className="text-[var(--color-text)] mb-6">
           Retrouve ici toutes tes conversations avec les autres utilisateurs.
         </p>
         <Button to="/authentication" variant="primary">Se connecter</Button>

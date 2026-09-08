@@ -116,12 +116,12 @@ export function CartPopover() {
         {cartItems.length > 0 && (
           <div className="border-t border-[var(--color-border)] pt-6 mt-6 space-y-4">
             {isAuthenticated && (
-              <div className="flex justify-between items-center px-3 py-2 rounded-lg bg-slate-900 border border-slate-800 text-sm">
-                <span className="text-slate-400 flex items-center gap-2">
+              <div className="flex justify-between items-center px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm">
+                <span className="text-slate-500 flex items-center gap-2">
                   <Wallet size={16} className="text-blue-400" />
                   Solde portefeuille :
                 </span>
-                <span className="font-mono font-semibold text-slate-200">
+                <span className="font-mono font-semibold text-[var(--color-text)]">
                   {Number(walletBudget).toFixed(2)} €
                 </span>
               </div>

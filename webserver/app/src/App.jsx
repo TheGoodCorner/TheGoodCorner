@@ -40,7 +40,7 @@ function App() {
     // C'est ce que lisent les tokens (styles/tokens.css) pour que toute
     // l'app réagisse au thème depuis un seul et même endroit.
     useEffect(() => {
-      document.documentElement.dataset.theme = theme
+      document.documentElement.dataset.theme = theme;
     }, [theme])
 
     // Tentative de reconnexion silencieuse au démarrage, une seule fois

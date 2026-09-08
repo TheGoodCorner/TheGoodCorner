@@ -8,14 +8,10 @@ import Avatar from '../UI/Avatar';
 
 export default function ProductCard({ product, allowOutOfStock = false }) {
 
-	if (!product || (!allowOutOfStock && Number(product.quantity) <= 0))
-		return null;
+
   const addToCart = useCartStore((state) => state.addToCart);
   const openUi = useUIStore((state) => state.openUi);
-
-  // Déclaration de l'état local pour le message d'erreur
   const [localError, setLocalError] = useState(null);
-
   const author = product?.author || {};
 
   const handleAddToCart = () => {
@@ -47,6 +43,8 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
     const timer = setTimeout(() => setLocalError(null), 3000);
     return () => clearTimeout(timer);
   }, [localError]);
+	if (!product || (!allowOutOfStock && Number(product.quantity) <= 0))
+		return null;
 
   const sellerInfo = (
     <>

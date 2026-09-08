@@ -53,9 +53,19 @@ export default function SuccessCheckout() {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="min-h-screen flex items-center justify-center px-4 py-12 bg-[var(--color-bg)]"
+      className="relative min-h-screen flex items-center justify-center px-4 py-12 bg-[var(--color-bg)] overflow-hidden"
     >
-      <motion.div className="max-w-md w-full bg-[var(--color-surface)] border border-[var(--color-border)] rounded-2xl p-8 text-center shadow-xl backdrop-blur-sm">
+      {/* Logo 42 en filigrane centré */}
+      <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] md:w-[750px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
+        <img
+          src="/42.svg"
+          alt="42 Logo"
+          className="w-full h-full object-contain neon-42"
+        />
+      </div>
+
+      {/* Carte de confirmation opaque */}
+      <motion.div className="relative z-10 max-w-md w-full bg-[rgba(15,23,42,0.97)] dark:bg-[rgba(11,15,25,0.97)] border border-[var(--color-border)] rounded-2xl p-8 text-center shadow-2xl backdrop-blur-2xl">
         
         {/* Icône de validation avec animation */}
         <motion.div
