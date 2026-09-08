@@ -5,10 +5,20 @@ export const useNotificationStore = create(
   persist(
     (set) => ({
       reviewNotifications: [],
+      notificationsEnabled: true,
+
+      toggleNotifications: () =>
+        set((state) => ({ notificationsEnabled: !state.notificationsEnabled })),
+
+      setNotificationsEnabled: (enabled) =>
+        set({ notificationsEnabled: enabled }),
 
       addReviewNotification: (notification) => {
         set((state) => ({
-          reviewNotifications: [{ ...notification, id: Date.now(), read: false }, ...state.reviewNotifications],
+          reviewNotifications: [
+            { ...notification, id: Date.now(), read: false },
+            ...state.reviewNotifications,
+          ],
         }));
       },
 

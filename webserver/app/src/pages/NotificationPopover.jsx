@@ -18,7 +18,10 @@ export function NotificationPopover() {
     (c) => (unreadCounts[c.interlocutor.id] || 0) > 0
   );
   const unreadReviews = reviewNotifications.filter((n) => !n.read);
+  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
 
+  if (!notificationsEnabled)
+	return null;
   const allNotifications = [
     ...unreadConversations.map((c) => ({
       type: 'message',

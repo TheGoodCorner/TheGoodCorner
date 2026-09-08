@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 import { apiClient } from '../api/client';
+import { useNotificationStore } from '../stores/notificationStore';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -15,6 +16,8 @@ const DEV_SECRET = 'GoodCornerPass';
 export default function Settings() {
   const navigate = useNavigate();
 
+  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
+  const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
   const token = useAuthStore((state) => state.token) || localStorage.getItem('token');
   const logout = useAuthStore((state) => state.logout);
 
@@ -36,10 +39,6 @@ export default function Settings() {
   }, [token]);
 
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'fr');
-  const [notificationsEnabled, setNotificationsEnabled] = useState(() => {
-    const saved = localStorage.getItem('notificationsEnabled');
-    return saved !== null ? JSON.parse(saved) : true;
-  });
 
   const [isDevUnlocked, setIsDevUnlocked] = useState(false);
   const [secretInput, setSecretInput] = useState('');
@@ -56,9 +55,7 @@ export default function Settings() {
   };
 
   const handleToggleNotifications = () => {
-    const newState = !notificationsEnabled;
-    setNotificationsEnabled(newState);
-    localStorage.setItem('notificationsEnabled', JSON.stringify(newState));
+    toggleNotifications();
   };
 
   const handleUnlockDev = (e) => {
