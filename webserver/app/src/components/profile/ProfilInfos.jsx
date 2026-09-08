@@ -110,11 +110,6 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
           label='Produits publiés'
           value={user?.product?.length || '0'}
         />
-        <InfoCard 
-          icon={TrendingUp}
-          label='Taux de vente'
-          value='89%  (fausse donee)'
-        />
         <LocationInfoCard location={user?.location} />
         <InfoCard 
           icon={Star}
