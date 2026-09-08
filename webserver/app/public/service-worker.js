@@ -124,7 +124,17 @@ async function networkFirst(request, cacheName, fallbackUrl) {
       const offline = await caches.match(fallbackUrl);
       if (offline) return offline;
     }
-    throw err;
+    return new Response(
+      JSON.stringify({ 
+        error: 'Network unavailable and no cache found',
+        offline: true 
+      }), 
+      {
+        status: 503,
+        statusText: 'Service Unavailable',
+        headers: { 'Content-Type': 'application/json' }
+      }
+    );
   }
 }
 
