@@ -56,6 +56,18 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('review_deleted', ({ reviewId }) => {
+  useNotificationStore.getState().removeReviewNotification(reviewId);
+  const { user, setUser } = useUserStore.getState();
+  if (user) {
+    setUser({
+      ...user,
+      sellerReviewCount: Math.max(0, (user.sellerReviewCount || 0) - 1),
+      receivedReviews: (user.receivedReviews || []).filter((r) => r.id !== reviewId),
+    });
+  }
+});
+
 socket.on('new_review', (payload) => {
   useNotificationStore.getState().addReviewNotification(payload);
   const { user, setUser } = useUserStore.getState();
@@ -66,6 +78,29 @@ socket.on('new_review', (payload) => {
       receivedReviews: [payload.review, ...(user.receivedReviews || [])],
     });
   }
+});
+
+// --- Notifications amis ---
+socket.on('new_friend_request', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'request', ...payload });
+  useFriendStore.getState().fetchReceivedFriendRequests();
+});
+
+socket.on('friend_request_accepted', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'accepted', ...payload });
+  useFriendStore.getState().fetchFriends();
+  useFriendStore.getState().fetchSentFriendRequests();
+});
+
+socket.on('friend_request_rejected', (payload) => {
+  useNotificationStore.getState().addFriendNotification({ type: 'rejected', ...payload });
+  useFriendStore.getState().fetchSentFriendRequests();
+});
+
+socket.on('friend_removed', () => {
+  useFriendStore.getState().fetchFriends();
+  useFriendStore.getState().fetchSentFriendRequests();
+  useFriendStore.getState().fetchReceivedFriendRequests();
 });
 
 // --- Statut en ligne (amis) ---
