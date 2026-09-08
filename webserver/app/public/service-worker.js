@@ -12,7 +12,7 @@
  * le build sont eux gérés automatiquement par staleWhileRevalidate).
  */
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `tgc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `tgc-runtime-${CACHE_VERSION}`;
 const API_CACHE = `tgc-api-${CACHE_VERSION}`;
@@ -26,7 +26,14 @@ const OFFLINE_URL = '/offline.html';
 // à la volée par staleWhileRevalidate dès le premier chargement, ce qui
 // suffit largement en pratique.
 const PRECACHE_URLS = ['/', OFFLINE_URL, '/manifest.json'];
-
+const OFFLINE_IMAGE_SVG = `
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+  <circle cx="8.5" cy="8.5" r="1.5"/>
+  <polyline points="21 15 16 10 5 21"/>
+  <line x1="2" y1="2" x2="22" y2="22" stroke="#ef4444" stroke-width="2"/>
+</svg>
+`.trim();
 // ---------- INSTALL ----------
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -149,7 +156,23 @@ async function staleWhileRevalidate(request, cacheName) {
       }
       return response;
     })
-    .catch(() => cached);
+    .catch(() => {
+      // Si le réseau échoue et qu'on a la version en cache, on la sert
+      if (cached) return cached;
 
+	  if (request.destination === 'image' || request.url.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i)) {
+        return new Response(OFFLINE_IMAGE_SVG, {
+          headers: { 'Content-Type': 'image/svg+xml' },
+        });
+      }
+      // Si l'image n'est JAMAIS passée par le cache, on évite le crash
+      // en retournant une Response 404 ou 503 propre
+      return new Response('', {
+        status: 404,
+        statusText: 'Not Found in Cache and Offline'
+      });
+    });
+
+  // Si on a le cache, on le sert tout de suite, sinon on attend le réseau
   return cached || networkFetch;
 }

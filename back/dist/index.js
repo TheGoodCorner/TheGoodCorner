@@ -15,9 +15,18 @@ import friendRouter from './routes/friends.js';
 // import { printRequest } from './utils/printHttpRequest.js';
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
-const origin_Url = process.env.CLIENT_URL;
+const allowedOrigin = [process.env.CLIENT_URL, 'http://localhost:8080', 'http://localhost:3000', 'https://TheGoodCorner.fr'];
 app.use(cors({
-    origin: origin_Url,
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigin.indexOf(origin) !== -1) {
+            callback(null, true);
+        }
+        else {
+            callback(new Error('Non autorisé par le CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
     credentials: true
@@ -27,6 +36,7 @@ app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
 app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
+// app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 const rootPath = '/';
 app.use(rootPath, generalRouter); // general routes
 app.use(rootPath, productRouter); // product routes
