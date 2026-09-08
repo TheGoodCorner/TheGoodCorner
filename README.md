@@ -1,4 +1,4 @@
-# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, rchan-re and kkafmagh*
+# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous*
 
 <!-- ![Docker.png](docker.png) -->
 
@@ -93,16 +93,34 @@ Docker Volumes vs Bind Mounts:
 # Instructions
 
 ### **Installation** :
-> ```  
+
+First clone the repository to your machine :
+
+> ```bash
 > git clone <repo_url>  
-> cd TheGoodCorner  
-> make  
+> cd TheGoodCorner
 > ```
 
-### **Usage** :
-> ```  
-> Access the website by typing https://mchanlia.42.fr or https://localhost on your local machine's web-browser.
+Copy the the environment file :
+
+```bash
+cp .env.example .env
+```
+
+Simply run `make` to build and start all containers:
+>```bash
+> make
 >```
+
+To target and start a specific container, use:
+>```bash
+> make <container\_name>
+>```
+
+
+### **Usage** :
+ Access the website by typing https://localhost:4443 for securised access or http://localhost:8080 for normal connection, on your local machine's web-browser.
+
 # Resources
 
 #### Docs
