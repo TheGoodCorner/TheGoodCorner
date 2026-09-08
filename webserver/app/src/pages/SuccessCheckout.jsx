@@ -58,7 +58,7 @@ export default function SuccessCheckout() {
       {/* Logo 42 en filigrane centré */}
       <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] md:w-[750px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
         <img
-          src="/42.svg"
+          src="/icons/42.svg"
           alt="42 Logo"
           className="w-full h-full object-contain neon-42"
         />
