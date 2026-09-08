@@ -14,8 +14,7 @@ export const useProductStore = create((set, get) => ({
   loading: true,
   error: null,
   
-  // Produit de la fiche détail, indépendant de `products` — son propre
-  // cycle de chargement, plus riche en champs.
+  // Produit de la fiche détail, indépendant de `products`
   currentProduct: null,
   currentProductLoading: false,
   currentProductError: null,
@@ -28,20 +27,22 @@ export const useProductStore = create((set, get) => ({
   },
 
   fetchProducts: async () => {
-	if (get().products.length === 0) {
+    if (get().products.length === 0) {
       set({ loading: true });
     }
     try {
       const data = await fetchAllProducts();
-      set({ products: data, loading: false });
+      // Déduplication de sécurité sur la réponse API
+      const uniqueProducts = Array.isArray(data)
+        ? Array.from(new Map(data.map((item) => [String(item.id), item])).values())
+        : [];
+
+      set({ products: uniqueProducts, loading: false });
     } catch (error) {
       set({ error: error.message, loading: false });
     }
   },
-  // GET /products/:id — toujours appelé au montage de la fiche, même si
-  // une version "light" est déjà en cache dans `products` : c'est le seul
-  // moyen d'obtenir les champs propres au détail (avis, stock...) et une
-  // donnée à jour.
+
   fetchProductById: async (id) => {
     set({ currentProductLoading: true, currentProductError: null });
     try {
@@ -53,11 +54,13 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  // Utilisé notamment par les WebSockets
   addProduct: (product) => {
+    if (!product || !product.id) return;
     set((state) => {
-      const exists = state.products.some((p) => p.id === product.id);
+      const exists = state.products.some((p) => String(p.id) === String(product.id));
       if (exists) return state;
-      return { products: [...state.products, product] };
+      return { products: [product, ...state.products] };
     });
   },
 
@@ -66,9 +69,28 @@ export const useProductStore = create((set, get) => ({
     set({ loading: true, error: null });
     try {
       const data = await createProductRequest(productData);
-      set((state) => ({ products: [...state.products, data], loading: false }));
+
+      set((state) => {
+        // Bloque l'ajout si le produit a déjà été injecté (via WebSocket ou double appel)
+        const alreadyExists = state.products.some((p) => String(p.id) === String(data.id));
+        if (alreadyExists) {
+          return { loading: false };
+        }
+        return { 
+          products: [data, ...state.products], 
+          loading: false 
+        };
+      });
+
       const { user, setUser } = useUserStore.getState();
-      if (user) setUser({ ...user, product: [...(user.product ?? []), data] });
+      if (user) {
+        const userProducts = user.product ?? [];
+        const alreadyInUser = userProducts.some((p) => String(p.id) === String(data.id));
+        if (!alreadyInUser) {
+          setUser({ ...user, product: [...userProducts, data] });
+        }
+      }
+
       return data;
     } catch (err) {
       set({ error: err.message, loading: false });
@@ -111,34 +133,41 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
-
-
-  // selectedCategory est un NOM de catégorie (string) ; product.category
-  // est désormais un objet { id, name } — comparaison sur .name.
+  // Filtrage avec déduplication intégrée
   getFilteredProducts: () => {
-    const { products, filters } = get()
+    const { products, filters } = get();
     const currentUser = useUserStore.getState().user;
+
     return products.filter((product) => {
-	  let myCategory = false;
-	  if (!product.quantity || product.quantity <= 0)
-		return false;
-      if (filters.selectedCategory === 'MyProducts')
-	  {
-			myCategory = product.author?.username === currentUser.username;
-	  }
-      const matchSearch = product.name?.toLowerCase().includes(filters.search.toLowerCase())
-      const matchCategory = !filters.selectedCategory || (filters.selectedCategory === 'MyProducts' ? myCategory : product.category?.name === filters.selectedCategory);
-      const matchPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice
-      return matchSearch && matchCategory && matchPrice
-    })
+      let myCategory = false;
+      if (!product.quantity || product.quantity <= 0) return false;
+
+      if (filters.selectedCategory === 'MyProducts') {
+        myCategory = product.author?.username === currentUser?.username;
+      }
+
+      const matchSearch = product.name
+        ?.toLowerCase()
+        .includes(filters.search.toLowerCase());
+
+      const matchCategory =
+        !filters.selectedCategory ||
+        (filters.selectedCategory === 'MyProducts'
+          ? myCategory
+          : product.category?.name === filters.selectedCategory);
+
+      const matchPrice =
+        product.price >= filters.minPrice && product.price <= filters.maxPrice;
+
+      return matchSearch && matchCategory && matchPrice;
+    });
   },
 
   resetFilters: () =>
     set({
       filters: { search: '', selectedCategory: '', minPrice: 0, maxPrice: PRODUCT_PRICE_MAX },
     }),
-  // Lecture locale instantanée (liste déjà chargée) — sert de
-  // placeholder pendant que fetchProductById va chercher la version complète.
+
   getProductById: (id) => {
     return get().products.find((p) => String(p.id) === String(id));
   },
