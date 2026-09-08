@@ -1,11 +1,5 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
-  return null;
-}
 import { useThemeStore } from './stores/themeStore';
 import { useNotificationStore } from './stores/notifications';
 import { useCartStore } from './stores/cartStore';
@@ -31,7 +25,11 @@ import Faq from './pages/Faq';
 import './styles/style.css';
 import './styles/tokens.css';
 
-
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  return null;
+}
 /**
  * Le composant principal de l'application.
  * C'est le point d'entrée qui structure toute l'app.
