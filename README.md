@@ -5,21 +5,22 @@
 # **Program Name** : ['TheGoodCorner']
 
 ### **Short Description** : 
-> This project introduces the fundamentals Docker, how Containers works and interacts with the system as a whole.  
+> This project is a Web Application created in the context of 42 Curriculum's last project Ft_transcendence. It is a custom made e-commerce website that place users in relation in a market type environment where each can buy and sell markets goods to one another.
 
 ### **Table of Content**:
 
 |  ---  |                Section                 |         ---         |
 | :---: | :------------------------------------: | :-----------------: |
 |  1.   |      [Description](#description)       | :large_blue_circle: |
-|  1.1  |     [Program Name](#program-name)     |   :yellow_circle:   |
-|  1.2  |  [Project Summary](#project-summary-)  |   :yellow_circle:   |
-|  1.3  | [Project Description](#project-description-) |   :yellow_circle:   |
-|  1.4  | [Project Features](#project-features-) |   :yellow_circle:   |
 |  2.   |     [Instructions](#instructions)      | :large_blue_circle: |
-|  2.1  |     [Installation](#installation-)     |   :yellow_circle:   |
-|  2.2  |            [Usage](#usage-)            |   :yellow_circle:   |
 |  3.   |        [Resources](#resources)         | :large_blue_circle: |
+|  4.   |   [Team Information](#team-information)| :large_blue_circle: |
+|  5.   |   [Project Management](#project-management)| :large_blue_circle: |
+|  6.   |   [Technical Stack](#technical-stack)| :large_blue_circle: |
+|  7.   |   [Database Schema](#database-schema)| :large_blue_circle: |
+|  8.   |   [Features List](#featured-list)| :large_blue_circle: |
+|  9.   |   [Modules](#modules)| :large_blue_circle: |
+|  10.  |   [Individual Contributions](#individual-contributions) |:large_blue_circle: |
   
 
 # Description
@@ -29,19 +30,16 @@
 
 Introduction :
 
-TheGoodCorner is a project that introduces the fundamentals of Dockerization.
-Docker is a software, that aims at enforcing portability of code and services across all platforms and differing kernels.
+TheGoodCorner is a complete buy and sell website that tries to connect people by allowing them to see online products they posted and get in contact with the seller over a chat system.
 
-It does so by creating small independent boxes called containers that runs using the host machine's hardware but their own specific kernel/system.
-Docker and Docker containers exists on the application layer of the host machine as a process with its own processID. Hence the containers supports "layerization" on top of themselves.
-
-A docker running a specific application or service is called a docker container, and it is based off whats called an image. You can visualize images as cooking recipe that contains all sort of data/configuration for the docker container(it's recipe of something (e.g,NGINX image is the recipe for a web server)).
+The project ships a containerized application, that deals with real registered users over a database system and allows them to interact deeply with eachother.
+It uses, a complete product management system allowing to upload image and a rich presentation of the product and a sorting and filtering system of the products. A complete profile management letting the user custom his own informations(username, email, avatar, phonenumber, etc...), with friends feature with online status, also you can post reviews on other users. A dedicated payment system over Stripe. A working user cart, and finally a notifications system.
 
 - The aim of the project is to go over:
 
-[How to setup a functional system of containers including:]  
+[How to setup a complete Web Architecture and a final polished product]  
 
-- An HTTP Web-Server in the form of **NGINX**.
+- An HTTP Web-Server in the form of **NGINX** and associate .
 - A basic Website in the form of **Wordpress**.
 - A basic database implementation in the form of **MariaDB**.
 
