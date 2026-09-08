@@ -14,6 +14,12 @@ export const useNotificationStore = create(
       setNotificationsEnabled: (enabled) =>
         set({ notificationsEnabled: enabled }),
 
+      removeReviewNotification: (reviewId) => {
+        set((state) => ({
+          reviewNotifications: state.reviewNotifications.filter((n) => n.reviewId !== reviewId),
+        }));
+      },
+
       addReviewNotification: (notification) => {
         set((state) => ({
           reviewNotifications: [

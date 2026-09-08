@@ -174,6 +174,12 @@ const reviewController =
 				});
 			})
 			console.log (`review delete successfull`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${oldReview.reviewedUserId}`).emit('review_deleted', {
+					reviewId: reviewedId,
+				});
+			}
 			return (res.status(201).json({message:' Avis supprime avec succes'}));
 		}
 		catch (error:any){
