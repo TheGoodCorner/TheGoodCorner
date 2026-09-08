@@ -31,8 +31,9 @@ export async function refreshRequest() {
 		};
 	}
 	catch(err){
-		localStorage.removeItem(SESSION_KEY)
-		throw err
+	if (err.response?.status === 401 || err.response?.status === 403)
+		return null;
+	throw err;
 	}
 }
 

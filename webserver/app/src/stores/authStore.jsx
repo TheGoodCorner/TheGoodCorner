@@ -60,10 +60,18 @@ export const useAuthStore = create((set) => ({
 	}
     try {
       const { user, token } = await refreshRequest()
-      set({token, isAuthenticated: true, initializing: false })
+	  if (!token) {
+        localStorage.removeItem(SESSION_KEY);
+        useUserStore.getState().setUser(null);
+        set({ user: null, token: null, isAuthenticated: false, initializing: false });
+        return;
+      }
+      set({user, token, isAuthenticated: true, initializing: false })
       useUserStore.getState().setUser(user)
       connectSocket(user.id)
     } catch {
+		localStorage.removeItem(SESSION_KEY);
+		useUserStore.getState().setUser(null);
       set({ user: null, token: null, isAuthenticated: false, initializing: false })
     }
   },

@@ -3,6 +3,7 @@ import { useMessageStore } from './stores/messageStore';
 import { useNotificationStore } from './stores/notificationStore';
 import { useUserStore } from './stores/userStore';
 import { useProductStore } from './stores/productStore';
+import { useFriendStore } from './stores/friendStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
@@ -28,7 +29,8 @@ export function connectSocket(userId) {
 
 export function disconnectSocket() {
   registeredUserId = null;
-  if (socket.connected) socket.disconnect();
+  if (socket.connected)
+    socket.disconnect();
 }
 
 socket.on('connect', () => {
@@ -37,6 +39,7 @@ socket.on('connect', () => {
   }
 });
 
+// --- Messagerie ----
 socket.on('receive_direct_message', (message) => {
   useMessageStore.getState().receiveMessage(message);
 });
@@ -63,4 +66,17 @@ socket.on('new_review', (payload) => {
       receivedReviews: [payload.review, ...(user.receivedReviews || [])],
     });
   }
+});
+
+// --- Statut en ligne (amis) ---
+socket.on('online_users_list', (userIds) => {
+  useFriendStore.getState().setOnlineUsers(userIds);
+});
+
+socket.on('user_online', ({ userId }) => {
+  useFriendStore.getState().setUserOnline(userId);
+});
+
+socket.on('user_offline', ({ userId }) => {
+  useFriendStore.getState().setUserOffline(userId);
 });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 
 function ScrollToTop() {
@@ -25,8 +25,8 @@ import Profile from './pages/Profile';
 import SellerProfile from './pages/SellerProfile';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
-import Checkout from './pages/Checkout';
-import SuccessCheckout from './pages/SuccessCheckout';
+import Settings from './pages/Settings';
+import Orders from './pages/Orders';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -35,6 +35,9 @@ import './styles/tokens.css';
  * Le composant principal de l'application.
  * C'est le point d'entrée qui structure toute l'app.
  */
+const Checkout = lazy(() => import('./pages/Checkout'));
+const SuccessCheckout = lazy(() => import('./pages/SuccessCheckout'));
+
 function App() {
   const theme = useThemeStore((state) => state.theme)
   const initAuth = useAuthStore((state) => state.initAuth);
@@ -43,7 +46,7 @@ function App() {
     // C'est ce que lisent les tokens (styles/tokens.css) pour que toute
     // l'app réagisse au thème depuis un seul et même endroit.
     useEffect(() => {
-      document.documentElement.dataset.theme = theme
+      document.documentElement.dataset.theme = theme;
     }, [theme])
 
     // Tentative de reconnexion silencieuse au démarrage, une seule fois
@@ -74,13 +77,15 @@ function App() {
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/orders" element={<Orders />} />
         </Route>
 
         {/* Routes sans Navbar/Footer */}
         <Route element={<AuthLayout />}>
           <Route path="/authentication" element={<Login />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout/success" element={<SuccessCheckout />} />
+          <Route path="/checkout" element={ <Suspense fallback = {null}> <Checkout /> </Suspense>} />
+          <Route path="/checkout/success" element={<Suspense fallback = {null}> <SuccessCheckout /> </Suspense>} />
         </Route>
       </Routes>
     </Router>

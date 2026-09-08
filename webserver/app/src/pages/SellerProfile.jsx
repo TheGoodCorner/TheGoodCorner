@@ -164,7 +164,7 @@ function SellerProfile() {
               {viewedUser.phoneNumber && (
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <BadgeCheck size={14} className="text-[var(--color-primary)]" />
-                  Téléphone renseigné
+                  Téléphone renseigné : {viewedUser.phoneNumber}
                 </p>
               )}
             </div>

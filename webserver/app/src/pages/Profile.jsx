@@ -52,6 +52,7 @@ function Profile() {
   const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest)
   const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
   const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest)
+  const onlineUserIds = useFriendStore((state) => state.onlineUserIds);
   const friendError = useFriendStore((state) => state.error)
   const { submitting: friendSubmitting, } = useFriendStore();
 
@@ -59,11 +60,13 @@ function Profile() {
   const activeTab = searchParams.get('tab') || 'products';
   const setActiveTab = (tab) => setSearchParams({ tab });
 
+
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      useFriendStore.getState().fetchSentFriendRequests()
-      useFriendStore.getState().fetchReceivedFriendRequests()
+      useFriendStore.getState().fetchReceivedFriendRequests();
+      useAuthStore.getState().initAuth();
       useFriendStore.getState().fetchFriends();
+      useFriendStore.getState().fetchSentFriendRequests();
     }
   }, [isAuthenticated, user?.id]);
 
@@ -187,6 +190,7 @@ function Profile() {
               <ProductCard
                 key={product.id}
                 product={{ ...product, author: user }}
+				allowOutOfStock={true}
               />
             ))}
           </div>
@@ -388,7 +392,7 @@ function Profile() {
                       className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Avatar src={friend.avatar} alt={friend.username} name={friend.username} size="md"/>
+                        <Avatar src={friend.avatar} alt={friend.username} name={friend.username} status={onlineUserIds[friend.id] ? 'online' : 'offline'} size="md"/>
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
                           <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>

@@ -120,6 +120,8 @@ export const useProductStore = create((set, get) => ({
     const currentUser = useUserStore.getState().user;
     return products.filter((product) => {
 	  let myCategory = false;
+	  if (!product.quantity || product.quantity <= 0)
+		return false;
       if (filters.selectedCategory === 'MyProducts')
 	  {
 			myCategory = product.author?.username === currentUser.username;

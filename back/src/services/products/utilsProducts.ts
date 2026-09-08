@@ -29,7 +29,7 @@ export const findReturnProduct = async (id: string) => {
 		where: {id: productId},
 		include: {category: true, author: true},
 	});
-	if (!product)
+	if (!product || product.quantity! <= 0)
 		return { error: "Product not found.", status: 400 };
 	console.log(`object found !`);
 	return (product);

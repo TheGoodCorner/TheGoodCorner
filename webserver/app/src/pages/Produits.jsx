@@ -1,10 +1,10 @@
-import React from "react";
-import { Filter, ChevronDown } from "lucide-react";
+import React, { useState, useEffect} from "react";
+import { Filter, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useProductStore } from "../stores/productStore";
 import ProductCard from "../components/products/ProductCard";
-import { useState } from "react";
 import { useUserStore } from "../stores/userStore";
 import { PRODUCT_PRICE_MAX } from "../utils/constants";
+import ReactPaginate from "react-paginate";
 
 const STANDARD_CATEGORIES = [
   "All",
@@ -13,6 +13,7 @@ const STANDARD_CATEGORIES = [
   "Combat",
   "Cardio",
 ];
+const itemsPerPage = 10;
 
 function Products() {
   const products = useProductStore((state) => state.products);
@@ -22,37 +23,49 @@ function Products() {
   const getFilteredProducts = useProductStore(
     (state) => state.getFilteredProducts,
   );
-  const fetchAllProducts = useProductStore((state) => state.fetchProducts);
+//   const fetchAllProducts = useProductStore((state) => state.fetchProducts);
   const user = useUserStore((state) => state.user);
   const currentUserId = user?.id;
+  const [isOtherOpen, setIsOtherOpen] = useState(false);
+  const [itemOffset, setItemOffset] = useState(0);
+  const filteredProducts = getFilteredProducts();
 
-  const allCategories = products
-    .map((p) =>
+  useEffect(() => {
+    setItemOffset(0);
+  }, [filters]);
+
+  const endOffset = itemOffset + itemsPerPage;
+  const currentItems = filteredProducts.slice(itemOffset, endOffset);
+  const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * itemsPerPage) % filteredProducts.length;
+    setItemOffset(newOffset);
+    window.scrollTo({ top: 0, behavior: "smooth" })};
+
+  const allCategories = products.map((p) =>
       typeof p.category === "object" ? p.category?.name : p.category,
-    )
-    .filter(Boolean);
-
+    ).filter(Boolean);
+	
   const customCategories = [
     ...new Set(
       allCategories.filter((cat) => !STANDARD_CATEGORIES.includes(cat)),
     ),
   ];
-
   const isCustomSelected = customCategories.includes(filters.selectedCategory);
-  const [isOtherOpen, setIsOtherOpen] = useState(false);
-  const filteredProducts = getFilteredProducts();
 
   const handleCategoryChange = (categoryName) => {
     setFilters({
       selectedCategory: categoryName === "All" ? "" : categoryName,
     });
   };
+
+
   return (
-    <div className="bg-[var(--color-bg)]">
-      <div className="products-container bg-[var(--color-bg)]">
+    <div className="bg-transparent">
+      <div className="products-container bg-transparent">
         <div className="products-header text-[var(--color-text)]">
           <h1>Nos Produits</h1>
-          <p className="text-[var(--color-text-muted)]">
+          <p className="text-[var(--color-text)]">
             Retrouvez notre sélection de produits, de peer to peer
           </p>
         </div>
@@ -281,8 +294,8 @@ function Products() {
                 <p className="no-products text-[var(--color-text-muted)]">
                   Aucun produit disponible pour le moment. Revenez bientôt !
                 </p>
-              ) : filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
+              ) : currentItems.length > 0 ? (
+                currentItems.map((product) => (
                   <ProductCard key={product.id} product={product} />
                 ))
               ) : (
@@ -291,8 +304,35 @@ function Products() {
                 </p>
               )}
             </div>
-            <div className="products-footer border-t border-[var(--color-border)]">
-              <p className="text-[var(--color-text-muted)]">
+
+              {!loading && pageCount > 1 && (
+                <div className="mt-8 mb-6 flex justify-center">
+                  <ReactPaginate
+                    breakLabel="..."
+                    nextLabel={<ChevronRight size={18} />}
+                    previousLabel={<ChevronLeft size={18} />}
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={3}
+                    marginPagesDisplayed={2}
+                    pageCount={pageCount}
+                    forcePage={Math.floor(itemOffset / itemsPerPage)}
+                    renderOnZeroPageCount={null}
+                    containerClassName="flex items-center gap-1.5 select-none"
+                    pageClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors overflow-hidden"
+                    pageLinkClassName="px-3.5 py-2 block cursor-pointer text-sm font-medium"
+                    activeClassName="!bg-blue-600 border-blue-600 !text-white"
+                    previousClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors overflow-hidden"
+                    previousLinkClassName="px-2.5 py-2 flex items-center justify-center cursor-pointer"
+                    nextClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors overflow-hidden"
+                    nextLinkClassName="px-2.5 py-2 flex items-center justify-center cursor-pointer"
+                    breakClassName="border border-[var(--color-border)] rounded-md text-[var(--color-text)]"
+                    breakLinkClassName="px-3 py-2 block text-sm"
+                    disabledClassName="opacity-30 pointer-events-none cursor-not-allowed"
+                  />
+                </div>
+              )}
+            <div className="products-footer border-t border-[var(--color-border)] pt-4 mt-6">
+              <p className="text-[var(--color-text)]">
                 {filteredProducts.length} produit(s) trouvé(s)
               </p>
             </div>

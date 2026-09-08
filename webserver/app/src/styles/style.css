@@ -4,6 +4,24 @@
 @tailwind utilities;
 
 /* ========== LAYOUT ========== */
+.neon-42 {
+  opacity: 0.70;
+  filter: 
+    drop-shadow(0 0 8px rgba(0, 0, 0, 0.45))
+    drop-shadow(0 0 20px rgba(0, 0, 0, 0.25))
+    drop-shadow(0 0 45px rgba(0, 0, 0, 0.15));
+  transition: filter 0.4s ease, opacity 0.4s ease;
+}
+
+[data-theme='dark'] .neon-42 {
+  opacity: 0.60;
+  filter: 
+    invert(1)
+    drop-shadow(0 0 6px rgba(255, 255, 255, 0.45))
+    drop-shadow(0 0 15px rgba(255, 255, 255, 0.25))
+    drop-shadow(0 0 35px rgba(255, 255, 255, 0.12));
+}
+
 .container {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
@@ -48,7 +66,16 @@
 
 /* ========== SECTIONS ========== */
 .hero-section {
-  @apply bg-gradient-to-r from-blue-500 via-blue-600 to-purple-600 text-white py-20 px-4;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.887), rgba(65, 67, 172, 0.752));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  @apply text-white py-20 px-4 transition-smooth;
+}
+
+[data-theme='dark'] .hero-section {
+  background: linear-gradient(135deg,rgba(15, 15, 20, 0.887), rgba(47, 48, 116, 0.752));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .hero-title {
@@ -60,7 +87,7 @@
 }
 
 .featured-section {
-  @apply py-16 px-4 bg-[var(--color-surface-hover)];
+  @apply py-16 px-4 bg-transparent;
 }
 
 .featured-title {
@@ -72,7 +99,16 @@
 }
 
 .cta-section {
-  @apply bg-[var(--color-primary)] text-white py-12 px-4;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.887), rgba(65, 67, 172, 0.752));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  @apply text-white py-20 px-4 transition-smooth;
+}
+
+[data-theme='dark'] .cta-section {
+  background: linear-gradient(135deg, rgba(15, 15, 20, 0.887),  rgba(47, 48, 116, 0.752));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .cta-title {
@@ -287,17 +323,12 @@
   animation: shake 0.5s ease-in-out;
 }
 
-
-
-
-
-
 /*argnqngjkeragkjneragjnkjrgneakjrln*/
 .products-container {
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  background: var(--color-bg);
+  background: transparent;
 }
 
 .products-header {
@@ -311,7 +342,7 @@
 }
 
 .products-header p {
-  color: #666;
+  color: var(--color-text);
   font-size: 1.1rem;
 }
 

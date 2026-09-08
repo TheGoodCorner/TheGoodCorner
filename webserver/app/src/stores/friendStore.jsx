@@ -16,6 +16,7 @@ export const useFriendStore = create((set, get) => ({
   friends: [],
   friendRequests: [], // demandes REÇUES en attente (PENDING)
   sentFriendRequests: [], // demandes ENVOYÉES en attente (PENDING)
+  onlineUserIds: {}, // status isOnline ?
   submitting: false,
   error: null,
 
@@ -189,6 +190,24 @@ export const useFriendStore = create((set, get) => ({
         console.error('fetchFriends error:', err);
       }
     },
+
+  setOnlineUsers: (userIds) => {
+    const map = {};
+    (userIds || []).forEach((id) => { map[String(id)] = true; });
+    set({ onlineUserIds: map });
+  },
+
+  setUserOnline: (userId) => {
+    set((state) => ({ onlineUserIds: { ...state.onlineUserIds, [String(userId)]: true } }));
+  },
+
+  setUserOffline: (userId) => {
+    set((state) => {
+      const next = { ...state.onlineUserIds };
+      delete next[String(userId)];
+      return { onlineUserIds: next };
+    });
+  },
 
   clearError: () => set({ error: null }),
 }));
