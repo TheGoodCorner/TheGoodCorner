@@ -39,6 +39,18 @@ export const useNotificationStore = create(
         }));
       },
 
+      markReviewsRead: () => {
+        set((state) => ({
+          reviewNotifications: state.reviewNotifications.map((n) => ({ ...n, read: true })),
+        }));
+      },
+
+      markFriendsRead: () => {
+        set((state) => ({
+          friendNotifications: state.friendNotifications.map((n) => ({ ...n, read: true })),
+        }));
+      },
+
       reset: () => set({ reviewNotifications: [], friendNotifications: [] }),
     }),
     {

@@ -12,7 +12,8 @@ export function NotificationPopover() {
   const setActiveConversation = useMessageStore((state) => state.setActiveConversation);
   const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
   const friendNotifications = useNotificationStore((state) => state.friendNotifications);
-  const markAllRead = useNotificationStore((state) => state.markAllRead);
+  const markReviewsRead = useNotificationStore((state) => state.markReviewsRead);
+  const markFriendsRead = useNotificationStore((state) => state.markFriendsRead);
   const navigate = useNavigate();
 
   const unreadConversations = conversations.filter(
@@ -54,13 +55,13 @@ export function NotificationPopover() {
   };
 
   const handleReviewClick = () => {
-    markAllRead();
+    markReviewsRead();
     closeUi('notification-popover');
     navigate('/profile?tab=reviews');
   };
 
   const handleFriendNotifClick = () => {
-    markAllRead();
+    markFriendsRead();
     closeUi('notification-popover');
     navigate('/profile?tab=friends');
   };

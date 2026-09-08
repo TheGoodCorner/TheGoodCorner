@@ -235,6 +235,12 @@ const friendController = {
 				where: { id: requestedId },
 			});
 			console.log(`A friend request has been deleted by ${userId}`);
+			const io = req.app.get('io');
+			if (io) {
+				const otherUserId = request.senderId === userId ? request.receiverId : request.senderId;
+				io.to(`user_${otherUserId}`).emit('friend_removed', { requestId: requestedId });
+				io.to(`user_${userId}`).emit('friend_removed', { requestId: requestedId });
+			}
 			return (res.status(204).send());
 		} catch (error) {
 			console.error(error);
