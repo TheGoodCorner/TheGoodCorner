@@ -33,6 +33,9 @@ const ProductController = {
                 }
             });
             console.log(`User created an object`);
+            const io = req.app.get('io');
+            if (io)
+                io.emit('new_product', newProduct);
             return (res.status(201).json({ status: 'OK', data: newProduct }));
         }
         catch (error) {

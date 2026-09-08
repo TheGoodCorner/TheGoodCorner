@@ -11,7 +11,7 @@ export default function MainLayout() {
         className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[700px] lg:w-[850px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center animate-neon-pulse"
       >
         <img 
-          src="/42.svg" 
+          src="/icons/42.svg" 
           alt="42 Neon Logo" 
           className="w-full h-full object-contain neon-42"
         />

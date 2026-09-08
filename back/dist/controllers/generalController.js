@@ -7,6 +7,11 @@ const generalController = {
     getProductsPage: async (_req, res) => {
         try {
             const products = await prisma.product.findMany({
+                where: {
+                    quantity: {
+                        gt: 0
+                    }
+                },
                 include: {
                     category: true, author: {
                         select: {
