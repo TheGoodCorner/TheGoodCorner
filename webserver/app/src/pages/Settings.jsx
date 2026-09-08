@@ -14,11 +14,9 @@ const DEV_SECRET = 'GoodCornerPass';
 export default function Settings() {
   const navigate = useNavigate();
 
-  // Extraction propre du token et de logout depuis authStore
   const token = useAuthStore((state) => state.token) || localStorage.getItem('token');
   const logout = useAuthStore((state) => state.logout);
 
-  // Extraction automatique de l'ID utilisateur depuis le JWT
   const userId = useMemo(() => {
     if (!token) return null;
     try {
@@ -38,7 +36,6 @@ export default function Settings() {
     return saved !== null ? JSON.parse(saved) : true;
   });
 
-  // États Mode Développeur
   const [isDevUnlocked, setIsDevUnlocked] = useState(false);
   const [secretInput, setSecretInput] = useState('');
   const [amountToAdd, setAmountToAdd] = useState(1000);
@@ -88,8 +85,7 @@ export default function Settings() {
         amount: numericAmount,
       });
 
-      const data = response.data
-
+      const data = response.data;
 
       setDevFeedback({
         type: 'success',
@@ -129,29 +125,63 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-140px)] bg-slate-950 text-slate-100 py-12 px-4 flex justify-center items-start">
-      <div className="w-full max-w-xl bg-slate-900 border border-slate-800 rounded-xl p-8 shadow-2xl">
-        <h1 className="text-2xl font-bold mb-6 text-white tracking-wide">Paramètres</h1>
+    <div
+      className="min-h-[calc(100vh-140px)] py-12 px-4 flex justify-center items-start"
+      style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+    >
+      <div
+        className="w-full max-w-xl rounded-[var(--radius-lg)] p-8 shadow-2xl"
+        style={{
+          backgroundColor: 'var(--color-surface)',
+          borderColor: 'var(--color-border)',
+          borderWidth: '1px',
+        }}
+      >
+        <h1 className="text-2xl font-bold mb-6 tracking-wide" style={{ color: 'var(--color-text)' }}>
+          Paramètres
+        </h1>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-950/60 border border-red-800 text-red-300 text-sm rounded-lg">
+          <div
+            className="mb-6 p-3 text-sm rounded-[var(--radius-md)]"
+            style={{
+              backgroundColor: 'var(--color-danger-surface)',
+              borderColor: 'var(--color-danger)',
+              borderWidth: '1px',
+              color: 'var(--color-danger)',
+            }}
+          >
             {error}
           </div>
         )}
 
         {/* 1. Sélection de la langue */}
-        <div className="mb-6 pb-6 border-b border-slate-800">
-          <label htmlFor="language-select" className="block text-sm font-medium text-slate-300 mb-2">
+        <div
+          className="mb-6 pb-6"
+          style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
+        >
+          <label
+            htmlFor="language-select"
+            className="block text-sm font-medium mb-2"
+            style={{ color: 'var(--color-text-muted)' }}
+          >
             Langue de l'application
           </label>
           <select
             id="language-select"
             value={language}
             onChange={handleLanguageChange}
-            className="w-full bg-slate-800 border border-slate-700 text-white rounded-lg p-3 text-base focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer"
+            className="w-full rounded-[var(--radius-md)] p-3 text-base outline-none focus:ring-2 cursor-pointer"
+            style={{
+              backgroundColor: 'var(--color-surface-hover)',
+              borderColor: 'var(--color-border)',
+              borderWidth: '1px',
+              color: 'var(--color-text)',
+              focusRingColor: 'var(--color-primary)',
+            }}
           >
             {LANGUAGES.map((lang) => (
-              <option key={lang.code} value={lang.code} className="bg-slate-900 text-white">
+              <option key={lang.code} value={lang.code}>
                 {lang.flag} {lang.label}
               </option>
             ))}
@@ -159,10 +189,15 @@ export default function Settings() {
         </div>
 
         {/* 2. Notifications */}
-        <div className="mb-6 pb-6 border-b border-slate-800 flex items-center justify-between">
+        <div
+          className="mb-6 pb-6 flex items-center justify-between"
+          style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
+        >
           <div>
-            <h2 className="text-sm font-medium text-slate-200">Notifications</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+              Notifications
+            </h2>
+            <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
               {notificationsEnabled ? 'Notifications activées' : 'Notifications désactivées'}
             </p>
           </div>
@@ -172,26 +207,41 @@ export default function Settings() {
             role="switch"
             aria-checked={notificationsEnabled}
             onClick={handleToggleNotifications}
-            className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-              notificationsEnabled ? 'bg-blue-600' : 'bg-slate-700'
-            }`}
+            className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
+            style={{
+              backgroundColor: notificationsEnabled ? 'var(--color-primary)' : 'var(--color-surface-hover)',
+              focusRingColor: 'var(--color-primary)',
+            }}
           >
             <span
-              className={`inline-block h-5 w-5 rounded-full bg-white shadow-lg transition duration-200 ${
-                notificationsEnabled ? 'translate-x-5' : 'translate-x-0'
-              }`}
+              className="inline-block h-5 w-5 rounded-full shadow-lg transition duration-200"
+              style={{
+                backgroundColor: 'var(--color-on-primary)',
+                transform: notificationsEnabled ? 'translateX(20px)' : 'translateX(0)',
+              }}
             />
           </button>
         </div>
 
         {/* 3. Developer Mode (Recharge Portefeuille) */}
-        <div className="mb-8 pb-8 border-b border-slate-800">
+        <div
+          className="mb-8 pb-8"
+          style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
+        >
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold text-yellow-400 flex items-center gap-2">
+            <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-primary)' }}>
               🛠️ Mode Développeur
             </h2>
             {isDevUnlocked && (
-              <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 border border-emerald-700 text-emerald-300 font-mono">
+              <span
+                className="text-xs px-2 py-0.5 rounded font-mono"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  borderColor: 'var(--color-primary)',
+                  borderWidth: '1px',
+                  color: 'var(--color-on-primary)',
+                }}
+              >
                 Déverrouillé
               </span>
             )}
@@ -199,11 +249,13 @@ export default function Settings() {
 
           {devFeedback && (
             <div
-              className={`mb-4 p-2.5 rounded text-xs font-mono border ${
-                devFeedback.type === 'success'
-                  ? 'bg-emerald-950/40 border-emerald-800 text-emerald-300'
-                  : 'bg-red-950/40 border-red-800 text-red-300'
-              }`}
+              className="mb-4 p-2.5 rounded text-xs font-mono"
+              style={{
+                backgroundColor: devFeedback.type === 'success' ? 'var(--color-surface-hover)' : 'var(--color-danger-surface)',
+                borderColor: devFeedback.type === 'success' ? 'var(--color-primary)' : 'var(--color-danger)',
+                borderWidth: '1px',
+                color: devFeedback.type === 'success' ? 'var(--color-primary)' : 'var(--color-danger)',
+              }}
             >
               {devFeedback.message}
             </div>
@@ -216,18 +268,35 @@ export default function Settings() {
                 placeholder="Entrez la phrase secrète..."
                 value={secretInput}
                 onChange={(e) => setSecretInput(e.target.value)}
-                className="flex-1 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-yellow-500 outline-none"
+                className="flex-1 rounded-[var(--radius-md)] px-3 py-2 text-sm outline-none focus:ring-2"
+                style={{
+                  backgroundColor: 'var(--color-surface-hover)',
+                  borderColor: 'var(--color-border)',
+                  borderWidth: '1px',
+                  color: 'var(--color-text)',
+                }}
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-slate-950 font-semibold text-sm rounded-lg transition"
+                className="px-4 py-2 font-semibold text-sm rounded-[var(--radius-md)] transition hover:opacity-90"
+                style={{
+                  backgroundColor: 'var(--color-primary)',
+                  color: 'var(--color-on-primary)',
+                }}
               >
                 Valider
               </button>
             </form>
           ) : (
-            <div className="bg-slate-950/60 p-4 border border-slate-800 rounded-lg space-y-3">
-              <label className="block text-xs font-mono text-slate-400">
+            <div
+              className="p-4 rounded-[var(--radius-md)] space-y-3"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+                borderWidth: '1px',
+              }}
+            >
+              <label className="block text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
                 Ajouter des fonds au portefeuille (EUR) :
               </label>
               <div className="flex gap-2">
@@ -237,12 +306,22 @@ export default function Settings() {
                   step="10"
                   value={amountToAdd}
                   onChange={(e) => setAmountToAdd(e.target.value)}
-                  className="w-32 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-yellow-500 outline-none"
+                  className="w-32 rounded-[var(--radius-md)] px-3 py-2 text-sm outline-none focus:ring-2"
+                  style={{
+                    backgroundColor: 'var(--color-surface-hover)',
+                    borderColor: 'var(--color-border)',
+                    borderWidth: '1px',
+                    color: 'var(--color-text)',
+                  }}
                 />
                 <button
                   type="button"
                   onClick={handleAddFunds}
-                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium text-sm rounded-lg transition"
+                  className="px-4 py-2 font-medium text-sm rounded-[var(--radius-md)] transition hover:opacity-90"
+                  style={{
+                    backgroundColor: 'var(--color-primary)',
+                    color: 'var(--color-on-primary)',
+                  }}
                 >
                   Créditer le compte
                 </button>
@@ -252,20 +331,31 @@ export default function Settings() {
         </div>
 
         {/* 4. Danger Zone */}
-        <div className="p-5 border border-red-900/60 rounded-xl bg-red-950/20">
-          <h2 className="text-lg font-semibold text-red-400 mb-1">Zone de danger</h2>
-          <p className="text-sm text-slate-400 mb-5">
+        <div
+          className="p-5 rounded-[var(--radius-lg)]"
+          style={{
+            backgroundColor: 'var(--color-danger-surface)',
+            borderColor: 'var(--color-danger)',
+            borderWidth: '1px',
+          }}
+        >
+          <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--color-danger)' }}>
+            Zone de danger
+          </h2>
+          <p className="text-sm mb-5" style={{ color: 'var(--color-text-muted)' }}>
             Une fois votre compte supprimé, toutes vos données seront définitivement effacées du système.
           </p>
           <button
             type="button"
             onClick={handleDeleteAccount}
             disabled={loading}
-            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition ${
-              loading
-                ? 'bg-red-900/40 text-red-300 cursor-not-allowed'
-                : 'bg-red-600 hover:bg-red-700 text-white active:scale-[0.98]'
-            }`}
+            className="px-5 py-2.5 rounded-[var(--radius-md)] text-sm font-semibold transition active:scale-[0.98]"
+            style={{
+              backgroundColor: loading ? 'var(--color-surface-hover)' : 'var(--color-danger)',
+              color: loading ? 'var(--color-danger)' : 'var(--color-on-danger)',
+              opacity: loading ? 0.6 : 1,
+              cursor: loading ? 'not-allowed' : 'pointer',
+            }}
           >
             {loading ? 'Suppression...' : 'Supprimer le compte'}
           </button>
