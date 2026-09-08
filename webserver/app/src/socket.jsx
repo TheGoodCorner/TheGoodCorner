@@ -1,5 +1,8 @@
 import { io } from 'socket.io-client';
 import { useMessageStore } from './stores/messageStore';
+import { useNotificationStore } from './stores/notificationStore';
+import { useUserStore } from './stores/userStore';
+import { useProductStore } from './stores/productStore';
 import { useFriendStore } from './stores/friendStore';
 
 const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
@@ -14,15 +17,14 @@ let registeredUserId = null;
 export function connectSocket(userId) {
   if (!userId)
     return;
-  
-  registeredUserId = userId;
 
-  if (socket.connected || socket.disconnected) {
-    socket.disconnect();
-  }
-  setTimeout(() => {
+  if (!socket.connected) {
     socket.connect();
-  }, 100);
+  }
+  if (registeredUserId !== userId) {
+    socket.emit('register_user', userId);
+    registeredUserId = userId;
+  }
 }
 
 export function disconnectSocket() {
@@ -50,6 +52,21 @@ socket.on('message_deleted', (payload) => {
   useMessageStore.getState().handleMessageDeleted(payload);
 });
 
+socket.on('new_product', (product) => {
+  useProductStore.getState().addProduct(product);
+});
+
+socket.on('new_review', (payload) => {
+  useNotificationStore.getState().addReviewNotification(payload);
+  const { user, setUser } = useUserStore.getState();
+  if (user) {
+    setUser({
+      ...user,
+      sellerReviewCount: (user.sellerReviewCount || 0) + 1,
+      receivedReviews: [payload.review, ...(user.receivedReviews || [])],
+    });
+  }
+});
 
 // --- Statut en ligne (amis) ---
 socket.on('online_users_list', (userIds) => {

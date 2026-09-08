@@ -3,6 +3,7 @@ import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '..
 import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
 import { useMessageStore } from './messageStore'
+import { useNotificationStore } from './notificationStore'
 import { connectSocket, disconnectSocket } from '../socket'
 import { SESSION_KEY } from '../utils/constants'
 
@@ -82,6 +83,7 @@ export const useAuthStore = create((set) => ({
     useCartStore.getState().clearCart()
     useUserStore.getState().logout()
     useMessageStore.getState().reset()
+    useNotificationStore.getState().reset()
     disconnectSocket()
     try {
       await logoutRequest()

@@ -51,6 +51,14 @@ function ProductDetail() {
     fetchProductById(id);
   }, [id, fetchProductById]);
 
+  useEffect(() => {
+      if (!localError) return;
+      const timer = setTimeout(() => {
+        setLocalError(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }, [localError]);
+
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
 

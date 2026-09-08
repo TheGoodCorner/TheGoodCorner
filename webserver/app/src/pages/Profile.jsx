@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack, Check, X } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
@@ -18,6 +18,7 @@ import Avatar from "../components/UI/Avatar";
 function Profile() {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { isAuthenticated, initializing } = useAuthStore();
+  const navigate = useNavigate();
 
   const {
     user,
@@ -55,10 +56,11 @@ function Profile() {
   const friendError = useFriendStore((state) => state.error)
   const { submitting: friendSubmitting, } = useFriendStore();
 
-  const [activeTab, setActiveTab] = useState("products");
-  useEffect(() => {
-    setActiveTab("products");
-  }, []);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'products';
+  const setActiveTab = (tab) => setSearchParams({ tab });
+
+
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       useFriendStore.getState().fetchReceivedFriendRequests();
@@ -440,7 +442,7 @@ function Profile() {
                 Remplire les informations pour créer un nouveau produit
               </p>
             </div>
-            <ProductForm />
+            <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />
           </div>
         </div>
       </section>
