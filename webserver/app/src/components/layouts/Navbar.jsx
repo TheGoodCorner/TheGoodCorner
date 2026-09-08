@@ -1,16 +1,17 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useThemeStore } from '../../stores/themeStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useMessageStore } from '../../stores/messageStore';
 import { useUIStore } from '../../stores/uiStore';
-import { Button } from '../UI/Button';
-import { Moon, Sun, ShoppingCart, Bell } from 'lucide-react';
-import { useClickOutside } from '../../hooks/useClickOutside';
-import { NotificationPopover } from '../../pages/NotificationPopover';
 import { useAuthStore } from '../../stores/authStore';
 import { useNotificationStore } from '../../stores/notificationStore';
-
-import ProfileDropdown from '../profile/ProfileDropdown';
+import { useUserStore } from '../../stores/userStore';
+import { Button } from '../UI/Button';
+import Avatar from '../UI/Avatar';
+import { Moon, Sun, ShoppingCart, Bell, Menu, X, LogOut, UserRound, MessageCircle, Settings, Package } from 'lucide-react';
+import { useClickOutside } from '../../hooks/useClickOutside';
+import { NotificationPopover } from '../../pages/NotificationPopover';
 
 function Navbar() {
   const theme = useThemeStore((state) => state.theme);
@@ -20,6 +21,9 @@ function Navbar() {
   const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
   const friendNotifications = useNotificationStore((state) => state.friendNotifications);
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
+  const { isAuthenticated, logout, initializing } = useAuthStore();
+  const user = useUserStore((state) => state.user);
+  const navigate = useNavigate();
 
   const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length;
   const unreadFriendCount = (friendNotifications || []).filter((n) => !n.read).length;
@@ -30,69 +34,170 @@ function Navbar() {
   const closeUi = useUIStore((state) => state.closeUi);
   const isNotifOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false;
   const notifRef = useClickOutside(() => closeUi('notification-popover'), isNotifOpen);
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useClickOutside(() => setProfileOpen(false), profileOpen);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    setMobileOpen(false);
+    setProfileOpen(false);
+  };
+
+  const navLink = "px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors";
+  const badge = "absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none";
 
   return (
-    <nav className={`navbar navbar-${theme}`}>
-      <Link to="/" className="navbar-logo">
-        🛍️ TheGoodCorner
-      </Link>
-      <Button
-        onClick={toggleTheme}
-        variant="ghost"
-        icon={theme === 'light' ? Moon : Sun}
-        title={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
-        aria-label={`Passer au thème ${theme === 'light' ? 'sombre' : 'clair'}`}
-      />
-      <div className="container">
-        <div className="navbar-wrapper">
-          <ul className={`navbar-menu`}>
-            <li><Link to="/" className="navbar-link">Accueil</Link></li>
-            <li><Link to="/products" className="navbar-link">Produits</Link></li>
-            <li><Link to="/messagerie" className="navbar-link">Messagerie</Link></li>
+    <nav className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-sm">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 gap-4">
+
+          <Link to="/" className="text-xl font-bold text-[var(--color-primary)] whitespace-nowrap flex-shrink-0">
+            🛍️ TheGoodCorner
+          </Link>
+
+          <ul className="hidden md:flex items-center gap-1 flex-1">
+            <li><Link to="/" className={navLink}>Accueil</Link></li>
+            <li><Link to="/products" className={navLink}>Produits</Link></li>
+            {isAuthenticated && <li><Link to="/messagerie" className={navLink}>Messagerie</Link></li>}
           </ul>
-          <div className="navbar-actions">
-            <ProfileDropdown />
-          </div>
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        {isAuthenticated && (
-          <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
-            <Button
-              onClick={() => {
-                if (!notificationsEnabled) return;
-                toggleUi('notification-popover');
-              }}
-              disabled={!notificationsEnabled}
-              variant='ghost'
-              icon={Bell}
-              title={notificationsEnabled ? "Notifications" : "Notifications désactivées"}
-              aria-label="Notifications"
-            />
-            {notificationsEnabled && notificationCount > 0 && (
-              <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-                {notificationCount}
+
+          <div className="hidden md:flex items-center gap-1">
+            <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
+
+            {isAuthenticated && (
+              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+                <Button onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }} variant="ghost" icon={Bell} aria-label="Notifications" />
+                {notificationsEnabled && notificationCount > 0 && (
+                  <div className={badge}>{notificationCount}</div>
+                )}
+                {notificationsEnabled && <NotificationPopover />}
               </div>
             )}
-            {notificationsEnabled && <NotificationPopover />}
-          </div>
-        )}
-        <div className="relative">
-          <Button
-            onClick={() => { openUi('cart-popover'); }}
-            variant='ghost'
-            icon={ShoppingCart}
-            title="Panier d'articles"
-            aria-label="Panier d'articles"
-          />
-          {cartCount > 0 && (
-            <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-              {cartCount}
+
+            <div className="relative">
+              <Button onClick={() => openUi('cart-popover')} variant="ghost" icon={ShoppingCart} aria-label="Panier" />
+              {cartCount > 0 && (
+                <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
+                  {cartCount}
+                </div>
+              )}
             </div>
-          )}
+
+            {initializing ? (
+              <div className="w-24 h-9 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />
+            ) : isAuthenticated ? (
+              <div className="relative" ref={profileRef}>
+                <button
+                  onClick={() => setProfileOpen((o) => !o)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                >
+                  <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
+                  <span className="text-sm font-medium text-[var(--color-text)] max-w-[100px] truncate">{user?.username}</span>
+                </button>
+                {profileOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-52 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-xl py-1 z-50">
+                    <div className="px-3 py-2 border-b border-[var(--color-border)]">
+                      <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
+                      <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                    </div>
+                    {[
+                      { to: '/profile', icon: UserRound, label: 'Mon profil' },
+                      { to: '/messagerie', icon: MessageCircle, label: 'Messagerie' },
+                      { to: '/orders', icon: Package, label: 'Mes commandes' },
+                      { to: '/settings', icon: Settings, label: 'Paramètres' },
+                    ].map(({ to, icon: Icon, label }) => (
+                      <Link key={to} to={to} onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
+                        <Icon size={16} /> {label}
+                      </Link>
+                    ))}
+                    <div className="border-t border-[var(--color-border)] mt-1">
+                      <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors">
+                        <LogOut size={16} /> Se déconnecter
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/authentication" className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
+                Se connecter
+              </Link>
+            )}
+          </div>
+
+          <div className="flex md:hidden items-center gap-1">
+            <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
+
+            {isAuthenticated && (
+              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+                <Button onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }} variant="ghost" icon={Bell} aria-label="Notifications" />
+                {notificationsEnabled && notificationCount > 0 && (
+                  <div className={badge}>{notificationCount}</div>
+                )}
+                {notificationsEnabled && <NotificationPopover />}
+              </div>
+            )}
+
+            <div className="relative">
+              <Button onClick={() => openUi('cart-popover')} variant="ghost" icon={ShoppingCart} aria-label="Panier" />
+              {cartCount > 0 && (
+                <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
+                  {cartCount}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => setMobileOpen((o) => !o)}
+              className="p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
+              aria-label="Menu"
+            >
+              {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {mobileOpen && (
+        <div className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] py-2 px-4">
+          <ul className="flex flex-col gap-1 mb-3">
+            <li><Link to="/" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Accueil</Link></li>
+            <li><Link to="/products" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Produits</Link></li>
+            {isAuthenticated && (
+              <>
+                <li><Link to="/messagerie" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Messagerie</Link></li>
+                <li><Link to="/profile" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Mon profil</Link></li>
+                <li><Link to="/orders" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Mes commandes</Link></li>
+                <li><Link to="/settings" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Paramètres</Link></li>
+              </>
+            )}
+          </ul>
+          <div className="border-t border-[var(--color-border)] pt-3">
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                  </div>
+                </div>
+                <button onClick={handleLogout} className="flex items-center gap-1 flex-shrink-0 px-3 py-1.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] rounded-[var(--radius-md)] transition-colors">
+                  <LogOut size={15} /> Déconnexion
+                </button>
+              </div>
+            ) : (
+              <Link to="/authentication" onClick={() => setMobileOpen(false)} className="block text-center px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
+                Se connecter
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
