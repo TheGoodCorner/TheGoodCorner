@@ -85,6 +85,12 @@ socket.on('friend_request_rejected', (payload) => {
   useFriendStore.getState().fetchSentFriendRequests();
 });
 
+socket.on('friend_removed', () => {
+  useFriendStore.getState().fetchFriends();
+  useFriendStore.getState().fetchSentFriendRequests();
+  useFriendStore.getState().fetchReceivedFriendRequests();
+});
+
 // --- Statut en ligne (amis) ---
 socket.on('online_users_list', (userIds) => {
   useFriendStore.getState().setOnlineUsers(userIds);
