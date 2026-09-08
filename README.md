@@ -141,3 +141,176 @@ Docker Volumes vs Bind Mounts:
 
 #### Others
 [linode](https://en.wikipedia.org/wiki/Linode)
+
+
+
+# Team Information
+
+# Project Management
+
+# Technical Stack
+### Frontend
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **React.js** | UI framework for building component-based interfaces | Excellent ecosystem, reusability, and performance optimization tools |
+| **Tailwind CSS** | Utility-first CSS framework for styling | Rapid development, consistent design system, smaller bundle size than alternatives |
+| **Lucide React** | Icon library with React components | Lightweight, customizable, and tree-shakeable icons |
+| **Axios** | HTTP client for API requests | Promise-based, interceptor support for authentication and error handling |
+| **React Router** | Client-side routing and navigation | Standard routing solution for React SPAs with nested routes and lazy loading |
+| **Zustand** | State management | Minimal boilerplate, easier to learn and maintain than Redux |
+| **Motion (Framer Motion)** | Animation and motion library | Smooth animations, gesture support, and great performance |
+
+**Frontend Justification:** This stack prioritizes developer experience and performance. Tailwind CSS eliminates CSS maintenance, Lucide provides consistent icons, and Axios with React Router creates a solid foundation for API communication and navigation. Zustand and Motion complete the UX with state management and smooth interactions.
+
+---
+
+### Backend
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **Node.js** | JavaScript runtime | Enables full-stack JavaScript development, non-blocking I/O for scalability |
+| **TypeScript** | Static typing for JavaScript | Prevents runtime errors, improves code maintainability and IDE support |
+| **Express.js** | Web framework for REST APIs | Lightweight, flexible, middleware-based architecture for modular code |
+| **Socket.io** | Real-time bidirectional communication | WebSocket support with fallbacks, automatic reconnection, and room-based messaging for live features |
+
+**Backend Justification:** Node.js with TypeScript provides type safety and a unified JavaScript ecosystem. Express is minimal yet powerful enough for complex API requirements without unnecessary overhead. Socket.io enables real-time features (messaging, notifications, live updates) with built-in reliability and fallback mechanisms for browsers that don't support WebSockets.
+
+---
+
+### Database & ORM
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **PostgreSQL** | Relational database | ACID compliance, advanced features, excellent scalability for complex queries |
+| **Prisma ORM** | Type-safe database toolkit | Auto-generated queries, type inference from schema, eliminates SQL bugs or SQL injections|
+
+**Database Justification:** PostgreSQL ensures data integrity and supports complex relationships. Prisma keeps types synchronized across backend and database, reducing errors and improving developer productivity.
+
+---
+
+### Additional Technologies
+
+| Technology | Purpose |
+|-----------|---------|
+| **Stripe** | Payment processing and secure transaction handling |
+
+---
+
+# Database Schema
+
+```mermaid
+erDiagram
+    USER ||--o{ PAYMENT : makes
+    USER ||--o{ PRODUCT : creates
+    USER ||--o{ MESSAGE : "sends & receives"
+    USER ||--o{ FRIENDREQUEST : "sends & receives"
+    USER ||--o{ REVIEW : "writes & receives"
+    USER ||--o{ REFRESHTOKEN : has
+    USER }o--|| LOCATION : "lives in"
+    PRODUCT }o--|| CATEGORY : "belongs to"
+    PRODUCT ||--o{ PAYMENT : "included in"
+    
+    USER {
+        int id PK
+        string email UK
+        string username UK
+        string password
+        string name
+        string avatar
+        string bio
+        string phoneNumber
+        float budget
+        float sellerRating
+        int sellerReviewCount
+        boolean sellerEliteStatus
+        string sellerEliteStatusCatchPhrase
+        string stripeCustomerId UK
+        int locationId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    PRODUCT {
+        int id PK
+        string name
+        float price
+        string description
+        string imageUrl
+        int quantity
+        int userId FK
+        int categoryId FK
+    }
+    
+    CATEGORY {
+        int id PK
+        string name UK
+    }
+    
+    PAYMENT {
+        int id PK
+        string stripeId UK
+        float amount
+        string currency
+        string status
+        int userId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    LOCATION {
+        int id PK
+        string country
+        string region
+        string city
+        string street
+        int houseNumber
+        string additionalInfos
+    }
+    
+    MESSAGE {
+        int id PK
+        string content
+        boolean isRead
+        int senderId FK
+        int receiverId FK
+        timestamp createdAt
+        timestamp modifiedAt
+    }
+    
+    FRIENDREQUEST {
+        int id PK
+        int senderId FK
+        int receiverId FK
+        string status
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    REVIEW {
+        int id PK
+        int reviewRating
+        string reviews
+        int authorId FK
+        int reviewedUserId FK
+        timestamp createdAt
+        timestamp deletedAt
+        timestamp modifiedAt
+    }
+    
+    REFRESHTOKEN {
+        string id PK
+        string hashedToken UK
+        int userId FK
+        timestamp expiresAt
+        timestamp revokedAt
+        string replacedBy
+        timestamp createdAt
+    }
+```
+
+# Features List
+
+# Modules
+
+# Individual Contributions
