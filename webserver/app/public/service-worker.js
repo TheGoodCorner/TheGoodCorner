@@ -34,6 +34,7 @@ const OFFLINE_IMAGE_SVG = `
   <line x1="2" y1="2" x2="22" y2="22" stroke="#ef4444" stroke-width="2"/>
 </svg>
 `.trim();
+
 // ---------- INSTALL ----------
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -71,46 +72,46 @@ self.addEventListener('message', (event) => {
 self.addEventListener('fetch', (event) => {
   const { request } = event;
 
-  // Seul le GET est intercepté : les mutations (login, création produit,
-  // paiement, suppression...) doivent TOUJOURS partir au réseau, jamais
-  // être servies ni écrites depuis un cache.
-  if (request.method !== 'GET') return;
+  // 1. Laisser filer TOUTES les méthodes non-GET (POST, PUT, DELETE, PATCH, etc.)
+  if (request.method !== 'GET') {
+    return;
+  }
 
   const url = new URL(request.url);
 
-  // Laisse passer tout ce qui n'est pas http(s) (ex: extensions navigateur)
-  if (!url.protocol.startsWith('http')) return;
+  // 2. Ignorer tout ce qui n'est pas HTTP(S)
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
 
-  // Stripe.js / iframe Stripe : jamais interceptés, réseau direct requis
-  // par leurs propres mécanismes anti-fraude.
-  if (url.hostname.includes('stripe.com')) return;
+  // 3. Ignorer Stripe
+  if (url.hostname.includes('stripe.com')) {
+    return;
+  }
 
-  // --- Navigation (chargement de page / F5) ---
-  // Network-first : priorité à la version la plus fraîche de l'app, avec
-  // repli sur le cache puis sur /offline.html si le réseau est HS. Une
-  // fois reconnecté, c'est React Router qui reprend la main normalement.
+  // 4. Ignorer les websockets, uploads backend et routes d'authentification
+  if (
+    url.pathname.startsWith('/socket.io/') ||
+    url.pathname.startsWith('/uploads/') ||
+    url.pathname === '/register' ||
+    url.pathname === '/login'
+  ) {
+    return;
+  }
+
+  // 5. Navigation (chargement HTML principal / F5)
   if (request.mode === 'navigate') {
     event.respondWith(networkFirst(request, STATIC_CACHE, OFFLINE_URL));
     return;
   }
 
-  // --- Appels API (/api/...) ---
-  // Network-first + repli cache : prix, stock et messages changent en
-  // permanence donc on veut du frais en priorité, mais un repli sur la
-  // dernière réponse connue évite une page blanche sur réseau instable.
-  // ATTENTION : le repli cache peut renvoyer une donnée légèrement
-  // périmée (ex: ancien stock) — c'est le compromis accepté ici, au
-  // profit de la résilience plutôt que d'une erreur brute.
+  // 6. Appels API GET (/api/...) -> Network-first
   if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirst(request, API_CACHE));
     return;
   }
 
-  // --- Assets statiques same-origin (JS/CSS/fonts buildés, noms hashés
-  // donc immuables) et images produits/avatars ---
-  // Stale-while-revalidate : sert le cache instantanément si dispo, tout
-  // en revalidant en arrière-plan. Idéal pour des fichiers dont le nom
-  // change à chaque nouveau contenu (un nouveau build = un nouveau hash).
+  // 7. Assets statiques (JS, CSS, images, etc.) -> Stale-while-revalidate
   event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
 });
 
@@ -160,13 +161,12 @@ async function staleWhileRevalidate(request, cacheName) {
       // Si le réseau échoue et qu'on a la version en cache, on la sert
       if (cached) return cached;
 
-	  if (request.destination === 'image' || request.url.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i)) {
+      if (request.destination === 'image' || request.url.match(/\.(jpg|jpeg|png|gif|svg|webp)$/i)) {
         return new Response(OFFLINE_IMAGE_SVG, {
           headers: { 'Content-Type': 'image/svg+xml' },
         });
       }
       // Si l'image n'est JAMAIS passée par le cache, on évite le crash
-      // en retournant une Response 404 ou 503 propre
       return new Response('', {
         status: 404,
         statusText: 'Not Found in Cache and Offline'

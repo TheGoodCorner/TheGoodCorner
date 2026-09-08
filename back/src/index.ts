@@ -17,16 +17,8 @@ import friendRouter from './routes/friends.js';
 
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
-const allowedOrigin = [process.env.CLIENT_URL, 'http://localhost:8080', 'http://localhost:3000', 'https://TheGoodCorner.fr'];
 app.use(cors({ // allow cors (cross origin ressource sharing) protocols on all incoming request (prevent denying request)
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigin.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Non autorisé par le CORS'));
-    }
-  },
+  origin: ["http://localhost:8080","https://localhost:4443"],
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true

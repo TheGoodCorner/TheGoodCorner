@@ -13,7 +13,7 @@ const socketToUser = new Map<string, string>();
 export function initializeWebServer(server: HttpServer) {
 	const io = new Server(server, {
 		cors: {
-			origin: 'https://localhost:4443',
+			origin: ["http://localhost:8080","https://localhost:4443"],
 			methods: ['GET', 'POST'],
 			credentials: true
 		}
