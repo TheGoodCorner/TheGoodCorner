@@ -1,6 +1,6 @@
-import { UserPlus, UserMinus, Check, X, Clock } from 'lucide-react';
+import { UserPlus, UserCheck, Check, X, Clock } from 'lucide-react';
 import { Button } from '../UI/Button';
-import { useFriendStore, useFriendshipStatus } from '../../stores/friendStore';
+import { useFriendStore } from '../../stores/friendStore';
 import { useAuthStore } from '../../stores/authStore';
 import { useUserStore } from '../../stores/userStore';
 
@@ -13,12 +13,16 @@ import { useUserStore } from '../../stores/userStore';
 export function FriendActionButton({ userId }) {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const currentUser = useUserStore((state) => state.user);
-  const { status, request, friend } = useFriendshipStatus(userId);
+
+  const friends = useFriendStore((state) => state.friends);
+  const friendRequests = useFriendStore((state) => state.friendRequests);
+  const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
+
   const actionLoadingId = useFriendStore((state) => state.actionLoadingId);
   const sendFriendRequest = useFriendStore((state) => state.sendFriendRequest);
-  const acceptRequest = useFriendStore((state) => state.acceptRequest);
-  const rejectRequest = useFriendStore((state) => state.rejectRequest);
-  const cancelOrRemove = useFriendStore((state) => state.cancelOrRemove);
+  const acceptRequest = useFriendStore((state) => state.acceptFriendRequest);
+  const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
+  const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest);
 
   if (currentUser && String(currentUser.id) === String(userId)) {
     return null;
@@ -32,49 +36,55 @@ export function FriendActionButton({ userId }) {
     );
   }
 
-  if (status === 'friends') {
+  const friend = friends.find((f) => String(f.id) === String(userId));
+  const receivedRequest = friendRequests.find((r) => String(r.senderId) === String(userId));
+  const sentRequest = sentFriendRequests.find((r) => String(r.receiverId) === String(userId));
+
+  if (friend) {
     return (
-      <Button
-        variant="outline"
-        icon={UserMinus}
-        loading={actionLoadingId === friend.friendRequestId}
-        disabled={!friend.friendRequestId}
-        onClick={() => cancelOrRemove(friend.friendRequestId, { isFriend: true })}
-      >
-        Amis · Retirer
-      </Button>
+      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold 
+        bg-[var(--color-primary)] bg-opacity-20
+        border border-[var(--color-primary)] border-opacity-40
+        text-[var(--color-on-primary)]
+        uppercase tracking-wide
+        transition-all duration-150 
+        hover:bg-opacity-30 hover:gap-2.5">
+        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-on-primary)] animate-pulse"></div>
+        <UserCheck size={14} />
+        Amis
+      </span>
     );
   }
 
-  if (status === 'sent') {
+  if (sentRequest) {
     return (
       <Button
         variant="outline"
         icon={Clock}
-        loading={actionLoadingId === request.id}
-        onClick={() => cancelOrRemove(request.id)}
+        loading={actionLoadingId === sentRequest.id}
+        onClick={() => deleteFriendRequest(sentRequest.id)}
       >
         Demande envoyée · Annuler
       </Button>
     );
   }
 
-  if (status === 'received') {
+  if (receivedRequest) {
     return (
       <div className="flex items-center gap-2">
         <Button
           variant="primary"
           icon={Check}
-          loading={actionLoadingId === request.id}
-          onClick={() => acceptRequest(request.id)}
+          loading={actionLoadingId === receivedRequest.id}
+          onClick={() => acceptRequest(receivedRequest.id)}
         >
           Accepter
         </Button>
         <Button
           variant="outline"
           icon={X}
-          loading={actionLoadingId === request.id}
-          onClick={() => rejectRequest(request.id)}
+          loading={actionLoadingId === receivedRequest.id}
+          onClick={() => rejectFriendRequest(receivedRequest.id)}
           aria-label="Refuser la demande"
           title="Refuser la demande"
         />

@@ -11,6 +11,7 @@ import {
 import { useUserStore } from "../stores/userStore";
 import { useAuthStore } from "../stores/authStore";
 import { useReviewStore } from "../stores/reviewStore";
+import { useFriendStore } from "../stores/friendStore";
 import { Button } from "../components/UI/Button";
 import { StarRating } from "../components/UI/StarRating";
 import { ReviewCard } from "../components/reviews/ReviewCard";
@@ -74,6 +75,14 @@ function SellerProfile() {
     setActiveTab("listings");
     setShowAllReviews(false);
   }, [id, fetchUser]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      useFriendStore.getState().fetchFriends();
+      useFriendStore.getState().fetchReceivedFriendRequests();
+      useFriendStore.getState().fetchSentFriendRequests();
+    }
+  }, [isAuthenticated]);
 
   const handleDeleteReview = async (reviewId) => {
     await deleteReview(id, reviewId);

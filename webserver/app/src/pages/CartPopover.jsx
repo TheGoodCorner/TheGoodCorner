@@ -1,10 +1,20 @@
-import { Trash2, CreditCard, Store, Minus, Plus, PackageOpen } from 'lucide-react';
+import { Trash2, CreditCard, Store, Minus, Plus } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { Button } from '../components/UI/Button';
+import { useNavigate } from 'react-router-dom';
+import { useUIStore } from '../stores/uiStore';
 
 export function CartPopover() {
   const { cartItems, cartCount, cartTotal, removeFromCart, updateQuantity } = useCartStore();
+  const closeUi = useUIStore((state) => state.closeUi);
+  const navigate = useNavigate();
+
+  const handleGotoCheckout = () =>
+  {
+    closeUi('cart-popover')
+    navigate("/checkout")
+  }
 
   return (
       <Popover id="cart-popover" position="right" showCloseButton={true} width="w-[700px]">
@@ -91,6 +101,7 @@ export function CartPopover() {
               </span>
             </div>
             <Button
+              onClick={handleGotoCheckout}
               icon={CreditCard}
               className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] py-3 rounded-lg hover:bg-[var(--color-primary-hover)] transition font-medium text-base"
               title="Aller au paiment"

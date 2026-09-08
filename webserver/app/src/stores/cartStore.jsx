@@ -9,6 +9,7 @@ export const useCartStore = create(
       cartCount: 0,
       cartTotal: 0,
       error: null,
+      isHydrated: false,
       
 
       addToCart: (product) => {
@@ -23,7 +24,7 @@ export const useCartStore = create(
           set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
           return false
         }
-		const maxStock = Number(product.stock ?? product.quantity) || 0;
+        const maxStock = Number(product.stock ?? product.quantity) || 0;
         const addCount = Number(product.quantity) || 1;
       
         const state = get(); // Récupère l'état actuel
@@ -73,9 +74,19 @@ export const useCartStore = create(
 
       updateQuantity: (productId, quantity) =>
         set((state) => {
-          const newItems = state.cartItems.map((item) =>
-            item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
-          )
+          const newItems = state.cartItems.map((item) => {
+            if (item.id === productId) {
+              // ✅ Limiter la quantité au stock disponible
+              const validQuantity = Math.max(1, Math.min(quantity, item.stock))
+              
+              if (quantity > item.stock) {
+                set({ error: `Stock limité à ${item.stock} unité(s)` })
+              }
+
+              return { ...item, quantity: validQuantity }
+            }
+            return item
+          })
           return {
             cartItems: newItems,
             cartCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
@@ -102,6 +113,9 @@ export const useCartStore = create(
         cartCount: state.cartCount,
         cartTotal: state.cartTotal,
       }),
+      onRehydrateStorage: () => (state) => {
+        state.isHydrated = true;
+      },
     }
   )
 )

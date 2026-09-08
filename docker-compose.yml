@@ -2,9 +2,11 @@ services:
 
   webserver:
     build:
-      context: ./webserver
-      dockerfile: dockerfile
+      context: .
+      dockerfile: ./webserver/dockerfile
     container_name: webserver
+    env_file:
+      - ./back/.env
     networks:
       - Container_network
     volumes:
