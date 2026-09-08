@@ -1,32 +1,35 @@
 import { Link } from 'react-router-dom';
-import { useThemeStore } from '../../stores/themeStore'
-import { useCartStore } from '../../stores/cartStore'
-import { useMessageStore } from '../../stores/messageStore'
+import { useThemeStore } from '../../stores/themeStore';
+import { useCartStore } from '../../stores/cartStore';
+import { useMessageStore } from '../../stores/messageStore';
 import { useUIStore } from '../../stores/uiStore';
 import { Button } from '../UI/Button';
-import { Moon, Sun, ShoppingCart, Bell } from 'lucide-react'
-import { useClickOutside } from '../../hooks/useClickOutside'
-import { NotificationPopover } from '../../pages/NotificationPopover'
-import { useAuthStore } from '../../stores/authStore'
-import { useNotificationStore } from '../../stores/notificationStore'
+import { Moon, Sun, ShoppingCart, Bell } from 'lucide-react';
+import { useClickOutside } from '../../hooks/useClickOutside';
+import { NotificationPopover } from '../../pages/NotificationPopover';
+import { useAuthStore } from '../../stores/authStore';
+import { useNotificationStore } from '../../stores/notificationStore';
 
-import ProfileDropdown from '../profile/ProfileDropdown'
+import ProfileDropdown from '../profile/ProfileDropdown';
 
 function Navbar() {
-  const theme = useThemeStore((state) => state.theme)
-  const toggleTheme = useThemeStore((state) => state.toggleTheme)
-  const cartCount = useCartStore((state) => state.cartCount)
-  const unreadCounts = useMessageStore((state) => state.unreadCounts)
-  const reviewNotifications = useNotificationStore((state) => state.reviewNotifications)
-  const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length
-  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount
-  const openUi = useUIStore((state) => state.openUi)
-  const toggleUi = useUIStore((state) => state.toggleUi)
-  const closeUi = useUIStore((state) => state.closeUi)
-  const isNotifOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false
-  const notifRef = useClickOutside(() => closeUi('notification-popover'), isNotifOpen)
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
-  
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const cartCount = useCartStore((state) => state.cartCount);
+  const unreadCounts = useMessageStore((state) => state.unreadCounts);
+  const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
+  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
+
+  const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length;
+  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount;
+
+  const openUi = useUIStore((state) => state.openUi);
+  const toggleUi = useUIStore((state) => state.toggleUi);
+  const closeUi = useUIStore((state) => state.closeUi);
+  const isNotifOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false;
+  const notifRef = useClickOutside(() => closeUi('notification-popover'), isNotifOpen);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+
   return (
     <nav className={`navbar navbar-${theme}`}>
       <Link to="/" className="navbar-logo">
@@ -52,37 +55,41 @@ function Navbar() {
         </div>
       </div>
       <div className="flex items-center gap-2">
-      {isAuthenticated && (
-        <div className="relative" ref={notifRef}>
-          <Button
-            onClick={() => {toggleUi('notification-popover')}}
-            variant='ghost'
-            icon={Bell}
-            title="Notifications"
-            aria-label="Notifications"
-          />
-          {notificationCount > 0 && (
-            <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-              {notificationCount}
-            </div>
-          )}
-          <NotificationPopover />
-        </div>
-      )}
-      <div className="relative">
-        <Button
-          onClick={() => {openUi('cart-popover')}}
-          variant='ghost'
-          icon={ShoppingCart}
-          title="Panier d'articles"
-          aria-label="Panier d'articles"
-        />
-        {cartCount > 0 && (
-          <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
-            {cartCount}
+        {isAuthenticated && (
+          <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+            <Button
+              onClick={() => {
+                if (!notificationsEnabled) return;
+                toggleUi('notification-popover');
+              }}
+              disabled={!notificationsEnabled}
+              variant='ghost'
+              icon={Bell}
+              title={notificationsEnabled ? "Notifications" : "Notifications désactivées"}
+              aria-label="Notifications"
+            />
+            {notificationsEnabled && notificationCount > 0 && (
+              <div className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                {notificationCount}
+              </div>
+            )}
+            {notificationsEnabled && <NotificationPopover />}
           </div>
         )}
-      </div>
+        <div className="relative">
+          <Button
+            onClick={() => { openUi('cart-popover'); }}
+            variant='ghost'
+            icon={ShoppingCart}
+            title="Panier d'articles"
+            aria-label="Panier d'articles"
+          />
+          {cartCount > 0 && (
+            <div className="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+              {cartCount}
+            </div>
+          )}
+        </div>
       </div>
     </nav>
   );
