@@ -56,6 +56,18 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('review_deleted', ({ reviewId }) => {
+  useNotificationStore.getState().removeReviewNotification(reviewId);
+  const { user, setUser } = useUserStore.getState();
+  if (user) {
+    setUser({
+      ...user,
+      sellerReviewCount: Math.max(0, (user.sellerReviewCount || 0) - 1),
+      receivedReviews: (user.receivedReviews || []).filter((r) => r.id !== reviewId),
+    });
+  }
+});
+
 socket.on('new_review', (payload) => {
   useNotificationStore.getState().addReviewNotification(payload);
   const { user, setUser } = useUserStore.getState();

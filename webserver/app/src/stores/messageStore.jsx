@@ -258,41 +258,75 @@ export const useMessageStore = create(
       },
 
       handleMessageUpdated: (message) => {
-        set((state) => {
-          const conversationId = Object.keys(state.messagesByConversation).find((cid) =>
-            (state.messagesByConversation[cid] || []).some((m) => m.id === message.id)
-          );
-          if (!conversationId) return state;
-          return {
-            messagesByConversation: {
-              ...state.messagesByConversation,
-              [conversationId]: state.messagesByConversation[conversationId].map((m) =>
-                m.id === message.id ? message : m
-              ),
-            },
-          };
+        const state = get();
+        const conversationId = Object.keys(state.messagesByConversation).find((cid) =>
+          (state.messagesByConversation[cid] || []).some((m) => m.id === message.id)
+        );
+
+        if (!conversationId) {
+          get().fetchConversations();
+          return;
+        }
+
+        const updatedMessages = state.messagesByConversation[conversationId].map((m) =>
+          m.id === message.id ? message : m
+        );
+
+        const currentLastMessage = state.conversations.find(
+          (c) => String(c.interlocutor.id) === String(conversationId)
+        )?.lastMessage;
+
+        const updatedConversations = currentLastMessage?.id === message.id
+          ? state.conversations.map((c) =>
+              String(c.interlocutor.id) === String(conversationId)
+                ? { ...c, lastMessage: { ...c.lastMessage, content: message.content, modifiedAt: message.modifiedAt } }
+                : c
+            )
+          : state.conversations;
+
+        set({
+          messagesByConversation: {
+            ...state.messagesByConversation,
+            [conversationId]: updatedMessages,
+          },
+          conversations: updatedConversations,
         });
       },
 
       handleMessageDeleted: ({ messageId }) => {
-        set((state) => {
-          const next = { ...state.messagesByConversation };
-          const newUnreadCounts = { ...state.unreadCounts };
-          for (const cid of Object.keys(next)) {
-            const msg = next[cid].find((m) => m.id === messageId);
-            if (msg) {
-              const currentUser = useUserStore.getState().user;
-              const isIncoming = String(msg.senderId) !== String(currentUser?.id);
-              const isConversationOpen = String(state.activeConversationId) === String(cid);
-              if (isIncoming && !isConversationOpen && newUnreadCounts[cid] > 0) {
-                newUnreadCounts[cid] = newUnreadCounts[cid] - 1;
-              }
-             next[cid] = next[cid].filter((m) => m.id !== messageId);
-            break;
+        const state = get();
+        const next = { ...state.messagesByConversation };
+        const newUnreadCounts = { ...state.unreadCounts };
+        let updatedConversations = state.conversations;
+        let found = false;
+
+        for (const cid of Object.keys(next)) {
+          const msg = next[cid].find((m) => m.id === messageId);
+          if (msg) {
+            found = true;
+            const currentUser = useUserStore.getState().user;
+            const isIncoming = String(msg.senderId) !== String(currentUser?.id);
+            const isConversationOpen = String(state.activeConversationId) === String(cid);
+            if (isIncoming && !isConversationOpen && newUnreadCounts[cid] > 0) {
+              newUnreadCounts[cid] = newUnreadCounts[cid] - 1;
             }
+            next[cid] = next[cid].filter((m) => m.id !== messageId);
+
+            const newLastMessage = next[cid].length > 0 ? next[cid][next[cid].length - 1] : null;
+            updatedConversations = state.conversations.map((c) =>
+              String(c.interlocutor.id) === String(cid)
+                ? { ...c, lastMessage: newLastMessage }
+                : c
+            );
+            break;
           }
-          return { messagesByConversation: next, unreadCounts: newUnreadCounts };
-        });
+        }
+
+        if (found) {
+          set({ messagesByConversation: next, unreadCounts: newUnreadCounts, conversations: updatedConversations });
+        } else {
+          get().fetchConversations();
+        }
       },
 
       clearError: () => set({ error: null, conversationsError: null, messagesError: null }),

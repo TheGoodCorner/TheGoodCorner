@@ -88,8 +88,10 @@ const messageController = {
 				return res.status(403).json({ status: 'ERROR', message: 'You can only edit your own messages' });
 			const updatedMsg = await MessageService.updateMessage(uniqueMessage.id, content.trim());
 			const io = req.app.get('io');
-			if (io)
+			if (io) {
 				io.to(`user_${uniqueMessage.receiverId}`).emit('message_updated', updatedMsg);
+				io.to(`user_${uniqueMessage.senderId}`).emit('message_updated', updatedMsg);
+			}
 			console.log('Messages successfully updated');
 			return res.status(200).json({data: updatedMsg});
 
@@ -115,8 +117,10 @@ const messageController = {
 
 		await MessageService.deleteMessage(messageId);
 		const io = req.app.get('io');
-		if (io)
+		if (io) {
 			io.to(`user_${existingMessage.receiverId}`).emit('message_deleted', { messageId });
+			io.to(`user_${existingMessage.senderId}`).emit('message_deleted', { messageId });
+		}
 		console.log('Messages successfully deleted');
 		return (res.status(200).json({ status: 'OK', message: 'Message deleted successfully' }));
 	} catch (error) {
