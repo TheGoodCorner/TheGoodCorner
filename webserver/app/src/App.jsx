@@ -27,6 +27,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
 import Settings from './pages/Settings';
 import Orders from './pages/Orders';
+import Faq from './pages/Faq';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -77,6 +78,7 @@ function App() {
           <Route path="/profile/:id" element={<SellerProfile />} />
           <Route path="/confidentialite" element={<PrivacyPolicy />} />
           <Route path="/conditions-generales" element={<TermsOfService />} />
+          <Route path="/faq" element={<Faq />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/orders" element={<Orders />} />
         </Route>
