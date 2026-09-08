@@ -5,11 +5,12 @@ import { useUserStore } from './stores/userStore';
 import { useProductStore } from './stores/productStore';
 import { useFriendStore } from './stores/friendStore';
 
-const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
+// const SOCKET_ORIGIN = ('https://localhost:4443/api').replace(/\/api\/?$/, '');
 
-export const socket = io(SOCKET_ORIGIN, {
+export const socket = io({
   autoConnect: false,
   withCredentials: true,
+  transports: ['websocket'],
 });
 
 let registeredUserId = null;
