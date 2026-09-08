@@ -885,3 +885,11 @@
   padding: 40px 20px;
   color: #999;
 }
+/* ========== STRIPE FIX ========== */
+body > iframe[style*="fixed"][style*="bottom"],
+iframe[name^="__privateStripeMetricsController"],
+div[data-stripe-badge],
+div[class*="StripeBadge"],
+div[data-testid="link-badge"] {
+  display: none !important;
+}

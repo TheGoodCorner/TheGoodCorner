@@ -130,6 +130,16 @@ export default function Checkout() {
         fetchBudget();
     }, [isAuthenticated]);
 
+	useEffect(() => {
+	  return () => {
+	    // Supprime toutes les iframes Stripe persistantes du body en quittant la page
+	    const elements = document.querySelectorAll(
+	      'iframe[name^="__privateStripe"], iframe[src*="stripe.com"], div[class*="stripe"]'
+	    );
+	    elements.forEach((el) => el.remove());
+		stripePromise = null;
+	  };
+	}, []);
     const hasEnoughBudget = walletBudget >= total;
 
     if (!isHydrated) {

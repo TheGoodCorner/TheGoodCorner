@@ -45,8 +45,6 @@ export default function CheckoutForm({ onSuccess }) {
       onSuccess();
     }
   };
-  const currentUser = useAuthStore((state) => state.user ?? state.currentUser);
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-6">
       <div className="p-4 border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)]">
@@ -57,12 +55,7 @@ export default function CheckoutForm({ onSuccess }) {
             googlePay: 'never',
           },
 		  paymentMethodOrder: ['card'],
-		  business: { name: 'TheGoodCorner' },
-		  fields: {
-          billingDetails: {
-            email: currentUser?.email,
-          }
-        }}} />
+		}} />
       </div>
 
       {errorMessage && (
