@@ -2,6 +2,8 @@ import { create } from 'zustand'
 import { loginRequest, registerRequest, refreshRequest, logoutRequest } from '../api/authApi'
 import { useCartStore } from './cartStore'
 import { useUserStore } from './userStore'
+import { useMessageStore } from './messageStore'
+import { useNotificationStore } from './notificationStore'
 import { connectSocket, disconnectSocket } from '../socket'
 import { SESSION_KEY } from '../utils/constants'
 
@@ -72,6 +74,8 @@ export const useAuthStore = create((set) => ({
     set({ user: null, token: null, isAuthenticated: false, error: null })
     useCartStore.getState().clearCart()
     useUserStore.getState().logout()
+    useMessageStore.getState().reset()
+    useNotificationStore.getState().reset()
     disconnectSocket()
     try {
       await logoutRequest()
