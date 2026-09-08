@@ -104,7 +104,6 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
           isEditing={isEditing}
           onChange={onFieldChange('phoneNumber')}
           type='tel'
-          placeholder='0612345678'
         />
         <InfoCard 
           icon={Award}
