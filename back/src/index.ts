@@ -56,7 +56,7 @@ async function startServer()
 		{
 			const server = socketServer.listen(port, '0.0.0.0', () => 
 			{
-				console.log(`Serveur démarré sur :${process.env.CLIENT_URL} en https ou localhost:8080 en http`);
+				console.log(`Serveur démarré sur https://localhost:4443 en https ou localhost:8080 en http`);
 				resolve(); // resolve the promise
 			})
 			server.on('error', (error: NodeJS.ErrnoException): void =>

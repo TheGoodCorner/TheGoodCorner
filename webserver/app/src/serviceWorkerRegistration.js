@@ -107,8 +107,20 @@ export function applyUpdate(registration) {
 
 export function unregister() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.ready
-      .then((registration) => registration.unregister())
-      .catch((error) => console.error(error.message));
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      for (const registration of registrations) {
+        registration.unregister();
+      }
+    }).catch((error) => {
+      console.error("[SW] Erreur lors de la désinscription :", error.message);
+    });
+
+    if ('caches' in window) {
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => caches.delete(cacheName))
+        );
+      });
+    }
   }
 }

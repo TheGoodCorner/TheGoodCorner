@@ -12,7 +12,7 @@
  * le build sont eux gérés automatiquement par staleWhileRevalidate).
  */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `tgc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `tgc-runtime-${CACHE_VERSION}`;
 const API_CACHE = `tgc-api-${CACHE_VERSION}`;
@@ -34,6 +34,8 @@ const OFFLINE_IMAGE_SVG = `
   <line x1="2" y1="2" x2="22" y2="22" stroke="#ef4444" stroke-width="2"/>
 </svg>
 `.trim();
+
+
 
 // ---------- INSTALL ----------
 self.addEventListener('install', (event) => {
