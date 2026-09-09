@@ -199,12 +199,19 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 
 ---
 
-
 # Team Information
 
+| 42 login | Name | Role(s) | Responsibilities |
+| --- | --- | --- | --- |
+| `mchanlia` | Maxence Chanliat | PO/PM / Backend/Frontend Developer | Backend development, Backend API, DevOps, Debugging, Frontend support |
+| `tgomez-f` | Thomas Gomez | PO/PM / Frontend/Backend Developer | Frontend development, Frontend API, Mocking, UI Integration, Backend support |
+| `dpaiva` | Delphine Paiva | PM/Tech Lead / Frontend Developer / Frontend development, Notification service | Frontend architecture, UI integration|
+| `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
+| `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
 # Project Management
 
 # Technical Stack
+
 ### Frontend
 
 | Technology | Purpose | Justification |
@@ -250,6 +257,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | Technology | Purpose |
 |-----------|---------|
 | **Stripe** | Payment processing and secure transaction handling |
+| **Lingui** | i18n service for easy regional translations handling |
 
 ---
 
@@ -391,6 +399,20 @@ erDiagram
 ---
 
 # Modules
+- Module 1 | Major 2pts
+- Module 2 | Minor 1pts
+-
 
 # Individual Contributions
+
+Maxence:
+Thomas:
+Delphine:
+Chloé:
+Charles:
+
 # Known limitations
+
+- groupe split fin aout
+- deadlines shorts
+- blackhole ?
