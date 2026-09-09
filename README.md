@@ -129,6 +129,8 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Compose Environment](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 [Documentation : Docker/Volume](https://docs.docker.com/reference/compose-file/volumes/)  
 [Documentation : Network Bridge](https://en.wikipedia.org/wiki/Network_bridge)  
+[Documentation : i18n](https://www.i18next.com/)  
+[Documentation : i18n](https://www.reddit.com/r/reactjs/comments/11mvp51/what_is_the_best_way_to_handle_a_multilanguage/)  
 
 #### Videos
 [Video : Docker Essentials](https://www.youtube.com/watch?v=pg19Z8LL06w)  

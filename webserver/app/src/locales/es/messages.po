@@ -1,0 +1,257 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-09-09 16:27+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: es\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/pages/Profile.jsx
+msgid "{reviewCount} avis des clients"
+msgstr "{reviewCount} opiniones de los clientes"
+
+#. placeholder {0}: data.newBudget ?? 'updated'
+#: src/pages/Settings.jsx
+msgid "+{numericAmount}€ successfully credited! (New balance: {0}€)"
+msgstr "¡+{numericAmount} € acreditados con éxito! (Nuevo saldo: {0} €)"
+
+#: src/pages/Profile.jsx
+msgid "Accepter"
+msgstr "Aceptar"
+
+#: src/pages/Settings.jsx
+msgid "Account deleted successfully."
+msgstr "Cuenta eliminada con éxito."
+
+#: src/pages/Settings.jsx
+msgid "Add funds to wallet (EUR):"
+msgstr "Añadir fondos al monedero (EUR):"
+
+#: src/pages/Profile.jsx
+msgid "Ajouter un produit"
+msgstr "Añadir un producto"
+
+#: src/pages/Profile.jsx
+msgid "Amis"
+msgstr "Amigos"
+
+#: src/pages/Profile.jsx
+msgid "Annuler"
+msgstr "Cancelar"
+
+#: src/pages/Settings.jsx
+msgid "Application language"
+msgstr "Idioma de la aplicación"
+
+#. placeholder {0}: reviewCount || 0
+#: src/pages/Profile.jsx
+msgid "Avis ({0})"
+msgstr "Opiniones ({0})"
+
+#: src/pages/Profile.jsx
+msgid "Bien tenté, petit fouineur !"
+msgstr "¡Buen intento, curioso!"
+
+#: src/pages/Profile.jsx
+msgid "Chargement..."
+msgstr "Cargando..."
+
+#: src/pages/Profile.jsx
+msgid "Connectez-vous pour accéder à votre page profil, gérer vos annonces et consulter vos avis."
+msgstr "Inicia sesión para acceder a tu perfil, gestionar tus anuncios y consultar tus opiniones."
+
+#: src/pages/Settings.jsx
+msgid "Credit Account"
+msgstr "Acreditar cuenta"
+
+#: src/pages/Profile.jsx
+msgid "Créer un compte"
+msgstr "Crear una cuenta"
+
+#: src/pages/Settings.jsx
+msgid "Danger Zone"
+msgstr "Zona de peligro"
+
+#: src/pages/Settings.jsx
+msgid "Dark mode"
+msgstr "Modo oscuro"
+
+#: src/pages/Settings.jsx
+msgid "Dark theme active"
+msgstr "Tema oscuro activo"
+
+#: src/pages/Settings.jsx
+msgid "Delete Account"
+msgstr "Eliminar cuenta"
+
+#: src/pages/Settings.jsx
+msgid "Deleting..."
+msgstr "Eliminando..."
+
+#. placeholder {0}: sentFriendRequests.length
+#: src/pages/Profile.jsx
+msgid "Demandes envoyées ({0})"
+msgstr "Solicitudes enviadas ({0})"
+
+#. placeholder {0}: receivedFriendRequests.length
+#: src/pages/Profile.jsx
+msgid "Demandes reçues ({0})"
+msgstr "Solicitudes recibidas ({0})"
+
+#: src/pages/Settings.jsx
+msgid "Developer Mode"
+msgstr "Modo desarrollador"
+
+#: src/pages/Settings.jsx
+msgid "Developer mode unlocked!"
+msgstr "¡Modo desarrollador desbloqueado!"
+
+#: src/pages/Profile.jsx
+msgid "En attente de réponse"
+msgstr "Esperando respuesta"
+
+#: src/pages/Settings.jsx
+msgid "Enter secret passphrase..."
+msgstr "Introduce la frase de contraseña secreta..."
+
+#: src/pages/Profile.jsx
+msgid "Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
+msgstr "Envía solicitudes de amistad para conectar con otros usuarios"
+
+#: src/pages/Settings.jsx
+msgid "Error crediting wallet."
+msgstr "Error al acreditar el monedero."
+
+#: src/pages/Settings.jsx
+msgid "Error during deletion."
+msgstr "Error durante la eliminación."
+
+#: src/pages/Profile.jsx
+msgid "Introuvable, réessaie après rechargement"
+msgstr "No encontrado, inténtalo de nuevo tras recargar"
+
+#: src/pages/Settings.jsx
+msgid "Invalid secret pass phrase."
+msgstr "Frase de contraseña secreta no válida."
+
+#: src/pages/Settings.jsx
+msgid "Light theme active"
+msgstr "Tema claro activo"
+
+#. placeholder {0}: friends.length
+#. placeholder {0}: friends?.length || 0
+#: src/pages/Profile.jsx
+msgid "Mes amis ({0})"
+msgstr "Mis amigos ({0})"
+
+#. placeholder {0}: user?.product?.length || 0
+#: src/pages/Profile.jsx
+msgid "Mes Annonces ({0})"
+msgstr "Mis anuncios ({0})"
+
+#: src/pages/Profile.jsx
+msgid "Mes avis"
+msgstr "Mis opiniones"
+
+#: src/pages/Settings.jsx
+msgid "Notifications"
+msgstr "Notificaciones"
+
+#: src/pages/Settings.jsx
+msgid "Notifications disabled"
+msgstr "Notificaciones desactivadas"
+
+#: src/pages/Settings.jsx
+msgid "Notifications enabled"
+msgstr "Notificaciones activadas"
+
+#: src/pages/Settings.jsx
+msgid "Once your account is deleted, all your data will be permanently removed from the system."
+msgstr "Una vez eliminada tu cuenta, todos tus datos se borrarán permanentemente del sistema."
+
+#: src/pages/Settings.jsx
+msgid "Permanently delete your account? This cannot be undone."
+msgstr "¿Eliminar permanentemente tu cuenta? Esta acción no se puede deshacer."
+
+#: src/pages/Profile.jsx
+msgid "Personne vous a laisser d'avis pour l'instant"
+msgstr "Nadie te ha dejado una opinión por el momento"
+
+#: src/pages/Settings.jsx
+msgid "Please enter a valid amount."
+msgstr "Por favor, introduce un importe válido."
+
+#: src/pages/Profile.jsx
+msgid "Poster votre premier produit en remplissant le formulaire ci-dessous."
+msgstr "Publica tu primer producto rellenando el siguiente formulario."
+
+#: src/pages/Profile.jsx
+msgid "Refuser"
+msgstr "Rechazar"
+
+#: src/pages/Profile.jsx
+msgid "Remplire les informations pour créer un nouveau produit"
+msgstr "Rellena los datos para crear un nuevo producto"
+
+#: src/pages/Profile.jsx
+msgid "Se connecter"
+msgstr "Iniciar sesión"
+
+#: src/pages/Settings.jsx
+msgid "Settings"
+msgstr "Configuración"
+
+#: src/pages/Profile.jsx
+msgid "Souhaite devenir ami avec toi"
+msgstr "Quiere ser tu amigo"
+
+#: src/pages/Profile.jsx
+msgid "Supprimer"
+msgstr "Eliminar"
+
+#: src/pages/Settings.jsx
+msgid "Unlocked"
+msgstr "Desbloqueado"
+
+#: src/pages/Settings.jsx
+msgid "User ID not found in token."
+msgstr "ID de usuario no encontrado en el token."
+
+#: src/pages/Settings.jsx
+msgid "User identifier not found."
+msgstr "Identificador de usuario no encontrado."
+
+#: src/pages/Profile.jsx
+msgid "Utilisateur"
+msgstr "Usuario"
+
+#: src/pages/Settings.jsx
+msgid "Validate"
+msgstr "Validar"
+
+#: src/pages/Profile.jsx
+msgid "Voir moins d'avis"
+msgstr "Ver menos opiniones"
+
+#: src/pages/Profile.jsx
+msgid "Voir tous les avis ({reviewCount})"
+msgstr "Ver todas las opiniones ({reviewCount})"
+
+#: src/pages/Profile.jsx
+msgid "Vous n'avez aucun article en vente."
+msgstr "No tienes ningún artículo a la venta."
+
+#: src/pages/Profile.jsx
+msgid "Vous n'avez pas d'amis pour l'instant"
+msgstr "No tienes amigos por el momento"
+
+#: src/pages/Profile.jsx
+msgid "Vous n'êtes pas connecté"
+msgstr "No has iniciado sesión"
