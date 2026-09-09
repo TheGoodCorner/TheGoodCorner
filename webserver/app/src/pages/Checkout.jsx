@@ -284,7 +284,7 @@ export default function Checkout() {
                 </motion.div>
                 <motion.div
                     variants={itemVariants}
-                    className="bg-[rgba(15,23,42,0.97)] dark:bg-[rgba(11,15,25,0.97)] backdrop-blur-2xl rounded-2xl border border-[var(--color-border)] p-8 shadow-2xl"
+                    className="bg-[var(--color-bg)] backdrop-blur-2xl rounded-2xl border border-[var(--color-border)] p-8 shadow-2xl"
                 >
                     {/* Items List */}
                     <motion.div className="mb-6">

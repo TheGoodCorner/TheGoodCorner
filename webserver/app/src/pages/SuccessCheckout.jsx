@@ -65,7 +65,7 @@ export default function SuccessCheckout() {
       </div>
 
       {/* Carte de confirmation opaque */}
-      <motion.div className="relative z-10 max-w-md w-full bg-[rgba(15,23,42,0.97)] dark:bg-[rgba(11,15,25,0.97)] border border-[var(--color-border)] rounded-2xl p-8 text-center shadow-2xl backdrop-blur-2xl">
+      <motion.div className="relative z-10 max-w-md w-full bg-[var(--color-bg)] border border-[var(--color-border)] rounded-2xl p-8 text-center shadow-2xl backdrop-blur-2xl">
         
         {/* Icône de validation avec animation */}
         <motion.div
