@@ -181,6 +181,9 @@ export default function Checkout() {
             const cartSnapshot = cartItems.map((item) => ({
                 productId: item.id,
                 quantity: item.quantity,
+                priceAtPurchase: item.price,
+                name: item.name,
+                imageUrl: item.imageUrl,
             }));
 
             const payload = {
