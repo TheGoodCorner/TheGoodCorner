@@ -248,6 +248,7 @@ erDiagram
         string currency
         string status
         int userId FK
+        Json cartSnapshot
         timestamp createdAt
         timestamp updatedAt
     }
@@ -304,6 +305,28 @@ erDiagram
 ```
 
 # Features List
+
+| Fonctionnalité | Description |
+|---|---|
+| 🔐 **Authentification & gestion de session** | Inscription et connexion par email/mot de passe, déconnexion. Session maintenue via access token en mémoire et refresh token en cookie httpOnly. Reconnexion silencieuse au chargement avec refresh automatique de token sur réponse 401. |
+| 🛍️ **Catalogue produits (marketplace)** | Liste paginée des produits avec filtres par catégorie (standards et personnalisées) et fourchette de prix. Page de détail avec image, description, sélecteur de quantité, informations vendeur et suggestions de produits similaires. |
+| ➕ **Publication de produits** | Formulaire de création d'annonce (nom, prix, catégorie, description, image) avec validation côté client et upload multipart. |
+| 🛒 **Panier d'achat** | Ajout, retrait et modification de quantité d'articles. Vérification du stock disponible et blocage d'achat de son propre produit. Panier persisté en localStorage et accessible via popover dans la Navbar. |
+| 💳 **Paiement (Stripe) & portefeuille virtuel** | Tunnel de paiement intégré via Stripe Elements (PaymentElement). Affichage du solde du portefeuille virtuel avant validation et page de confirmation après paiement réussi. |
+| 📋 **Historique des commandes** | Page listant les transactions passées avec statut, date, montant et détail des articles achetés (image et quantité). |
+| 👤 **Profil utilisateur** | Consultation et édition du profil personnel (email, téléphone, bio, adresse, avatar) avec validation. Profil public vendeur avec annonces, note moyenne et date d'inscription. Suppression de compte. |
+| ⭐ **Avis & notation des vendeurs** | Système de notation (1-5 étoiles) avec commentaire. Un seul avis par vendeur, éditable et supprimable. Badge « Vendeur Elite » automatique à partir de 20 avis. |
+| 💬 **Messagerie instantanée** | Messagerie privée en temps réel (Socket.IO). Conversations avec recherche, fil de discussion, envoi/édition/suppression de messages. Badges de messages non lus et masquage de conversation. |
+| 👥 **Système d'amis** | Envoi, acceptation, refus et annulation de demandes d'ami. Liste d'amis avec indicateur de statut en ligne/hors-ligne mis à jour en temps réel. |
+| 🔔 **Notifications** | Centre de notifications regroupant messages non lus, nouveaux avis et demandes d'ami, mis à jour en temps réel. Activables/désactivables depuis les paramètres. |
+| 🌓 **Thème clair / sombre** | Bascule entre thème clair et sombre depuis la Navbar ou les Paramètres. Préférence persistée en localStorage et propagée via tokens CSS. |
+| ⚙️ **Paramètres du compte** | Choix de la langue d'affichage, bascule du thème et des notifications, mode développeur (crédit fictif pour tests), suppression définitive du compte. |
+| 📄 **Pages légales & FAQ** | Pages statiques : Politique de confidentialité, Conditions générales d'utilisation et FAQ avec sommaire ancré. |
+| 📱 **PWA & résilience hors-ligne** | Service Worker en production pour mise en cache des ressources et consultation hors-ligne. Détection automatique des nouvelles versions avec invite de rechargement. |
+| 🔗 **Robustesse couche API** | Client HTTP centralisé (Axios) avec attachement automatique du token, file d'attente lors du refresh et retry automatique avec backoff exponentiel sur erreur 429. |
+| 🎨 **Design system / UI Kit** | Bibliothèque de composants réutilisables (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) pilotés par tokens CSS pour cohérence visuelle et compatibilité clair/sombre. |
+
+---
 
 # Modules
 
