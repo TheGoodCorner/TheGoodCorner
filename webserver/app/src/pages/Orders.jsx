@@ -91,6 +91,29 @@ export default function Orders() {
     return rawSrc;
   };
 
+  // 🔧 FUSIONNER cartSnapshot + products
+  const getMergedOrderItems = (order) => {
+    const cartSnapshot = order.cartSnapshot || [];
+    const productsMap = new Map(
+      (order.products || []).map((p) => [p.id, p])
+    );
+
+    return cartSnapshot.map((snapshot) => {
+      const currentProduct = productsMap.get(snapshot.productId);
+
+      return {
+        productId: snapshot.productId,
+        title: snapshot.name || currentProduct?.title || currentProduct?.name || 'Produit supprimé',
+        quantity: snapshot.quantity, // Vraie quantité d'achat (snapshot)
+        priceAtPurchase: snapshot.priceAtPurchase || currentProduct?.price || 0,
+        images: currentProduct?.images,
+        image: currentProduct?.image,
+        imageUrl: snapshot.imageUrl,
+        thumbnail: currentProduct?.thumbnail,
+      };
+    });
+  };
+
   return (
     <div className="min-h-[calc(100vh-140px)] bg-[var(--color-bg)] text-[var(--color-text)] py-10 px-4 flex justify-center items-start">
       <div className="w-full max-w-4xl bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-lg)] p-8 shadow-2xl">
@@ -141,7 +164,8 @@ export default function Orders() {
         {!loading && !error && orders.length > 0 && (
           <div className="space-y-4">
             {orders.map((order) => {
-              const items = order.products || [];
+              // fusion avec snapshot de cart
+              const mergedItems = getMergedOrderItems(order);
 
               return (
                 <div
@@ -165,23 +189,26 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  {items.length > 0 ? (
+                  {mergedItems.length > 0 ? (
                     <div className="mt-4 pt-1">
                       <p className="text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-semibold mb-2">
-                        Articles commandés ({items.length})
+                        Articles commandés ({mergedItems.length})
                       </p>
                       <ul className="divide-y divide-[var(--color-border)]">
-                        {items.map((item, idx) => {
+                        {mergedItems.map((item, idx) => {
                           const imageUrl = getProductImageUrl(item);
 
                           return (
-                            <li key={item.id || idx} className="py-2.5 flex items-center justify-between text-sm">
+                            <li
+                              key={item.productId || idx}
+                              className="py-2.5 flex items-center justify-between text-sm"
+                            >
                               <div className="flex items-center gap-3.5">
                                 <div className="w-12 h-12 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] border border-[var(--color-border)] overflow-hidden flex items-center justify-center shrink-0">
                                   {imageUrl ? (
                                     <img
                                       src={imageUrl}
-                                      alt={item.title || item.name}
+                                      alt={item.title}
                                       className="w-full h-full object-cover"
                                       onError={(e) => {
                                         e.currentTarget.style.display = 'none';
@@ -195,18 +222,16 @@ export default function Orders() {
 
                                 <div>
                                   <span className="text-[var(--color-text)] font-medium block">
-                                    {item.title || item.name || 'Produit'}
+                                    {item.title}
                                   </span>
-                                  {item.quantity && (
-                                    <span className="text-xs text-[var(--color-text-muted)]">
-                                      Quantité : {item.quantity}
-                                    </span>
-                                  )}
+                                  <span className="text-xs text-[var(--color-text-muted)]">
+                                    Quantité : {item.quantity}
+                                  </span>
                                 </div>
                               </div>
 
                               <span className="text-[var(--color-text)] font-mono font-medium">
-                                {item.price ? `${Number(item.price).toFixed(2)} €` : ''}
+                                {Number(item.priceAtPurchase).toFixed(2)} €
                               </span>
                             </li>
                           );

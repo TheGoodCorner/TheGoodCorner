@@ -19,7 +19,7 @@ const paymentController =
 			if (!userId)
 				return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
 
-			const { stripeCurrency = 'eur', productId = [], quantity = [] } = req.body;
+			const { stripeCurrency = 'eur', productId = [], quantity = [], cartSnapshot = [] } = req.body;
 
 			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
 				return (res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' }));
@@ -49,7 +49,13 @@ const paymentController =
 
 			if (products.length !== productId.length)
 				return (res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' }));
+			
+			if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0)
+				return (res.status(400).json({ status: 'ERROR', message: 'Snapshot du panier invalide' }));
 
+			if (cartSnapshot.length !== productId.length)
+				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence: snapshot ne match pas le cart' }));
+			
 			const numericPrice = products.reduce((sum, item) => {
 				const itemQty = quantityMap.get(item.id) || 0;
 				return (sum + (Number(item.price) * itemQty));
@@ -105,6 +111,7 @@ const paymentController =
 							currency: stripeCurrency,
 							status: 'PENDING',
 							userId: userId,
+							cartSnapshot: cartSnapshot,
 							products: {
 								connect: productId.map((id: number) => ({ id })),
 						}}

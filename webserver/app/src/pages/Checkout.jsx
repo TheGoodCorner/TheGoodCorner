@@ -178,10 +178,19 @@ export default function Checkout() {
             const productId = cartItems.map((item) => item.id);
             const quantity = cartItems.map((item) => item.quantity);
 
+            const cartSnapshot = cartItems.map((item) => ({
+                productId: item.id,
+                quantity: item.quantity,
+                priceAtPurchase: item.price,
+                name: item.name,
+                imageUrl: item.imageUrl,
+            }));
+
             const payload = {
                 productId,
                 quantity,
                 stripeCurrency: 'eur',
+                cartSnapshot,
             };
 
             const res = await createPayment(payload);
