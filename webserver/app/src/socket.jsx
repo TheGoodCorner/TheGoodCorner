@@ -57,6 +57,16 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('product_sold', (payload) => {
+  useNotificationStore.getState().addNotification({
+    id: Date.now(),
+    type: 'PRODUCT_SOLD',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
+});
+
 socket.on('review_deleted', ({ reviewId }) => {
   const notifs = useNotificationStore.getState().notifications;
   const toRemove = notifs.find((n) => n.type === 'REVIEW' && n.content?.reviewId === reviewId);

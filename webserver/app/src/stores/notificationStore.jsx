@@ -36,11 +36,11 @@ export const useNotificationStore = create(
       },
 
       markAsRead: async (id) => {
+        set((state) => ({
+          notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
+        }));
         try {
           await markNotificationReadRequest(id);
-          set((state) => ({
-            notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
-          }));
         } catch (error) {
           console.error('markAsRead error:', error);
         }

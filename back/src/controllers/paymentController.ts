@@ -178,10 +178,22 @@ const paymentController =
 						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
 						if (updatedProduct.userId) {
 							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
-							const updatedSellerBudget = await tx.user.update({
+							await tx.user.update({
 								where: { id: updatedProduct.userId },
 								data: { budget: { increment: sellerGain } }
-							})
+							});
+							await tx.notification.create({
+								data: {
+									userId: updatedProduct.userId,
+									type: 'PRODUCT_SOLD',
+									content: {
+										productId: updatedProduct.id,
+										productName: updatedProduct.name,
+										quantity: Number(item.qty),
+										gain: sellerGain,
+									},
+								},
+							});
 						}
 					}
 					// 2. Decrement user budget securely
@@ -196,6 +208,20 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
+				const io = req.app.get('io');
+				if (io) {
+					for (const item of cart) {
+						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
+						if (product?.userId) {
+							io.to(`user_${product.userId}`).emit('product_sold', {
+								productId: product.id,
+								productName: product.name,
+								quantity: Number(item.qty),
+								gain: Number(item.qty) * Number(product.price),
+							});
+						}
+					}
+				}
 			} catch (dbError: any) {
 				console.error('Error applying DB updates:', dbError);
 				return (res.status(500).end()); // Let Stripe retry later
