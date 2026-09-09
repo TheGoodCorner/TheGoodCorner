@@ -40,12 +40,12 @@ msgstr "{0, plural, one {# producto encontrado} other {# productos encontrados}}
 #. placeholder {1}: activeReviews.length
 #: src/pages/SellerProfile.jsx
 msgid "{0} ({1} avis)"
-msgstr "{0} ({1} opiniones)"
+msgstr "{0} ({1} reseña)"
 
 #. placeholder {0}: userRating.toFixed(1)
 #: src/components/profile/ProfilHeader.jsx
 msgid "{0} ({reviewCount, plural, one {# avis} other {# avis}})"
-msgstr "{0} ({reviewCount, plural, one {# opinión} other {# opiniones}})"
+msgstr "{0} ({reviewCount, plural, one {# reseña} other {# reseñas}})"
 
 #. placeholder {0}: notif.data.acceptedBy?.username
 #: src/pages/NotificationPopover.jsx
@@ -56,7 +56,7 @@ msgstr "{0} ha aceptado tu solicitud"
 #. placeholder {1}: notif.data.rating
 #: src/pages/NotificationPopover.jsx
 msgid "{0} a laissé un avis ({1}★)"
-msgstr "{0} ha dejado una opinión ({1}★)"
+msgstr "{0} ha dejado una reseña ({1}★)"
 
 #. placeholder {0}: notif.data.rejectedBy?.username
 #: src/pages/NotificationPopover.jsx
@@ -70,7 +70,7 @@ msgstr "{0} quiere añadirte"
 
 #: src/pages/Profile.jsx
 msgid "{reviewCount} avis des clients"
-msgstr "{reviewCount} opiniones de los clientes"
+msgstr "{reviewCount} reseñas de clientes"
 
 #: src/components/layouts/Footer.jsx
 msgid "© 2026 TheGoodCorner. Tous droits réservés."
@@ -87,7 +87,7 @@ msgstr "<0>Acceso y rectificación</0>: modificables directamente desde tu pági
 
 #: src/pages/SellerProfile.jsx
 msgid "<0>Connecte-toi</0> pour laisser un avis à ce vendeur."
-msgstr "<0>Inicia sesión</0> para dejar una opinión a este vendedor."
+msgstr "<0>Inicia sesión</0> para dejar una reseña a este vendedor."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "<0>Données de compte</0> : email, mot de passe (jamais stocké en clair), nom d'utilisateur."
@@ -99,7 +99,7 @@ msgstr "<0>Datos del perfil (opcionales)</0>: número de teléfono, dirección (
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "<0>Données liées à votre activité</0> : produits que vous publiez (nom, description, prix, catégorie, photo), avis que vous laissez à d'autres utilisateurs (note, commentaire), messages échangés avec d'autres membres via la messagerie."
-msgstr "<0>Datos vinculados a tu actividad</0>: productos que publicas (nombre, descripción, precio, categoría, foto), opiniones que dejas a otros usuarios (valoración, comentario), mensajes intercambiados con otros miembros a través del chat."
+msgstr "<0>Datos vinculados a tu actividad</0>: productos que publicas (nombre, descripción, precio, categoría, foto), reseñas que dejas a otros usuarios (valoración, comentario), mensajes intercambiados con otros miembros a través del chat."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "<0>Données techniques</0> : préférence de thème (clair/sombre), contenu de votre panier, aperçu de vos conversations — stockées localement dans votre navigateur (voir la section Cookies ci-dessous)."
@@ -241,7 +241,7 @@ msgstr "Artículos pedidos ({0})"
 
 #: src/pages/SellerProfile.jsx
 msgid "Aucun avis pour l'instant"
-msgstr "Ninguna opinión por el momento"
+msgstr "Ninguna reseña por el momento"
 
 #: src/pages/Orders.jsx
 msgid "Aucun détail d'article disponible pour cette transaction."
@@ -294,11 +294,11 @@ msgstr "Otro"
 #: src/pages/Profile.jsx
 #: src/pages/SellerProfile.jsx
 msgid "Avis ({0})"
-msgstr "Opiniones ({0})"
+msgstr "Reseñas ({0})"
 
 #: src/pages/TermsOfService.jsx
 msgid "Avis et évaluations"
-msgstr "Opiniones y valoraciones"
+msgstr "reseñas y valoraciones"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Base légale"
@@ -340,7 +340,7 @@ msgstr "Este vendedor no tiene anuncios publicados"
 
 #: src/pages/SellerProfile.jsx
 msgid "Ce vendeur n'a pas encore reçu d'avis client."
-msgstr "Este vendedor aún no ha recibido opiniones de clientes."
+msgstr "Este vendedor aún no ha recibido reseñas de clientes."
 
 #: src/pages/TermsOfService.jsx
 msgid "Ces CGU peuvent évoluer. La date de dernière mise à jour est indiquée en haut de cette page."
@@ -427,7 +427,7 @@ msgstr "Inicia sesión para acceder a tu mensajería"
 
 #: src/pages/Profile.jsx
 msgid "Connectez-vous pour accéder à votre page profil, gérer vos annonces et consulter vos avis."
-msgstr "Inicia sesión para acceder a tu perfil, gestionar tus anuncios y consultar tus opiniones."
+msgstr "Inicia sesión para acceder a tu perfil, gestionar tus anuncios y consultar tus reseñas."
 
 #: src/components/layouts/Footer.jsx
 msgid "Connexion / Inscription"
@@ -758,7 +758,7 @@ msgstr "Frase de contraseña secreta no válida."
 
 #: src/pages/TermsOfService.jsx
 msgid "L'utilisation du site implique l'acceptation pleine et entière des présentes conditions générales d'utilisation (CGU). La navigation et la consultation des annonces sont libres ; la création d'un compte est nécessaire pour vendre, laisser un avis ou envoyer un message."
-msgstr "El uso del sitio implica la aceptación plena e íntegra de estas condiciones generales de uso (CGU). La navegación y la consulta de anuncios son libres; la creación de una cuenta es obligatoria para vender, dejar opiniones o enviar mensajes."
+msgstr "El uso del sitio implica la aceptación plena e íntegra de estas condiciones generales de uso (CGU). La navegación y la consulta de anuncios son libres; la creación de una cuenta es obligatoria para vender, dejar reseñas o enviar mensajes."
 
 #: src/pages/Faq.jsx
 msgid "La création de compte est-elle obligatoire ?"
@@ -778,7 +778,7 @@ msgstr "Deja todos los campos en blanco si por ahora no deseas indicar una direc
 
 #: src/components/reviews/ReviewForm.jsx
 msgid "Laisser un avis"
-msgstr "Dejar una opinión"
+msgstr "Dejar una reseña"
 
 #: src/pages/Checkout.jsx
 msgid "Le budget est insuffisant !"
@@ -856,7 +856,7 @@ msgstr "Gracias por tu pedido. La transacción ha sido validada por Stripe y tus
 
 #: src/components/reviews/ReviewForm.jsx
 msgid "Merci, ton avis a été publié !"
-msgstr "¡Gracias, tu opinión ha sido publicada!"
+msgstr "¡Gracias, tu reseña ha sido publicada!"
 
 #. placeholder {0}: friends.length
 #. placeholder {0}: friends?.length || 0
@@ -875,7 +875,7 @@ msgstr "Mis anuncios ({0})"
 
 #: src/pages/Profile.jsx
 msgid "Mes avis"
-msgstr "Mis opiniones"
+msgstr "Mis reseñas"
 
 #: src/components/layouts/Navbar.jsx
 msgid "Mes commandes"
@@ -917,7 +917,7 @@ msgstr "Editar"
 
 #: src/components/reviews/ReviewCard.jsx
 msgid "Modifier cet avis"
-msgstr "Editar esta opinión"
+msgstr "Editar esta reseña"
 
 #: src/components/chat/MessageBubble.jsx
 msgid "Modifier le message"
@@ -1012,7 +1012,7 @@ msgstr "Nuevo miembro"
 
 #: src/pages/NotificationPopover.jsx
 msgid "Nouvel avis"
-msgstr "Nueva opinión"
+msgstr "Nueva reseña"
 
 #: src/components/chat/ConversationListItem.jsx
 msgid "Nouvelle conversation"
@@ -1106,7 +1106,7 @@ msgstr "¿Eliminar permanentemente tu cuenta? Esta acción no se puede deshacer.
 
 #: src/pages/Profile.jsx
 msgid "Personne vous a laisser d'avis pour l'instant"
-msgstr "Nadie te ha dejado una opinión por el momento"
+msgstr "Nadie te ha dejado una reseña por el momento"
 
 #: src/pages/Settings.jsx
 msgid "Please enter a valid amount."
@@ -1198,7 +1198,7 @@ msgstr "Propiedad intelectual"
 
 #: src/components/reviews/ReviewForm.jsx
 msgid "Publier mon avis"
-msgstr "Publicar mi opinión"
+msgstr "Publicar mi reseña"
 
 #: src/pages/Faq.jsx
 msgid "Puis-je acheter mon propre article ?"
@@ -1407,7 +1407,7 @@ msgstr "Eliminar"
 
 #: src/components/reviews/ReviewCard.jsx
 msgid "Supprimer cet avis"
-msgstr "Eliminar esta opinión"
+msgstr "Eliminar esta reseña"
 
 #. placeholder {0}: interlocutor.username
 #: src/components/chat/ConversationListItem.jsx
@@ -1478,7 +1478,7 @@ msgstr "Procesando..."
 
 #: src/pages/SellerProfile.jsx
 msgid "Tu as déjà laissé un avis pour ce vendeur."
-msgstr "Ya has dejado una opinión para este vendedor."
+msgstr "Ya has dejado una reseña para este vendedor."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Type"
@@ -1575,7 +1575,7 @@ msgstr "Ver detalles de la dirección"
 #: src/pages/Profile.jsx
 #: src/pages/SellerProfile.jsx
 msgid "Voir moins d'avis"
-msgstr "Ver menos opiniones"
+msgstr "Ver menos reseñas"
 
 #: src/pages/Home.jsx
 msgid "Voir nos produits"
@@ -1584,11 +1584,11 @@ msgstr "Ver nuestros productos"
 #. placeholder {0}: activeReviews.length
 #: src/pages/SellerProfile.jsx
 msgid "Voir tous les avis ({0})"
-msgstr "Ver todas las opiniones ({0})"
+msgstr "Ver todas las reseñas ({0})"
 
 #: src/pages/Profile.jsx
 msgid "Voir tous les avis ({reviewCount})"
-msgstr "Ver todas las opiniones ({reviewCount})"
+msgstr "Ver todas las reseñas ({reviewCount})"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vos données ne sont partagées avec aucun prestataire publicitaire ou analytique tiers."
@@ -1596,7 +1596,7 @@ msgstr "Tus datos no se comparten con ningún proveedor externo de publicidad o 
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vos données sont conservées tant que votre compte est actif. Vous pouvez supprimer votre compte à tout moment depuis votre page Profil ; vos données de profil sont alors effacées. Pour toute question sur le devenir d'un contenu que vous avez publié et qui concerne d'autres utilisateurs (avis, messages), contactez-nous."
-msgstr "Tus datos se conservan mientras tu cuenta permanezca activa. Puedes eliminar tu cuenta en cualquier momento desde tu página de Perfil; tus datos de perfil quedarán borrados. Para cualquier consulta sobre el destino de los contenidos que hayas publicado y que afecten a otros usuarios (opiniones, mensajes), contáctanos."
+msgstr "Tus datos se conservan mientras tu cuenta permanezca activa. Puedes eliminar tu cuenta en cualquier momento desde tu página de Perfil; tus datos de perfil quedarán borrados. Para cualquier consulta sobre el destino de los contenidos que hayas publicado y que afecten a otros usuarios (reseñas, mensajes), contáctanos."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vos droits"
@@ -1648,7 +1648,7 @@ msgstr "No has iniciado sesión"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vous permettre de publier des annonces, laisser des avis et échanger des messages avec d'autres utilisateurs."
-msgstr "Permitirte publicar anuncios, dejar opiniones e intercambiar mensajes con otros usuarios."
+msgstr "Permitirte publicar anuncios, dejar reseñas e intercambiar mensajes con otros usuarios."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vous pouvez effacer ces données à tout moment depuis les paramètres de votre navigateur."
@@ -1656,7 +1656,7 @@ msgstr "Puedes borrar estos datos en cualquier momento desde los ajustes de tu n
 
 #: src/pages/TermsOfService.jsx
 msgid "Vous pouvez laisser un avis (note et commentaire) sur le profil d'un vendeur avec qui vous n'avez pas encore d'avis existant — un seul avis par vendeur et par utilisateur. Les avis doivent être honnêtes, refléter une expérience réelle, et ne pas être diffamatoires, injurieux ou trompeurs. Vous pouvez modifier ou supprimer un avis que vous avez publié à tout moment."
-msgstr "Puedes dejar una opinión (valoración y comentario) en el perfil de un vendedor con el que aún no tengas valoraciones previas: solo se permite una opinión por vendedor y usuario. Las opiniones deben ser sinceras, reflejar una experiencia real y no ser difamatorias, injuriosas ni engañosas. Puedes modificar o eliminar una opinión publicada en cualquier momento."
+msgstr "Puedes dejar una reseña (valoración y comentario) en el perfil de un vendedor con el que aún no tengas valoraciones previas: solo se permite una reseña por vendedor y usuario. Las reseñas deben ser sinceras, reflejar una experiencia real y no ser difamatorias, injuriosas ni engañosas. Puedes modificar o eliminar una reseña publicada en cualquier momento."
 
 #: src/pages/TermsOfService.jsx
 msgid "Vous vous engagez à fournir des informations exactes lors de votre inscription."

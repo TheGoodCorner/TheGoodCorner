@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
@@ -50,6 +50,14 @@ function ProductDetail() {
 
   const [quantity, setQuantity] = useState(1);
   const [localError, setLocalError] = useState(null);
+
+  const categoryLabels = useMemo(() => ({
+        All: t`Tous`,
+        Training: t`Entraînement`,
+        Professional: t`Professionnel`,
+        Combat: t`Combat`,
+        Cardio: t`Cardio`,
+  }), [t]);
 
   useEffect(() => {
     fetchProductById(id);
@@ -170,7 +178,7 @@ function ProductDetail() {
 
           <div className="flex flex-col">
             <span className="text-sm font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">
-              {product.category?.name || <Trans>Non catégorisé</Trans>}
+              {categoryLabels[product.category?.name] || product.category?.name || <Trans>Non catégorisé</Trans>}
             </span>
             <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">{product.name}</h1>
             <p className="text-3xl font-bold text-[var(--color-primary)] mb-6">
