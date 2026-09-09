@@ -1,11 +1,12 @@
-// components/SelectUserModal.jsx
 import { useState, useEffect } from 'react';
 import { X, Search } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { GetAllUsers } from '../../api/userApi';
 import { useUserStore } from '../../stores/userStore';
 import Avatar from '../UI/Avatar';
 
 function SelectUserModal({ isOpen, onClose, onSelectUser }) {
+  const { t } = useLingui();
   const currentUser = useUserStore((state) => state.user);
 
   const [users, setUsers] = useState([]);
@@ -32,9 +33,6 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
     }
   };
 
-  // Le back refuse explicitement de te laisser te messager toi-même
-  // (currentUserId === recipientUserId → 400) — autant ne pas te le
-  // proposer dans la liste.
   const filteredUsers = users
     .filter((user) => !currentUser || String(user.id) !== String(currentUser.id))
     .filter((user) => user.username.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -48,11 +46,13 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between p-4 border-b border-[var(--color-border)]">
-          <h2 className="text-base font-semibold text-[var(--color-text)]">Nouvelle discussion</h2>
+          <h2 className="text-base font-semibold text-[var(--color-text)]">
+            <Trans>Nouvelle discussion</Trans>
+          </h2>
           <button
             onClick={onClose}
             className="p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors"
-            aria-label="Fermer"
+            aria-label={t`Fermer`}
           >
             <X size={18} />
           </button>
@@ -63,7 +63,7 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
             <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]" />
             <input
               type="text"
-              placeholder="Rechercher un utilisateur..."
+              placeholder={t`Rechercher un utilisateur...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-9 pr-3 py-2 text-sm rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors"
@@ -79,7 +79,9 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
               ))}
             </div>
           ) : filteredUsers.length === 0 ? (
-            <p className="text-center text-sm text-[var(--color-text-muted)] py-12">Aucun utilisateur trouvé</p>
+            <p className="text-center text-sm text-[var(--color-text-muted)] py-12">
+              <Trans>Aucun utilisateur trouvé</Trans>
+            </p>
           ) : (
             filteredUsers.map((user) => (
               <button

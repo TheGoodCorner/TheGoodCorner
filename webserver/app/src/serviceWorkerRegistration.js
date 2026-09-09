@@ -3,10 +3,6 @@
  * Create React App, avec un point d'entrée (onUpdate) pour notifier
  * l'app quand une nouvelle version est prête, plutôt que de rafraîchir
  * silencieusement sous les pieds de quelqu'un (ex: en plein paiement).
- *
- * Volontairement inactif en dev (NODE_ENV !== 'production') : un SW qui
- * met en cache le bundle pendant `npm start` fait plus de mal que de
- * bien (rechargements fantômes, cache qui ne suit pas le hot-reload).
  */
 
 const isLocalhost = Boolean(
@@ -19,14 +15,16 @@ const isLocalhost = Boolean(
  * @param {{ onSuccess?: (reg: ServiceWorkerRegistration) => void, onUpdate?: (reg: ServiceWorkerRegistration) => void }} config
  */
 export function register(config) {
-  if (process.env.NODE_ENV !== 'production' || !('serviceWorker' in navigator)) {
+  if (
+    process.env.REACT_APP_SERVICE_WORKER === 'disabled' ||
+    process.env.NODE_ENV !== 'production' ||
+    !('serviceWorker' in navigator)
+  ) {
     return;
   }
 
   const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
   if (publicUrl.origin !== window.location.origin) {
-    // Le SW ne peut pas fonctionner si PUBLIC_URL pointe vers une autre
-    // origine (ex: assets servis depuis un CDN).
     return;
   }
 
@@ -52,9 +50,6 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              // Un SW précédent contrôlait déjà la page : c'est une MISE
-              // À JOUR. Le nouveau SW reste "waiting" — à l'app de
-              // décider quand basculer (voir applyUpdate ci-dessous).
               console.log('[SW] Nouvelle version disponible.');
               config?.onUpdate?.(registration);
             } else {
@@ -69,8 +64,6 @@ function registerValidSW(swUrl, config) {
       console.error("[SW] Échec de l'enregistrement :", error);
     });
 
-  // Recharge la page une seule fois quand le nouveau SW prend le
-  // contrôle (déclenché par applyUpdate() -> postMessage SKIP_WAITING).
   let refreshing = false;
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (refreshing) return;
@@ -96,11 +89,6 @@ function checkValidServiceWorker(swUrl, config) {
     });
 }
 
-/**
- * Fait passer le SW "waiting" à l'état actif. À appeler depuis l'UI (ex:
- * bouton "Rafraîchir" du toast de mise à jour affiché via onUpdate()).
- * Déclenche 'controllerchange' -> reload (voir registerValidSW).
- */
 export function applyUpdate(registration) {
   registration?.waiting?.postMessage({ type: 'SKIP_WAITING' });
 }
@@ -109,7 +97,11 @@ export function unregister() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       for (const registration of registrations) {
-        registration.unregister();
+        registration.unregister().then((success) => {
+          if (success) {
+            console.log('[SW] Service Worker désenregistré avec succès.');
+          }
+        });
       }
     }).catch((error) => {
       console.error("[SW] Erreur lors de la désinscription :", error.message);
