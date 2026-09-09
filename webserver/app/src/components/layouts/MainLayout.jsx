@@ -1,10 +1,15 @@
-import { CartPopover } from '../../pages/CartPopover'
-import { Outlet } from 'react-router-dom'
+import React, { Suspense, lazy } from 'react';
+import { Outlet } from 'react-router-dom';
+import Navbar from './Navbar';
+import Footer from './Footer';
+import { useUIStore } from '../../stores/uiStore';
 
-import Navbar from './Navbar'
-import Footer from './Footer'
+const CartPopover = lazy(() => 
+  import('../../pages/CartPopover').then(module => ({ default: module.CartPopover }))
+);
 
 export default function MainLayout() {
+ const isCartOpen = useUIStore((state) => state.UserInterfaces['cart-popover']);
  return (
     <div className="relative min-h-screen flex flex-col bg-[var(--color-bg)] overflow-x-hidden">
       <div 
@@ -13,12 +18,18 @@ export default function MainLayout() {
         <img 
           src="/icons/42.svg" 
           alt="42 Neon Logo" 
+		  width="700"
+		  height="700"
           className="w-full h-full object-contain neon-42"
         />
       </div>
       <div className="relative z-10 flex flex-col flex-1">
         <Navbar />
-        <CartPopover />
+        {isCartOpen && (
+		 <Suspense fallback={null}>
+          <CartPopover />
+        </Suspense>
+		)}
         <main className="flex-1 bg-transparent">
           <Outlet />
         </main>

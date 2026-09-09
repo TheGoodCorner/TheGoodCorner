@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useThemeStore } from '../../stores/themeStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -11,9 +11,13 @@ import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
 import { Moon, Sun, ShoppingCart, Bell, Menu, X, LogOut, UserRound, MessageCircle, Settings, Package } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
-import { NotificationPopover } from '../../pages/NotificationPopover';
+
+const NotificationPopover = lazy(() => 
+  import('../../pages/NotificationPopover').then(module => ({ default: module.NotificationPopover }))
+);
 
 function Navbar() {
+
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const cartCount = useCartStore((state) => state.cartCount);
@@ -73,7 +77,11 @@ function Navbar() {
                 {notificationsEnabled && notificationCount > 0 && (
                   <div className={badge}>{notificationCount}</div>
                 )}
-                {notificationsEnabled && <NotificationPopover />}
+                {notificationsEnabled && isNotifOpen && (
+                  <Suspense fallback={null}>
+                    <NotificationPopover />
+                  </Suspense>
+                )}
               </div>
             )}
 
@@ -138,7 +146,11 @@ function Navbar() {
                 {notificationsEnabled && notificationCount > 0 && (
                   <div className={badge}>{notificationCount}</div>
                 )}
-                {notificationsEnabled && <NotificationPopover />}
+                {notificationsEnabled && (
+                  <Suspense fallback={null}>
+                    <NotificationPopover />
+                  </Suspense>
+                )}
               </div>
             )}
 
