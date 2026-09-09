@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: src/components/products/ProductForm.jsx
+msgid "-- Sélectionne une catégorie --"
+msgstr "-- Sélectionne une catégorie --"
+
 #. placeholder {0}: item.stock
 #: src/pages/CartPopover.jsx
 msgid "({0} disponible)"
@@ -37,6 +41,11 @@ msgstr "{0, plural, one {# produit trouvé} other {# produits trouvés}}"
 #: src/pages/SellerProfile.jsx
 msgid "{0} ({1} avis)"
 msgstr "{0} ({1} avis)"
+
+#. placeholder {0}: userRating.toFixed(1)
+#: src/components/profile/ProfilHeader.jsx
+msgid "{0} ({reviewCount, plural, one {# avis} other {# avis}})"
+msgstr "{0} ({reviewCount, plural, one {# avis} other {# avis}})"
 
 #. placeholder {0}: notif.data.acceptedBy?.username
 #: src/pages/NotificationPopover.jsx
@@ -187,6 +196,7 @@ msgstr "Afficher votre profil vendeur (public) aux autres membres."
 msgid "Âge minimum"
 msgstr "Âge minimum"
 
+#: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Ajouter au panier"
 msgstr "Ajouter au panier"
@@ -208,6 +218,9 @@ msgstr "Amis"
 msgid "Annonces ({0})"
 msgstr "Annonces ({0})"
 
+#: src/components/chat/MessageBubble.jsx
+#: src/components/profile/ProfilHeader.jsx
+#: src/components/reviews/ReviewCard.jsx
 #: src/pages/Profile.jsx
 msgid "Annuler"
 msgstr "Annuler"
@@ -234,6 +247,10 @@ msgstr "Aucun avis pour l'instant"
 msgid "Aucun détail d'article disponible pour cette transaction."
 msgstr "Aucun détail d'article disponible pour cette transaction."
 
+#: src/components/chat/ChatThread.jsx
+msgid "Aucun message pour le moment — dis bonjour !"
+msgstr "Aucun message pour le moment — dis bonjour !"
+
 #: src/pages/Produits.jsx
 msgid "Aucun produit disponible pour le moment. Revenez bientôt !"
 msgstr "Aucun produit disponible pour le moment. Revenez bientôt !"
@@ -245,6 +262,10 @@ msgstr "Aucun produit ne correspond à vos critères"
 #: src/components/chat/SelectUserModal.jsx
 msgid "Aucun utilisateur trouvé"
 msgstr "Aucun utilisateur trouvé"
+
+#: src/components/chat/ConversationsSidebar.jsx
+msgid "Aucune conversation pour l'instant."
+msgstr "Aucune conversation pour l'instant."
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Aucune description fournie"
@@ -263,6 +284,10 @@ msgstr "Aucune notification"
 #: src/pages/ProduitDetail.jsx
 msgid "Augmenter la quantité"
 msgstr "Augmenter la quantité"
+
+#: src/components/products/ProductForm.jsx
+msgid "Autre"
+msgstr "Autre"
 
 #. placeholder {0}: activeReviews.length
 #. placeholder {0}: reviewCount || 0
@@ -291,10 +316,12 @@ msgstr "Bien tenté, petit fouineur !"
 msgid "Bienvenue sur TheGoodCorner"
 msgstr "Bienvenue sur TheGoodCorner"
 
+#: src/components/products/ProductForm.jsx
 #: src/pages/Produits.jsx
 msgid "Cardio"
 msgstr "Cardio"
 
+#: src/components/products/ProductForm.jsx
 #: src/pages/Produits.jsx
 msgid "Catégorie"
 msgstr "Catégorie"
@@ -323,6 +350,10 @@ msgstr "Ces CGU peuvent évoluer. La date de dernière mise à jour est indiqué
 msgid "Cette politique peut évoluer. La date de dernière mise à jour est indiquée en haut de cette page."
 msgstr "Cette politique peut évoluer. La date de dernière mise à jour est indiquée en haut de cette page."
 
+#: src/components/profile/ProfilHeader.jsx
+msgid "Changer la photo de profil"
+msgstr "Changer la photo de profil"
+
 #: src/pages/Orders.jsx
 msgid "Chargement des commandes..."
 msgstr "Chargement des commandes..."
@@ -336,6 +367,15 @@ msgstr "Chargement du panier..."
 msgid "Chargement..."
 msgstr "Chargement..."
 
+#: src/components/chat/ChatThread.jsx
+msgid "Choisis une discussion dans la liste, ou démarre-en une nouvelle."
+msgstr "Choisis une discussion dans la liste, ou démarre-en une nouvelle."
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Choisis une note entre 1 et 5 étoiles."
+msgstr "Choisis une note entre 1 et 5 étoiles."
+
+#: src/components/products/ProductForm.jsx
 #: src/pages/Produits.jsx
 msgid "Combat"
 msgstr "Combat"
@@ -372,6 +412,10 @@ msgstr "Conditions générales"
 #: src/pages/TermsOfService.jsx
 msgid "Conditions générales d'utilisation"
 msgstr "Conditions générales d'utilisation"
+
+#: src/components/checkout/checkoutForm.jsx
+msgid "Confirmer le règlement"
+msgstr "Confirmer le règlement"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Conformément au RGPD, vous disposez des droits suivants sur vos données :"
@@ -450,6 +494,10 @@ msgstr "Crée ton compte en quelques secondes"
 msgid "Créer et gérer votre compte, vous authentifier."
 msgstr "Créer et gérer votre compte, vous authentifier."
 
+#: src/components/products/ProductForm.jsx
+msgid "Créer le produit"
+msgstr "Créer le produit"
+
 #: src/pages/Login.jsx
 msgid "Créer mon compte"
 msgstr "Créer mon compte"
@@ -498,6 +546,10 @@ msgstr "Découvrir les produits"
 msgid "Décris ton expérience avec ce vendeur..."
 msgstr "Décris ton expérience avec ce vendeur..."
 
+#: src/components/products/ProductForm.jsx
+msgid "Décris ton produit en détail..."
+msgstr "Décris ton produit en détail..."
+
 #: src/pages/Login.jsx
 msgid "Déjà un compte ?"
 msgstr "Déjà un compte ?"
@@ -536,9 +588,21 @@ msgstr "Demandes envoyées ({0})"
 msgid "Demandes reçues ({0})"
 msgstr "Demandes reçues ({0})"
 
+#: src/components/chat/ConversationsSidebar.jsx
+msgid "Démarrer une discussion"
+msgstr "Démarrer une discussion"
+
+#: src/components/layouts/LegalPageLayout.jsx
+msgid "Dernière mise à jour : {lastUpdated}"
+msgstr "Dernière mise à jour : {lastUpdated}"
+
 #: src/pages/Faq.jsx
 msgid "Dernière mise à jour : 8 septembre 2026"
 msgstr "Dernière mise à jour : 8 septembre 2026"
+
+#: src/components/products/ProductForm.jsx
+msgid "Description"
+msgstr "Description"
 
 #: src/pages/ProduitDetail.jsx
 msgid "Description à venir."
@@ -569,6 +633,10 @@ msgstr "Droit applicable"
 msgid "Durée de conservation"
 msgstr "Durée de conservation"
 
+#: src/components/chat/ChatThread.jsx
+msgid "Écris un message..."
+msgstr "Écris un message..."
+
 #: src/components/profile/ProfilInfos.jsx
 #: src/pages/Login.jsx
 msgid "Email"
@@ -586,9 +654,14 @@ msgstr "En attente de réponse"
 msgid "Enter secret passphrase..."
 msgstr "Entrez la phrase secrète..."
 
+#: src/components/products/ProductForm.jsx
 #: src/pages/Produits.jsx
 msgid "Entraînement"
 msgstr "Entraînement"
+
+#: src/components/chat/ChatThread.jsx
+msgid "Envoyer"
+msgstr "Envoyer"
 
 #: src/pages/Profile.jsx
 msgid "Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
@@ -601,6 +674,14 @@ msgstr "Erreur lors du crédit du portefeuille."
 #: src/pages/Settings.jsx
 msgid "Error during deletion."
 msgstr "Erreur lors de la suppression."
+
+#: src/components/products/ProductForm.jsx
+msgid "Ex: Chaise ergonomique"
+msgstr "Ex : Chaise ergonomique"
+
+#: src/components/products/ProductForm.jsx
+msgid "Ex: Équipements de frappe"
+msgstr "Ex : Équipements de frappe"
 
 #: src/components/layouts/Footer.jsx
 msgid "FAQ"
@@ -646,6 +727,11 @@ msgstr "Grâce à notre Service Worker intégré, le site dispose d'une résilie
 msgid "Île-de-France"
 msgstr "Île-de-France"
 
+#: src/components/products/ProductForm.jsx
+msgid "Image du produit"
+msgstr "Image du produit"
+
+#: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Impossible d'ajouter cet article au panier."
 msgstr "Impossible d'ajouter cet article au panier."
@@ -701,6 +787,10 @@ msgstr "Le budget est insuffisant !"
 #: src/pages/TermsOfService.jsx
 msgid "Le code, le design et la marque TheGoodCorner sont la propriété de l'équipe du projet. Les photos et descriptions que vous publiez restent votre propriété ; en les publiant, vous accordez à TheGoodCorner le droit de les afficher sur la plateforme dans le cadre de son fonctionnement normal."
 msgstr "Le code, le design et la marque TheGoodCorner sont la propriété de l'équipe du projet. Les photos et descriptions que vous publiez restent votre propriété ; en les publiant, vous accordez à TheGoodCorner le droit de les afficher sur la plateforme dans le cadre de son fonctionnement normal."
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Le commentaire ne peut pas être vide."
+msgstr "Le commentaire ne peut pas être vide."
 
 #: src/pages/TermsOfService.jsx
 msgid "Le mot de passe doit comporter au minimum 6 caractères."
@@ -817,6 +907,22 @@ msgstr "Modification des CGU"
 msgid "Modifications"
 msgstr "Modifications"
 
+#: src/components/chat/MessageBubble.jsx
+msgid "modifié"
+msgstr "modifié"
+
+#: src/components/profile/ProfilHeader.jsx
+msgid "Modifier"
+msgstr "Modifier"
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Modifier cet avis"
+msgstr "Modifier cet avis"
+
+#: src/components/chat/MessageBubble.jsx
+msgid "Modifier le message"
+msgstr "Modifier le message"
+
 #: src/components/layouts/Navbar.jsx
 msgid "Mon profil"
 msgstr "Mon profil"
@@ -836,6 +942,10 @@ msgstr "Nom"
 #: src/pages/Login.jsx
 msgid "Nom d'utilisateur"
 msgstr "Nom d'utilisateur"
+
+#: src/components/products/ProductForm.jsx
+msgid "Nom du produit"
+msgstr "Nom du produit"
 
 #: src/pages/ProduitDetail.jsx
 msgid "Non catégorisé"
@@ -903,6 +1013,10 @@ msgstr "Nouveau membre"
 #: src/pages/NotificationPopover.jsx
 msgid "Nouvel avis"
 msgstr "Nouvel avis"
+
+#: src/components/chat/ConversationListItem.jsx
+msgid "Nouvelle conversation"
+msgstr "Nouvelle conversation"
 
 #: src/components/chat/SelectUserModal.jsx
 #: src/pages/Messagerie.jsx
@@ -1027,6 +1141,10 @@ msgstr "Pour toute question sur vos données personnelles, vous pouvez nous écr
 msgid "Pourquoi nous les utilisons"
 msgstr "Pourquoi nous les utilisons"
 
+#: src/components/products/ProductForm.jsx
+msgid "Précise la catégorie personnalisée"
+msgstr "Précise la catégorie personnalisée"
+
 #: src/pages/Home.jsx
 msgid "Prêt à acheter un max de produit ?"
 msgstr "Prêt à acheter un max de produits ?"
@@ -1035,9 +1153,17 @@ msgstr "Prêt à acheter un max de produits ?"
 msgid "Prix"
 msgstr "Prix"
 
+#: src/components/products/ProductForm.jsx
+msgid "Prix (€)"
+msgstr "Prix (€)"
+
 #: src/pages/CartPopover.jsx
 msgid "Procéder au paiement"
 msgstr "Procéder au paiement"
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Produit : <0>{product}</0>"
+msgstr "Produit : <0>{product}</0>"
 
 #: src/pages/ProduitDetail.jsx
 msgid "Produit indisponible"
@@ -1061,6 +1187,7 @@ msgstr "Produits publiés"
 msgid "Produits similaires"
 msgstr "Produits similaires"
 
+#: src/components/products/ProductForm.jsx
 #: src/pages/Produits.jsx
 msgid "Professionnel"
 msgstr "Professionnel"
@@ -1115,6 +1242,10 @@ msgstr "Récapitulatif de commande"
 msgid "Rechercher un utilisateur..."
 msgstr "Rechercher un utilisateur..."
 
+#: src/components/chat/ConversationsSidebar.jsx
+msgid "Rechercher une conversation..."
+msgstr "Rechercher une conversation..."
+
 #: src/pages/Profile.jsx
 msgid "Refuser"
 msgstr "Refuser"
@@ -1146,6 +1277,10 @@ msgstr "Retour"
 #: src/pages/Login.jsx
 msgid "Retour à la boutique"
 msgstr "Retour à la boutique"
+
+#: src/components/chat/ChatThread.jsx
+msgid "Retour aux conversations"
+msgstr "Retour aux conversations"
 
 #: src/pages/ProduitDetail.jsx
 #: src/pages/SellerProfile.jsx
@@ -1184,6 +1319,11 @@ msgstr "Rue de Rivoli"
 msgid "S'inscrire"
 msgstr "S'inscrire"
 
+#: src/components/profile/ProfilHeader.jsx
+#: src/components/reviews/ReviewCard.jsx
+msgid "Sauvegarder"
+msgstr "Sauvegarder"
+
 #: src/pages/PrivacyPolicy.jsx
 msgid "Savoir si une session est potentiellement active au chargement"
 msgstr "Savoir si une session est potentiellement active au chargement"
@@ -1204,6 +1344,10 @@ msgstr "Se déconnecter"
 msgid "Sécurité"
 msgstr "Sécurité"
 
+#: src/components/chat/ChatThread.jsx
+msgid "Sélectionne une conversation"
+msgstr "Sélectionne une conversation"
+
 #: src/pages/PrivacyPolicy.jsx
 msgid "Selon votre usage du site, nous collectons :"
 msgstr "Selon votre usage du site, nous collectons :"
@@ -1223,6 +1367,10 @@ msgstr "Solde insuffisant pour finaliser cet achat"
 #: src/pages/CartPopover.jsx
 msgid "Solde portefeuille :"
 msgstr "Solde portefeuille :"
+
+#: src/components/layouts/LegalPageLayout.jsx
+msgid "Sommaire"
+msgstr "Sommaire"
 
 #: src/pages/Faq.jsx
 msgid "SOMMAIRE"
@@ -1257,6 +1405,19 @@ msgstr "Support & Contact"
 msgid "Supprimer"
 msgstr "Supprimer"
 
+#: src/components/reviews/ReviewCard.jsx
+msgid "Supprimer cet avis"
+msgstr "Supprimer cet avis"
+
+#. placeholder {0}: interlocutor.username
+#: src/components/chat/ConversationListItem.jsx
+msgid "Supprimer la conversation avec {0}"
+msgstr "Supprimer la conversation avec {0}"
+
+#: src/components/chat/MessageBubble.jsx
+msgid "Supprimer le message"
+msgstr "Supprimer le message"
+
 #: src/pages/TermsOfService.jsx
 msgid "Suspension et résiliation"
 msgstr "Suspension et résiliation"
@@ -1281,6 +1442,10 @@ msgstr "TheGoodCorner est un intermédiaire technique et n'est pas partie aux tr
 #: src/pages/Faq.jsx
 msgid "TheGoodCorner est un projet réalisé dans le cadre de la formation \"ft_transcendence\" du cursus de l'école 42-Paris. Les questions-réponses ci-dessous illustrent les fonctionnalités disponibles sur cette version d'évaluation."
 msgstr "TheGoodCorner est un projet réalisé dans le cadre de la formation « ft_transcendence » du cursus de l'école 42-Paris. Les questions-réponses ci-dessous illustrent les fonctionnalités disponibles sur cette version d'évaluation."
+
+#: src/components/layouts/LegalPageLayout.jsx
+msgid "TheGoodCorner est un projet réalisé dans le cadre du projet de formation \"ft_transcendence\" du cursus de l'école 42-Paris. Il n'a pas de valeur commerciale réelle, mais cette page est rédigée dans des conditions proches du réel pour les besoins de l'exercice."
+msgstr "TheGoodCorner est un projet réalisé dans le cadre du projet de formation « ft_transcendence » du cursus de l'école 42-Paris. Il n'a pas de valeur commerciale réelle, mais cette page est rédigée dans des conditions proches du réel pour les besoins de l'exercice."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "TheGoodCorner est une marketplace qui met en relation des particuliers pour l'achat et la vente d'articles d'occasion (matériel de sport, entraînement, combat...). Cette politique explique quelles données nous collectons lorsque vous utilisez le site, pourquoi, et quels droits vous pouvez exercer."
@@ -1360,14 +1525,28 @@ msgstr "Utilisateur"
 msgid "Validate"
 msgstr "Valider"
 
+#: src/components/checkout/checkoutForm.jsx
+msgid "Validation en cours..."
+msgstr "Validation en cours..."
+
+#: src/components/chat/MessageBubble.jsx
+msgid "Valider"
+msgstr "Valider"
+
 #: src/components/profile/ProfilInfos.jsx
 msgid "Vendeur"
 msgstr "Vendeur"
+
+#. placeholder {0}: formatMonthYear(user?.createdAt)
+#: src/components/profile/ProfilHeader.jsx
+msgid "Vendeur depuis {0} • En ligne"
+msgstr "Vendeur depuis {0} • En ligne"
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Vendeur Elite"
 msgstr "Vendeur Elite"
 
+#: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Vendeur inconnu"
 msgstr "Vendeur inconnu"
@@ -1380,6 +1559,7 @@ msgstr "Vendeur introuvable"
 msgid "Vendu par"
 msgstr "Vendu par"
 
+#: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Victime de son succès"
 msgstr "Victime de son succès"

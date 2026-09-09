@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
@@ -7,15 +8,13 @@ import { PlusCircle, Star } from 'lucide-react';
 import Avatar from '../UI/Avatar';
 
 export default function ProductCard({ product, allowOutOfStock = false }) {
-
-
+    const { t } = useLingui();
     const addToCart = useCartStore((state) => state.addToCart);
     const openUi = useUIStore((state) => state.openUi);
     const [localError, setLocalError] = useState(null);
     const author = product?.author || {};
 
     const handleAddToCart = () => {
-        // On capture la valeur de retour (true ou false) dans 'succèss'
         const succèss = addToCart({
             id: product.id,
             name: product.name,
@@ -28,13 +27,12 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
 
         if (succèss) {
             setLocalError(null);
-            openUi('cart-popover'); // S'ouvre uniquement en cas de succès
+            openUi('cart-popover');
         } else {
-            // On récupère le message exact renvoyé par cartStore (stock ou propre article)
             const lastError = useCartStore.getState().error;
             const message = typeof lastError === 'object' ? lastError?.message : lastError;
 
-            setLocalError(message || "Impossible d'ajouter cet article au panier.");
+            setLocalError(message || t`Impossible d'ajouter cet article au panier.`);
         }
     };
 
@@ -43,6 +41,7 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
         const timer = setTimeout(() => setLocalError(null), 3000);
         return () => clearTimeout(timer);
     }, [localError]);
+
     if (!product || (!allowOutOfStock && Number(product.quantity) <= 0))
         return null;
 
@@ -50,7 +49,7 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
         <>
             <Avatar src={author.avatar} name={author.username} size="xs" />
             <span className="text-xs font-medium text-[var(--color-text)]">
-                {author.username || 'Vendeur inconnu'}
+                {author.username || <Trans>Vendeur inconnu</Trans>}
             </span>
         </>
     );
@@ -101,7 +100,6 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
                 </div>
             </Link>
 
-            {/* Affichage de l'erreur locale */}
             {localError && (
                 <div className="p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
                     <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
@@ -121,12 +119,16 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
                 <Button
                     icon={PlusCircle}
                     onClick={handleAddToCart}
-                    disabled={!product.quantity || product.quantity <= 0}
-                    title={product.quantity <= 0 ? "Victime de son succès" : "Ajouter au panier"}
-                    aria-label="Ajouter au panier"
+                    disabled={!isInStock}
+                    title={!isInStock ? t`Victime de son succès` : t`Ajouter au panier`}
+                    aria-label={!isInStock ? t`Victime de son succès` : t`Ajouter au panier`}
                     className="w-full"
                 >
-                    {product.quantity > 0 ? "Ajouter au panier" : "Victime de son succès"}
+                    {isInStock ? (
+                        <Trans>Ajouter au panier</Trans>
+                    ) : (
+                        <Trans>Victime de son succès</Trans>
+                    )}
                 </Button>
             </div>
         </div>

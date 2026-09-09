@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useProductForm } from '../../hooks/useProductForm';
 import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
@@ -5,16 +7,20 @@ import { FileInput } from '../UI/FileInput';
 import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
 import { PRODUCT_PRICE_MAX } from '../../utils/constants';
 
-const CATEGORIES = [
-  { value: 'Training', label: 'Entrainement' },
-  { value: 'Professionnal', label: 'Professionnel' },
-  { value: 'Combat', label: 'combat' },
-  { value: 'Cardio', label: 'cardio' },
-  { value: 'other', label: 'Autre' },
-];
-
 export function ProductForm({ onSuccess }) {
+  const { t } = useLingui();
   const { form, submitting, error, handleChange, submit } = useProductForm();
+
+  const categories = useMemo(
+    () => [
+      { value: 'Training', label: t`Entraînement` },
+      { value: 'Professionnal', label: t`Professionnel` },
+      { value: 'Combat', label: t`Combat` },
+      { value: 'Cardio', label: t`Cardio` },
+      { value: 'other', label: t`Autre` },
+    ],
+    [t]
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,18 +33,18 @@ export function ProductForm({ onSuccess }) {
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
         <FormField
           id='product-name'
-          label='Nom du produit'
+          label={t`Nom du produit`}
           icon={Package}
           type='text'
           value={form.name}
           onChange={handleChange('name')}
-          placeholder='Ex: Chaise ergonomique'
+          placeholder={t`Ex: Chaise ergonomique`}
           disabled={submitting}
         />
         
         <div>
           <label htmlFor='category' className='block text-sm font-semibold text-[var(--color-text)] mb-2'>
-            Catégorie
+            <Trans>Catégorie</Trans>
           </label>
           <div className='relative'>
             <Tag
@@ -53,8 +59,10 @@ export function ProductForm({ onSuccess }) {
               onChange={handleChange('category')}
               disabled={submitting}
             >
-              <option value=''>-- Sélectionne une catégorie --</option>
-              {CATEGORIES.map(cat => (
+              <option value=''>
+                {t`-- Sélectionne une catégorie --`}
+              </option>
+              {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
@@ -63,32 +71,34 @@ export function ProductForm({ onSuccess }) {
           </div>
         </div>
       </div>
-	{/* Champ affiché uniquement si "Autre" est sélectionné */}
-        {form.category === 'other' && (
+
+      {/* Champ affiché uniquement si "Autre" est sélectionné */}
+      {form.category === 'other' && (
         <div className='animate-in fade-in slide-in-from-top-2 duration-200'>
           <FormField
             id='custom-category'
-            label='Précise la catégorie personnalisée'
+            label={t`Précise la catégorie personnalisée`}
             icon={PlusCircle}
             type='text'
             value={form.customCategory || ''}
             onChange={handleChange('customCategory')}
-            placeholder='Ex: Équipements de frappe'
+            placeholder={t`Ex: Équipements de frappe`}
             disabled={submitting}
             required
           />
         </div>
       )}
+
       {/* Ligne 2: Prix + Image */}
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
         <FormField
           id='price'
-          label='Prix (€)'
+          label={t`Prix (€)`}
           icon={Euro}
           type='number'
           step='0.01'
           min='0'
-          max = {PRODUCT_PRICE_MAX}
+          max={PRODUCT_PRICE_MAX}
           value={form.price}
           onChange={handleChange('price')}
           placeholder='29.99'
@@ -97,7 +107,7 @@ export function ProductForm({ onSuccess }) {
 
         <FileInput
           id='image-file'
-          label='Image du produit'
+          label={t`Image du produit`}
           accept='.png,.jpeg,.jpg,image/png,image/jpeg'
           value={form.image}
           onChange={handleChange('image')}
@@ -108,13 +118,13 @@ export function ProductForm({ onSuccess }) {
       {/* Ligne 3: Description */}
       <FormField
         id='description'
-        label='Description'
+        label={t`Description`}
         icon={FileText}
         type='text'
         as='textarea'
         value={form.description}
         onChange={handleChange('description')}
-        placeholder='Décris ton produit en détail...'
+        placeholder={t`Décris ton produit en détail...`}
         disabled={submitting}
         className='resize-none'
         rows='5'
@@ -136,7 +146,7 @@ export function ProductForm({ onSuccess }) {
         loading={submitting}
         className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] py-3 rounded-[var(--radius-md)] font-semibold transition-colors'
       >
-        Créer le produit
+        <Trans>Créer le produit</Trans>
       </Button>
     </form>
   );
