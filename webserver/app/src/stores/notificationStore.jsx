@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import { fetchNotificationsRequest, markNotificationReadRequest, markAllNotificationsReadRequest, deleteNotificationRequest } from '../api/notificationApi';
 
 export const useNotificationStore = create(
   persist(
-    (set) => ({
-      reviewNotifications: [],
-      friendNotifications: [],
+    (set, get) => ({
+      notifications: [],
       notificationsEnabled: true,
 
       toggleNotifications: () =>
@@ -14,54 +14,55 @@ export const useNotificationStore = create(
       setNotificationsEnabled: (enabled) =>
         set({ notificationsEnabled: enabled }),
 
-      removeReviewNotification: (reviewId) => {
+      fetchNotifications: async () => {
+        try {
+          const data = await fetchNotificationsRequest();
+          set({ notifications: data });
+        } catch (error) {
+          console.error('fetchNotifications error:', error);
+        }
+      },
+
+      addNotification: (notification) => {
         set((state) => ({
-          reviewNotifications: state.reviewNotifications.filter((n) => n.reviewId !== reviewId),
+          notifications: [notification, ...state.notifications],
         }));
       },
 
-      addReviewNotification: (notification) => {
+      removeNotification: (notifId) => {
         set((state) => ({
-          reviewNotifications: [
-            { ...notification, id: Date.now(), read: false },
-            ...state.reviewNotifications,
-          ],
+          notifications: state.notifications.filter((n) => n.id !== notifId),
         }));
       },
 
-      addFriendNotification: (notification) => {
-        set((state) => ({
-          friendNotifications: [
-            { ...notification, id: Date.now(), read: false },
-            ...state.friendNotifications,
-          ],
-        }));
+      markAsRead: async (id) => {
+        try {
+          await markNotificationReadRequest(id);
+          set((state) => ({
+            notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
+          }));
+        } catch (error) {
+          console.error('markAsRead error:', error);
+        }
       },
 
-      markAllRead: () => {
-        set((state) => ({
-          reviewNotifications: state.reviewNotifications.map((n) => ({ ...n, read: true })),
-          friendNotifications: state.friendNotifications.map((n) => ({ ...n, read: true })),
-        }));
+      markAllRead: async () => {
+        try {
+          await markAllNotificationsReadRequest();
+          set((state) => ({
+            notifications: state.notifications.map((n) => ({ ...n, read: true })),
+          }));
+        } catch (error) {
+          console.error('markAllRead error:', error);
+        }
       },
 
-      markReviewsRead: () => {
-        set((state) => ({
-          reviewNotifications: state.reviewNotifications.map((n) => ({ ...n, read: true })),
-        }));
-      },
-
-      markFriendsRead: () => {
-        set((state) => ({
-          friendNotifications: state.friendNotifications.map((n) => ({ ...n, read: true })),
-        }));
-      },
-
-      reset: () => set({ reviewNotifications: [], friendNotifications: [] }),
+      reset: () => set({ notifications: [] }),
     }),
     {
       name: 'notification-storage',
       storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ notificationsEnabled: state.notificationsEnabled }),
     }
   )
 );

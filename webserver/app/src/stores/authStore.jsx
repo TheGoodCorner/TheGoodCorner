@@ -30,6 +30,7 @@ export const useAuthStore = create((set) => ({
       // ne renverrait que la version publique).
       useUserStore.getState().setUser(user)
       connectSocket(user.id)
+      useNotificationStore.getState().fetchNotifications()
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -45,6 +46,7 @@ export const useAuthStore = create((set) => ({
       set({token, isAuthenticated: true, loading: false })
       useUserStore.getState().setUser(user)
       connectSocket(user.id)
+      useNotificationStore.getState().fetchNotifications()
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -69,6 +71,7 @@ export const useAuthStore = create((set) => ({
       set({user, token, isAuthenticated: true, initializing: false })
       useUserStore.getState().setUser(user)
       connectSocket(user.id)
+      useNotificationStore.getState().fetchNotifications()
     } catch {
 		localStorage.removeItem(SESSION_KEY);
 		useUserStore.getState().setUser(null);

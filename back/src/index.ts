@@ -13,7 +13,7 @@ import messageRouter from './routes/messages.js';
 import paymentRouter from './routes/payment.js';
 import paymentController from './controllers/paymentController.js';
 import friendRouter from './routes/friends.js';
-// import { printRequest } from './utils/printHttpRequest.js';
+import notificationRouter from './routes/notifications.js';
 
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
@@ -31,13 +31,14 @@ app.use('/uploads', express.static(('/app/uploads'))); // allow static file serv
 // app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 
 const rootPath = '/';
-app.use(rootPath, generalRouter); // general routes
-app.use(rootPath, productRouter); // product routes
-app.use(rootPath, userRouter); // Users routes
-app.use(rootPath, reviewsRouter); // reviews routes
-app.use(rootPath, messageRouter); // message routes
-app.use(rootPath, paymentRouter); // payment routes
-app.use(rootPath, friendRouter);// friend routes
+app.use(rootPath, generalRouter);		// general routes
+app.use(rootPath, productRouter);		// product routes
+app.use(rootPath, userRouter);			// Users routes
+app.use(rootPath, reviewsRouter);		// reviews routes
+app.use(rootPath, messageRouter);		// message routes
+app.use(rootPath, paymentRouter);		// payment routes
+app.use(rootPath, friendRouter);		// friend routes
+app.use(rootPath, notificationRouter);	// notification routes
 
 const socketServer = http.createServer(app);
 const io = initializeWebServer(socketServer);

@@ -62,14 +62,22 @@ const reviewController =
 			});
 			console.log (`review creation successfull`);
 			const io = req.app.get('io');
+			const notifContent = {
+				authorUsername: createdReview.reviewAuthor.username,
+				reviewedUserId: reviewedId,
+				reviewId: createdReview.id,
+				rating: createdReview.reviewRating,
+				review: createdReview,
+			};
+			const notif = await prisma.notification.create({
+				data: {
+					userId: reviewedId,
+					type: 'REVIEW',
+					content: notifContent,
+				},
+			});
 			if (io) {
-				io.to(`user_${reviewedId}`).emit('new_review', {
-					authorUsername: createdReview.reviewAuthor.username,
-					reviewedUserId: reviewedId,
-					reviewId: createdReview.id,
-					rating: createdReview.reviewRating,
-					review: createdReview,
-				});
+				io.to(`user_${reviewedId}`).emit('new_review', { ...notifContent, notifId: notif.id });
 			}
 			return (res.status(201).json({message: 'Avis cree avec succes', data:{createdReview}}));
 		}
@@ -174,6 +182,13 @@ const reviewController =
 				});
 			})
 			console.log (`review delete successfull`);
+			await prisma.notification.deleteMany({
+				where: {
+					userId: oldReview.reviewedUserId,
+					type: 'REVIEW',
+					content: { path: ['reviewId'], equals: reviewedId },
+				},
+			});
 			const io = req.app.get('io');
 			if (io) {
 				io.to(`user_${oldReview.reviewedUserId}`).emit('review_deleted', {

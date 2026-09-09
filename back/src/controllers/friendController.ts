@@ -91,11 +91,16 @@ const friendController = {
 			});
 			console.log(`A friend request has been sucessfully sent to ${parsedReceiverId}`);
 			const io = req.app.get('io');
+			const notifContent = { requestId: friendRequest.id, sender: friendRequest.sender };
+			const notif = await prisma.notification.create({
+				data: {
+					userId: parsedReceiverId,
+					type: 'FRIEND_REQUEST',
+					content: notifContent,
+				},
+			});
 			if (io) {
-				io.to(`user_${parsedReceiverId}`).emit('new_friend_request', {
-					requestId: friendRequest.id,
-					sender: friendRequest.sender,
-				});
+				io.to(`user_${parsedReceiverId}`).emit('new_friend_request', { ...notifContent, notifId: notif.id });
 			}
 			return (res.status(201).json({ message: `sucessfully sent friend request`, data: friendRequest }));
 		} catch (error) {
@@ -164,10 +169,16 @@ const friendController = {
 			});
 			console.log(`A friend request has been accepted by ${userId}`);
 			const io = req.app.get('io');
+			const notifContent = { acceptedBy: updated.receiver };
+			const notif = await prisma.notification.create({
+				data: {
+					userId: request.senderId,
+					type: 'FRIEND_ACCEPTED',
+					content: notifContent,
+				},
+			});
 			if (io) {
-				io.to(`user_${request.senderId}`).emit('friend_request_accepted', {
-					acceptedBy: updated.receiver,
-				});
+				io.to(`user_${request.senderId}`).emit('friend_request_accepted', { ...notifContent, notifId: notif.id });
 			}
 			return (res.status(200).json({ message: '', data: updated }));
 		} catch (error) {
@@ -203,10 +214,16 @@ const friendController = {
 			});
 			console.log(`A friend request has been rejected by ${userId}`);
 			const io = req.app.get('io');
+			const notifContent = { rejectedBy: updated.receiver };
+			const notif = await prisma.notification.create({
+				data: {
+					userId: request.senderId,
+					type: 'FRIEND_REJECTED',
+					content: notifContent,
+				},
+			});
 			if (io) {
-				io.to(`user_${request.senderId}`).emit('friend_request_rejected', {
-					rejectedBy: updated.receiver,
-				});
+				io.to(`user_${request.senderId}`).emit('friend_request_rejected', { ...notifContent, notifId: notif.id });
 			}
 			return (res.status(200).json({ message: `a friend request has been rejected by ${requestId}`, data: updated }));
 		} catch (error) {

@@ -58,7 +58,9 @@ socket.on('new_product', (product) => {
 });
 
 socket.on('review_deleted', ({ reviewId }) => {
-  useNotificationStore.getState().removeReviewNotification(reviewId);
+  const notifs = useNotificationStore.getState().notifications;
+  const toRemove = notifs.find((n) => n.type === 'REVIEW' && n.content?.reviewId === reviewId);
+  if (toRemove) useNotificationStore.getState().removeNotification(toRemove.id);
   const { user, setUser } = useUserStore.getState();
   if (user) {
     setUser({
@@ -70,7 +72,13 @@ socket.on('review_deleted', ({ reviewId }) => {
 });
 
 socket.on('new_review', (payload) => {
-  useNotificationStore.getState().addReviewNotification(payload);
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'REVIEW',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   const { user, setUser } = useUserStore.getState();
   if (user) {
     setUser({
@@ -83,18 +91,36 @@ socket.on('new_review', (payload) => {
 
 // --- Notifications amis ---
 socket.on('new_friend_request', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'request', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_REQUEST',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchReceivedFriendRequests();
 });
 
 socket.on('friend_request_accepted', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'accepted', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_ACCEPTED',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchFriends();
   useFriendStore.getState().fetchSentFriendRequests();
 });
 
 socket.on('friend_request_rejected', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'rejected', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_REJECTED',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchSentFriendRequests();
 });
 
