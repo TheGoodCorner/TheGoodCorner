@@ -10,21 +10,18 @@ export function NotificationPopover() {
   const conversations = useMessageStore((state) => state.conversations);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
   const setActiveConversation = useMessageStore((state) => state.setActiveConversation);
-  const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
-  const friendNotifications = useNotificationStore((state) => state.friendNotifications);
-  const markReviewsRead = useNotificationStore((state) => state.markReviewsRead);
-  const markFriendsRead = useNotificationStore((state) => state.markFriendsRead);
+  const notifications = useNotificationStore((state) => state.notifications);
+  const markAsRead = useNotificationStore((state) => state.markAsRead);
+  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const navigate = useNavigate();
 
   const unreadConversations = conversations.filter(
     (c) => (unreadCounts[c.interlocutor.id] || 0) > 0
   );
-  const unreadReviews = reviewNotifications.filter((n) => !n.read);
-  const unreadFriendNotifs = (friendNotifications || []).filter((n) => !n.read);
-  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
+  const unreadNotifs = notifications.filter((n) => !n.read);
 
-  if (!notificationsEnabled)
-	return null;
+  if (!notificationsEnabled) return null;
+
   const allNotifications = [
     ...unreadConversations.map((c) => ({
       type: 'message',
@@ -32,17 +29,11 @@ export function NotificationPopover() {
       date: c.lastMessage?.createdAt ? new Date(c.lastMessage.createdAt).getTime() : 0,
       data: c,
     })),
-    ...unreadReviews.map((n) => ({
-      type: 'review',
-      key: `review-${n.id}`,
-      date: n.id,
-      data: n,
-    })),
-    ...unreadFriendNotifs.map((n) => ({
-      type: 'friend',
-      key: `friend-${n.id}`,
-      date: n.id,
-      data: n,
+    ...unreadNotifs.map((n) => ({
+      type: n.type,
+      key: `notif-${n.id}`,
+      date: new Date(n.createdAt).getTime(),
+      data: { ...n.content, notifId: n.id },
     })),
   ].sort((a, b) => b.date - a.date);
 
@@ -54,14 +45,14 @@ export function NotificationPopover() {
     navigate('/messagerie');
   };
 
-  const handleReviewClick = () => {
-    markReviewsRead();
+  const handleReviewClick = (notifId) => {
+    markAsRead(notifId);
     closeUi('notification-popover');
     navigate('/profile?tab=reviews');
   };
 
-  const handleFriendNotifClick = () => {
-    markFriendsRead();
+  const handleFriendNotifClick = (notifId) => {
+    markAsRead(notifId);
     closeUi('notification-popover');
     navigate('/profile?tab=friends');
   };
@@ -102,10 +93,10 @@ export function NotificationPopover() {
                           {unreadCounts[notif.data.interlocutor.id]}
                         </div>
                       </li>
-                    ) : notif.type === 'review' ? (
+                    ) : notif.type === 'REVIEW' ? (
                       <li
                         key={notif.key}
-                        onClick={() => handleReviewClick()}
+                        onClick={() => handleReviewClick(notif.data.notifId)}
                         className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">
@@ -120,19 +111,19 @@ export function NotificationPopover() {
                     ) : (
                       <li
                         key={notif.key}
-                        onClick={() => handleFriendNotifClick()}
+                        onClick={() => handleFriendNotifClick(notif.data.notifId)}
                         className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">
                           <span className="text-sm font-semibold text-[var(--color-text)] truncate">
-                            {notif.data.type === 'request' && 'Demande d\'ami'}
-                            {notif.data.type === 'accepted' && 'Demande acceptée'}
-                            {notif.data.type === 'rejected' && 'Demande refusée'}
+                            {notif.type === 'FRIEND_REQUEST' && "Demande d'ami"}
+                            {notif.type === 'FRIEND_ACCEPTED' && 'Demande acceptée'}
+                            {notif.type === 'FRIEND_REJECTED' && 'Demande refusée'}
                           </span>
                           <span className="text-xs text-[var(--color-text-muted)] truncate">
-                            {notif.data.type === 'request' && `${notif.data.sender?.username} veut vous ajouter`}
-                            {notif.data.type === 'accepted' && `${notif.data.acceptedBy?.username} a accepté votre demande`}
-                            {notif.data.type === 'rejected' && `${notif.data.rejectedBy?.username} a refusé votre demande`}
+                            {notif.type === 'FRIEND_REQUEST' && `${notif.data.sender?.username} veut vous ajouter`}
+                            {notif.type === 'FRIEND_ACCEPTED' && `${notif.data.acceptedBy?.username} a accepté votre demande`}
+                            {notif.type === 'FRIEND_REJECTED' && `${notif.data.rejectedBy?.username} a refusé votre demande`}
                           </span>
                         </div>
                       </li>

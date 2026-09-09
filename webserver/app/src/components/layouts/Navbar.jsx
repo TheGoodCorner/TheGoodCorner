@@ -18,16 +18,14 @@ function Navbar() {
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const cartCount = useCartStore((state) => state.cartCount);
   const unreadCounts = useMessageStore((state) => state.unreadCounts);
-  const reviewNotifications = useNotificationStore((state) => state.reviewNotifications);
-  const friendNotifications = useNotificationStore((state) => state.friendNotifications);
+  const notifications = useNotificationStore((state) => state.notifications);
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const { isAuthenticated, logout, initializing } = useAuthStore();
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
-  const unreadReviewCount = reviewNotifications.filter((n) => !n.read).length;
-  const unreadFriendCount = (friendNotifications || []).filter((n) => !n.read).length;
-  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadReviewCount + unreadFriendCount;
+  const unreadNotifCount = notifications.filter((n) => !n.read).length;
+  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
 
   const openUi = useUIStore((state) => state.openUi);
   const toggleUi = useUIStore((state) => state.toggleUi);
