@@ -1,4 +1,4 @@
-import { useState, Suspense, lazy } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useThemeStore } from '../../stores/themeStore';
 import { useCartStore } from '../../stores/cartStore';
@@ -9,12 +9,9 @@ import { useNotificationStore } from '../../stores/notificationStore';
 import { useUserStore } from '../../stores/userStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
-import { Moon, Sun, ShoppingCart, Bell, Menu, X, LogOut, UserRound, MessageCircle, Settings, Package } from 'lucide-react';
+import { Moon, Sun, ShoppingCart, Menu, X, LogOut, UserRound, MessageCircle, Settings, Package } from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
-
-const NotificationPopover = lazy(() => 
-  import('../../pages/NotificationPopover').then(module => ({ default: module.NotificationPopover }))
-);
+import { NotificationBell } from './NotificationBell';
 
 function Navbar() {
 
@@ -32,10 +29,6 @@ function Navbar() {
   const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
 
   const openUi = useUIStore((state) => state.openUi);
-  const toggleUi = useUIStore((state) => state.toggleUi);
-  const closeUi = useUIStore((state) => state.closeUi);
-  const isNotifOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false;
-  const notifRef = useClickOutside(() => closeUi('notification-popover'), isNotifOpen);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -49,7 +42,6 @@ function Navbar() {
   };
 
   const navLink = "px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors";
-  const badge = "absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none";
 
   return (
     <nav className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-sm">
@@ -66,21 +58,22 @@ function Navbar() {
             {isAuthenticated && <li><Link to="/messagerie" className={navLink}>Messagerie</Link></li>}
           </ul>
 
-          <div className="hidden md:flex items-center gap-1">
+          {/*
+            Zone d'icônes commune à desktop ET mobile.
+            Thème + Notifications + Panier ne sont rendus QU'UNE FOIS,
+            quelle que soit la largeur d'écran. C'est ce qui corrige le bug :
+            avant, la cloche existait en double (une copie cachée en
+            display:none selon l'écran) et une seule ref était partagée
+            entre les deux, ce qui cassait le clic sur la popover en desktop.
+          */}
+          <div className="flex items-center gap-1">
             <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
 
             {isAuthenticated && (
-              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
-                <Button onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }} variant="ghost" icon={Bell} aria-label="Notifications" />
-                {notificationsEnabled && notificationCount > 0 && (
-                  <div className={badge}>{notificationCount}</div>
-                )}
-                {notificationsEnabled && isNotifOpen && (
-                  <Suspense fallback={null}>
-                    <NotificationPopover />
-                  </Suspense>
-                )}
-              </div>
+              <NotificationBell
+                notificationsEnabled={notificationsEnabled}
+                notificationCount={notificationCount}
+              />
             )}
 
             <div className="relative">
@@ -92,78 +85,55 @@ function Navbar() {
               )}
             </div>
 
-            {initializing ? (
-              <div className="w-24 h-9 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />
-            ) : isAuthenticated ? (
-              <div className="relative" ref={profileRef}>
-                <button
-                  onClick={() => setProfileOpen((o) => !o)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
-                >
-                  <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
-                  <span className="text-sm font-medium text-[var(--color-text)] max-w-[100px] truncate">{user?.username}</span>
-                </button>
-                {profileOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-52 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-xl py-1 z-50">
-                    <div className="px-3 py-2 border-b border-[var(--color-border)]">
-                      <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
-                      <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+            {/* Desktop uniquement : profil / connexion */}
+            <div className="hidden md:block">
+              {initializing ? (
+                <div className="w-24 h-9 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />
+              ) : isAuthenticated ? (
+                <div className="relative" ref={profileRef}>
+                  <button
+                    onClick={() => setProfileOpen((o) => !o)}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                  >
+                    <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
+                    <span className="text-sm font-medium text-[var(--color-text)] max-w-[100px] truncate">{user?.username}</span>
+                  </button>
+                  {profileOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-52 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-xl py-1 z-50">
+                      <div className="px-3 py-2 border-b border-[var(--color-border)]">
+                        <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
+                        <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                      </div>
+                      {[
+                        { to: '/profile', icon: UserRound, label: 'Mon profil' },
+                        { to: '/messagerie', icon: MessageCircle, label: 'Messagerie' },
+                        { to: '/orders', icon: Package, label: 'Mes commandes' },
+                        { to: '/settings', icon: Settings, label: 'Paramètres' },
+                      ].map(({ to, icon: Icon, label }) => (
+                        <Link key={to} to={to} onClick={() => setProfileOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
+                          <Icon size={16} /> {label}
+                        </Link>
+                      ))}
+                      <div className="border-t border-[var(--color-border)] mt-1">
+                        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors">
+                          <LogOut size={16} /> Se déconnecter
+                        </button>
+                      </div>
                     </div>
-                    {[
-                      { to: '/profile', icon: UserRound, label: 'Mon profil' },
-                      { to: '/messagerie', icon: MessageCircle, label: 'Messagerie' },
-                      { to: '/orders', icon: Package, label: 'Mes commandes' },
-                      { to: '/settings', icon: Settings, label: 'Paramètres' },
-                    ].map(({ to, icon: Icon, label }) => (
-                      <Link key={to} to={to} onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
-                        <Icon size={16} /> {label}
-                      </Link>
-                    ))}
-                    <div className="border-t border-[var(--color-border)] mt-1">
-                      <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors">
-                        <LogOut size={16} /> Se déconnecter
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link to="/authentication" className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
-                Se connecter
-              </Link>
-            )}
-          </div>
-
-          <div className="flex md:hidden items-center gap-1">
-            <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
-
-            {isAuthenticated && (
-              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
-                <Button onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }} variant="ghost" icon={Bell} aria-label="Notifications" />
-                {notificationsEnabled && notificationCount > 0 && (
-                  <div className={badge}>{notificationCount}</div>
-                )}
-                {notificationsEnabled && (
-                  <Suspense fallback={null}>
-                    <NotificationPopover />
-                  </Suspense>
-                )}
-              </div>
-            )}
-
-            <div className="relative">
-              <Button onClick={() => openUi('cart-popover')} variant="ghost" icon={ShoppingCart} aria-label="Panier" />
-              {cartCount > 0 && (
-                <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
-                  {cartCount}
+                  )}
                 </div>
+              ) : (
+                <Link to="/authentication" className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
+                  Se connecter
+                </Link>
               )}
             </div>
 
+            {/* Mobile uniquement : bouton hamburger */}
             <button
               onClick={() => setMobileOpen((o) => !o)}
-              className="p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
+              className="md:hidden p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
               aria-label="Menu"
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
