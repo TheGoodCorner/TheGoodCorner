@@ -57,9 +57,25 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('product_updated', (payload) => {
+  useProductStore.getState().updateProductStock(payload);
+  const { user, setUser } = useUserStore.getState();
+  if (user?.product) {
+    const updatedProduct = user.product.find((p) => String(p.id) === String(payload.id));
+    if (updatedProduct) {
+      setUser({
+        ...user,
+        product: user.product.map((p) =>
+          String(p.id) === String(payload.id) ? { ...p, quantity: payload.quantity } : p
+        ),
+      });
+    }
+  }
+});
+
 socket.on('product_sold', (payload) => {
   useNotificationStore.getState().addNotification({
-    id: Date.now(),
+    id: payload.notifId,
     type: 'PRODUCT_SOLD',
     content: payload,
     read: false,

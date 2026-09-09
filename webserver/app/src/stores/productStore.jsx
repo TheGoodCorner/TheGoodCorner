@@ -54,6 +54,14 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  updateProductStock: ({ id, quantity }) => {
+    set((state) => ({
+      products: state.products.map((p) =>
+        String(p.id) === String(id) ? { ...p, quantity } : p
+      ),
+    }));
+  },
+
   // Utilisé notamment par les WebSockets
   addProduct: (product) => {
     if (!product || !product.id) return;

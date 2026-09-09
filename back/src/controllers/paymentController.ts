@@ -166,6 +166,7 @@ const paymentController =
 			const rawCart = paymentIntent.metadata?.cart;
 			const cart: Array<{ id: number; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
 			const amountToDeduct = transaction.amount;
+			const soldNotifIds = new Map<number, number>();
 
 			try {
 				await prisma.$transaction(async (tx) => {
@@ -182,7 +183,7 @@ const paymentController =
 								where: { id: updatedProduct.userId },
 								data: { budget: { increment: sellerGain } }
 							});
-							await tx.notification.create({
+							const notif = await tx.notification.create({
 								data: {
 									userId: updatedProduct.userId,
 									type: 'PRODUCT_SOLD',
@@ -194,6 +195,7 @@ const paymentController =
 									},
 								},
 							});
+							soldNotifIds.set(Number(item.id), notif.id);
 						}
 					}
 					// 2. Decrement user budget securely
@@ -212,13 +214,17 @@ const paymentController =
 				if (io) {
 					for (const item of cart) {
 						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
-						if (product?.userId) {
-							io.to(`user_${product.userId}`).emit('product_sold', {
-								productId: product.id,
-								productName: product.name,
-								quantity: Number(item.qty),
-								gain: Number(item.qty) * Number(product.price),
-							});
+						if (product) {
+							if (product.userId) {
+								io.to(`user_${product.userId}`).emit('product_sold', {
+									notifId: soldNotifIds.get(Number(item.id)),
+									productId: product.id,
+									productName: product.name,
+									quantity: Number(item.qty),
+									gain: Number(item.qty) * Number(product.price),
+								});
+							}
+							io.emit('product_updated', { id: product.id, quantity: product.quantity });
 						}
 					}
 				}

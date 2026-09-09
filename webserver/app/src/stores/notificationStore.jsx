@@ -24,9 +24,11 @@ export const useNotificationStore = create(
       },
 
       addNotification: (notification) => {
-        set((state) => ({
-          notifications: [notification, ...state.notifications],
-        }));
+        set((state) => {
+          const alreadyExists = state.notifications.some((n) => n.id === notification.id);
+          if (alreadyExists) return state;
+          return { notifications: [notification, ...state.notifications] };
+        });
       },
 
       removeNotification: (notifId) => {
