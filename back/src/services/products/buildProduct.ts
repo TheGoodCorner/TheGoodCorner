@@ -12,6 +12,8 @@ export const buildProduct = ({ body, file, userId }: ProductCrInput): Prisma.Pro
 		throw new Error('Le prix doit être un nombre valide compris entre 0.01 € et 10 000 €.');
 	const parsedUserId = typeof userId === 'number' ? userId : parseInt(String(userId), 10);
 	const parsedQuantity = quantity ? (typeof quantity === 'number' ? quantity : parseInt(quantity, 10)) : 1;
+	if (category.length > 256 || description.length > 256 || name.length)
+		throw new Error('la categorie du produit ne doit pas aussi longue.');
 
 	return {
 		name: String(name),
