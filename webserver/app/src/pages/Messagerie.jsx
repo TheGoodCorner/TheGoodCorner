@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, Plus } from 'lucide-react';
+import { Trans } from '@lingui/react/macro';
 import { useUserStore } from '../stores/userStore';
 import { useAuthStore } from '../stores/authStore';
 import { useMessageStore } from '../stores/messageStore';
@@ -120,33 +121,41 @@ function Messagerie() {
   };
 
   if (initializing) {
-    return <div className="container py-16 text-center text-[var(--color-text-muted)]">Chargement...</div>;
+    return (
+      <div className="container py-16 text-center text-[var(--color-text-muted)]">
+        <Trans>Chargement...</Trans>
+      </div>
+    );
   }
 
   if (!isAuthenticated || !currentUser?.id) {
-  return (
-    <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-transparent">
-      <div className="container py-16 text-center">
-        <MessageCircle size={40} className="text-[var(--color-text)] mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
-          Connecte-toi pour accéder à ta messagerie
-        </h1>
-        <p className="text-[var(--color-text)] mb-6">
-          Retrouve ici toutes tes conversations avec les autres utilisateurs.
-        </p>
-        <Button to="/authentication" variant="primary">Se connecter</Button>
+    return (
+      <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-transparent">
+        <div className="container py-16 text-center">
+          <MessageCircle size={40} className="text-[var(--color-text)] mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+            <Trans>Connecte-toi pour accéder à ta messagerie</Trans>
+          </h1>
+          <p className="text-[var(--color-text)] mb-6">
+            <Trans>Retrouve ici toutes tes conversations avec les autres utilisateurs.</Trans>
+          </p>
+          <Button to="/authentication" variant="primary">
+            <Trans>Se connecter</Trans>
+          </Button>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Messagerie</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">
+            <Trans>Messagerie</Trans>
+          </h1>
           <Button variant="primary" icon={Plus} onClick={() => setShowUserModal(true)}>
-            Nouvelle discussion
+            <Trans>Nouvelle discussion</Trans>
           </Button>
         </div>
 

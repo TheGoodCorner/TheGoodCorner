@@ -1,11 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User as UserIcon, ArrowLeft } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useLoginForm } from '../hooks/useLoginForm';
 import { Button } from '../components/UI/Button';
 import { FormField } from '../components/UI/FormField';
 
 function Login() {
   const navigate = useNavigate();
+  const { t } = useLingui();
   const {
     isRegister,
     form,
@@ -31,7 +33,7 @@ function Login() {
           className="inline-flex items-center gap-2 text-sm text-[var(--color-text-muted)] hover:text-blue-500 transition-colors mb-8"
         >
           <ArrowLeft size={16} strokeWidth={2.75}/>
-          Retour à la boutique
+          <Trans>Retour à la boutique</Trans>
         </Link>
 
         <div className="animate-fade-slide-up">
@@ -40,7 +42,11 @@ function Login() {
               🛍️ TheGoodCorner
             </Link>
             <p className="text-[var(--color-text-muted)] mt-2">
-              {isRegister ? 'Crée ton compte en quelques secondes' : 'Content de te revoir'}
+              {isRegister ? (
+                <Trans>Crée ton compte en quelques secondes</Trans>
+              ) : (
+                <Trans>Content de te revoir</Trans>
+              )}
             </p>
           </div>
 
@@ -54,7 +60,7 @@ function Login() {
               {isRegister && (
                 <FormField
                   id="username"
-                  label="Nom d'utilisateur"
+                  label={t`Nom d'utilisateur`}
                   icon={UserIcon}
                   type="text"
                   autoComplete="username"
@@ -67,7 +73,7 @@ function Login() {
 
               <FormField
                 id="email"
-                label="Email"
+                label={t`Email`}
                 icon={Mail}
                 type="email"
                 autoComplete="email"
@@ -79,7 +85,7 @@ function Login() {
 
               <FormField
                 id="password"
-                label="Mot de passe"
+                label={t`Mot de passe`}
                 icon={Lock}
                 type="password"
                 autoComplete={isRegister ? 'new-password' : 'current-password'}
@@ -96,19 +102,23 @@ function Login() {
               )}
 
               <Button type="submit" variant="primary" fullWidth loading={submitting}>
-                {isRegister ? 'Créer mon compte' : 'Se connecter'}
+                {isRegister ? <Trans>Créer mon compte</Trans> : <Trans>Se connecter</Trans>}
               </Button>
             </form>
 
             <p className="text-center text-sm text-[var(--color-text-muted)] mt-6">
-              {isRegister ? 'Déjà un compte ?' : 'Pas encore de compte ?'}{' '}
+              {isRegister ? (
+                <Trans>Déjà un compte ?</Trans>
+              ) : (
+                <Trans>Pas encore de compte ?</Trans>
+              )}{' '}
               <Button
                 onClick={switchMode}
                 disabled={submitting}
                 variant='ghost'
                 className="font-medium text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors disabled:opacity-50"
               >
-                {isRegister ? 'Se connecter' : "S'inscrire"}
+                {isRegister ? <Trans>Se connecter</Trans> : <Trans>S'inscrire</Trans>}
               </Button>
             </p>
           </div>

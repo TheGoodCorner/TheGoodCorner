@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { Trans } from '@lingui/react/macro';
 import { useProductStore } from '../stores/productStore';
 import { useUserStore } from '../stores/userStore';
 import { motion } from 'framer-motion';
@@ -46,7 +46,7 @@ export default function SuccessCheckout() {
     }, 800);
 
     return () => clearTimeout(timer);
-  }, [fetchProducts, fetchUser]);
+  }, [fetchProducts, fetchUser, currentUser?.id]);
 
   return (
     <motion.div
@@ -96,14 +96,16 @@ export default function SuccessCheckout() {
         {/* Titre & Message */}
         <motion.div variants={itemVariants}>
           <h1 className="text-3xl font-bold text-[var(--color-text)] mb-2">
-            Paiement réussi !
+            <Trans>Paiement réussi !</Trans>
           </h1>
           <p className="text-[var(--color-text-muted)] text-sm leading-relaxed mb-6">
-            Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation.
+            <Trans>
+              Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation.
+            </Trans>
           </p>
         </motion.div>
 
-        {/* Encadré d'information avec animation staggered */}
+        {/* Encadré d'information */}
         <motion.div
           variants={itemVariants}
           className="bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-xl p-4 text-left mb-6 text-sm"
@@ -114,7 +116,9 @@ export default function SuccessCheckout() {
             transition={{ delay: 0.4, duration: 0.3 }}
             className="flex justify-between items-center py-2"
           >
-            <span className="text-[var(--color-text-muted)]">Statut</span>
+            <span className="text-[var(--color-text-muted)]">
+              <Trans>Statut</Trans>
+            </span>
             <motion.span
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -122,7 +126,7 @@ export default function SuccessCheckout() {
               className="text-emerald-400 font-semibold flex items-center gap-1"
             >
               <CheckCircle2 size={16} />
-              Payé
+              <Trans>Payé</Trans>
             </motion.span>
           </motion.div>
           <motion.div
@@ -131,8 +135,12 @@ export default function SuccessCheckout() {
             transition={{ delay: 0.5, duration: 0.3 }}
             className="flex justify-between items-center py-2"
           >
-            <span className="text-[var(--color-text-muted)]">Délai estimé</span>
-            <span className="text-[var(--color-text)]">2 à 4 jours ouvrés</span>
+            <span className="text-[var(--color-text-muted)]">
+              <Trans>Délai estimé</Trans>
+            </span>
+            <span className="text-[var(--color-text)]">
+              <Trans>2 à 4 jours ouvrés</Trans>
+            </span>
           </motion.div>
         </motion.div>
 
@@ -148,7 +156,9 @@ export default function SuccessCheckout() {
             variants={buttonVariants}
             className="w-full bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] font-semibold py-3 px-4 rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
           >
-            <span>Retourner sur mon profil</span>
+            <span>
+              <Trans>Retourner sur mon profil</Trans>
+            </span>
             <ArrowRight size={18} />
           </motion.button>
 
@@ -159,7 +169,7 @@ export default function SuccessCheckout() {
             variants={buttonVariants}
             className="w-full bg-[var(--color-surface-hover)] hover:bg-[var(--color-border)] text-[var(--color-text)] font-semibold py-3 px-4 rounded-xl transition-all border border-[var(--color-border)]"
           >
-            Retourner sur les produits
+            <Trans>Retourner sur les produits</Trans>
           </motion.button>
         </motion.div>
       </motion.div>

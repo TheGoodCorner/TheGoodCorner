@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Filter, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Filter, ChevronLeft, ChevronRight } from "lucide-react";
+import { Trans, Plural, useLingui } from "@lingui/react/macro";
 import { useProductStore } from "../stores/productStore";
 import ProductCard from "../components/products/ProductCard";
 import { useUserStore } from "../stores/userStore";
 import { PRODUCT_PRICE_MAX } from "../utils/constants";
 import ReactPaginate from "react-paginate";
 
-const STANDARD_CATEGORIES = [
+const RAW_STANDARD_CATEGORIES = [
     "All",
     "Training",
     "Professional",
@@ -16,6 +17,7 @@ const STANDARD_CATEGORIES = [
 const itemsPerPage = 12;
 
 function Products() {
+    const { t } = useLingui();
     const products = useProductStore((state) => state.products);
     const loading = useProductStore((state) => state.loading);
     const filters = useProductStore((state) => state.filters);
@@ -23,12 +25,18 @@ function Products() {
     const getFilteredProducts = useProductStore(
         (state) => state.getFilteredProducts,
     );
-    //   const fetchAllProducts = useProductStore((state) => state.fetchProducts);
     const user = useUserStore((state) => state.user);
     const currentUserId = user?.id;
-    const [isOtherOpen, setIsOtherOpen] = useState(false);
     const [itemOffset, setItemOffset] = useState(0);
     const filteredProducts = getFilteredProducts();
+
+    const categoryLabels = useMemo(() => ({
+        All: t`Tous`,
+        Training: t`Entraînement`,
+        Professional: t`Professionnel`,
+        Combat: t`Combat`,
+        Cardio: t`Cardio`,
+    }), [t]);
 
     useEffect(() => {
         setItemOffset(0);
@@ -37,22 +45,12 @@ function Products() {
     const endOffset = itemOffset + itemsPerPage;
     const currentItems = filteredProducts.slice(itemOffset, endOffset);
     const pageCount = Math.ceil(filteredProducts.length / itemsPerPage);
+
     const handlePageClick = (event) => {
         const newOffset = (event.selected * itemsPerPage) % filteredProducts.length;
         setItemOffset(newOffset);
-        window.scrollTo({ top: 0, behavior: "smooth" })
+        window.scrollTo({ top: 0, behavior: "smooth" });
     };
-
-    const allCategories = products.map((p) =>
-        typeof p.category === "object" ? p.category?.name : p.category,
-    ).filter(Boolean);
-
-    const customCategories = [
-        ...new Set(
-            allCategories.filter((cat) => !STANDARD_CATEGORIES.includes(cat)),
-        ),
-    ];
-    const isCustomSelected = customCategories.includes(filters.selectedCategory);
 
     const handleCategoryChange = (categoryName) => {
         setFilters({
@@ -60,52 +58,52 @@ function Products() {
         });
     };
 
-
     return (
         <div className="bg-transparent min-h-screen">
             <div className="w-full max-w-[1750px] mx-auto px-6 sm:px-10 lg:px-12 py-8">
                 <div className="text-center mb-10 text-[var(--color-text)]">
                     <h1 className="text-3xl md:text-4xl 2xl:text-5xl font-extrabold tracking-tight">
-                        Nos Produits
+                        <Trans>Nos Produits</Trans>
                     </h1>
                     <p className="mt-3 text-base md:text-lg text-[var(--color-text-muted)]">
-                        Retrouvez notre sélection de produits, de peer to peer
+                        <Trans>Retrouvez notre sélection de produits, de peer to peer</Trans>
                     </p>
                 </div>
 
-                {/* Contenu Responsive : Colonne sur mobile, Ligne sur Desktop */}
+                {/* Contenu Responsive */}
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
 
                     {/* Sidebar Filtres */}
                     <aside className="w-full lg:w-64 shrink-0 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 lg:sticky lg:top-6">
-                        {/* Grille 2 colonnes sur tablette/mobile large, 1 colonne sur desktop */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
 
-                            {/* Section Catégories compacte en badges / flex-wrap */}
+                            {/* Section Catégories */}
                             <div>
                                 <div className="flex items-center gap-2 font-semibold text-sm text-[var(--color-text)] mb-2.5">
                                     <Filter size={16} />
-                                    <span>Catégorie</span>
+                                    <span>
+                                        <Trans>Catégorie</Trans>
+                                    </span>
                                 </div>
 
                                 <div className="flex flex-wrap lg:flex-col gap-1.5">
-                                    {STANDARD_CATEGORIES.map((category) => {
+                                    {RAW_STANDARD_CATEGORIES.map((categoryKey) => {
                                         const isSelected =
-                                            category === "All"
+                                            categoryKey === "All"
                                                 ? filters.selectedCategory === ""
-                                                : filters.selectedCategory === category;
+                                                : filters.selectedCategory === categoryKey;
 
                                         return (
                                             <button
-                                                key={category}
+                                                key={categoryKey}
                                                 type="button"
-                                                onClick={() => handleCategoryChange(category)}
+                                                onClick={() => handleCategoryChange(categoryKey)}
                                                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all text-left ${isSelected
                                                     ? "bg-blue-600 text-white font-semibold shadow-sm"
                                                     : "bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                                                     }`}
                                             >
-                                                {category}
+                                                {categoryLabels[categoryKey] || categoryKey}
                                             </button>
                                         );
                                     })}
@@ -120,16 +118,16 @@ function Products() {
                                                     : "bg-blue-500/10 text-blue-400 hover:bg-blue-500/20"
                                                     }`}
                                             >
-                                                Mes annonces
+                                                <Trans>Mes annonces</Trans>
                                             </button>
                                         )}
                                 </div>
                             </div>
 
-                            {/* Section Prix compacte */}
+                            {/* Section Prix */}
                             <div>
                                 <div className="font-semibold text-sm text-[var(--color-text)] mb-2.5">
-                                    Prix
+                                    <Trans>Prix</Trans>
                                 </div>
 
                                 <div className="flex flex-col gap-2.5">
@@ -165,7 +163,9 @@ function Products() {
                                             </button>
                                         </div>
 
-                                        <span className="text-[var(--color-text-muted)]">à</span>
+                                        <span className="text-[var(--color-text-muted)]">
+                                            <Trans>à</Trans>
+                                        </span>
 
                                         <div className="flex items-center justify-between bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-md px-2 py-1 flex-1">
                                             <button
@@ -227,9 +227,8 @@ function Products() {
                         </div>
                     </aside>
 
-                    {/* Zone principale (Grille + Pagination) */}
+                    {/* Zone principale */}
                     <main className="flex-1 w-full min-w-0">
-                        {/* Grille responsive : 1 col mobile, 2 col sm, 3 col md, 4 col xl */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                             {loading ? (
                                 Array.from({ length: 6 }).map((_, i) => (
@@ -241,7 +240,7 @@ function Products() {
                             ) : products.length === 0 ? (
                                 <div className="col-span-full py-12 text-center">
                                     <p className="text-[var(--color-text-muted)]">
-                                        Aucun produit disponible pour le moment. Revenez bientôt !
+                                        <Trans>Aucun produit disponible pour le moment. Revenez bientôt !</Trans>
                                     </p>
                                 </div>
                             ) : currentItems.length > 0 ? (
@@ -251,13 +250,13 @@ function Products() {
                             ) : (
                                 <div className="col-span-full py-12 text-center">
                                     <p className="text-[var(--color-text-muted)]">
-                                        Aucun produit ne correspond à vos critères
+                                        <Trans>Aucun produit ne correspond à vos critères</Trans>
                                     </p>
                                 </div>
                             )}
                         </div>
 
-                        {/* Pagination Responsive */}
+                        {/* Pagination */}
                         {!loading && pageCount > 1 && (
                             <div className="mt-8 mb-6 flex justify-center">
                                 <ReactPaginate
@@ -285,10 +284,14 @@ function Products() {
                             </div>
                         )}
 
-                        {/* Footer de résultats */}
+                        {/* Footer de résultats avec Plural */}
                         <div className="border-t border-[var(--color-border)] pt-4 mt-6">
                             <p className="text-sm text-[var(--color-text-muted)]">
-                                {filteredProducts.length} produit(s) trouvé(s)
+                                <Plural
+                                    value={filteredProducts.length}
+                                    one="# produit trouvé"
+                                    other="# produits trouvés"
+                                />
                             </p>
                         </div>
                     </main>

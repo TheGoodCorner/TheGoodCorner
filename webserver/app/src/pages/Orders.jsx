@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { apiClient } from '../api/client';
+import { useLanguageStore } from '../stores/languageStore';
 
 export default function Orders() {
+  const { t } = useLingui();
+  const currentLocale = useLanguageStore((state) => state.locale);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,7 +17,6 @@ export default function Orders() {
         setLoading(true);
         const response = await apiClient.get('/transactions');
 
-        // Gère le retour que data soit un objet direct ou un tableau contenant l'utilisateur
         const resData = response.data?.data;
         const paymentList = Array.isArray(resData)
           ? resData[0]?.payment || []
@@ -22,18 +25,18 @@ export default function Orders() {
         setOrders(paymentList);
       } catch (err) {
         console.error('Erreur récupération commandes:', err);
-        setError(err.message || 'Impossible de charger vos commandes.');
+        setError(err.message || t`Impossible de charger vos commandes.`);
       } finally {
         setLoading(false);
       }
     };
 
     fetchOrders();
-  }, []);
+  }, [t]);
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Date inconnue';
-    return new Date(dateString).toLocaleDateString('fr-FR', {
+    if (!dateString) return t`Date inconnue`;
+    return new Date(dateString).toLocaleDateString(currentLocale || 'fr-FR', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
@@ -47,25 +50,24 @@ export default function Orders() {
     if (s === 'SUCCEEDED' || s === 'SUCCESS' || s === 'PAID') {
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800">
-          Payée
+          <Trans>Payée</Trans>
         </span>
       );
     }
     if (s === 'PENDING') {
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-950 text-amber-300 border border-amber-800">
-          En attente
+          <Trans>En attente</Trans>
         </span>
       );
     }
     return (
       <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)]">
-        {status || 'Statut inconnu'}
+        {status || t`Statut inconnu`}
       </span>
     );
   };
 
-  // Résolution robuste de l'image (tableau, string, absolue ou relative)
   const getProductImageUrl = (product) => {
     let rawSrc =
       (Array.isArray(product.images) ? product.images[0] : null) ||
@@ -91,7 +93,6 @@ export default function Orders() {
     return rawSrc;
   };
 
-  // 🔧 FUSIONNER cartSnapshot + products
   const getMergedOrderItems = (order) => {
     const cartSnapshot = order.cartSnapshot || [];
     const productsMap = new Map(
@@ -103,8 +104,8 @@ export default function Orders() {
 
       return {
         productId: snapshot.productId,
-        title: snapshot.name || currentProduct?.title || currentProduct?.name || 'Produit supprimé',
-        quantity: snapshot.quantity, // Vraie quantité d'achat (snapshot)
+        title: snapshot.name || currentProduct?.title || currentProduct?.name || t`Produit supprimé`,
+        quantity: snapshot.quantity,
         priceAtPurchase: snapshot.priceAtPurchase || currentProduct?.price || 0,
         images: currentProduct?.images,
         image: currentProduct?.image,
@@ -120,24 +121,26 @@ export default function Orders() {
         <div className="flex items-center justify-between mb-8 pb-4 border-b border-[var(--color-border)]">
           <div>
             <h1 className="text-2xl font-bold text-[var(--color-text)] tracking-wide">
-              Mes Commandes
+              <Trans>Mes Commandes</Trans>
             </h1>
             <p className="text-sm text-[var(--color-text-muted)] mt-1">
-              Consultez l'historique et le détail de vos achats passés.
+              <Trans>Consultez l'historique et le détail de vos achats passés.</Trans>
             </p>
           </div>
           <Link
             to="/products"
             className="px-4 py-2 bg-[var(--color-primary)] hover:opacity-90 text-[var(--color-on-primary)] text-sm font-medium rounded-[var(--radius-md)] transition"
           >
-            Continuer mes achats
+            <Trans>Continuer mes achats</Trans>
           </Link>
         </div>
 
         {loading && (
           <div className="py-16 text-center text-[var(--color-text-muted)]">
             <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[var(--color-primary)] mb-3" />
-            <p className="text-sm">Chargement des commandes...</p>
+            <p className="text-sm">
+              <Trans>Chargement des commandes...</Trans>
+            </p>
           </div>
         )}
 
@@ -150,13 +153,13 @@ export default function Orders() {
         {!loading && !error && orders.length === 0 && (
           <div className="text-center py-16">
             <p className="text-[var(--color-text-muted)] text-base mb-4">
-              Vous n'avez passé aucune commande pour le moment.
+              <Trans>Vous n'avez passé aucune commande pour le moment.</Trans>
             </p>
             <Link
-              to="/produits"
+              to="/products"
               className="text-sm text-[var(--color-primary)] hover:opacity-80 underline font-medium"
             >
-              Découvrir les produits
+              <Trans>Découvrir les produits</Trans>
             </Link>
           </div>
         )}
@@ -164,7 +167,6 @@ export default function Orders() {
         {!loading && !error && orders.length > 0 && (
           <div className="space-y-4">
             {orders.map((order) => {
-              // fusion avec snapshot de cart
               const mergedItems = getMergedOrderItems(order);
 
               return (
@@ -175,7 +177,7 @@ export default function Orders() {
                   <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-[var(--color-border)]">
                     <div>
                       <span className="text-xs font-mono text-[var(--color-text-muted)]">
-                        Commande #{order.id}
+                        <Trans>Commande #{order.id}</Trans>
                       </span>
                       <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
                         {formatDate(order.createdAt)}
@@ -192,7 +194,7 @@ export default function Orders() {
                   {mergedItems.length > 0 ? (
                     <div className="mt-4 pt-1">
                       <p className="text-xs uppercase tracking-wider text-[var(--color-text-muted)] font-semibold mb-2">
-                        Articles commandés ({mergedItems.length})
+                        <Trans>Articles commandés ({mergedItems.length})</Trans>
                       </p>
                       <ul className="divide-y divide-[var(--color-border)]">
                         {mergedItems.map((item, idx) => {
@@ -225,7 +227,7 @@ export default function Orders() {
                                     {item.title}
                                   </span>
                                   <span className="text-xs text-[var(--color-text-muted)]">
-                                    Quantité : {item.quantity}
+                                    <Trans>Quantité : {item.quantity}</Trans>
                                   </span>
                                 </div>
                               </div>
@@ -240,7 +242,7 @@ export default function Orders() {
                     </div>
                   ) : (
                     <div className="mt-3 text-xs text-[var(--color-text-muted)] italic">
-                      Aucun détail d'article disponible pour cette transaction.
+                      <Trans>Aucun détail d'article disponible pour cette transaction.</Trans>
                     </div>
                   )}
                 </div>
