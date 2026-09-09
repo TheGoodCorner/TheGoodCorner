@@ -58,14 +58,6 @@ function Navbar() {
             {isAuthenticated && <li><Link to="/messagerie" className={navLink}>Messagerie</Link></li>}
           </ul>
 
-          {/*
-            Zone d'icônes commune à desktop ET mobile.
-            Thème + Notifications + Panier ne sont rendus QU'UNE FOIS,
-            quelle que soit la largeur d'écran. C'est ce qui corrige le bug :
-            avant, la cloche existait en double (une copie cachée en
-            display:none selon l'écran) et une seule ref était partagée
-            entre les deux, ce qui cassait le clic sur la popover en desktop.
-          */}
           <div className="flex items-center gap-1">
             <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
 
@@ -85,7 +77,6 @@ function Navbar() {
               )}
             </div>
 
-            {/* Desktop uniquement : profil / connexion */}
             <div className="hidden md:block">
               {initializing ? (
                 <div className="w-24 h-9 rounded-[var(--radius-md)] bg-[var(--color-surface-hover)] animate-pulse" />
@@ -130,7 +121,6 @@ function Navbar() {
               )}
             </div>
 
-            {/* Mobile uniquement : bouton hamburger */}
             <button
               onClick={() => setMobileOpen((o) => !o)}
               className="md:hidden p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
