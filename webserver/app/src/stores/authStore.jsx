@@ -29,6 +29,7 @@ export const useAuthStore = create((set) => ({
       // dans userStore, pas de fetch séparé (GET /user/:id est publique et
       // ne renverrait que la version publique).
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
       useNotificationStore.getState().fetchNotifications()
       return true
@@ -45,6 +46,7 @@ export const useAuthStore = create((set) => ({
 	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
       useNotificationStore.getState().fetchNotifications()
       return true
@@ -70,6 +72,7 @@ export const useAuthStore = create((set) => ({
       }
       set({user, token, isAuthenticated: true, initializing: false })
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
       useNotificationStore.getState().fetchNotifications()
     } catch {
@@ -83,7 +86,7 @@ export const useAuthStore = create((set) => ({
     // Même si l'appel échoue, on déconnecte quand même côté client.
     localStorage.removeItem(SESSION_KEY)
     set({ user: null, token: null, isAuthenticated: false, error: null })
-    useCartStore.getState().clearCart()
+    useCartStore.getState().switchUser(null)
     useUserStore.getState().logout()
     useMessageStore.getState().reset()
     useNotificationStore.getState().reset()

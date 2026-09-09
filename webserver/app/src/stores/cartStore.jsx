@@ -10,16 +10,50 @@ export const useCartStore = create(
       cartTotal: 0,
       error: null,
       isHydrated: false,
-      
+      currentUserId: null,
+
+      switchUser: (userId) => {
+        const state = get()
+        
+        if (state.currentUserId === userId) {
+          return
+        }
+
+        // Si on change d'utilisateur, sauvegarder l'état actuel
+        // avant de charger le nouvel utilisateur
+        if (state.currentUserId !== null) {
+          // La persist middleware sauvegarde automatiquement dans localStorage
+        }
+
+        // Charger le panier du nouvel utilisateur depuis localStorage
+        const storageKey = `cart-storage-${userId}`
+        const savedCart = localStorage.getItem(storageKey)
+        
+        if (savedCart) {
+          try {
+            const parsed = JSON.parse(savedCart)
+            set({
+              cartItems: parsed.cartItems || [],
+              cartCount: parsed.cartCount || 0,
+              cartTotal: parsed.cartTotal || 0,
+              currentUserId: userId,
+            })
+          } catch (e) {
+            console.error('Erreur parsing cart:', e)
+            set({ currentUserId: userId, cartItems: [], cartCount: 0, cartTotal: 0 })
+          }
+        } else {
+          // Nouvel utilisateur = panier vide
+          set({ currentUserId: userId, cartItems: [], cartCount: 0, cartTotal: 0 })
+        }
+      },
 
       addToCart: (product) => {
-
         if (!product || !product.id || !product.price) {
           set({ error: 'Produit invalide.' })
           return false
         }
         const currentUser = useUserStore.getState().user        
-        // Vérifier si c'est le propre produit de l'utilisateur
         if (product.authorId === currentUser?.id) {
           set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
           return false
@@ -106,13 +140,27 @@ export const useCartStore = create(
 
     }),
     {
-      name: 'cart-storage',
+      name: 'cart-storage', // Clé globale
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        cartItems: state.cartItems,
-        cartCount: state.cartCount,
-        cartTotal: state.cartTotal,
-      }),
+      partialize: (state) => {
+        // Sauvegarder aussi le panier de l'utilisateur actuel avec une clé unique
+        if (state.currentUserId) {
+          const userCartKey = `cart-storage-${state.currentUserId}`
+          const userCartData = {
+            cartItems: state.cartItems,
+            cartCount: state.cartCount,
+            cartTotal: state.cartTotal,
+          }
+          localStorage.setItem(userCartKey, JSON.stringify(userCartData))
+        }
+
+        return {
+          cartItems: state.cartItems,
+          cartCount: state.cartCount,
+          cartTotal: state.cartTotal,
+          currentUserId: state.currentUserId,
+        }
+      },
       onRehydrateStorage: () => (state) => {
         state.isHydrated = true;
       },
