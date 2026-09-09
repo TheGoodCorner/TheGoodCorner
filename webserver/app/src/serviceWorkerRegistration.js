@@ -96,23 +96,26 @@ export function applyUpdate(registration) {
 export function unregister() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.getRegistrations().then((registrations) => {
-      for (const registration of registrations) {
-        registration.unregister().then((success) => {
-          if (success) {
-            console.log('[SW] Service Worker désenregistré avec succès.');
-          }
-        });
-      }
-    }).catch((error) => {
-      console.error("[SW] Erreur lors de la désinscription :", error.message);
-    });
+      let unregisteredAny = false;
 
-    if ('caches' in window) {
-      caches.keys().then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => caches.delete(cacheName))
-        );
+      const unregisterPromises = registrations.map((registration) =>
+        registration.unregister().then((success) => {
+          if (success) unregisteredAny = true;
+        })
+      );
+
+      Promise.all(unregisterPromises).then(() => {
+        // Supprime tous les caches de stockage de l'app (tgc-static, runtime, api)
+        if ('caches' in window) {
+          caches.keys().then((names) => {
+            Promise.all(names.map((name) => caches.delete(name))).then(() => {
+              if (unregisteredAny) {
+                window.location.reload();
+              }
+            });
+          });
+        }
       });
-    }
+    });
   }
 }
