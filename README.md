@@ -96,7 +96,11 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 
 # Resources
 
-#### Docs
+---
+
+<details>
+  <summary>📚 Documentation</summary>
+
 [Documentation : Offline PWA](https://www.itnetwork.fr/blog/application-web-hors-ligne/)  
 [Documentation : SEO Scoring - Lighthouse validation](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
 [Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/meta-description?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
@@ -104,7 +108,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : React pagination](https://www.contentful.com/blog/react-pagination/)  
 [Documentation : Stripe test payment](https://docs.stripe.com/testing)  
 [Documentation : Stripe CLI](https://docs.stripe.com/cli)  
-[Documentation : Stripe metadata](https://docs.stripe.com/api/metadata)  
+[Documentation : Stripe metadata](https://docs.stripe.com/taapi/medata)  
 [Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
 [Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
@@ -144,6 +148,13 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Docker](https://docs.docker.com/engine/volumes/)  
 [Documentation : Docker](https://docs.docker.com/reference/compose-file/volumes/)  
 [Documentation : Network Bridge](https://en.wikipedia.org/wiki/Network_bridge)  
+[Documentation : Create React App](https://create-react-app.dev/)  
+[Documentation : React UI](https://fr.react.dev/learn/describing-the-ui)  
+[Documentation : Introduction to React](https://legacy.reactjs.org/tutorial/tutorial.html)  
+[Documentation : Motion Library](https://motion.dev/)  
+[Documentation : HTML Balises](https://facemweb.com/blog/creation-site/liste-balises-html/)  
+[Documentation : Zustand Library](https://zustand.docs.pmnd.rs/)
+[Documentation : Lucid Icons Library](https://lucide.dev/guide/)  
 [Documentation : Prisma](https://www.prisma.io/docs/orm/v7/more/dev-environment/environment-variables)  
 [Documentation : Sockets](https://medium.com/@basukori8463/build-a-real-time-chat-app-from-scratch-with-node-js-and-socket-io-9714)  
 [Documentation : Prisma](https://www.prisma.io/docs/orm/reference/error-reference)  
@@ -165,14 +176,28 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)  
 [Documentation : Basic SQL syntaxe](https://www.w3schools.com/sql/sql_syntax.asp)  
 
-#### Videos
+</details>
+
+---
+
+<details>
+  <summary>🎓 Tutoriels</summary>
+
 [Video : Docker Essentials](https://www.youtube.com/watch?v=pg19Z8LL06w)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=MP3Wm9dtHSQ)  
 [Video : NGINX capabilities](https://www.youtube.com/watch?v=OEFZUj_RQKc)  
-[Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)  
+[Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)
 [Video : Best backend Framework in 2025](https://www.youtube.com/watch?v=qZ6w9_MhmJ0)  
+[Video : React tuto](https://www.youtube.com/watch?v=h2a0cSC1Vz8&t=15s)  
+[Video : Building Shopping Cart](https://www.youtube.com/watch?v=AdmB2CJ9I9E)  
+[Video : Authentication in React with JWTs, Access & Refresh Tokens](https://www.youtube.com/watch?v=AcYF18oGn6Y)  
+[Video : Complete tuto User managment](https://www.youtube.com/watch?v=VOmHs6-NNgc&list=PLSJnlFr3D-mHNQYzpfBCt9ezHxbgxaAZi)  
+[Video : API Authentication](https://www.youtube.com/watch?v=bP1mo3UbhNg)  
+[Video : Authentication Concepts](https://www.youtube.com/watch?v=iX8g4LqF8p8)  
 
+</details>
 
+---
 
 
 # Team Information
