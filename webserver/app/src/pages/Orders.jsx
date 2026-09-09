@@ -141,7 +141,10 @@ export default function Orders() {
         {!loading && !error && orders.length > 0 && (
           <div className="space-y-4">
             {orders.map((order) => {
+              console.log("order:", order)
               const items = order.products || [];
+              const cartSnapshot = order.cartSnapshot || [];
+              console.log("items:", items)
 
               return (
                 <div

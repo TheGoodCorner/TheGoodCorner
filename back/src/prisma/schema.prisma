@@ -59,6 +59,7 @@ model Payment {
   status String
   userId Int
   user  User  @relation(fields: [userId], references: [id], onDelete:Cascade)
+  cartSnapshot  Json?
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
