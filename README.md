@@ -5,7 +5,8 @@
 # **Program Name** : ['TheGoodCorner']
 
 ### **Short Description** : 
-> This project is a Web Application created in the context of 42 Curriculum's last project Ft_transcendence. It is a custom made e-commerce website that place users in relation in a market type environment where each can buy and sell markets goods to one another.
+> This project is a Web Application created in the context of 42 Curriculum's last project Ft_transcendence.  
+> It is a custom made e-commerce website that place users in relation in a market type environment where each can buy and sell markets goods to one another.  
 
 ### **Table of Content**:
 
@@ -30,65 +31,31 @@
 
 Introduction :
 
-TheGoodCorner is a complete buy and sell website that tries to connect people by allowing them to see online products they posted and get in contact with the seller over a chat system.
+TheGoodCorner is a complete buy and sell website that tries to connect people by allowing them to see online products they posted and get in contact with the seller over a chat system.  
+It is meant as a P2P (peer to peer) solution to help people sell and buy more easily in a decentralized way.  
+The website works from the get go without an account although several features are served only under the possession of a user account.
 
-The project ships a containerized application, that deals with real registered users over a database system and allows them to interact deeply with eachother.
-It uses, a complete product management system allowing to upload image and a rich presentation of the product and a sorting and filtering system of the products. A complete profile management letting the user custom his own informations(username, email, avatar, phonenumber, etc...), with friends feature with online status, also you can post reviews on other users. A dedicated payment system over Stripe. A working user cart, and finally a notifications system.
-
-- The aim of the project is to go over:
+#### The aim of the project is to go over:
 
 [How to setup a complete Web Architecture and a final polished product]  
 
-- An HTTP Web-Server in the form of **NGINX** and associate .
-- A basic Website in the form of **Wordpress**.
-- A basic database implementation in the form of **MariaDB**.
-
-This project emphasizes understanding of:
-- Virtualization not of system as a whole but of application/services as processes using the Docker software technology
-- The basics of system-architecture development (Dev-Ops).
+- Desigining a fully fledged Front-End, expressing creativity.
+- Desigining an optimised, reliable and predictable Back-End.
+- Think about the whole picture: how to assembles an architecture that efficiently handle users requests.
+- Users experience as a central part of the designing process.
+- Handle traffic, network and request made over the site in a graceful way.
+- Have basic knowledge of security principles, to protect the core infrastructure of the site.
+- Use new programming languages to gain new perspectives on programming as a whole.
 
 ### **Project Summary** :
-The program instantiates Docker Images of subject-bound named services.  
-It creates a network on the host machine(VM here), accessible via HTTPS protocol and allows the navigation on a NGINX hosted wordpress web-server.  
-Everything is minimally configured but the point was to design the system-architecture not the website in itself.  
-Wordpress is able to communicate with its own database and everything is stored in persistent volumes making it possible for data to stay persistent/present across multiple starts/restarts.
 
-### **Project Description** :
-[Virtual Machines vs Docker] :
-> Virtual machines hosts themselves by using part of the physical hardware of the host machine an assigning it to themselves.  
->They also possess their own operating system and kernel (as a whole).  
-> Whereas Docker only emulate the application layer of the kernel, it uses the hardware of the host (do not own its own virtual hardware).  
-> Docker is faster, safer, more portable and easily configurable through DockerHub.  
+The project ships a containerized application, that deals with real registered users over a database system and allows them to interact deeply with eachother.  
+It uses, a complete product management system allowing to upload image, a rich presentation of the product and a sorting and filtering system.  
+There is also a  complete profile management that lets the user custom his own informations(username, email, avatar, phonenumber, etc...), a friends feature with online status.  
+You can also post reviews on other sellers to give insights to buyers on a seller's reputation.  
+Moreover the website ships with it's dedicated payment system over Stripe, A working user cart.  
+Finally a notifications system that keeps tracks of important matters to the user.
 
-[Secrets vs Environment Variables] :
-> Secrets are specially identified Docker composed files that holds private API credentials. 
->This is meant to increase security as thoses passwords and sensitive data are not meant to be accessible through github (thanks to gitignore).  
-> Environment variables are accessibles for all Dockers that are allowed to access them. They are used for configuration purposes (and infrastructure maintenance) and are critical to the user.  
-
-[Docker Network vs Host Network] :
-> By default Docker Containers can only see their own local network and they are isolated from the host unless they expose a port to it. Their default network configuration method between to container is bridged connection (isolated network connection segment).  
-> It is possible to create local network for Dockers Containers to regroup them or isolate them from one another (like sub-netting) through the network command/attribute in the docker-compose file.  
-> Docker Containers cannot access and cannot be accessed Host's network by any means other than ports.  
-> Host network represent the host's actual network in the company's facilities or wherever he currently stays at.  
->It designate the interconnections between the different machines linked over the network .
-  
-
-Docker Volumes vs Bind Mounts:
-> Docker Volumes and Bind Mounts are designed to deal with data persistency.  
-> When shutting down the Dockers Containers, all of their writeable memory gets erased and the data is being lost. By creating Volumes or Binds Mounts we can solve this issue.  
-> The main difference between volumes and bind mounts lies in how Docker Compose adjust itself to create this data persistency : Over volumes, it create a global virtual "Volume" that represent an external peripheral accessible for the Container.  
->In this regard, the Volume is named and known to both the host and the Container and is stored locally on the host machine under docker compose 's specified storage folder (the path you specify your volume to exist at). 
-> Bind Mounts on the other hand is a hardcoded path in which a said service/container can store its data. The specified folder is mounted from the host to the docker container.  
-> It is stored on the local host machine just like the volumes. It doesn't exist officially for the Docker-Compose (its not global). It is tied to a specific container and bypasses the logic of setting up global volumes environnment.  
-  
-
-### **Project Features** :
-
-- Connection to NGINX Web-Server through port 443 only and using TLS encryption protocol.
-- Navigation on Wordpress and communication to NGINX using FastCGI process manager technology (PHP-FPM).
-- Database availability.
-- Persistent data storage.
-  
 
 # Instructions
 
@@ -101,10 +68,13 @@ First clone the repository to your machine :
 > cd TheGoodCorner
 > ```
 
-Copy the the environment file :
+Copy the the environment file into the back directory or manually fill and rename the env_example file :
 
 ```bash
-cp .env.example .env
+cd TheGoodCorner/back
+cp <path to your .env> .
+or 
+mv .env_example .env
 ```
 
 Simply run `make` to build and start all containers:
@@ -114,51 +84,57 @@ Simply run `make` to build and start all containers:
 
 To target and start a specific container, use:
 >```bash
-> make <container\_name>
+> make <container_name>
 >```
 
 
 ### **Usage** :
- Access the website by typing https://localhost:4443 for securised access or http://localhost:8080 for normal connection, on your local machine's web-browser.
+Access the website by typing:  
+https://localhost:4443 for signed certificate access (secure encrypted website access)  
+or  
+http://localhost:8080 for non encrypted connection on your local machine's web-browser.
 
 # Resources
 
 #### Docs
-[Documentation : Compose GettingStarted](https://docs.docker.com/compose/gettingstarted/)  
-[Documentation : NGINX ConfigurationFile](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
-[Documentation : NGINX Dockerization](https://medium.com/@srikanthjosyula/dockerizing-nginx-a-step-by-step-guide-for-beginners-a9bdc1944a44)  
+[Documentation : Offline PWA](https://www.itnetwork.fr/blog/application-web-hors-ligne/)  
+[Documentation : SEO Scoring - Lighthouse validation](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
+[Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/meta-description?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
+[Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
+[Documentation : React pagination](https://www.contentful.com/blog/react-pagination/)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
-[Documentation : Debian](https://www.debian.org/releases/)  
+[Documentation : Stripe test payment](https://docs.stripe.com/testing)  
+[Documentation : Stripe CLI](https://docs.stripe.com/cli)  
+[Documentation : Stripe metadata](https://docs.stripe.com/api/metadata)  
+[Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
+[Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX ConfigurationFile](https://nginx.org/en/linux_packages.html#Debian)  
-[Documentation : APT](https://manpages.debian.org/stretch/apt/apt.8.en.html)  
-[Documentation : FASTCGI](https://fr.wikipedia.org/wiki/FastCGI)  
 [Documentaiton : NGINX RequestProcess](https://nginx.org/en/docs/http/request_processing.html)  
-[Documentation : FASTCGI Configuration](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_param)  
-[Documentation : Wordpress Installation](https://www.rosehosting.com/blog/how-to-install-wordpress-on-debian-12/)  
-[Documentation : Wordpress Installation](https://make.wordpress.org/cli/handbook/guides/installing/)  
-[Documentation : Wordpress InstallationVerification](https://make.wordpress.org/cli/handbook/guides/verifying-downloads/)  
-[Documentation : SED](https://www.ionos.fr/digitalguide/serveur/configuration/commande-sed-de-linux/)  
-[Documentation : MariaDB Installation](https://mariadb.com/docs/server/clients-and-utilities/deployment-tools/mariadb-install-db)  
+[Documentation : API - LoadBalancer - ReverseProxy](https://www.reddit.com/r/devops/comments/py1q54/difference_between_reverse_proxy_load_balancer/)  
+[Documentation : CORS principles](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/CORS)  
+[Documentation : CORS principles](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers)  
+[Documentation : CORS principles](https://portswigger.net/web-security/cors/access-control-allow-origin)  
+[Documentation : Http headers](https://blog.postman.com/what-are-http-headers/)  
+[Documentation : Http codes](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
+[Documentation : Multer API integration](https://medium.com/@julien.maffar/impl%C3%A9mentation-de-multer-dans-une-api-node-js-e358dd513e64)  
+[Documentation : Multer middleware](https://expressjs.com/fr/resources/middleware/multer/)  
+[Documentation : Multer](https://www.npmjs.com/package/multer)  
+[Documentation : Prisma env variables](https://www.prisma.io/docs/orm/v7/more/dev-environment/environment-variables)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/fr/docs/handbook/2/modules.html)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/tsconfig/#noEmitOnError)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#non-null-assertion-operator-postfix-)  
 [Documentation : Docker/Networkng](https://docs.docker.com/engine/network/)  
 [Documentation : Docker/Storage](https://docs.docker.com/engine/storage/)  
 [Documentation : Docker/Volume](https://docs.docker.com/engine/volumes/)  
 [Documentation : Compose Environment](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 [Documentation : Docker/Volume](https://docs.docker.com/reference/compose-file/volumes/)  
-[Documentation : Test Command](https://www.it-connect.fr/verifier-la-presence-dun-repertoire-ou-dun-fichier/)  
 [Documentation : Network Bridge](https://en.wikipedia.org/wiki/Network_bridge)  
-[Documentation : Mysql Socket](https://www.digitalocean.com/community/tutorials/how-to-troubleshoot-socket-errors-in-mysql)  
-[Documentation : Curl Command](https://www.geeksforgeeks.org/linux-unix/curl-command-in-linux-with-examples/)  
-[Documentation : Shell Basics](https://pressbooks.senecapolytechnic.ca/uli101/chapter/shell-scripting-basics/)  
-[Documentation : Set Command](https://www.geeksforgeeks.org/linux-unix/shell-scripting-set-command/)
 
 #### Videos
 [Video : Docker Essentials](https://www.youtube.com/watch?v=pg19Z8LL06w)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=MP3Wm9dtHSQ)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)  
-[Video : PHP-FPM Wordpress](https://www.youtube.com/watch?v=TswVrfNQZHc)  
 
-#### Others
-[linode](https://en.wikipedia.org/wiki/Linode)
 
 
 
@@ -332,3 +308,4 @@ erDiagram
 # Modules
 
 # Individual Contributions
+# Known limitations
