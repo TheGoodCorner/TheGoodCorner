@@ -439,7 +439,7 @@ function Profile() {
                 Ajouter un produit
               </h2>
               <p className="text-[var(--color-text-muted)]">
-                Remplire les informations pour créer un nouveau produit
+                Remplir les informations pour créer un nouveau produit
               </p>
             </div>
             <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />
