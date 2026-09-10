@@ -203,7 +203,7 @@ export default function Checkout() {
             }
         } catch (err) {
             console.error('Erreur lors du paiement :', err);
-            setError(err.response?.data?.message || 'Le budget est insuffisant !');
+            setError(err.response?.data?.message || err.message || "Une erreur est survenue lors de l'initialisation du paiement.");
         } finally {
             setLoading(false);
         }

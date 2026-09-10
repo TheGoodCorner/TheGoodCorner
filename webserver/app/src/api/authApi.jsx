@@ -1,20 +1,10 @@
-// import { rawClient } from './client';
+import { apiClient } from './client';
 import { SESSION_KEY } from '../utils/constants';
-import axios from 'axios';
-
-
-const rawClient = axios.create({
-  baseURL: '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,
-});
 
 export async function loginRequest(email, password) {
   // axios retourne ce que le serveur renvoie (data) + des metadonnee
   // En destructurant '{ data }' on garde que ce qui nous interesse (les donnees renvoyer par le back)
-  const { data } = await rawClient.post('/auth/login', { email, password });
+  const { data } = await apiClient.post('/auth/login', { email, password });
   return {
     user: data.data,
     token: data.accessToken,
@@ -22,7 +12,7 @@ export async function loginRequest(email, password) {
 }
 
 export async function registerRequest(email, password, username) {
-  const { data } = await rawClient.post('/auth/register', { email, password, username });
+  const { data } = await apiClient.post('/auth/register', { email, password, username });
     return {
       user: data.data,
       token: data.accessToken,
@@ -33,7 +23,7 @@ export async function registerRequest(email, password, username) {
 // de client.jsx quand un access token expire. Le cookie refresh httpOnly part
 // automatiquement avec la requête (withCredentials) — rien à lui passer ici.
 export async function refreshRequest() {
-		const { data } = await rawClient.post('/auth/refresh');
+		const { data } = await apiClient.post('/auth/refresh');
 		return {
 		  user: data.data,
 		  token: data.accessToken,
@@ -42,7 +32,7 @@ export async function refreshRequest() {
 
 export async function logoutRequest() {
   try {
-    await rawClient.post('/auth/logout');
+    await apiClient.post('/auth/logout');
   } finally {
     localStorage.removeItem(SESSION_KEY);
   }

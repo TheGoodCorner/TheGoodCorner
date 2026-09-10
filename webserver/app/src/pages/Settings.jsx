@@ -45,7 +45,7 @@ export default function Settings() {
   const [amountToAdd, setAmountToAdd] = useState(1000);
   const [devFeedback, setDevFeedback] = useState(null);
   const [currentBudget, setCurrentBudget] = useState(10000);
-
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
