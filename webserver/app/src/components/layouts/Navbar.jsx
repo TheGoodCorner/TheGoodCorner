@@ -25,7 +25,7 @@ function Navbar() {
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
 
-  const unreadNotifCount = notifications.filter((n) => !n.read).length;
+  const unreadNotifCount = notifications || [].filter((n) => !n.read).length;
   const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
 
   const openUi = useUIStore((state) => state.openUi);

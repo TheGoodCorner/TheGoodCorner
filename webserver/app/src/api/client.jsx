@@ -15,8 +15,6 @@ export const apiClient = axios.create({
 });
 
 // Attache automatiquement le token d'auth (s'il existe) à CHAQUE requête.
-// useAuthStore.getState() lit l'état du store en dehors de tout composant
-// React (un intercepteur n'est pas un composant, donc pas de hook ici).
 apiClient.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
@@ -25,17 +23,12 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// File d'attente : si plusieurs requêtes échouent en 401 en même temps
-// (ex: 3 appels en vol juste avant l'expiration de l'access token), on ne
-// veut déclencher qu'UN SEUL refresh, pas trois en parallèle. Les requêtes
-// suivantes attendent le résultat du premier refresh puis rejouent.
+// Verrou anti-spam : dès qu'un 429 est rencontré, on bloque toutes les autres
+// requêtes concurrentes pour empêcher tout logout intempestif.
+let isRedirectingTo429 = false;
+
 let isRefreshing = false;
 let pendingRequests = [];
-
-let rateLimitRetries = {}; // Track les retries par URL
-const MAX_RETRIES_429 = 3;
-const INITIAL_DELAY_429 = 200; // 1 seconde
-const MAX_DELAY_429 = 2000; // ← NOUVEAU : max 2 secondes (pas 30)
 
 function onRefreshed(newToken) {
   pendingRequests.forEach((callback) => callback(newToken));
@@ -45,48 +38,25 @@ function onRefreshed(newToken) {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const status = error.response?.status;
+
+    // 1. Détection 429 ou verrouillage déjà en cours : redirection immédiate
+    if (status === 429 || isRedirectingTo429) {
+      isRedirectingTo429 = true;
+      if (!window.location.pathname.startsWith('/TooManyRequest')) {
+        window.location.replace('/TooManyRequest');
+      }
+      // Promesse suspendue : empêche les catch() React/Zustand de s'exécuter
+      return new Promise(() => {});
+    }
+
     const originalRequest = error.config;
     const isAuthEndpoint = ['/auth/login', '/auth/register', '/auth/refresh'].some((path) =>
       originalRequest?.url?.includes(path)
     );
 
- // ===== Gestion des 429 =====
-    if (error.response?.status === 429 && originalRequest) {
-      const requestKey = `${originalRequest.method}-${originalRequest.url}`;
-      const retryCount = rateLimitRetries[requestKey] || 0;
-
-      if (retryCount < MAX_RETRIES_429) {
-        // Calcule le délai avec backoff exponentiel + jitter
-        const baseDelay = INITIAL_DELAY_429;
-        const delay = Math.min(
-          baseDelay * Math.pow(2, retryCount) + Math.random() * 100,
-          MAX_DELAY_429 // max 30 secondes
-        );
-
-        console.warn(
-          `[429 Rate Limited] ${originalRequest.method} ${originalRequest.url} - ` +
-          `Retry ${retryCount + 1}/${MAX_RETRIES_429} in ${Math.round(delay)}ms`
-        );
-
-        rateLimitRetries[requestKey] = retryCount + 1;
-
-        // Attend avant de réessayer
-        await new Promise((resolve) => setTimeout(resolve, delay));
-
-        // Réessaye la requête
-        return apiClient(originalRequest);
-      } else {
-        // Max retries atteint
-        delete rateLimitRetries[requestKey];
-        console.error(`[429] Max retries exceeded for ${originalRequest.method} ${originalRequest.url}`);
-        return Promise.reject(new Error('Le serveur est surchargé. Veuillez réessayer plus tard.'));
-      }
-    }
-
-    // Un 401 sur une route "normale" (pas login/register/refresh eux-mêmes,
-    // et pas déjà rejouée une fois) déclenche une tentative de refresh
-    // silencieux avant d'abandonner.
-    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
+    // 2. Gestion du 401 et renouvellement silencieux
+    if (status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve) => {
           pendingRequests.push((newToken) => {
@@ -107,6 +77,17 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         pendingRequests = [];
+
+        // Si le refresh lui-même subit un rate-limit, pas de déconnexion
+        const refreshStatus = refreshError?.response?.status || refreshError?.status;
+        if (refreshStatus === 429 || isRedirectingTo429) {
+          isRedirectingTo429 = true;
+          if (!window.location.pathname.startsWith('/TooManyRequest')) {
+            window.location.replace('/TooManyRequest');
+          }
+          return new Promise(() => {});
+        }
+
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       } finally {
@@ -114,11 +95,12 @@ apiClient.interceptors.response.use(
       }
     }
 
-    const isLoginOrRegister = ['/auth/login', '/auth/register'].some((path) =>
+    const isLoginOrRegister = ['/auth/refresh', '/auth/login', '/auth/register'].some((path) =>
       originalRequest?.url?.includes(path)
     );
 
-    if ((error.response?.status === 401 || error.response?.status === 403) && !isLoginOrRegister) {
+    // 3. Déconnexion uniquement si aucune redirection 429 n'est en cours
+    if ((status === 401 || status === 403) && !isLoginOrRegister && !isRedirectingTo429) {
       useAuthStore.getState().logout();
     }
 

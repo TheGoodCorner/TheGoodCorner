@@ -20,6 +20,7 @@ export const useNotificationStore = create(
           set({ notifications: data });
         } catch (error) {
           console.error('fetchNotifications error:', error);
+		  set({ notifications: [] });
         }
       },
 
