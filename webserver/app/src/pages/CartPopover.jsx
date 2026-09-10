@@ -53,7 +53,7 @@ export function CartPopover() {
                 aria-label="Continuer vos achats"
                 to="/products"
               >
-                Decouvrez nos produits
+                Découvrir les produits
               </Button>
             </div>
           ) : (
