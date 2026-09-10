@@ -96,6 +96,10 @@ socket.on('product_sold', (payload) => {
   });
 });
 
+socket.on('review_updated', ({ review }) => {
+  useUserStore.getState().updateReview(review);
+});
+
 socket.on('review_deleted', ({ reviewId }) => {
   const notifs = useNotificationStore.getState().notifications;
   const toRemove = notifs.find((n) => n.type === 'REVIEW' && n.content?.reviewId === reviewId);

@@ -142,6 +142,10 @@ const reviewController =
 				return (newReview);
 			})
 			console.log (`review update successfull`);
+			const io = req.app.get('io');
+			if (io) {
+				io.to(`user_${oldReview.reviewedUserId}`).emit('review_updated', { review: updatedReview, reviewedUserId: oldReview.reviewedUserId });
+			}
 			return (res.status(200).json({message: 'Avis mis a jour avec succes', data:{updatedReview}}));
 		}
 		catch (error:any){

@@ -103,6 +103,28 @@ export const useUserStore = create(
         });
       },
 
+      updateReview: (review) => {
+        set((state) => {
+          const updatedUser = state.user?.receivedReviews
+            ? {
+                ...state.user,
+                receivedReviews: state.user.receivedReviews.map((r) =>
+                  r.id === review.id ? review : r
+                ),
+              }
+            : state.user;
+          const updatedViewedUser = state.viewedUser?.receivedReviews
+            ? {
+                ...state.viewedUser,
+                receivedReviews: state.viewedUser.receivedReviews.map((r) =>
+                  r.id === review.id ? review : r
+                ),
+              }
+            : state.viewedUser;
+          return { user: updatedUser, viewedUser: updatedViewedUser };
+        });
+      },
+
       clearError: () => {
         set({ error: null });
       },

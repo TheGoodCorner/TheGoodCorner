@@ -14,6 +14,7 @@ import { EmptyState } from "../components/UI/EmptyState";
 import { formatMonthYear } from "../utils/date";
 import { Button } from "../components/UI/Button";
 import { useProductStore } from '../stores/productStore';
+import { useNotificationStore } from '../stores/notificationStore'; // eslint-disable-line
 import Avatar from "../components/UI/Avatar";
 
 function Profile() {
@@ -70,6 +71,20 @@ function Profile() {
       useFriendStore.getState().fetchSentFriendRequests();
     }
   }, [isAuthenticated, user?.id]);
+
+  useEffect(() => {
+    const { notifications, markAsRead } = useNotificationStore.getState();
+    const typesForTab = {
+      reviews: ['REVIEW'],
+      products: ['PRODUCT_SOLD'],
+      friends: ['FRIEND_REQUEST', 'FRIEND_ACCEPTED', 'FRIEND_REJECTED'],
+    };
+    const types = typesForTab[activeTab];
+    if (!types) return;
+    notifications
+      .filter((n) => !n.read && types.includes(n.type))
+      .forEach((n) => markAsRead(n.id));
+  }, [activeTab]);
 
   if (initializing) {
     return (
