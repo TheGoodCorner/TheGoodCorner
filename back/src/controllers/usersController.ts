@@ -126,7 +126,7 @@ const userController =
 			});
 			if (!storedToken || storedToken.expiresAt < new Date()) {
 				res.clearCookie('refreshToken', BASIC_COOKIE); // clear the invalid token
-				return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
+				return (res.status(401).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 			}
 
 			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
@@ -143,7 +143,7 @@ const userController =
 		catch (error){
 			console.error(error);
 			res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS); // clear the token 
-			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
+			return (res.status(401).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 		}
 	},
 	getUser: async (req:Request<{ id:string}>, res:Response) => 
@@ -182,7 +182,7 @@ const userController =
 			if ('error' in dbUser)
 				return(res.status(dbUser.status).json({message: dbUser.error}));
 			if (userId !== dbUser.id)
-				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t delete someone else than yourself !' });
+				return res.status(401).json({ status: 'ERROR', message: 'Forbidden: You can\'t delete someone else than yourself !' });
 			const deletedUser = await prisma.user.delete({
 				where: {id: dbUser.id},
 			});
@@ -202,7 +202,7 @@ const userController =
 			if (isNaN(paramId))
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid user ID' }));
 			if (userId !== paramId)
-				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t update someone else than yourself !' });
+				return res.status(401).json({ status: 'ERROR', message: 'Forbidden: You can\'t update someone else than yourself !' });
 			const dbUser = await findReturnUser(req.params.id);
 			if ('error' in dbUser)
 				return(res.status(dbUser.status).json({message: dbUser.error}));

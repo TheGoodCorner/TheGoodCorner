@@ -118,7 +118,7 @@ apiClient.interceptors.response.use(
       originalRequest?.url?.includes(path)
     );
 
-    if ((error.response?.status === 401 || error.response?.status === 403) && !isLoginOrRegister) {
+    if (error.response?.status === 401 && !isLoginOrRegister) {
       useAuthStore.getState().logout();
     }
 
