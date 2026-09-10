@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { AuthenticatedRequest } from '../interfaces/interfaces.js';
 import prisma from '../services/db.js';
-//import prisma from '../services/db.js';
 import { comparePassword } from '../utils/securityUtils.js';
 import { encryptSecret, newSecret } from '../utils/twoFactor.js';
 import { consumeFactor } from '../services/twoFactor.js';

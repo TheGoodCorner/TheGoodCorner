@@ -7,8 +7,6 @@ export function newSecret() {
   return Array.from(randomBytes(32), b => alphabet[b & 31]).join('');
 }
 
-//// g
-
 // decode le Base32
 function decode(secret: string) {
   // pour chaque caractere, on convertit en binaire puis on complete avec des 0 pour former des groupes de 5 bits
