@@ -79,6 +79,8 @@ const ProductController =
 			},
 		});
 		console.log(`User updated product ID ${updatedProduct.id}`);
+		const io = req.app.get('io');
+		if (io) io.emit('product_edited', updatedProduct);
 		return (res.status(200).json({ status: 'OK', data: updatedProduct }));
 	},
 	deleteProduct: async (req: AuthenticatedRequest<{ id: string }>, res: Response) => {

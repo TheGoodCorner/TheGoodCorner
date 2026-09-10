@@ -54,6 +54,16 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  updateProduct_socket: (product) => {
+    set((state) => ({
+      products: state.products.map((p) => String(p.id) === String(product.id) ? product : p),
+      currentProduct:
+        state.currentProduct && String(state.currentProduct.id) === String(product.id)
+          ? product
+          : state.currentProduct,
+    }));
+  },
+
   updateProductStock: ({ id, quantity }) => {
     set((state) => ({
       products: state.products.map((p) =>

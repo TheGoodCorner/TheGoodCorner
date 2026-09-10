@@ -106,5 +106,33 @@ export const useUserStore = create(
       clearError: () => {
         set({ error: null });
       },
+
+      updateViewedUserProduct_full: (product) => {
+        set((state) => {
+          if (!state.viewedUser?.product) return state;
+          return {
+            viewedUser: {
+              ...state.viewedUser,
+              product: state.viewedUser.product.map((p) =>
+                String(p.id) === String(product.id) ? product : p
+              ),
+            },
+          };
+        });
+      },
+
+      updateViewedUserProduct: (id, quantity) => {
+        set((state) => {
+          if (!state.viewedUser?.product) return state;
+          return {
+            viewedUser: {
+              ...state.viewedUser,
+              product: state.viewedUser.product.map((p) =>
+                String(p.id) === String(id) ? { ...p, quantity } : p
+              ),
+            },
+          };
+        });
+      },
     })
 );
