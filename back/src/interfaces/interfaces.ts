@@ -25,6 +25,8 @@ export interface ProductUpdate {
 		price?: string | number | undefined;
 		quantity?: string | number | undefined;
 		CategoryId?: string | number | undefined;
+		category?: string | undefined;
+		description?: string | undefined;
 	};
 	file?: Express.Multer.File | undefined;
 }

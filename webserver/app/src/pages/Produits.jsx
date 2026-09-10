@@ -3,16 +3,10 @@ import { Filter, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useProductStore } from "../stores/productStore";
 import ProductCard from "../components/products/ProductCard";
 import { useUserStore } from "../stores/userStore";
-import { PRODUCT_PRICE_MAX } from "../utils/constants";
+import { PRODUCT_PRICE_MAX, CATEGORIES, getCategoryLabel } from "../utils/constants";
 import ReactPaginate from "react-paginate";
 
-const STANDARD_CATEGORIES = [
-    "All",
-    "Training",
-    "Professional",
-    "Combat",
-    "Cardio",
-];
+const STANDARD_CATEGORIES = ["All", ...CATEGORIES.map((c) => c.value)];
 const itemsPerPage = 12;
 
 function Products() {
@@ -105,7 +99,7 @@ function Products() {
                                                     : "bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                                                     }`}
                                             >
-                                                {category}
+                                                {category === "All" ? "Tous" : getCategoryLabel(category)}
                                             </button>
                                         );
                                     })}

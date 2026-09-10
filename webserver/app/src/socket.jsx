@@ -57,6 +57,18 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('product_edited', (product) => {
+  useProductStore.getState().updateProduct_socket(product);
+  useUserStore.getState().updateViewedUserProduct_full(product);
+  const { user, setUser } = useUserStore.getState();
+  if (user?.product?.some((p) => String(p.id) === String(product.id))) {
+    setUser({
+      ...user,
+      product: user.product.map((p) => String(p.id) === String(product.id) ? product : p),
+    });
+  }
+});
+
 socket.on('product_updated', (payload) => {
   useProductStore.getState().updateProductStock(payload);
   const { user, setUser } = useUserStore.getState();
@@ -71,6 +83,7 @@ socket.on('product_updated', (payload) => {
       });
     }
   }
+  useUserStore.getState().updateViewedUserProduct(payload.id, payload.quantity);
 });
 
 socket.on('product_sold', (payload) => {
@@ -81,6 +94,10 @@ socket.on('product_sold', (payload) => {
     read: false,
     createdAt: new Date().toISOString(),
   });
+});
+
+socket.on('review_updated', ({ review }) => {
+  useUserStore.getState().updateReview(review);
 });
 
 socket.on('review_deleted', ({ reviewId }) => {

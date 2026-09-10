@@ -3,18 +3,10 @@ import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
 import { FileInput } from '../UI/FileInput';
 import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
-import { PRODUCT_PRICE_MAX } from '../../utils/constants';
+import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
-const CATEGORIES = [
-  { value: 'Training', label: 'Entrainement' },
-  { value: 'Professionnal', label: 'Professionnel' },
-  { value: 'Combat', label: 'combat' },
-  { value: 'Cardio', label: 'cardio' },
-  { value: 'other', label: 'Autre' },
-];
-
-export function ProductForm({ onSuccess }) {
-  const { form, submitting, error, handleChange, submit } = useProductForm();
+export function ProductForm({ product = null, onSuccess }) {
+  const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -35,7 +27,7 @@ export function ProductForm({ onSuccess }) {
           placeholder='Ex: Chaise ergonomique'
           disabled={submitting}
         />
-        
+
         <div>
           <label htmlFor='category' className='block text-sm font-semibold text-[var(--color-text)] mb-2'>
             Catégorie
@@ -63,8 +55,9 @@ export function ProductForm({ onSuccess }) {
           </div>
         </div>
       </div>
-	{/* Champ affiché uniquement si "Autre" est sélectionné */}
-        {form.category === 'other' && (
+
+      {/* Champ affiché uniquement si "Autre" est sélectionné */}
+      {form.category === 'other' && (
         <div className='animate-in fade-in slide-in-from-top-2 duration-200'>
           <FormField
             id='custom-category'
@@ -79,8 +72,9 @@ export function ProductForm({ onSuccess }) {
           />
         </div>
       )}
+
       {/* Ligne 2: Prix + Image */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+      <div className={isEditMode ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 sm:grid-cols-2 gap-6'}>
         <FormField
           id='price'
           label='Prix (€)'
@@ -88,22 +82,37 @@ export function ProductForm({ onSuccess }) {
           type='number'
           step='0.01'
           min='0'
-          max = {PRODUCT_PRICE_MAX}
+          max={PRODUCT_PRICE_MAX}
           value={form.price}
           onChange={handleChange('price')}
           placeholder='29.99'
           disabled={submitting}
         />
 
-        <FileInput
-          id='image-file'
-          label='Image du produit'
-          accept='.png,.jpeg,.jpg,image/png,image/jpeg'
-          value={form.image}
-          onChange={handleChange('image')}
-          disabled={submitting}
-        />
+        {!isEditMode && (
+          <FileInput
+            id='image-file'
+            label='Image du produit'
+            accept='.png,.jpeg,.jpg,image/png,image/jpeg'
+            value={form.image}
+            onChange={handleChange('image')}
+            disabled={submitting}
+          />
+        )}
       </div>
+
+      {isEditMode && form.existingImageUrl && (
+        <div className='flex items-center gap-3'>
+          <img
+            src={form.existingImageUrl}
+            alt='Image actuelle'
+            className='w-14 h-14 object-cover rounded-[var(--radius-sm)] border border-[var(--color-border)]'
+          />
+          <p className='text-xs text-[var(--color-text-muted)]'>
+            L'image ne peut pas être modifiée depuis ce formulaire pour l'instant.
+          </p>
+        </div>
+      )}
 
       {/* Ligne 3: Description */}
       <FormField
@@ -130,13 +139,13 @@ export function ProductForm({ onSuccess }) {
       )}
 
       {/* Bouton Submit */}
-      <Button 
-        variant='primary' 
-        fullWidth 
+      <Button
+        variant='primary'
+        fullWidth
         loading={submitting}
         className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] py-3 rounded-[var(--radius-md)] font-semibold transition-colors'
       >
-        Créer le produit
+        {isEditMode ? 'Enregistrer les modifications' : 'Créer le produit'}
       </Button>
     </form>
   );
