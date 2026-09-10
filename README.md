@@ -1,25 +1,27 @@
-# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, rchan-re and kkafmagh*
+# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous*
 
 <!-- ![Docker.png](docker.png) -->
 
 # **Program Name** : ['TheGoodCorner']
 
 ### **Short Description** : 
-> This project introduces the fundamentals Docker, how Containers works and interacts with the system as a whole.  
+> This project is a Web Application created in the context of 42 Curriculum's last project Ft_transcendence.  
+> It is a custom made e-commerce website that place users in relation in a market type environment where each can buy and sell markets goods to one another.  
 
 ### **Table of Content**:
 
 |  ---  |                Section                 |         ---         |
 | :---: | :------------------------------------: | :-----------------: |
 |  1.   |      [Description](#description)       | :large_blue_circle: |
-|  1.1  |     [Program Name](#program-name)     |   :yellow_circle:   |
-|  1.2  |  [Project Summary](#project-summary-)  |   :yellow_circle:   |
-|  1.3  | [Project Description](#project-description-) |   :yellow_circle:   |
-|  1.4  | [Project Features](#project-features-) |   :yellow_circle:   |
 |  2.   |     [Instructions](#instructions)      | :large_blue_circle: |
-|  2.1  |     [Installation](#installation-)     |   :yellow_circle:   |
-|  2.2  |            [Usage](#usage-)            |   :yellow_circle:   |
 |  3.   |        [Resources](#resources)         | :large_blue_circle: |
+|  4.   |   [Team Information](#team-information)| :large_blue_circle: |
+|  5.   |   [Project Management](#project-management)| :large_blue_circle: |
+|  6.   |   [Technical Stack](#technical-stack)| :large_blue_circle: |
+|  7.   |   [Database Schema](#database-schema)| :large_blue_circle: |
+|  8.   |   [Features List](#featured-list)| :large_blue_circle: |
+|  9.   |   [Modules](#modules)| :large_blue_circle: |
+|  10.  |   [Individual Contributions](#individual-contributions) |:large_blue_circle: |
   
 
 # Description
@@ -29,117 +31,342 @@
 
 Introduction :
 
-TheGoodCorner is a project that introduces the fundamentals of Dockerization.
-Docker is a software, that aims at enforcing portability of code and services across all platforms and differing kernels.
+TheGoodCorner is a complete buy and sell website that tries to connect people by allowing them to see online products they posted and get in contact with the seller over a chat system.  
+It is meant as a P2P (peer to peer) solution to help people sell and buy more easily in a decentralized way.  
+The website works from the get go without an account although several features are served only under the possession of a user account.
 
-It does so by creating small independent boxes called containers that runs using the host machine's hardware but their own specific kernel/system.
-Docker and Docker containers exists on the application layer of the host machine as a process with its own processID. Hence the containers supports "layerization" on top of themselves.
+#### The aim of the project is to go over:
 
-A docker running a specific application or service is called a docker container, and it is based off whats called an image. You can visualize images as cooking recipe that contains all sort of data/configuration for the docker container(it's recipe of something (e.g,NGINX image is the recipe for a web server)).
+[How to setup a complete Web Architecture and a final polished product]  
 
-- The aim of the project is to go over:
-
-[How to setup a functional system of containers including:]  
-
-- An HTTP Web-Server in the form of **NGINX**.
-- A basic Website in the form of **Wordpress**.
-- A basic database implementation in the form of **MariaDB**.
-
-This project emphasizes understanding of:
-- Virtualization not of system as a whole but of application/services as processes using the Docker software technology
-- The basics of system-architecture development (Dev-Ops).
+- Desigining a fully fledged Front-End, expressing creativity.
+- Desigining an optimised, reliable and predictable Back-End.
+- Think about the whole picture: how to assembles an architecture that efficiently handle users requests.
+- Users experience as a central part of the designing process.
+- Handle traffic, network and request made over the site in a graceful way.
+- Have basic knowledge of security principles, to protect the core infrastructure of the site.
+- Use new programming languages to gain new perspectives on programming as a whole.
 
 ### **Project Summary** :
-The program instantiates Docker Images of subject-bound named services.  
-It creates a network on the host machine(VM here), accessible via HTTPS protocol and allows the navigation on a NGINX hosted wordpress web-server.  
-Everything is minimally configured but the point was to design the system-architecture not the website in itself.  
-Wordpress is able to communicate with its own database and everything is stored in persistent volumes making it possible for data to stay persistent/present across multiple starts/restarts.
 
-### **Project Description** :
-[Virtual Machines vs Docker] :
-> Virtual machines hosts themselves by using part of the physical hardware of the host machine an assigning it to themselves.  
->They also possess their own operating system and kernel (as a whole).  
-> Whereas Docker only emulate the application layer of the kernel, it uses the hardware of the host (do not own its own virtual hardware).  
-> Docker is faster, safer, more portable and easily configurable through DockerHub.  
+The project ships a containerized application, that deals with real registered users over a database system and allows them to interact deeply with eachother.  
+It uses, a complete product management system allowing to upload image, a rich presentation of the product and a sorting and filtering system.  
+There is also a  complete profile management that lets the user custom his own informations(username, email, avatar, phonenumber, etc...), a friends feature with online status.  
+You can also post reviews on other sellers to give insights to buyers on a seller's reputation.  
+Moreover the website ships with it's dedicated payment system over Stripe, A working user cart.  
+Finally a notifications system that keeps tracks of important matters to the user.
 
-[Secrets vs Environment Variables] :
-> Secrets are specially identified Docker composed files that holds private API credentials. 
->This is meant to increase security as thoses passwords and sensitive data are not meant to be accessible through github (thanks to gitignore).  
-> Environment variables are accessibles for all Dockers that are allowed to access them. They are used for configuration purposes (and infrastructure maintenance) and are critical to the user.  
-
-[Docker Network vs Host Network] :
-> By default Docker Containers can only see their own local network and they are isolated from the host unless they expose a port to it. Their default network configuration method between to container is bridged connection (isolated network connection segment).  
-> It is possible to create local network for Dockers Containers to regroup them or isolate them from one another (like sub-netting) through the network command/attribute in the docker-compose file.  
-> Docker Containers cannot access and cannot be accessed Host's network by any means other than ports.  
-> Host network represent the host's actual network in the company's facilities or wherever he currently stays at.  
->It designate the interconnections between the different machines linked over the network .
-  
-
-Docker Volumes vs Bind Mounts:
-> Docker Volumes and Bind Mounts are designed to deal with data persistency.  
-> When shutting down the Dockers Containers, all of their writeable memory gets erased and the data is being lost. By creating Volumes or Binds Mounts we can solve this issue.  
-> The main difference between volumes and bind mounts lies in how Docker Compose adjust itself to create this data persistency : Over volumes, it create a global virtual "Volume" that represent an external peripheral accessible for the Container.  
->In this regard, the Volume is named and known to both the host and the Container and is stored locally on the host machine under docker compose 's specified storage folder (the path you specify your volume to exist at). 
-> Bind Mounts on the other hand is a hardcoded path in which a said service/container can store its data. The specified folder is mounted from the host to the docker container.  
-> It is stored on the local host machine just like the volumes. It doesn't exist officially for the Docker-Compose (its not global). It is tied to a specific container and bypasses the logic of setting up global volumes environnment.  
-  
-
-### **Project Features** :
-
-- Connection to NGINX Web-Server through port 443 only and using TLS encryption protocol.
-- Navigation on Wordpress and communication to NGINX using FastCGI process manager technology (PHP-FPM).
-- Database availability.
-- Persistent data storage.
-  
 
 # Instructions
 
 ### **Installation** :
-> ```  
+
+First clone the repository to your machine :
+
+> ```bash
 > git clone <repo_url>  
-> cd TheGoodCorner  
-> make  
+> cd TheGoodCorner
 > ```
 
-### **Usage** :
-> ```  
-> Access the website by typing https://mchanlia.42.fr or https://localhost on your local machine's web-browser.
+Copy the the environment file into the back directory or manually fill and rename the env_example file :
+
+```bash
+cd TheGoodCorner/back
+cp <path to your .env> .
+or 
+mv .env_example .env
+```
+
+Simply run `make` to build and start all containers:
+>```bash
+> make
 >```
+
+To target and start a specific container, use:
+>```bash
+> make <container_name>
+>```
+
+
+### **Usage** :
+Access the website by typing:  
+https://localhost:4443 for signed certificate access (secure encrypted website access)  
+or  
+http://localhost:8080 for non encrypted connection on your local machine's web-browser.
+
 # Resources
 
 #### Docs
-[Documentation : Compose GettingStarted](https://docs.docker.com/compose/gettingstarted/)  
-[Documentation : NGINX ConfigurationFile](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
-[Documentation : NGINX Dockerization](https://medium.com/@srikanthjosyula/dockerizing-nginx-a-step-by-step-guide-for-beginners-a9bdc1944a44)  
+[Documentation : Offline PWA](https://www.itnetwork.fr/blog/application-web-hors-ligne/)  
+[Documentation : SEO Scoring - Lighthouse validation](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
+[Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/meta-description?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
+[Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/invalid-robots-txt?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
+[Documentation : React pagination](https://www.contentful.com/blog/react-pagination/)  
+[Documentation : Stripe test payment](https://docs.stripe.com/testing)  
+[Documentation : Stripe CLI](https://docs.stripe.com/cli)  
+[Documentation : Stripe metadata](https://docs.stripe.com/api/metadata)  
+[Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
+[Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
-[Documentation : Debian](https://www.debian.org/releases/)  
 [Documentation : NGINX ConfigurationFile](https://nginx.org/en/linux_packages.html#Debian)  
-[Documentation : APT](https://manpages.debian.org/stretch/apt/apt.8.en.html)  
-[Documentation : FASTCGI](https://fr.wikipedia.org/wiki/FastCGI)  
 [Documentaiton : NGINX RequestProcess](https://nginx.org/en/docs/http/request_processing.html)  
-[Documentation : FASTCGI Configuration](https://nginx.org/en/docs/http/ngx_http_fastcgi_module.html#fastcgi_param)  
-[Documentation : Wordpress Installation](https://www.rosehosting.com/blog/how-to-install-wordpress-on-debian-12/)  
-[Documentation : Wordpress Installation](https://make.wordpress.org/cli/handbook/guides/installing/)  
-[Documentation : Wordpress InstallationVerification](https://make.wordpress.org/cli/handbook/guides/verifying-downloads/)  
-[Documentation : SED](https://www.ionos.fr/digitalguide/serveur/configuration/commande-sed-de-linux/)  
-[Documentation : MariaDB Installation](https://mariadb.com/docs/server/clients-and-utilities/deployment-tools/mariadb-install-db)  
-[Documentation : Docker/Networkng](https://docs.docker.com/engine/network/)  
-[Documentation : Docker/Storage](https://docs.docker.com/engine/storage/)  
-[Documentation : Docker/Volume](https://docs.docker.com/engine/volumes/)  
-[Documentation : Compose Environment](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
-[Documentation : Docker/Volume](https://docs.docker.com/reference/compose-file/volumes/)  
-[Documentation : Test Command](https://www.it-connect.fr/verifier-la-presence-dun-repertoire-ou-dun-fichier/)  
+[Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
+[Documentation : API - LoadBalancer - ReverseProxy](https://www.reddit.com/r/devops/comments/py1q54/difference_between_reverse_proxy_load_balancer/)  
+[Documentation : CORS principles](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/CORS)  
+[Documentation : CORS principles](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers)  
+[Documentation : CORS principles](https://portswigger.net/web-security/cors/access-control-allow-origin)  
+[Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
+[Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
+[Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
+[Documentation : Multer](https://medium.com/@julien.maffar/impl%C3%A9mentation-de-multer-dans-une-api-node-js-e358dd513e64)  
+[Documentation : Multer](https://expressjs.com/fr/resources/middleware/multer/)  
+[Documentation : Multer](https://www.npmjs.com/package/multer)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/fr/docs/handbook/2/modules.html)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/tsconfig/#noEmitOnError)  
+[Documentation : Typescript tutorial](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#non-null-assertion-operator-postfix-)  
+[Documentation : Typescript tutorials](https://www.w3schools.com/typescript/typescript_arrays.php)  
+[Documentation : Javascript tutorials](https://developer.mozilla.org/fr/docs/Web/JavaScript/Reference/Global_Objects/Date)  
+[Documentation : Javascript tutorials](https://lecoints.fr/guide-es5-es6-es2016-es2024-esnext/)  
+[Documentation : Javascript tutorials](https://www.w3schools.com/js/js_2022.asp)  
+[Documentation : Javascript tutorials](https://developer.mozilla.org/fr/docs/Glossary/Asynchronous)  
+[Documentation : Javascript tutorials](https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Async_JS/Introducing)  
+[Documentation : Javascript tutorials ](https://grafikart.fr/tutoriels/fonctions-2059#autoplay)  
+[Documentation : Javascript tutorials](https://grafikart.fr/tutoriels/javascript-promise-2067#autoplay)  
+[Documentation : Javascript tutorials ](https://js.muthu.co/posts/implicit-explicit-nominal-structuring-and-duck-typing/)  
+[Documentation : Javascript tutorials](https://www.geeksforgeeks.org/javascript/how-to-check-for-null-undefined-or-blank-variables-in-javascript/)  
+[Documentation : Javascript tutorials](https://stackoverflow.com/questions/35706164/typescript-import-as-vs-import-require)  
+[Documentation : Javascript tutorials](https://fr.wikipedia.org/wiki/Document_Object_Model)  
+[Documentation : Docker Compose](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
+[Documentation : Docker Compose](https://lours.me/posts/compose-tip-020-docker-compose-logs/)  
+[Documentation : Docker](https://docs.docker.com/build/building/best-practices/#minimize-the-number-of-layers)  
+[Documentation : Docker](https://docs.docker.com/reference/cli/docker/container/exec/)  
+[Documentation : Docker](https://docs.docker.com/engine/network/)  
+[Documentation : Docker](https://docs.docker.com/engine/storage/)  
+[Documentation : Docker](https://docs.docker.com/engine/volumes/)  
+[Documentation : Docker](https://docs.docker.com/reference/compose-file/volumes/)  
 [Documentation : Network Bridge](https://en.wikipedia.org/wiki/Network_bridge)  
-[Documentation : Mysql Socket](https://www.digitalocean.com/community/tutorials/how-to-troubleshoot-socket-errors-in-mysql)  
-[Documentation : Curl Command](https://www.geeksforgeeks.org/linux-unix/curl-command-in-linux-with-examples/)  
-[Documentation : Shell Basics](https://pressbooks.senecapolytechnic.ca/uli101/chapter/shell-scripting-basics/)  
-[Documentation : Set Command](https://www.geeksforgeeks.org/linux-unix/shell-scripting-set-command/)
+[Documentation : Prisma](https://www.prisma.io/docs/orm/v7/more/dev-environment/environment-variables)  
+[Documentation : Sockets](https://medium.com/@basukori8463/build-a-real-time-chat-app-from-scratch-with-node-js-and-socket-io-9714)  
+[Documentation : Prisma](https://www.prisma.io/docs/orm/reference/error-reference)  
+[Documentation : Prisma](https://www.prisma.io/docs/guides/deployment/docker)  
+[Documentation : Prisma](https://www.prisma.io/docs/orm/v6/overview/prisma-in-your-stack/is-prisma-an-orm)  
+[Documentation : Prisma](https://medium.com/@alpercitak/dockerize-next-js-with-prisma-19b7b9d82134)  
+[Documentation : I18n](https://lingui.dev/introduction)  
+[Documentation : I18n](https://fr.wikipedia.org/wiki/Internationalisation_(informatique))  
+[Documentation : I18n](https://www.i18next.com/)  
+[Documentation : Express Router](https://expressjs.com/en/5x/api/router/)  
+[Documentation : Express Router](https://www.geeksforgeeks.org/web-tech/express-js-express-router-function/)  
+[Documentation : NPM](https://blog.logrocket.com/npm-vs-npx/)  
+[Documentation : NPM](https://docs.npmjs.com/uninstalling-packages-and-dependencies)  
+[Documentation : NPM](https://stackoverflow.com/questions/43664200/what-is-the-difference-between-npm-install-and-npm-run-build)  
+[Documentation : NPM](https://docs.npmjs.com/cli/v9/commands/npm-prune)  
+[Documentation : Object to JSON conversion](https://www.geeksforgeeks.org/typescript/how-to-convert-an-object-to-a-json-string-in-typescript/)  
+[Documentation : introduction to JSON Web Tokens](https://www.jwt.io/introduction#difference-decoding-encoding-jwt)  
+[Documentation : NodeJs releases](https://nodejs.org/en/about/previous-releases)  
+[Documentation : Tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)  
+[Documentation : Basic SQL syntaxe](https://www.w3schools.com/sql/sql_syntax.asp)  
 
 #### Videos
 [Video : Docker Essentials](https://www.youtube.com/watch?v=pg19Z8LL06w)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=MP3Wm9dtHSQ)  
+[Video : NGINX capabilities](https://www.youtube.com/watch?v=OEFZUj_RQKc)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)  
-[Video : PHP-FPM Wordpress](https://www.youtube.com/watch?v=TswVrfNQZHc)  
+[Video : Best backend Framework in 2025](https://www.youtube.com/watch?v=qZ6w9_MhmJ0)  
 
-#### Others
-[linode](https://en.wikipedia.org/wiki/Linode)
+
+
+
+# Team Information
+
+# Project Management
+
+# Technical Stack
+### Frontend
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **React.js** | UI framework for building component-based interfaces | Excellent ecosystem, reusability, and performance optimization tools |
+| **Tailwind CSS** | Utility-first CSS framework for styling | Rapid development, consistent design system, smaller bundle size than alternatives |
+| **Lucide React** | Icon library with React components | Lightweight, customizable, and tree-shakeable icons |
+| **Axios** | HTTP client for API requests | Promise-based, interceptor support for authentication and error handling |
+| **React Router** | Client-side routing and navigation | Standard routing solution for React SPAs with nested routes and lazy loading |
+| **Zustand** | State management | Minimal boilerplate, easier to learn and maintain than Redux |
+| **Motion (Framer Motion)** | Animation and motion library | Smooth animations, gesture support, and great performance |
+
+**Frontend Justification:** This stack prioritizes developer experience and performance. Tailwind CSS eliminates CSS maintenance, Lucide provides consistent icons, and Axios with React Router creates a solid foundation for API communication and navigation. Zustand and Motion complete the UX with state management and smooth interactions.
+
+---
+
+### Backend
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **Node.js** | JavaScript runtime | Enables full-stack JavaScript development, non-blocking I/O for scalability |
+| **TypeScript** | Static typing for JavaScript | Prevents runtime errors, improves code maintainability and IDE support |
+| **Express.js** | Web framework for REST APIs | Lightweight, flexible, middleware-based architecture for modular code |
+| **Socket.io** | Real-time bidirectional communication | WebSocket support with fallbacks, automatic reconnection, and room-based messaging for live features |
+
+**Backend Justification:** Node.js with TypeScript provides type safety and a unified JavaScript ecosystem. Express is minimal yet powerful enough for complex API requirements without unnecessary overhead. Socket.io enables real-time features (messaging, notifications, live updates) with built-in reliability and fallback mechanisms for browsers that don't support WebSockets.
+
+---
+
+### Database & ORM
+
+| Technology | Purpose | Justification |
+|-----------|---------|---------------|
+| **PostgreSQL** | Relational database | ACID compliance, advanced features, excellent scalability for complex queries |
+| **Prisma ORM** | Type-safe database toolkit | Auto-generated queries, type inference from schema, eliminates SQL bugs or SQL injections|
+
+**Database Justification:** PostgreSQL ensures data integrity and supports complex relationships. Prisma keeps types synchronized across backend and database, reducing errors and improving developer productivity.
+
+---
+
+### Additional Technologies
+
+| Technology | Purpose |
+|-----------|---------|
+| **Stripe** | Payment processing and secure transaction handling |
+
+---
+
+# Database Schema
+
+```mermaid
+erDiagram
+    USER ||--o{ PAYMENT : makes
+    USER ||--o{ PRODUCT : creates
+    USER ||--o{ MESSAGE : "sends & receives"
+    USER ||--o{ FRIENDREQUEST : "sends & receives"
+    USER ||--o{ REVIEW : "writes & receives"
+    USER ||--o{ REFRESHTOKEN : has
+    USER }o--|| LOCATION : "lives in"
+    PRODUCT }o--|| CATEGORY : "belongs to"
+    PRODUCT ||--o{ PAYMENT : "included in"
+    
+    USER {
+        int id PK
+        string email UK
+        string username UK
+        string password
+        string name
+        string avatar
+        string bio
+        string phoneNumber
+        float budget
+        float sellerRating
+        int sellerReviewCount
+        boolean sellerEliteStatus
+        string sellerEliteStatusCatchPhrase
+        string stripeCustomerId UK
+        int locationId FK
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    PRODUCT {
+        int id PK
+        string name
+        float price
+        string description
+        string imageUrl
+        int quantity
+        int userId FK
+        int categoryId FK
+    }
+    
+    CATEGORY {
+        int id PK
+        string name UK
+    }
+    
+    PAYMENT {
+        int id PK
+        string stripeId UK
+        float amount
+        string currency
+        string status
+        int userId FK
+        Json cartSnapshot
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    LOCATION {
+        int id PK
+        string country
+        string region
+        string city
+        string street
+        int houseNumber
+        string additionalInfos
+    }
+    
+    MESSAGE {
+        int id PK
+        string content
+        boolean isRead
+        int senderId FK
+        int receiverId FK
+        timestamp createdAt
+        timestamp modifiedAt
+    }
+    
+    FRIENDREQUEST {
+        int id PK
+        int senderId FK
+        int receiverId FK
+        string status
+        timestamp createdAt
+        timestamp updatedAt
+    }
+    
+    REVIEW {
+        int id PK
+        int reviewRating
+        string reviews
+        int authorId FK
+        int reviewedUserId FK
+        timestamp createdAt
+        timestamp deletedAt
+        timestamp modifiedAt
+    }
+    
+    REFRESHTOKEN {
+        string id PK
+        string hashedToken UK
+        int userId FK
+        timestamp expiresAt
+        timestamp revokedAt
+        string replacedBy
+        timestamp createdAt
+    }
+```
+
+# Features List
+
+| Fonctionnalité | Description |
+|---|---|
+| 🔐 **Authentification & gestion de session** | Inscription et connexion par email/mot de passe, déconnexion. Session maintenue via access token en mémoire et refresh token en cookie httpOnly. Reconnexion silencieuse au chargement avec refresh automatique de token sur réponse 401. |
+| 🛍️ **Catalogue produits (marketplace)** | Liste paginée des produits avec filtres par catégorie (standards et personnalisées) et fourchette de prix. Page de détail avec image, description, sélecteur de quantité, informations vendeur et suggestions de produits similaires. |
+| ➕ **Publication de produits** | Formulaire de création d'annonce (nom, prix, catégorie, description, image) avec validation côté client et upload multipart. |
+| 🛒 **Panier d'achat** | Ajout, retrait et modification de quantité d'articles. Vérification du stock disponible et blocage d'achat de son propre produit. Panier persisté en localStorage et accessible via popover dans la Navbar. |
+| 💳 **Paiement (Stripe) & portefeuille virtuel** | Tunnel de paiement intégré via Stripe Elements (PaymentElement). Affichage du solde du portefeuille virtuel avant validation et page de confirmation après paiement réussi. |
+| 📋 **Historique des commandes** | Page listant les transactions passées avec statut, date, montant et détail des articles achetés (image et quantité). |
+| 👤 **Profil utilisateur** | Consultation et édition du profil personnel (email, téléphone, bio, adresse, avatar) avec validation. Profil public vendeur avec annonces, note moyenne et date d'inscription. Suppression de compte. |
+| ⭐ **Avis & notation des vendeurs** | Système de notation (1-5 étoiles) avec commentaire. Un seul avis par vendeur, éditable et supprimable. Badge « Vendeur Elite » automatique à partir de 20 avis. |
+| 💬 **Messagerie instantanée** | Messagerie privée en temps réel (Socket.IO). Conversations avec recherche, fil de discussion, envoi/édition/suppression de messages. Badges de messages non lus et masquage de conversation. |
+| 👥 **Système d'amis** | Envoi, acceptation, refus et annulation de demandes d'ami. Liste d'amis avec indicateur de statut en ligne/hors-ligne mis à jour en temps réel. |
+| 🔔 **Notifications** | Centre de notifications regroupant messages non lus, nouveaux avis et demandes d'ami, mis à jour en temps réel. Activables/désactivables depuis les paramètres. |
+| 🌓 **Thème clair / sombre** | Bascule entre thème clair et sombre depuis la Navbar ou les Paramètres. Préférence persistée en localStorage et propagée via tokens CSS. |
+| ⚙️ **Paramètres du compte** | Choix de la langue d'affichage, bascule du thème et des notifications, mode développeur (crédit fictif pour tests), suppression définitive du compte. |
+| 📄 **Pages légales & FAQ** | Pages statiques : Politique de confidentialité, Conditions générales d'utilisation et FAQ avec sommaire ancré. |
+| 📱 **PWA & résilience hors-ligne** | Service Worker en production pour mise en cache des ressources et consultation hors-ligne. Détection automatique des nouvelles versions avec invite de rechargement. |
+| 🔗 **Robustesse couche API** | Client HTTP centralisé (Axios) avec attachement automatique du token, file d'attente lors du refresh et retry automatique avec backoff exponentiel sur erreur 429. |
+| 🎨 **Design system / UI Kit** | Bibliothèque de composants réutilisables (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) pilotés par tokens CSS pour cohérence visuelle et compatibilité clair/sombre. |
+
+---
+
+# Modules
+
+# Individual Contributions
+# Known limitations

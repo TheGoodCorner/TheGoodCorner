@@ -8,7 +8,7 @@ STRIPE_CONT			= stripe
 DATABASE_CONT		= postgresql
 WEB_SERVER_CONT		= webserver
 SRC_DIR				= srcs
-COMPOSE				= docker compose
+COMPOSE				= podman compose
 CONF				= ./docker-compose.yml
 
 # -------------------------------------------------- #
@@ -44,7 +44,7 @@ all: up launch
 
 up:
 	npm install --prefix back --no-audit --no-fund --loglevel=error
-	@if [ $$(docker ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
+	@if [ $$(podman ps -q -f name=$(WEB_SERVER_CONT) | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)TheGoodCorner is already up."; \
 	else \
 		if [ -f ./back/.env ]; then \
@@ -93,7 +93,7 @@ re: clean all
 
 stripe:
 
-	@if [ $$(docker ps -q -f name=stripe | wc -l ) -gt 0 ]; then \
+	@if [ $$(podman ps -q -f name=stripe | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)stripe container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(STRIPE_CONT) 2>/dev/null; \
 	else \
@@ -103,7 +103,7 @@ stripe:
 
 back:
 
-	@if [ $$(docker ps -q -f name=back | wc -l ) -gt 0 ]; then \
+	@if [ $$(podman ps -q -f name=back | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)back container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(BACK_CONT) 2>/dev/null; \
 	else \
@@ -113,7 +113,7 @@ back:
 	fi
 postgresql:
 
-	@if [ $$(docker ps -q -f name=postgresql | wc -l ) -gt 0 ]; then \
+	@if [ $$(podman ps -q -f name=postgresql | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)database container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(DATABASE_CONT) 2>/dev/null; \
 	else \
@@ -123,7 +123,7 @@ postgresql:
 	fi
 webserver:
 
-	@if [ $$(docker ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
+	@if [ $$(podman ps -q -f name=webserver | wc -l ) -gt 0 ]; then \
 		echo -e "$(RED)webserver container is already up refreshing. $(RESET)"; \
 		$(COMPOSE) -f $(CONF) up -d --build --force-recreate $(WEB_SERVER_CONT) 2>/dev/null; \
 	else \

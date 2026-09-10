@@ -2,34 +2,36 @@ import { Request, Response } from "express";
 import prisma from "../services/db.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import Stripe from 'stripe';
+import { findReturnUser } from "../services/users/utilsUsers.js";
+import productRouter from "../routes/products.js";
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a transaction inside the prisma database by taking the request and sending the json object
  * @param request
  * @returns promise containing the json object
  */
-const stripe = new Stripe(process.env.STRIPE_KEY || '');
+const stripe = new Stripe(process.env.PRIVATE_STRIPE_KEY || '');
 const paymentController =
 {
 	createTransaction: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user?.id;
 			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
+				return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
 
-			const { stripeCurrency = 'eur', productId = [], quantity = [] } = req.body;
+			const { stripeCurrency = 'eur', productId = [], quantity = [], cartSnapshot = [] } = req.body;
 
 			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
-				return res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' });
+				return (res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' }));
 
 			if (productId.length !== quantity.length)
-				return res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' });
+				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' }));
 
 			const quantityMap = new Map<number, number>();
 			for (let i = 0; i < productId.length; i++) {
 				const qty = Number(quantity[i]);
 				if (isNaN(qty) || qty <= 0)
-					return res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' });
+					return (res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' }));
 				quantityMap.set(productId[i], qty);
 			}
 
@@ -43,21 +45,27 @@ const paymentController =
 			]);
 
 			if (!user)
-				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
+				return (res.status(404).json({ status: 'ERROR', message: 'User not found' }));
 
 			if (products.length !== productId.length)
-				return res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' });
+				return (res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' }));
+			
+			if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0)
+				return (res.status(400).json({ status: 'ERROR', message: 'Snapshot du panier invalide' }));
 
+			if (cartSnapshot.length !== productId.length)
+				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence: snapshot ne match pas le cart' }));
+			
 			const numericPrice = products.reduce((sum, item) => {
 				const itemQty = quantityMap.get(item.id) || 0;
-				return sum + (Number(item.price) * itemQty);
+				return (sum + (Number(item.price) * itemQty));
 			}, 0);
 
 			if (numericPrice <= 0)
-				return res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' });
+				return (res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' }));
 
 			if (user.budget < numericPrice)
-				return res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget });
+				return (res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget }));
 
 			let customerId = user.stripeCustomerId;
 			if (!customerId) {
@@ -78,6 +86,7 @@ const paymentController =
 			}));
 			const stripesCentsConvertedAmount = Math.round(numericPrice * 100);
 			const stripePaymentIntent = await stripe.paymentIntents.create({
+				payment_method_types: ['card'],
 				amount: stripesCentsConvertedAmount,
 				currency: stripeCurrency,
 				customer: customerId,
@@ -102,21 +111,18 @@ const paymentController =
 							currency: stripeCurrency,
 							status: 'PENDING',
 							userId: userId,
-						}
+							cartSnapshot: cartSnapshot,
+							products: {
+								connect: productId.map((id: number) => ({ id })),
+						}}
 					});
 				});
-				return res.status(201).json({
-					status: 'OK',
-					data: {
-						transaction: newTransaction,
-						clientSecret: stripePaymentIntent.client_secret
-					}
-				});
+				console.log('Transaction successfully created !');
+				return (res.status(201).json({ status: 'OK', data: { transaction: newTransaction, clientSecret: stripePaymentIntent.client_secret } }));
 			} catch (stockError: any) {
 				await stripe.paymentIntents.cancel(stripePaymentIntent.id);
-				if (stockError.message === 'OUT_OF_STOCK') {
+				if (stockError.message === 'OUT_OF_STOCK')
 					return res.status(400).json({ status: 'ERROR', message: 'Item went out of stock during checkout!' });
-				}
 				throw stockError;
 			}
 		} catch (error: any) {
@@ -133,50 +139,70 @@ const paymentController =
 			event = stripe.webhooks.constructEvent(
 				req.body,
 				sig,
-				process.env.STRIPE_WEBHOOK_SECRET!
+				process.env.STRIPE_WEBHOOK!
 			);
 		} catch (err: any) {
 			console.error(`Webhook signature verification failed: ${err.message}`);
-			return res.status(400).send(`Webhook Error: ${err.message}`);
+			return (res.status(400).send(`Webhook Error: ${err.message}`));
 		}
-
 		// Handle successful payment
 		if (event.type === 'payment_intent.succeeded') {
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
 			const transaction = await prisma.payment.findFirst({
 				where: { stripeId: paymentIntent.id }
 			});
 
 			// Idempotency check: prevent duplicate deductions if Stripe resends the event
-			if (!transaction || transaction.status === 'SUCCEEDED') {
-				return res.status(200).json({ received: true });
+			if (!transaction) {
+				console.log(`Webhook received for unknown transaction ${paymentIntent.id} (ignoring mock trigger).`);
+				return (res.status(200).json({ status: 'OK', received: true }));
+			}
+			if (transaction.status === 'SUCCEEDED') {
+				console.log(`Payment ${paymentIntent.id} already processed. Skipping.`);
+				return (res.status(200).json({ status: 'OK', received: true }));
 			}
 
 			// Extract cart from metadata
 			const rawCart = paymentIntent.metadata?.cart;
-			const cart: Array<{ id: string; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
-			const amountToDeduct = Math.round(transaction.amount);
+			const cart: Array<{ id: number; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
+			const amountToDeduct = transaction.amount;
+			const soldNotifIds = new Map<number, number>();
 
 			try {
 				await prisma.$transaction(async (tx) => {
-					// 1. Decrement product stock
+					// 1. Décrémentation du stock des produits
 					for (const item of cart) {
-						await tx.product.update({
+						const updatedProduct = await tx.product.update({
 							where: { id: Number(item.id) },
-							data: { quantity: { decrement: item.qty } }
+							data: { quantity: { decrement: Number(item.qty) } }
 						});
+						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
+						if (updatedProduct.userId) {
+							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
+							await tx.user.update({
+								where: { id: updatedProduct.userId },
+								data: { budget: { increment: sellerGain } }
+							});
+							const notif = await tx.notification.create({
+								data: {
+									userId: updatedProduct.userId,
+									type: 'PRODUCT_SOLD',
+									content: {
+										productId: updatedProduct.id,
+										productName: updatedProduct.name,
+										quantity: Number(item.qty),
+										gain: sellerGain,
+									},
+								},
+							});
+							soldNotifIds.set(Number(item.id), notif.id);
+						}
 					}
-
 					// 2. Decrement user budget securely
-					await tx.user.updateMany({
-						where: {
-							id: transaction.userId,
-							budget: { gte: amountToDeduct } // ensure they didn't spend it elsewhere in the last 2 minutes
-						},
+					const updatedBuyerBudget = await tx.user.update({
+						where: { id: transaction.userId },
 						data: { budget: { decrement: amountToDeduct } }
 					});
-
 					// 3. Mark payment as completed
 					await tx.payment.update({
 						where: { id: transaction.id },
@@ -184,59 +210,64 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
-			} catch (dbError) {
+				const io = req.app.get('io');
+				if (io) {
+					for (const item of cart) {
+						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
+						if (product) {
+							if (product.userId) {
+								io.to(`user_${product.userId}`).emit('product_sold', {
+									notifId: soldNotifIds.get(Number(item.id)),
+									productId: product.id,
+									productName: product.name,
+									quantity: Number(item.qty),
+									gain: Number(item.qty) * Number(product.price),
+								});
+							}
+							io.emit('product_updated', { id: product.id, quantity: product.quantity });
+						}
+					}
+				}
+			} catch (dbError: any) {
 				console.error('Error applying DB updates:', dbError);
-				return res.status(500).end(); // Let Stripe retry later
+				return (res.status(500).end()); // Let Stripe retry later
 			}
 		}
-
 		// Handle failed or canceled payments
 		else if (event.type === 'payment_intent.payment_failed' || event.type === 'payment_intent.canceled') {
 			const paymentIntent = event.data.object as Stripe.PaymentIntent;
-
-			// Because we used Option 2, we never decremented stock in createTransaction. 
-			// We just need to update the payment status to keep our records accurate.
 			await prisma.payment.updateMany({
 				where: { stripeId: paymentIntent.id },
 				data: { status: event.type === 'payment_intent.canceled' ? 'CANCELED' : 'FAILED' }
 			});
 		}
-
-		// Acknowledge receipt to Stripe
-		return res.status(200).json({ received: true });
+		return (res.status(200).json({ status: 'OK', received: true }));
 	},
 	getAllTransactions: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user?.id;
 			if (!userId)
-				return res.status(401).json({ status: 'ERROR', message: 'Unauthorized' });
-			const user = await prisma.user.findUnique({ where: { id: userId }, select: { sellerEliteStatus: true } });
-			if (!user)
-				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
-			if (!user.sellerEliteStatus)
-				return res.status(403).json({ status: 'ERROR', message: 'User does not have the permissions to check on all transactions' });
-			const transactions = await prisma.payment.findMany({
-				include: {
-					user: {
-						select: {
-							id: true,
-							email: true,
-							username: true,
-							stripeCustomerId: true,
-							name: true,
-							avatar: true,
-							phoneNumber: true,
-							budget: true,
-							sellerRating: true,
-							sellerReviewCount: true,
-							location: true,
-							createdAt: true,
-						}
-					}
+				return res.status(400).json({ status: 'ERROR', message: 'invalid UserId' });
+			const user = await prisma.user.findUnique({
+				where: { id: userId },
+				select: {
+					username: true,
+					email: true,
+					phoneNumber: true,
+					payment: {
+						orderBy: { createdAt: 'desc' },
+						take: 20,
+						include: {products:true}
+					},
+					budget: true,
+					avatar: true,
+					product: true,
 				}
 			});
-			console.log('all transactions have been returned with their corresponding user');
-			return res.status(200).json({ status: 'OK', data: transactions })
+			if (!user)
+				return res.status(404).json({ status: 'ERROR', message: 'User not found' });
+			console.log(`all 20 last transactions of ${userId}`);
+			return res.status(200).json({ status: 'OK', data: user })
 		} catch (error) {
 			console.error('Erreur getAllTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
@@ -264,6 +295,35 @@ const paymentController =
 		} catch (error: any) {
 			console.error('Erreur getTransaction:', error);
 			return res.status(500).json({ status: 'ERROR', message: 'Internal server error' });
+		}
+	},
+	topUp: async (req: AuthenticatedRequest, res: Response) => {
+		try {
+			const userId = Number(req.params.id);
+			const amount = Number(req.body.amount);
+			if (!userId || isNaN(userId))
+				return res.status(400).json({ message: 'Invalid userId'});
+			if (Number.isNaN(amount) || amount <= 0 || amount > 2147483646)
+				return (res.status(403).json({ message: 'invalid amount parameter provided'}));
+			const user = await prisma.user.findUnique({
+				where: { id: userId }
+			})
+			if (!user)
+				return (res.status(404).json({ message: 'unable to find user'}));
+			if (user.budget + amount > 2147483646)
+				return (res.status(403).json({ message: 'budget is set too high'}));
+
+			const updatedUser = await prisma.user.update({
+				where: { id: userId },
+				data: { budget: { increment: amount } }
+			})
+
+			console.log(`successfully topped up : ${updatedUser.username}`);
+			return (res.status(200).json({ message: 'OK', newBudget: updatedUser.budget }));
+		}
+		catch (error) {
+			console.error('Erreur topUp:', error);
+			return (res.status(500).json({ message: 'internal server Error'}));
 		}
 	}
 }

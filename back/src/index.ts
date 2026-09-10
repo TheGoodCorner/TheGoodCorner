@@ -12,31 +12,33 @@ import reviewsRouter from './routes/reviews.js';
 import messageRouter from './routes/messages.js';
 import paymentRouter from './routes/payment.js';
 import paymentController from './controllers/paymentController.js';
-// import { printRequest } from './utils/printHttpRequest.js';
+import friendRouter from './routes/friends.js';
+import notificationRouter from './routes/notifications.js';
 
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
-const origin_Url = process.env.CLIENT_URL;
-
 app.use(cors({ // allow cors (cross origin ressource sharing) protocols on all incoming request (prevent denying request)
-  origin: origin_Url,
+  origin: ["http://localhost:8080","https://localhost:4443"],
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
   credentials: true
 }));
-app.post('/api/webhook', express.raw({ type: 'application/json' }), paymentController.stripeWebhook);
+app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), paymentController.stripeWebhook); // allow payment processing, do not move it
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
 app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
+// app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 
 const rootPath = '/';
-app.use(rootPath, generalRouter); // general routes
-app.use(rootPath, productRouter); // product routes
-app.use(rootPath, userRouter); // Users routes
-app.use(rootPath, reviewsRouter); // reviews routes
-app.use(rootPath, messageRouter); // message routes
-app.use(rootPath, paymentRouter); // payment routes
+app.use(rootPath, generalRouter);		// general routes
+app.use(rootPath, productRouter);		// product routes
+app.use(rootPath, userRouter);			// Users routes
+app.use(rootPath, reviewsRouter);		// reviews routes
+app.use(rootPath, messageRouter);		// message routes
+app.use(rootPath, paymentRouter);		// payment routes
+app.use(rootPath, friendRouter);		// friend routes
+app.use(rootPath, notificationRouter);	// notification routes
 
 const socketServer = http.createServer(app);
 const io = initializeWebServer(socketServer);
@@ -55,7 +57,7 @@ async function startServer()
 		{
 			const server = socketServer.listen(port, '0.0.0.0', () => 
 			{
-				console.log(`Serveur démarré sur :${origin_Url}`);
+				console.log(`Serveur démarré sur https://localhost:4443 en https ou localhost:8080 en http`);
 				resolve(); // resolve the promise
 			})
 			server.on('error', (error: NodeJS.ErrnoException): void =>

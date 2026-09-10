@@ -17,6 +17,7 @@ function ChatThread({
   onCancelEdit,
   onDeleteMessage,
   messageText,
+  sendError,
   onMessageTextChange,
   onSendMessage,
   sending,
@@ -77,17 +78,31 @@ function ChatThread({
         )}
       </div>
 
-      <form onSubmit={onSendMessage} className="flex items-center gap-3 p-4 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
-        <input
-          type="text"
-          value={messageText}
-          onChange={(e) => onMessageTextChange(e.target.value)}
-          placeholder="Écris un message..."
-          disabled={sending}
-          className="flex-1 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60"
-        />
-        <Button type="submit" variant="primary" icon={Send} iconOnly disabled={sending || !messageText.trim()} aria-label="Envoyer" />
-      </form>
+      <div className="border-t border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        {sendError && (
+          <p className="text-xs text-[var(--color-danger)] font-medium mb-2 px-1" role="alert">
+            {sendError}
+          </p>
+        )}
+        <form onSubmit={onSendMessage} className="flex items-center gap-3">
+          <input
+            type="text"
+            value={messageText}
+            onChange={(e) => onMessageTextChange(e.target.value)}
+            placeholder="Écris un message..."
+            disabled={sending}
+            className="flex-1 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60"
+          />
+          <Button
+            type="submit"
+            variant="primary"
+            icon={Send}
+            iconOnly
+            disabled={sending || !messageText.trim()}
+            aria-label="Envoyer"
+          />
+        </form>
+      </div>
     </>
   );
 }

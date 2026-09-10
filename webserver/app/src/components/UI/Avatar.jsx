@@ -18,19 +18,14 @@ const SIZE_CLASSES = {
   xl: 'w-20 h-20 sm:w-24 sm:h-24 text-2xl',
 };
 const ICON_PX = { xs: 14, sm: 16, md: 20, lg: 24, xl: 32 };
+const DOT_SIZE_CLASSES = { xs: 'w-1.5 h-1.5', sm: 'w-2 h-2', md: 'w-2.5 h-2.5', lg: 'w-3 h-3', xl: 'w-4 h-4' };
 
 /**
  * Avatar unifié : image si dispo (avec fallback propre si elle casse),
  * sinon un badge de repli.
  *
- * - variant='initials' (défaut) : initiales + couleur dérivée de `name`
- *   (mêmes helpers que partout : utils/avatar.jsx). Sans `name`, retombe
- *   sur une icône générique (ex: pas encore connecté).
- * - variant='gradient' : dégradé marque + première lettre du nom — réservé
- *   aux avatars "hero" (ProfilHeader, SellerProfile).
- *
- * `size` : préréglage ('xs'|'sm'|'md'|'lg'|'xl') ou nombre de px pour un
- * besoin ponctuel non couvert par les préréglages.
+ * `status` (optionnel) : 'online' | 'offline' — affiche un petit point de
+ * présence en bas à droite. Absent = pas de point (comportement d'origine).
  */
 function Avatar({
   src,
@@ -39,6 +34,7 @@ function Avatar({
   size = 'md',
   shape = 'circle',
   variant = 'initials',
+  status,
   className = '',
 }) {
   const [imgFailed, setImgFailed] = useState(false);
@@ -55,24 +51,41 @@ function Avatar({
       : 'bg-[var(--color-surface-hover)]';
 
   const iconPx = isPreset ? ICON_PX[size] : Math.round(Number(size) * 0.55);
+  const dotPx = Math.round(Number(size) * 0.28);
 
   return (
     <span
-      style={isPreset ? undefined : { width: size, height: size, fontSize: Math.round(Number(size) * 0.4) }}
-      className={cx(
-        'inline-flex items-center justify-center overflow-hidden shrink-0 font-bold text-white',
-        isPreset && SIZE_CLASSES[size],
-        shape === 'square' ? 'rounded-2xl' : 'rounded-full',
-        bgClass,
-        className
-      )}
+      className={cx('relative inline-flex shrink-0', isPreset && SIZE_CLASSES[size], className)}
+      style={!isPreset ? { width: size, height: size } : undefined}
     >
-      {showImage ? (
-        <img src={src} alt={alt} onError={() => setImgFailed(true)} className="w-full h-full object-cover" />
-      ) : name ? (
-        variant === 'gradient' ? name.charAt(0).toUpperCase() : getInitials(name)
-      ) : (
-        <CircleUserRound size={iconPx} className="text-[var(--color-text-muted)]" aria-hidden="true" />
+      <span
+        style={isPreset ? undefined : { fontSize: Math.round(Number(size) * 0.4) }}
+        className={cx(
+          'inline-flex items-center justify-center overflow-hidden w-full h-full font-bold text-white',
+          isPreset && SIZE_CLASSES[size],
+          shape === 'square' ? 'rounded-2xl' : 'rounded-full',
+          bgClass
+        )}
+      >
+        {showImage ? (
+          <img src={src} alt={alt} onError={() => setImgFailed(true)} className="w-full h-full object-cover" />
+        ) : name ? (
+          variant === 'gradient' ? name.charAt(0).toUpperCase() : getInitials(name)
+        ) : (
+          <CircleUserRound size={iconPx} className="text-[var(--color-text-muted)]" aria-hidden="true" />
+        )}
+      </span>
+
+      {status && (
+        <span
+          aria-hidden="true"
+          className={cx(
+            'absolute bottom-0 right-0 rounded-full border-2 border-[var(--color-surface)]',
+            isPreset ? DOT_SIZE_CLASSES[size] : '',
+            status === 'online' ? 'bg-green-500' : 'bg-gray-400'
+          )}
+          style={!isPreset ? { width: dotPx, height: dotPx } : undefined}
+        />
       )}
     </span>
   );

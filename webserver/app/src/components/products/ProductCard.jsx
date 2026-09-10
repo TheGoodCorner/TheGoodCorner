@@ -1,97 +1,198 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
-import { PlusCircle, Star } from 'lucide-react'
+import { PlusCircle, Star, Trash2 } from 'lucide-react';
 import Avatar from '../UI/Avatar';
 
-export default function ProductCard({ product }) {
-  const addToCart = useCartStore((state) => state.addToCart)
-  const error = useCartStore((state) => state.error)
-  const clearError = useCartStore((state) => state.clearError)
-  const openUi = useUIStore((state) => state.openUi)
+export default function ProductCard({ product, allowOutOfStock = false, isOwner = false, onDelete }) {
 
-  // Défensif : certains contextes
-  const author = product.author || {};
-  
-  const handleAddToCart = () => {
-    const success = addToCart({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      quantity: 1,
-      authorId: product.author.id,
-      stock: product.quantity,
-    })
-    if (!success) { return; }
-    openUi('cart-popover')
-  }
+    const [showConfirm, setShowConfirm] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [localError, setLocalError] = useState(null);
+    const addToCart = useCartStore((state) => state.addToCart);
+    const openUi = useUIStore((state) => state.openUi);
+    const author = product?.author || {};
 
-  useEffect(() => {
-    if (!error) return;
-    const timer = setTimeout(() => {
-      clearError();
-    }, 3000);
+    const handleAddToCart = () => {
+        // On capture la valeur de retour (true ou false) dans 'succèss'
+        const succèss = addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            quantity: 1,
+            authorId: product.author?.id,
+            stock: product.quantity,
+        });
 
-    return () => clearTimeout(timer); // Cleanup si composant unmount ou error change
-  }, [error, clearError]);
+        if (succèss) {
+            setLocalError(null);
+            openUi('cart-popover'); // S'ouvre uniquement en cas de succès
+        } else {
+            // On récupère le message exact renvoyé par cartStore (stock ou propre article)
+            const lastError = useCartStore.getState().error;
+            const message = typeof lastError === 'object' ? lastError?.message : lastError;
 
-  const sellerInfo = (
-    <>
-      <Avatar src={author.avatar} name={author.username} size="xs" />
-      <span className="text-xs font-medium text-[var(--color-text)]">{author.username || 'Vendeur inconnu'}</span>
-    </>
-  );
+            setLocalError(message || "Impossible d'ajouter cet article au panier.");
+        }
+    };
 
-  return (
-    <div className="card">
-      <div className="card-header">
-        <div className="flex items-center gap-2">
-          {author.id ? (
-            <Link to={`/profile/${author.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              {sellerInfo}
+
+    const handleDeleteClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowConfirm(true);
+    };
+
+    const confirmDelete = async () => {
+        setDeleting(true);
+        setShowConfirm(false);
+        try {
+            await onDelete(product.id);
+        } catch (err) {
+            setLocalError(err?.message || "Impossible de supprimer cet article.");
+            setDeleting(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!localError) return;
+        const timer = setTimeout(() => setLocalError(null), 3000);
+        return () => clearTimeout(timer);
+    }, [localError]);
+    if (!product || (!allowOutOfStock && Number(product.quantity) <= 0))
+        return null;
+
+    const sellerInfo = (
+        <>
+            <Avatar src={author.avatar} name={author.username} size="xs" />
+            <span className="text-xs font-medium text-[var(--color-text)]">
+                {author.username || 'Vendeur inconnu'}
+            </span>
+        </>
+    );
+
+    const isInStock = product.quantity > 0;
+
+    return (
+        <div className="card">
+            <div className="card-header flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    {author.id ? (
+                <Link
+                    to={`/profile/${author.id}`}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                    {sellerInfo}
+                </Link>
+            ) : (
+                <div className="flex items-center gap-2">{sellerInfo}</div>
+            )}
+            <div className="flex items-center gap-1 ml-3">
+                <Star
+                    size={15}
+                    className="text-[var(--color-primary)]"
+                    fill="var(--color-primary)"
+                />
+                <span className="text-xs font-medium text-gray-700">
+                    {author?.sellerRating ?? '—'}
+                </span>
+                <span className="text-xs text-gray-500">
+                    ({author?.sellerReviewCount ?? 0})
+                </span>
+            </div>
+        </div>
+
+        {isOwner && (
+            <button
+            onClick={handleDeleteClick}
+            disabled={deleting}
+            title="Supprimer l'annonce"
+            aria-label="Supprimer l'annonce"
+            className="p-1.5 rounded-full text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors disabled:opacity-50"
+        >
+            <Trash2 size={16} />
+        </button>
+        )}
+        </div>
+
+            <Link to={`/products/${product.id}`}>
+                <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-[var(--color-surface-hover)]">
+                    <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        width="340"
+                        height="340"
+                        loading="eager"
+                        decoding="async"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
             </Link>
-          ) : (
-            <div className="flex items-center gap-2">{sellerInfo}</div>
-          )}
-          <div className="flex items-center gap-1 ml-3">
-            <Star size={15} className='text-[var(--color-primary)]' fill='var(--color-primary)'/>
-            <span className="text-xs font-medium text-gray-700">{author?.sellerRating ?? '—'}</span>
-            <span className="text-xs text-gray-500">({author?.sellerReviewCount ?? 0})</span>
-          </div>
-        </div>
-      </div>
 
-      <Link to={`/products/${product.id}`}>
-        <div className='flex items-center justify-center w-fit h-auto bg-[var(--color-surface-hover)]'>
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            loading="lazy"
-            className="max-w-full h-auto"
-          />
-        </div>
-      </Link>
+            {/* Affichage de l'erreur locale */}
+            {localError && (
+                <div className="p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
+                    <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
+                        {localError}
+                    </p>
+                </div>
+            )}
 
-      {error && (
-        <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
-          <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
-            {error}
-          </p>
-        </div>
-      )}
+                        <div className="card-body card-footer-compact">
+                <Link
+                    to={`/products/${product.id}`}
+                    className="hover:text-[var(--color-primary)] transition-colors"
+                >
+                    <h3 className="card-title line-clamp-2">{product.name}</h3>
+                </Link>
+                <p className="card-price">{product.price?.toFixed(2) ?? '—'}€</p>
+                <Button
+                    icon={PlusCircle}
+                    onClick={handleAddToCart}
+                    disabled={!product.quantity || product.quantity <= 0}
+                    title={product.quantity <= 0 ? "Victime de son succès" : "Ajouter au panier"}
+                    aria-label="Ajouter au panier"
+                    className="w-full"
+                >
+                    {product.quantity > 0 ? "Ajouter au panier" : "Victime de son succès"}
+                </Button>
+            </div>
 
-      <div className="card-body card-footer-compact">
-        <Link to={`/products/${product.id}`} className="hover:text-[var(--color-primary)] transition-colors">
-          <h3 className="card-title line-clamp-2">{product.name}</h3>
-        </Link>
-        <p className="card-price">{product.price?.toFixed(2) ?? '—'}€</p>
-        <Button icon={PlusCircle} onClick={handleAddToCart} title="add to cart" aria-label="add to cart" className="w-full">
-          Ajouter au panier
-        </Button>
-      </div>
-    </div>
-  );
+            {showConfirm && (
+                <div
+                    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowConfirm(false); }}
+                >
+                    <div
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-6 max-w-sm w-full mx-4"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+                            Supprimer l'annonce ?
+                        </h3>
+                        <p className="text-sm text-[var(--color-text-muted)] mb-6">
+                            "{product.name}" sera définitivement supprimée. Cette action est irréversible.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="outline"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowConfirm(false); }}
+                            >
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); confirmDelete(); }}
+                                className="bg-[var(--color-danger)] hover:opacity-90 text-white"
+                            >
+                                Supprimer
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
 }

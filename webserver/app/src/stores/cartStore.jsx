@@ -9,35 +9,82 @@ export const useCartStore = create(
       cartCount: 0,
       cartTotal: 0,
       error: null,
-      
+      isHydrated: false,
+      currentUserId: null,
+
+      switchUser: (userId) => {
+        const state = get()
+        
+        if (state.currentUserId === userId) {
+          return
+        }
+
+        // Si on change d'utilisateur, sauvegarder l'état actuel
+        // avant de charger le nouvel utilisateur
+        if (state.currentUserId !== null) {
+          // La persist middleware sauvegarde automatiquement dans localStorage
+        }
+
+        // Charger le panier du nouvel utilisateur depuis localStorage
+        const storageKey = `cart-storage-${userId}`
+        const savedCart = localStorage.getItem(storageKey)
+        
+        if (savedCart) {
+          try {
+            const parsed = JSON.parse(savedCart)
+            set({
+              cartItems: parsed.cartItems || [],
+              cartCount: parsed.cartCount || 0,
+              cartTotal: parsed.cartTotal || 0,
+              currentUserId: userId,
+            })
+          } catch (e) {
+            console.error('Erreur parsing cart:', e)
+            set({ currentUserId: userId, cartItems: [], cartCount: 0, cartTotal: 0 })
+          }
+        } else {
+          // Nouvel utilisateur = panier vide
+          set({ currentUserId: userId, cartItems: [], cartCount: 0, cartTotal: 0 })
+        }
+      },
 
       addToCart: (product) => {
-
         if (!product || !product.id || !product.price) {
           set({ error: 'Produit invalide.' })
           return false
         }
         const currentUser = useUserStore.getState().user        
-        // Vérifier si c'est le propre produit de l'utilisateur
         if (product.authorId === currentUser?.id) {
-          set({ error: 'Vous ne pouvez pas ajouter votre propre produit au panier.' })
+          set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
           return false
         }
+        const maxStock = Number(product.stock ?? product.quantity) || 0;
+        const addCount = Number(product.quantity) || 1;
+      
+        const state = get(); // Récupère l'état actuel
+        const existing = state.cartItems.find((item) => item.id === product.id);
+        const currentCount = existing ? existing.quantity : 0;
+      
+        // 1. Bloquer si la quantité cumulée dépasse le stock disponible
+        if (currentCount + addCount > maxStock) {
+          set({
+            error: {message: `Stock insuffisant : vous avez déjà ${currentCount} article(s) dans le panier pour un stock de ${maxStock}.`, productId: product.id}
+          });
+          return false;
+        }
 
-        set({ error: null })
-
-        set((state) => {
-          const existing = state.cartItems.find((item) => item.id === product.id)
+        set((prevState) => {
+          const existing = prevState.cartItems.find((item) => item.id === product.id)
           let newItems
 
           if (existing) {
-            newItems = state.cartItems.map((item) =>
+            newItems = prevState.cartItems.map((item) =>
               item.id === product.id
                 ? { ...item, quantity: item.quantity + (product.quantity || 1) }
                 : item
             )
           } else {
-            newItems = [...state.cartItems, { ...product, quantity: product.quantity || 1 }]
+            newItems = [...prevState.cartItems, { ...product, quantity: product.quantity || 1 }]
           }
 
           return {
@@ -61,9 +108,19 @@ export const useCartStore = create(
 
       updateQuantity: (productId, quantity) =>
         set((state) => {
-          const newItems = state.cartItems.map((item) =>
-            item.id === productId ? { ...item, quantity: Math.max(1, quantity) } : item
-          )
+          const newItems = state.cartItems.map((item) => {
+            if (item.id === productId) {
+              // ✅ Limiter la quantité au stock disponible
+              const validQuantity = Math.max(1, Math.min(quantity, item.stock))
+              
+              if (quantity > item.stock) {
+                set({ error: `Stock limité à ${item.stock} unité(s)` })
+              }
+
+              return { ...item, quantity: validQuantity }
+            }
+            return item
+          })
           return {
             cartItems: newItems,
             cartCount: newItems.reduce((sum, item) => sum + item.quantity, 0),
@@ -83,13 +140,30 @@ export const useCartStore = create(
 
     }),
     {
-      name: 'cart-storage',
+      name: 'cart-storage', // Clé globale
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        cartItems: state.cartItems,
-        cartCount: state.cartCount,
-        cartTotal: state.cartTotal,
-      }),
+      partialize: (state) => {
+        // Sauvegarder aussi le panier de l'utilisateur actuel avec une clé unique
+        if (state.currentUserId) {
+          const userCartKey = `cart-storage-${state.currentUserId}`
+          const userCartData = {
+            cartItems: state.cartItems,
+            cartCount: state.cartCount,
+            cartTotal: state.cartTotal,
+          }
+          localStorage.setItem(userCartKey, JSON.stringify(userCartData))
+        }
+
+        return {
+          cartItems: state.cartItems,
+          cartCount: state.cartCount,
+          cartTotal: state.cartTotal,
+          currentUserId: state.currentUserId,
+        }
+      },
+      onRehydrateStorage: () => (state) => {
+        state.isHydrated = true;
+      },
     }
   )
 )

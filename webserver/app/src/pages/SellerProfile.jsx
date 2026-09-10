@@ -11,6 +11,7 @@ import {
 import { useUserStore } from "../stores/userStore";
 import { useAuthStore } from "../stores/authStore";
 import { useReviewStore } from "../stores/reviewStore";
+import { useFriendStore } from "../stores/friendStore";
 import { Button } from "../components/UI/Button";
 import { StarRating } from "../components/UI/StarRating";
 import { ReviewCard } from "../components/reviews/ReviewCard";
@@ -19,6 +20,7 @@ import ProductCard from "../components/products/ProductCard";
 import Avatar from "../components/UI/Avatar";
 import { TabButton } from "../components/UI/TabButton";
 import { EmptyState } from "../components/UI/EmptyState";
+import { FriendActionButton } from "../components/friends/FriendActionButton";
 import { formatMonthYear } from "../utils/date";
 
 function SellerProfileSkeleton() {
@@ -74,6 +76,14 @@ function SellerProfile() {
     setShowAllReviews(false);
   }, [id, fetchUser]);
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      useFriendStore.getState().fetchFriends();
+      useFriendStore.getState().fetchReceivedFriendRequests();
+      useFriendStore.getState().fetchSentFriendRequests();
+    }
+  }, [isAuthenticated]);
+
   const handleDeleteReview = async (reviewId) => {
     await deleteReview(id, reviewId);
     await fetchUser(id);
@@ -101,7 +111,7 @@ function SellerProfile() {
 
   const displayName = viewedUser.name || viewedUser.username || "Utilisateur";
   const userRating = viewedUser.sellerRating || 0;
-  const listings = (viewedUser.product || []).map((product) => ({ ...product, author: viewedUser }));
+  const listings = (viewedUser.product || []).filter((p) => (p.quantity ?? 0) > 0).map((product) => ({ ...product, author: viewedUser }));
   const memberSince = formatMonthYear(viewedUser.createdAt);
 
   const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);
@@ -154,12 +164,14 @@ function SellerProfile() {
               {viewedUser.phoneNumber && (
                 <p className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
                   <BadgeCheck size={14} className="text-[var(--color-primary)]" />
-                  Téléphone renseigné
+                  Téléphone renseigné : {viewedUser.phoneNumber}
                 </p>
               )}
             </div>
+            <div className="flex-shrink-0">
+              <FriendActionButton userId={viewedUser.id} />
+            </div>
           </div>
-
           {viewedUser.bio && (
             <p className="text-sm text-[var(--color-text)] leading-relaxed mt-6 pt-6 border-t border-[var(--color-border)]">
               {viewedUser.bio}

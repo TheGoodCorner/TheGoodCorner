@@ -5,10 +5,15 @@ import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
 import { buildUser } from "../services/users/buildUser.js";
 import { userUpdate, ValidationError } from "../services/users/updateUser.js";
 const prisma = new PrismaClient; // get the prisma client instance
-const BASIC_COOKIE = {
+const REFRESH_COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: true,
     sameSite: 'strict',
+    path: '/',
+};
+const BASIC_COOKIE = {
+    ...REFRESH_COOKIE_OPTIONS,
+    maxAge: 0,
 };
 const userController = {
     createUser: async (req, res) => {
@@ -30,9 +35,7 @@ const userController = {
             const hashedRefreshToken = hashIt(refreshToken);
             await saveRefreshToken(savedUser.id, hashedRefreshToken);
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                ...REFRESH_COOKIE_OPTIONS,
                 maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             });
             const { password, ...sanitizedUser } = savedUser;
@@ -62,9 +65,7 @@ const userController = {
             const hashedRefreshToken = hashIt(refreshToken);
             await saveRefreshToken(existingUser.id, hashedRefreshToken);
             res.cookie('refreshToken', refreshToken, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'strict',
+                ...REFRESH_COOKIE_OPTIONS,
                 maxAge: 7 * 24 * 60 * 60 * 1000,
             });
             console.log(`User logged in`);
@@ -84,7 +85,7 @@ const userController = {
                 await prisma.refreshToken.deleteMany({ where: { hashedToken } }); // delete it
             }
             console.log(`User logged out`);
-            res.clearCookie('refreshToken', BASIC_COOKIE); // reset the refreshToken cookie to BASIC_COOKIE value
+            res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS); // reset the refreshToken cookie to BASIC_COOKIE value
             return (res.status(200).json({ status: 'OK', message: 'User logged out successfully' }));
         }
         catch (error) {
@@ -120,7 +121,7 @@ const userController = {
         }
         catch (error) {
             console.error(error);
-            res.clearCookie('refreshToken', BASIC_COOKIE); // clear the token 
+            res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS); // clear the token 
             return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
         }
     },

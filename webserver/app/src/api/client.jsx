@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { refreshRequest } from './authApi';
+import { redirectTo } from '../utils/navigate';
 
 export const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://localhost:3000/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,6 +33,9 @@ apiClient.interceptors.request.use((config) => {
 let isRefreshing = false;
 let pendingRequests = [];
 
+const BLOCK_DURATION = 4000;
+let rateLimitBlocked = false;
+
 function onRefreshed(newToken) {
   pendingRequests.forEach((callback) => callback(newToken));
   pendingRequests = [];
@@ -44,6 +48,19 @@ apiClient.interceptors.response.use(
     const isAuthEndpoint = ['/auth/login', '/auth/register', '/auth/refresh'].some((path) =>
       originalRequest?.url?.includes(path)
     );
+
+  // ===== 429 : redirection + blocage, une seule fois =====
+    if (error.response?.status === 429) {
+      if (!rateLimitBlocked) {
+        rateLimitBlocked = true;
+        redirectTo('/rate-limiting');
+        setTimeout(() => { rateLimitBlocked = false; }, BLOCK_DURATION);
+      }
+      const rateLimitError = new Error('Trop de requêtes, veuillez patienter.');
+      rateLimitError.isRateLimited = true;
+      return Promise.reject(rateLimitError);
+    }
+    // =========================================================
 
     // Un 401 sur une route "normale" (pas login/register/refresh eux-mêmes,
     // et pas déjà rejouée une fois) déclenche une tentative de refresh
@@ -69,7 +86,9 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         pendingRequests = [];
-        useAuthStore.getState().logout();
+        if (!refreshError?.isRateLimited) {
+          useAuthStore.getState().logout();
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
@@ -80,7 +99,7 @@ apiClient.interceptors.response.use(
       originalRequest?.url?.includes(path)
     );
 
-    if (error.response?.status === 401 && !isLoginOrRegister) {
+    if ((error.response?.status === 401 || error.response?.status === 403) && !isLoginOrRegister) {
       useAuthStore.getState().logout();
     }
 

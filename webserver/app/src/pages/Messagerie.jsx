@@ -29,6 +29,7 @@ function Messagerie() {
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
   const updateMessage = useMessageStore((state) => state.updateMessage);
   const deleteMessage = useMessageStore((state) => state.deleteMessage);
+  const [sendError, setSendError] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [messageText, setMessageText] = useState('');
@@ -37,8 +38,7 @@ function Messagerie() {
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
 
-  // Sur mobile, on affiche soit la liste soit la conversation ouverte,
-  // jamais les deux en même temps (pas assez de place).
+  // Sur mobile, on affiche soit la liste soit la conversation ouverte
   const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
 
   useEffect(() => {
@@ -47,10 +47,6 @@ function Messagerie() {
     }
   }, [isAuthenticated, currentUser?.id, fetchConversations]);
 
-  // Reset activeConversationId au démontage : sinon un message reçu après
-  // avoir quitté la page ne serait pas compté comme non lu, puisque
-  // receiveMessage() considère la conversation "déjà ouverte" tant que
-  // l'id traîne dans le store (voir isConversationOpen dans messageStore.jsx).
   useEffect(() => {
     return () => {
       clearActiveConversation();
@@ -76,8 +72,10 @@ function Messagerie() {
     const messageId = editingMessageId;
     const original = activeMessages.find((m) => m.id === messageId)?.content;
     setEditingMessageId(null);
-    // rien à faire si vide ou si le contenu n'a pas changé (évite un appel réseau inutile)
-    if (!trimmed || !activeConversationId || trimmed === original) return;
+
+    // Sécurité de longueur et de contenu
+    if (!trimmed || !activeConversationId || trimmed === original || trimmed.length > 5000) return;
+
     try {
       await updateMessage(messageId, activeConversationId, trimmed);
     } catch {
@@ -109,14 +107,27 @@ function Messagerie() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+	setSendError(null);
     const trimmed = messageText.trim();
-    if (!trimmed || !activeConversationId) return;
+    
+    // Sécurité de longueur et contenu vide
+    if (!trimmed || !activeConversationId || trimmed.length > 5000) {
+		setSendError('Le message est trop long (maximum 5000 caractères).');
+		return;
+	}
+
     setMessageText('');
     try {
       await sendMessage(activeConversationId, trimmed);
-    } catch {
-      setMessageText(trimmed); // on remet le texte si l'envoi échoue
+    } catch (err) {
+      setMessageText(trimmed); // Restauration en cas d'échec
+	  setSendError(err?.message || 'Erreur lors de l\'envoi du message');
     }
+	const handleMessageTextChange = (text) => {
+	  setMessageText(text);
+	  if (sendError)
+		setSendError(null);
+	};
   };
 
   if (initializing) {
@@ -125,15 +136,17 @@ function Messagerie() {
 
   if (!isAuthenticated || !currentUser?.id) {
     return (
-      <div className="container py-16 text-center bg-[var(--color-bg)]">
-        <MessageCircle size={40} className="text-[var(--color-text-muted)] mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
-          Connecte-toi pour accéder à ta messagerie
-        </h1>
-        <p className="text-[var(--color-text-muted)] mb-6">
-          Retrouve ici toutes tes conversations avec les autres utilisateurs.
-        </p>
-        <Button to="/authentication" variant="primary">Se connecter</Button>
+      <div className="w-full min-h-[calc(100vh-theme(spacing.16))] flex items-center justify-center bg-transparent">
+        <div className="container py-16 text-center">
+          <MessageCircle size={40} className="text-[var(--color-text)] mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
+            Connecte-toi pour accéder à ta messagerie
+          </h1>
+          <p className="text-[var(--color-text)] mb-6">
+            Retrouve ici toutes tes conversations avec les autres utilisateurs.
+          </p>
+          <Button to="/authentication" variant="primary">Se connecter</Button>
+        </div>
       </div>
     );
   }
@@ -163,7 +176,8 @@ function Messagerie() {
             className={showThreadOnMobile ? 'hidden sm:flex' : 'flex'}
           />
 
-          <div className={`flex-1 flex-col ${showThreadOnMobile ? 'flex' : 'hidden sm:flex'}`}>
+          {/* min-w-0 est indispensable pour empêcher les enfants flex de forcer la largeur */}
+          <div className={`flex-1 min-w-0 flex-col ${showThreadOnMobile ? 'flex' : 'hidden sm:flex'}`}>
             <ChatThread
               conversation={activeConversation}
               messages={activeMessages}
@@ -171,6 +185,7 @@ function Messagerie() {
               currentUserId={currentUser.id}
               editingMessageId={editingMessageId}
               editingContent={editingContent}
+			  sendError={sendError}
               onEditingContentChange={setEditingContent}
               onStartEdit={startEditingMessage}
               onSaveEdit={saveEditingMessage}

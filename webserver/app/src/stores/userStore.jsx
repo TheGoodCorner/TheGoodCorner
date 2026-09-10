@@ -1,6 +1,5 @@
 // src/stores/userStore.jsx
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 import { fetchUserRequest, updateUserRequest, removeUserRequest } from '../api/userApi';
 
 export const useUserStore = create(
@@ -14,15 +13,28 @@ export const useUserStore = create(
       loading: false,
       error: null,
 
-      // Profil PUBLIC d'un autre utilisateur consulté (ex: future page
-      // vendeur) — séparé de `user` pour ne jamais écraser ton propre
+      // Profil PUBLIC d'un autre utilisateur consulté (pour page sellerProfile)
+      // séparé de `user` pour ne jamais écraser ton propre
       // profil avec la version publique de quelqu'un d'autre.
       viewedUser: null,
       viewedUserLoading: false,
       viewedUserError: null,
 
-      // GET /user/:id — profil PUBLIC d'un utilisateur donné.
+      // GET /user/:id — profil PUBLIC d'un utilisateur donné ou le user privee meme si meme id
       fetchUser: async (id) => {
+        const currentUser = get().user;
+
+        if (currentUser?.id === id) {
+          set({ loading: true, error: null });
+          try {
+            const data = await fetchUserRequest(id);
+            set({ user: data, loading: false });
+            return data;
+          } catch (err) {
+            set({ error: err.message, loading: false });
+            console.error('fetchUser for CurrentUser error:', err);
+          }
+        }
         set({ viewedUserLoading: true, viewedUserError: null });
         try {
           const data = await fetchUserRequest(id);
@@ -77,8 +89,18 @@ export const useUserStore = create(
         }
       },
 
+
+
       logout: () => {
-        set({ user: null, error: null, loading: false, viewedUser: null });
+        // Les données d'amitié sont privées : on les vide comme viewedUser,
+        // pour ne pas qu'elles traînent en mémoire pour le prochain compte
+        // connecté sur ce navigateur (même logique que messageStore.reset()).
+        set({
+          user: null,
+          error: null,
+          loading: false,
+          viewedUser: null,
+        });
       },
 
       clearError: () => {

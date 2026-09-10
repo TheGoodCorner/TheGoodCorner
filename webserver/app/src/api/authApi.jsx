@@ -24,18 +24,12 @@ export async function registerRequest(email, password, username) {
 // de client.jsx quand un access token expire. Le cookie refresh httpOnly part
 // automatiquement avec la requête (withCredentials) — rien à lui passer ici.
 export async function refreshRequest() {
-	try{
 		const { data } = await apiClient.post('/auth/refresh');
 		return {
 		  user: data.data,
 		  token: data.accessToken,
 		};
 	}
-	catch(err){
-		localStorage.removeItem(SESSION_KEY)
-		throw err
-	}
-}
 
 export async function logoutRequest() {
   try {

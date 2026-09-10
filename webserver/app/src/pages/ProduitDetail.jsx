@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle, Trash2 } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
@@ -10,6 +10,7 @@ import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
 import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
+import NotFound from './NotFound';
 
 function ProductDetailSkeleton() {
   return (
@@ -35,52 +36,104 @@ function ProductDetail() {
 
   const cachedProduct = useProductStore((state) => state.getProductById(id));
   const currentProduct = useProductStore((state) => state.currentProduct);
-  const currentProductLoading = useProductStore((state) => state.currentProductLoading);
   const currentProductError = useProductStore((state) => state.currentProductError);
   const fetchProductById = useProductStore((state) => state.fetchProductById);
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
   const allProducts = useProductStore((state) => state.products);
   const addToCart = useCartStore((state) => state.addToCart);
-  const error = useCartStore((state) => state.error);
   const openUi = useUIStore((state) => state.openUi);
   const currentUser = useUserStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
 
   const [quantity, setQuantity] = useState(1);
+  const [localError, setLocalError] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   useEffect(() => {
     fetchProductById(id);
   }, [id, fetchProductById]);
 
+  useEffect(() => {
+      if (!localError) return;
+      const timer = setTimeout(() => {
+        setLocalError(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }, [localError]);
+
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
+
+  const isOwner = currentUser && product && String(currentUser.id) === String(product.author?.id);
+
+  const handleDelete = async () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true);
+      return;
+    }
+    try {
+      await deleteProduct(id);
+      navigate('/products');
+    } catch {
+      setLocalError("Erreur lors de la suppression.");
+      setDeleteConfirm(false);
+    }
+  };
+
+  useEffect(() => {
+    if (product) {
+      setQuantity(product.quantity === 0 ? 0 : 1);
+    }
+  }, [product?.quantity]);
+
+  useEffect(() => {
+    if (!localError) return;
+    const timer = setTimeout(() => {
+      setLocalError(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [localError]);
 
   if (!product && !currentProductError) {
     return <ProductDetailSkeleton />;
   }
 
-  if (!product) {
-    return (
-      <div className="container py-16 text-center">
-        <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Produit introuvable</h1>
-        <p className="text-[var(--color-text-muted)] mb-6">Ce produit n'existe pas ou n'est plus disponible.</p>
-        <Button to="/products" variant="primary">Retour aux produits</Button>
-      </div>
-    );
+  if (!product && currentProductError) {
+    return <NotFound />;
   }
 
+  if (!product || Number(product.quantity) <= 0) {
+  return (
+    <div className="container py-16 text-center">
+      <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">Produit indisponible</h1>
+      <p className="text-[var(--color-text-muted)] mb-6">
+        Ce produit est actuellement en rupture de stock ou n'est plus disponible.
+      </p>
+      <Button to="/products" variant="primary">Retour aux produits</Button>
+    </div>
+  );
+}
+
   const handleAddToCart = () => {
-    const succes = addToCart({
+    const success = addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
       imageUrl: product.imageUrl,
       quantity,
       stock: product.quantity,
-      authorId: product.author.id
+      authorId: product.author?.id
     });
-    if (!succes) { return; }
-    openUi('cart-popover');
+
+    if (success) {
+      setLocalError(null);
+      openUi('cart-popover');
+    } else {
+      const lastError = useCartStore.getState().error;
+      const message = typeof lastError === 'object' ? lastError?.message : lastError;
+      setLocalError(message || "Impossible d'ajouter cet article au panier.");
+    }
   };
 
   const handleContactSeller = () => {
@@ -93,13 +146,16 @@ function ProductDetail() {
   };
 
   const relatedProducts = allProducts
-    .filter((p) => p.category?.id === product.category?.id && p.id !== product.id)
-    .slice(0, 4);
+    .filter((p) => p.category?.id === product.category?.id &&
+      p.id !== product.id &&
+      Number(p.quantity) > 0)
 
   const authorName = product.author?.username;
   const memberSince = product.author?.createdAt
     ? new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(product.author.createdAt))
     : null;
+
+  const isOutOfStock = product.quantity === 0;
 
   return (
     <div className="bg-[var(--color-bg)]">
@@ -120,6 +176,7 @@ function ProductDetail() {
           Retour aux produits
         </Link>
 
+        {/* Grille principale produit */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex items-center justify-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)] p-8">
             <img
@@ -140,15 +197,16 @@ function ProductDetail() {
             <p className="text-[var(--color-text-muted)] leading-relaxed mb-8">
               {product.description || "Description à venir."}
             </p>
-            
-            {error && (
-              <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
-                <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
-                  {error}
+
+            {localError && (
+              <div className="p-4 mb-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
+                <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
+                  {typeof localError === 'object' ? localError.message : localError}
                 </p>
               </div>
             )}
 
+            {/* Sélecteur de quantité */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-medium text-[var(--color-text)]">Quantité</span>
               <div className="flex items-center gap-1 bg-[var(--color-surface-hover)] rounded-[var(--radius-md)] px-2">
@@ -157,38 +215,44 @@ function ProductDetail() {
                   size="sm"
                   icon={Minus}
                   onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  disabled={quantity <= 1}
+                  disabled={quantity <= 1 || isOutOfStock}
                   aria-label="Diminuer la quantité"
                 />
-                <span className="w-8 text-center text-[var(--color-text)]">{quantity}</span>
+                <span className="w-8 text-center text-[var(--color-text)] font-medium">
+                  {isOutOfStock ? 0 : quantity}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"
                   icon={Plus}
                   onClick={() => setQuantity((q) => Math.min(product.quantity, q + 1))}
-                  disabled={quantity >= product.quantity}
+                  disabled={quantity >= product.quantity || isOutOfStock}
                   aria-label="Augmenter la quantité"
                 />
               </div>
-              <span className="text-xs text-[var(--color-text-muted)]">({product.quantity} En stock)</span>
+              <span className={`text-xs ${isOutOfStock ? 'text-red-400 font-semibold' : 'text-[var(--color-text-muted)]'}`}>
+                {!isOutOfStock ? `(${product.quantity} en stock)` : '(Victime de son succès)'}
+              </span>
             </div>
 
+            {/* Bouton d'action panier */}
             <Button
               icon={ShoppingCart}
               variant="primary"
               size="lg"
               onClick={handleAddToCart}
-              disabled={product.quantity === 0}
-              title={product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
+              disabled={isOutOfStock}
+              title={isOutOfStock ? "Victime de son succès" : "Ajouter au panier"}
               aria-label="Ajouter au panier"
             >
-              {product.quantity === 0 ? "Produit en rupture de stock" : "Ajouter au panier"}
+              {isOutOfStock ? "Victime de son succès" : "Ajouter au panier"}
             </Button>
           </div>
         </div>
 
         <div className="my-16 border-t border-[var(--color-border)]"></div>
 
+        {/* Section Vendeur */}
         <section className="mb-16">
           <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">Vendu par</h3>
           <div className="flex items-center justify-between gap-4">
@@ -204,7 +268,26 @@ function ProductDetail() {
                 </div>
               </div>
             </Link>
-            {String(currentUser?.id) !== String(product.author?.id) && (
+            {isOwner ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={deleteConfirm ? 'danger' : 'outline'}
+                  size="md"
+                  icon={Trash2}
+                  onClick={handleDelete}
+                >
+                  {deleteConfirm ? 'Confirmer la suppression' : 'Supprimer'}
+                </Button>
+                {deleteConfirm && (
+                  <button
+                    onClick={() => setDeleteConfirm(false)}
+                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                  >
+                    Annuler
+                  </button>
+                )}
+              </div>
+            ) : (
               <Button variant="outline" size="md" icon={MessageCircle} onClick={handleContactSeller}>
                 Contacter le vendeur
               </Button>
@@ -212,6 +295,7 @@ function ProductDetail() {
           </div>
         </section>
 
+        {/* Produits similaires */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">Produits similaires</h2>
