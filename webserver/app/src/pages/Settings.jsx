@@ -44,6 +44,7 @@ export default function Settings() {
   const [secretInput, setSecretInput] = useState('');
   const [amountToAdd, setAmountToAdd] = useState(1000);
   const [devFeedback, setDevFeedback] = useState(null);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -101,29 +102,29 @@ export default function Settings() {
     }
   };
 
-  const handleDeleteAccount = async () => {
+  const handleDeleteClick = () => {
     if (!userId) {
-      setError('Identifiant utilisateur introuvable.');
-      return;
+        setError('Identifiant utilisateur introuvable.');
+        return;
     }
+    setShowConfirm(true);
+  };
 
-    if (!window.confirm('Confirmer la suppression définitive du compte ?')) return;
+  const confirmDeleteAccount = async () => {
+      setShowConfirm(false);
+      setLoading(true);
+      setError(null);
 
-    setLoading(true);
-    setError(null);
-
-    try {
-      await apiClient.delete(`/user/${userId}`);
-
-      alert('Compte supprimé avec succès.');
-      if (logout) logout();
-      localStorage.removeItem('token');
-      navigate('/');
-    } catch (err) {
-      setError(err.message || 'Erreur lors de la suppression.');
-    } finally {
-      setLoading(false);
-    }
+      try {
+          await apiClient.delete(`/user/${userId}`);
+          if (logout) logout();
+          localStorage.removeItem('token');
+          navigate('/');
+      } catch (err) {
+          setError(err.message || 'Erreur lors de la suppression.');
+      } finally {
+          setLoading(false);
+      }
   };
 
   return (
@@ -379,7 +380,7 @@ export default function Settings() {
           </p>
           <button
             type="button"
-            onClick={handleDeleteAccount}
+            onClick={handleDeleteClick}
             disabled={loading}
             className="px-5 py-2.5 rounded-[var(--radius-md)] text-sm font-semibold transition active:scale-[0.98]"
             style={{
@@ -388,10 +389,64 @@ export default function Settings() {
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
-          >
+          > 
             {loading ? 'Suppression...' : 'Supprimer le compte'}
           </button>
         </div>
+
+        {showConfirm && (
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
+            onClick={() => setShowConfirm(false)}
+          >
+            <div
+              className="rounded-[var(--radius-lg)] p-6 max-w-sm w-full mx-4"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+                borderWidth: '1px',
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
+                Supprimer votre compte ?
+              </h3>
+              <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
+                Cette action est définitive et irréversible. Toutes vos données seront perdues.
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(false)}
+                  className="px-4 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition"
+                  style={{
+                    backgroundColor: 'var(--color-surface-hover)',
+                    color: 'var(--color-text)',
+                    borderColor: 'var(--color-border)',
+                    borderWidth: '1px',
+                  }}
+                >
+                  Annuler
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmDeleteAccount}
+                  disabled={loading}
+                  className="px-4 py-2 rounded-[var(--radius-md)] text-sm font-semibold transition"
+                  style={{
+                    backgroundColor: 'var(--color-danger)',
+                    color: 'var(--color-on-danger)',
+                    opacity: loading ? 0.6 : 1,
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {loading ? 'Suppression...' : 'Supprimer définitivement'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
