@@ -6,7 +6,6 @@ import { useAuthStore } from './stores/authStore';
 import MainLayout from './components/layouts/MainLayout';
 import AuthLayout from './components/layouts/AuthLayout';
 import Home from './pages/Home';
-import NotFound from './pages/NotFound';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -32,6 +31,8 @@ const Messagerie = lazy(() => import('./pages/Messagerie'));
 const Login = lazy(() => import('./pages/Login'));
 const ProductDetail = lazy(() => import('./pages/ProduitDetail'));
 const Produits = lazy(() => import('./pages/Produits'));
+const NotFound = lazy(() => import ('./pages/NotFound'));
+const TooManyRequest = lazy(() => import ('./pages/TooManyRequest'))
 
 function App() {
   const theme = useThemeStore((state) => state.theme)
@@ -84,7 +85,8 @@ function App() {
           <Route path="/checkout/success" element={<Suspense fallback = {null}> <SuccessCheckout /> </Suspense>} />
         </Route>
       
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<Suspense fallback = {null}> <NotFound /> </Suspense>} />
+      <Route path="/TooManyRequest" element={<Suspense fallback = {null}> <TooManyRequest /> </Suspense>} />
 
       </Routes>
     </Router>
