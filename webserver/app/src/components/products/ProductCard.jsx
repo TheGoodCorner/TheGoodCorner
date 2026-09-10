@@ -8,6 +8,7 @@ import Avatar from '../UI/Avatar';
 
 export default function ProductCard({ product, allowOutOfStock = false, isOwner = false, onDelete }) {
 
+    const [showConfirm, setShowConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [localError, setLocalError] = useState(null);
     const addToCart = useCartStore((state) => state.addToCart);
@@ -38,12 +39,16 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
         }
     };
 
-    const handleDelete = async (e) => {
+
+    const handleDeleteClick = (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!window.confirm(`Supprimer "${product.name}" ?`)) return;
+        setShowConfirm(true);
+    };
 
+    const confirmDelete = async () => {
         setDeleting(true);
+        setShowConfirm(false);
         try {
             await onDelete(product.id);
         } catch (err) {
@@ -100,9 +105,9 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
             </div>
         </div>
 
-    {isOwner && (
-        <button
-            onClick={handleDelete}
+        {isOwner && (
+            <button
+            onClick={handleDeleteClick}
             disabled={deleting}
             title="Supprimer l'annonce"
             aria-label="Supprimer l'annonce"
@@ -110,8 +115,8 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
         >
             <Trash2 size={16} />
         </button>
-    )}
-</div>
+        )}
+        </div>
 
             <Link to={`/products/${product.id}`}>
                 <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-[var(--color-surface-hover)]">
@@ -136,7 +141,7 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
                 </div>
             )}
 
-            <div className="card-body card-footer-compact">
+                        <div className="card-body card-footer-compact">
                 <Link
                     to={`/products/${product.id}`}
                     className="hover:text-[var(--color-primary)] transition-colors"
@@ -155,6 +160,39 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
                     {product.quantity > 0 ? "Ajouter au panier" : "Victime de son succès"}
                 </Button>
             </div>
+
+            {showConfirm && (
+                <div
+                    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowConfirm(false); }}
+                >
+                    <div
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-6 max-w-sm w-full mx-4"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3 className="text-lg font-semibold text-[var(--color-text)] mb-2">
+                            Supprimer l'annonce ?
+                        </h3>
+                        <p className="text-sm text-[var(--color-text-muted)] mb-6">
+                            "{product.name}" sera définitivement supprimée. Cette action est irréversible.
+                        </p>
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                variant="outline"
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowConfirm(false); }}
+                            >
+                                Annuler
+                            </Button>
+                            <Button
+                                onClick={(e) => { e.preventDefault(); e.stopPropagation(); confirmDelete(); }}
+                                className="bg-[var(--color-danger)] hover:opacity-90 text-white"
+                            >
+                                Supprimer
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
