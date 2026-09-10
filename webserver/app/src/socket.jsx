@@ -57,6 +57,32 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('product_updated', (payload) => {
+  useProductStore.getState().updateProductStock(payload);
+  const { user, setUser } = useUserStore.getState();
+  if (user?.product) {
+    const updatedProduct = user.product.find((p) => String(p.id) === String(payload.id));
+    if (updatedProduct) {
+      setUser({
+        ...user,
+        product: user.product.map((p) =>
+          String(p.id) === String(payload.id) ? { ...p, quantity: payload.quantity } : p
+        ),
+      });
+    }
+  }
+});
+
+socket.on('product_sold', (payload) => {
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'PRODUCT_SOLD',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
+});
+
 socket.on('review_deleted', ({ reviewId }) => {
   const notifs = useNotificationStore.getState().notifications;
   const toRemove = notifs.find((n) => n.type === 'REVIEW' && n.content?.reviewId === reviewId);

@@ -1,6 +1,6 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle, Trash2 } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
@@ -10,6 +10,7 @@ import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
 import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
+import NotFound from './NotFound';
 
 function ProductDetailSkeleton() {
   return (
@@ -37,6 +38,7 @@ function ProductDetail() {
   const currentProduct = useProductStore((state) => state.currentProduct);
   const currentProductError = useProductStore((state) => state.currentProductError);
   const fetchProductById = useProductStore((state) => state.fetchProductById);
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
   const allProducts = useProductStore((state) => state.products);
   const addToCart = useCartStore((state) => state.addToCart);
   const openUi = useUIStore((state) => state.openUi);
@@ -46,6 +48,7 @@ function ProductDetail() {
 
   const [quantity, setQuantity] = useState(1);
   const [localError, setLocalError] = useState(null);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   useEffect(() => {
     fetchProductById(id);
@@ -61,6 +64,22 @@ function ProductDetail() {
 
   const isCurrentFresh = currentProduct && String(currentProduct.id) === String(id);
   const product = isCurrentFresh ? currentProduct : cachedProduct;
+
+  const isOwner = currentUser && product && String(currentUser.id) === String(product.author?.id);
+
+  const handleDelete = async () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true);
+      return;
+    }
+    try {
+      await deleteProduct(id);
+      navigate('/products');
+    } catch {
+      setLocalError("Erreur lors de la suppression.");
+      setDeleteConfirm(false);
+    }
+  };
 
   useEffect(() => {
     if (product) {
@@ -78,6 +97,10 @@ function ProductDetail() {
 
   if (!product && !currentProductError) {
     return <ProductDetailSkeleton />;
+  }
+
+  if (!product && currentProductError) {
+    return <NotFound />;
   }
 
   if (!product || Number(product.quantity) <= 0) {
@@ -245,7 +268,26 @@ function ProductDetail() {
                 </div>
               </div>
             </Link>
-            {String(currentUser?.id) !== String(product.author?.id) && (
+            {isOwner ? (
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={deleteConfirm ? 'danger' : 'outline'}
+                  size="md"
+                  icon={Trash2}
+                  onClick={handleDelete}
+                >
+                  {deleteConfirm ? 'Confirmer la suppression' : 'Supprimer'}
+                </Button>
+                {deleteConfirm && (
+                  <button
+                    onClick={() => setDeleteConfirm(false)}
+                    className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
+                  >
+                    Annuler
+                  </button>
+                )}
+              </div>
+            ) : (
               <Button variant="outline" size="md" icon={MessageCircle} onClick={handleContactSeller}>
                 Contacter le vendeur
               </Button>

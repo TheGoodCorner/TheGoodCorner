@@ -111,7 +111,7 @@ function SellerProfile() {
 
   const displayName = viewedUser.name || viewedUser.username || "Utilisateur";
   const userRating = viewedUser.sellerRating || 0;
-  const listings = (viewedUser.product || []).map((product) => ({ ...product, author: viewedUser }));
+  const listings = (viewedUser.product || []).filter((p) => (p.quantity ?? 0) > 0).map((product) => ({ ...product, author: viewedUser }));
   const memberSince = formatMonthYear(viewedUser.createdAt);
 
   const activeReviews = (viewedUser.receivedReviews || []).filter((r) => !r.deletedAt);

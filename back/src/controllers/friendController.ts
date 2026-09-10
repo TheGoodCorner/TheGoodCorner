@@ -60,17 +60,24 @@ const friendController = {
 								receiverId: parsedReceiverId,
 							},
 							include: {
-								receiver: {
-									select: {
-										id: true,
-										username: true,
-										avatar: true
-									}
-								}
+								sender: { select: { id: true, username: true, avatar: true } },
+								receiver: { select: { id: true, username: true, avatar: true } },
 							}
 						});
 					});
 					console.log(`Old rejected request deleted. New friend request sent to ${parsedReceiverId}`);
+					const io = req.app.get('io');
+					const notifContent = { requestId: friendRequest.id, sender: friendRequest.sender };
+					const notif = await prisma.notification.create({
+						data: {
+							userId: parsedReceiverId,
+							type: 'FRIEND_REQUEST',
+							content: notifContent,
+						},
+					});
+					if (io) {
+						io.to(`user_${parsedReceiverId}`).emit('new_friend_request', { ...notifContent, notifId: notif.id });
+					}
 					return res.status(201).json({ message: 'Friend request sent (previous rejection cleared)', data: friendRequest });
 				}
 				return res.status(409).json({

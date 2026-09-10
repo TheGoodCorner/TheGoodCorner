@@ -166,6 +166,7 @@ const paymentController =
 			const rawCart = paymentIntent.metadata?.cart;
 			const cart: Array<{ id: number; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
 			const amountToDeduct = transaction.amount;
+			const soldNotifIds = new Map<number, number>();
 
 			try {
 				await prisma.$transaction(async (tx) => {
@@ -178,10 +179,23 @@ const paymentController =
 						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
 						if (updatedProduct.userId) {
 							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
-							const updatedSellerBudget = await tx.user.update({
+							await tx.user.update({
 								where: { id: updatedProduct.userId },
 								data: { budget: { increment: sellerGain } }
-							})
+							});
+							const notif = await tx.notification.create({
+								data: {
+									userId: updatedProduct.userId,
+									type: 'PRODUCT_SOLD',
+									content: {
+										productId: updatedProduct.id,
+										productName: updatedProduct.name,
+										quantity: Number(item.qty),
+										gain: sellerGain,
+									},
+								},
+							});
+							soldNotifIds.set(Number(item.id), notif.id);
 						}
 					}
 					// 2. Decrement user budget securely
@@ -196,6 +210,24 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
+				const io = req.app.get('io');
+				if (io) {
+					for (const item of cart) {
+						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
+						if (product) {
+							if (product.userId) {
+								io.to(`user_${product.userId}`).emit('product_sold', {
+									notifId: soldNotifIds.get(Number(item.id)),
+									productId: product.id,
+									productName: product.name,
+									quantity: Number(item.qty),
+									gain: Number(item.qty) * Number(product.price),
+								});
+							}
+							io.emit('product_updated', { id: product.id, quantity: product.quantity });
+						}
+					}
+				}
 			} catch (dbError: any) {
 				console.error('Error applying DB updates:', dbError);
 				return (res.status(500).end()); // Let Stripe retry later

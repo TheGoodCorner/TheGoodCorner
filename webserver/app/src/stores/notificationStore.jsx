@@ -24,9 +24,11 @@ export const useNotificationStore = create(
       },
 
       addNotification: (notification) => {
-        set((state) => ({
-          notifications: [notification, ...state.notifications],
-        }));
+        set((state) => {
+          const alreadyExists = state.notifications.some((n) => n.id === notification.id);
+          if (alreadyExists) return state;
+          return { notifications: [notification, ...state.notifications] };
+        });
       },
 
       removeNotification: (notifId) => {
@@ -36,11 +38,11 @@ export const useNotificationStore = create(
       },
 
       markAsRead: async (id) => {
+        set((state) => ({
+          notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
+        }));
         try {
           await markNotificationReadRequest(id);
-          set((state) => ({
-            notifications: state.notifications.map((n) => n.id === id ? { ...n, read: true } : n),
-          }));
         } catch (error) {
           console.error('markAsRead error:', error);
         }

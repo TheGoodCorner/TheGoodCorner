@@ -57,6 +57,12 @@ export function NotificationPopover() {
     navigate('/profile?tab=friends');
   };
 
+  const handleProductSoldClick = (notifId) => {
+    markAsRead(notifId);
+    closeUi('notification-popover');
+    navigate('/profile?tab=products');
+  };
+
   return (
     <div className="absolute top-10 right-0 z-50">
       <AnimatePresence>
@@ -75,7 +81,22 @@ export function NotificationPopover() {
               ) : (
                 <ul className="flex flex-col gap-2">
                   {allNotifications.map((notif) =>
-                    notif.type === 'message' ? (
+                    notif.type === 'PRODUCT_SOLD' ? (
+                      <li
+                        key={notif.key}
+                        onClick={() => handleProductSoldClick(notif.data.notifId)}
+                        className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
+                      >
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-sm font-semibold text-[var(--color-text)] truncate">
+                            Article vendu !
+                          </span>
+                          <span className="text-xs text-[var(--color-text-muted)] truncate">
+                            {notif.data.productName} × {notif.data.quantity} — +{Number(notif.data.gain).toFixed(2)} €
+                          </span>
+                        </div>
+                      </li>
+                    ) : notif.type === 'message' ? (
                       <li
                         key={notif.key}
                         onClick={() => handleMessageClick(notif.data.interlocutor.id)}
