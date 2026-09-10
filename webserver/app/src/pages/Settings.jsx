@@ -44,7 +44,8 @@ export default function Settings() {
   const [secretInput, setSecretInput] = useState('');
   const [amountToAdd, setAmountToAdd] = useState(1000);
   const [devFeedback, setDevFeedback] = useState(null);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [currentBudget, setCurrentBudget] = useState(10000);
+
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -72,15 +73,20 @@ export default function Settings() {
 
   const handleAddFunds = async () => {
     const numericAmount = parseFloat(amountToAdd);
+    const MAX_AMOUNT = 2147483646;
 
     if (!userId) {
       setDevFeedback({ type: 'error', message: 'ID utilisateur introuvable dans le token.' });
       return;
     }
 
-    if (isNaN(numericAmount) || numericAmount <= 0) {
+    if (isNaN(numericAmount) || numericAmount <= 0 || numericAmount > MAX_AMOUNT) {
       setDevFeedback({ type: 'error', message: 'Veuillez saisir un montant valide.' });
       return;
+    }
+    if (currentBudget + numericAmount > MAX_AMOUNT) {
+    setDevFeedback({type: 'error', message: `Le solde total ne peut pas dépasser ${MAX_AMOUNT}€. (Solde actuel : ${currentBudget}€)`,});
+    return;
     }
 
     try {
@@ -89,7 +95,9 @@ export default function Settings() {
       });
 
       const data = response.data;
+      const updatedBudget = currentBudget + numericAmount;
 
+      setCurrentBudget(updatedBudget);
       setDevFeedback({
         type: 'success',
         message: `+${numericAmount}€ crédités avec succès ! (Nouveau solde: ${data.newBudget ?? 'mis à jour'}€)`,

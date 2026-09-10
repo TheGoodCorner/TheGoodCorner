@@ -135,6 +135,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Javascript tutorials ](https://js.muthu.co/posts/implicit-explicit-nominal-structuring-and-duck-typing/)  
 [Documentation : Javascript tutorials](https://www.geeksforgeeks.org/javascript/how-to-check-for-null-undefined-or-blank-variables-in-javascript/)  
 [Documentation : Javascript tutorials](https://stackoverflow.com/questions/35706164/typescript-import-as-vs-import-require)  
+[Documentation : Javascript tutorials](https://fr.wikipedia.org/wiki/Document_Object_Model)  
 [Documentation : Docker Compose](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 [Documentation : Docker Compose](https://lours.me/posts/compose-tip-020-docker-compose-logs/)  
 [Documentation : Docker](https://docs.docker.com/build/building/best-practices/#minimize-the-number-of-layers)  

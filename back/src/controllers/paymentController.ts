@@ -302,14 +302,16 @@ const paymentController =
 			const userId = Number(req.params.id);
 			const amount = Number(req.body.amount);
 			if (!userId || isNaN(userId))
-				return res.status(400).json({ message: 'Invalid userId', status: 400 });
-			if (Number.isNaN(amount) || amount <= 0 || amount > 100000)
-				return (res.status(403).json({ message: 'invalid parameter provided', Status: 400 }));
+				return res.status(400).json({ message: 'Invalid userId'});
+			if (Number.isNaN(amount) || amount <= 0 || amount > 2147483646)
+				return (res.status(403).json({ message: 'invalid amount parameter provided'}));
 			const user = await prisma.user.findUnique({
 				where: { id: userId }
 			})
 			if (!user)
-				return (res.status(404).json({ message: 'unable to find user', Status: 400 }));
+				return (res.status(404).json({ message: 'unable to find user'}));
+			if (user.budget + amount > 2147483646)
+				return (res.status(403).json({ message: 'budget is set too high'}));
 
 			const updatedUser = await prisma.user.update({
 				where: { id: userId },
@@ -321,7 +323,7 @@ const paymentController =
 		}
 		catch (error) {
 			console.error('Erreur topUp:', error);
-			return (res.status(500).json({ message: 'internal server Error', Status: 500 }));
+			return (res.status(500).json({ message: 'internal server Error'}));
 		}
 	}
 }

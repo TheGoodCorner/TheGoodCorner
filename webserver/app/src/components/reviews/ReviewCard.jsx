@@ -41,15 +41,22 @@ export const ReviewCard = ({
       setError('Choisis une note entre 1 et 5 étoiles.');
       return;
     }
-    if (!draftContent.trim()) {
+
+    const trimmedContent = (draftContent || '').trim();
+
+    if (!trimmedContent) {
       setError('Le commentaire ne peut pas être vide.');
+      return;
+    }
+    if (trimmedContent.length > 5000) {
+      setError('Le commentaire ne peut pas être aussi long.');
       return;
     }
 
     setError(null);
     setSaving(true);
     try {
-      await onSave({ reviews: draftContent.trim(), reviewRating: draftRating });
+      await onSave({ reviews: trimmedContent, reviewRating: draftRating });
       setIsEditing(false);
     } catch (err) {
       setError(err.message);
@@ -78,8 +85,7 @@ export const ReviewCard = ({
           onRatingChange={isEditing ? setDraftRating : undefined}
         />
 
-        {/* Boutons edit/delete, ou annuler/sauvegarder pendant l'édition —
-            seulement si c'est ton propre avis */}
+        {/* Action buttons */}
         {isAuthor && !isEditing && (
           <div className="flex gap-1 -mt-2 ms-2">
             <Button
@@ -132,7 +138,7 @@ export const ReviewCard = ({
             onChange={(e) => setDraftContent(e.target.value)}
             rows={3}
             disabled={saving}
-            className="w-full text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors disabled:opacity-60"
+            className="w-full text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors disabled:opacity-60 review-content"
           />
           {error && (
             <p className="text-xs text-[var(--color-danger)] font-medium" role="alert">
@@ -141,7 +147,7 @@ export const ReviewCard = ({
           )}
         </div>
       ) : (
-        <p className="text-sm text-[var(--color-text)] mb-3 leading-relaxed">
+        <p className="text-sm text-[var(--color-text)] mb-3 leading-relaxed review-content">
           {content}
         </p>
       )}
