@@ -15,7 +15,7 @@ export async function consumeFactor(userId: number, code: unknown, action: 'logi
     await tx.twoFactor.update({ where: { userId }, data: { attempts: attempts + 1, ...(reset ? { windowStart: now } : {}) } });
     const step = verifyTotp(decryptSecret(factor.secret), code, factor.lastStep);
     // on calcule le hash du code en input, au cas où ce serait un code de secours
-    const hash = typeof code === 'string' && code.length <= 100 ? recoveryHash(code) : ''; /////////////////
+    const hash = typeof code === 'string' && code.length <= 20 ? recoveryHash(code) : '';
     const recovery = action !== 'enable' && factor.recoveryHashes.includes(hash);
     if (step === null && !recovery) return { ok: false as const };
     if (action === 'disable') {
