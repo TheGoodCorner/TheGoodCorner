@@ -112,7 +112,7 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
             </div>
         </div>
 
-        {isOwner && (
+        {isOwner && isInStock && (
             <div className="flex items-center gap-1">
                 <button
                     onClick={handleEditClick}
