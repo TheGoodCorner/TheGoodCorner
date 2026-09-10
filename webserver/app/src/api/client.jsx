@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { refreshRequest } from './authApi';
+import { redirectTo } from '../utils/navigate';
 
 export const apiClient = axios.create({
   baseURL: '/api',
@@ -32,10 +33,8 @@ apiClient.interceptors.request.use((config) => {
 let isRefreshing = false;
 let pendingRequests = [];
 
-let rateLimitRetries = {}; // Track les retries par URL
-const MAX_RETRIES_429 = 3;
-const INITIAL_DELAY_429 = 200; // 1 seconde
-const MAX_DELAY_429 = 2000; // ← NOUVEAU : max 2 secondes (pas 30)
+const BLOCK_DURATION = 4000;
+let rateLimitBlocked = false;
 
 function onRefreshed(newToken) {
   pendingRequests.forEach((callback) => callback(newToken));
@@ -50,38 +49,18 @@ apiClient.interceptors.response.use(
       originalRequest?.url?.includes(path)
     );
 
- // ===== Gestion des 429 =====
-    if (error.response?.status === 429 && originalRequest) {
-      const requestKey = `${originalRequest.method}-${originalRequest.url}`;
-      const retryCount = rateLimitRetries[requestKey] || 0;
-
-      if (retryCount < MAX_RETRIES_429) {
-        // Calcule le délai avec backoff exponentiel + jitter
-        const baseDelay = INITIAL_DELAY_429;
-        const delay = Math.min(
-          baseDelay * Math.pow(2, retryCount) + Math.random() * 100,
-          MAX_DELAY_429 // max 30 secondes
-        );
-
-        console.warn(
-          `[429 Rate Limited] ${originalRequest.method} ${originalRequest.url} - ` +
-          `Retry ${retryCount + 1}/${MAX_RETRIES_429} in ${Math.round(delay)}ms`
-        );
-
-        rateLimitRetries[requestKey] = retryCount + 1;
-
-        // Attend avant de réessayer
-        await new Promise((resolve) => setTimeout(resolve, delay));
-
-        // Réessaye la requête
-        return apiClient(originalRequest);
-      } else {
-        // Max retries atteint
-        delete rateLimitRetries[requestKey];
-        console.error(`[429] Max retries exceeded for ${originalRequest.method} ${originalRequest.url}`);
-        return Promise.reject(new Error('Le serveur est surchargé. Veuillez réessayer plus tard.'));
+  // ===== 429 : redirection + blocage, une seule fois =====
+    if (error.response?.status === 429) {
+      if (!rateLimitBlocked) {
+        rateLimitBlocked = true;
+        redirectTo('/rate-limiting');
+        // Se réarme après la fenêtre de blocage : un futur 429 (plus tard,
+        // sur une autre action) redéclenchera bien la redirection.
+        setTimeout(() => { rateLimitBlocked = false; }, BLOCK_DURATION);
       }
+      return Promise.reject(new Error('Trop de requêtes, veuillez patienter.'));
     }
+    // =========================================================
 
     // Un 401 sur une route "normale" (pas login/register/refresh eux-mêmes,
     // et pas déjà rejouée une fois) déclenche une tentative de refresh

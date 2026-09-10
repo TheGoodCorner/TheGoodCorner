@@ -7,6 +7,7 @@ import MainLayout from './components/layouts/MainLayout';
 import AuthLayout from './components/layouts/AuthLayout';
 import Home from './pages/Home';
 import NotFound from './pages/NotFound';
+import TooManyRequests from './pages/TooManyRequests';
 import './styles/style.css';
 import './styles/tokens.css';
 
@@ -85,6 +86,7 @@ function App() {
         </Route>
       
       <Route path="*" element={<NotFound />} />
+      <Route path="/rate-limiting" element={<TooManyRequests />} />
 
       </Routes>
     </Router>
