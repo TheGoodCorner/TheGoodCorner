@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
-import { PlusCircle, Star } from 'lucide-react';
+import { PlusCircle, Star, Trash2 } from 'lucide-react';
 import Avatar from '../UI/Avatar';
 
-export default function ProductCard({ product, allowOutOfStock = false }) {
+export default function ProductCard({ product, allowOutOfStock = false, isOwner = false, onDelete }) {
 
-
+    const [deleting, setDeleting] = useState(false);
+    const [localError, setLocalError] = useState(null);
     const addToCart = useCartStore((state) => state.addToCart);
     const openUi = useUIStore((state) => state.openUi);
-    const [localError, setLocalError] = useState(null);
     const author = product?.author || {};
 
     const handleAddToCart = () => {
@@ -38,6 +38,20 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
         }
     };
 
+    const handleDelete = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!window.confirm(`Supprimer "${product.name}" ?`)) return;
+
+        setDeleting(true);
+        try {
+            await onDelete(product.id);
+        } catch (err) {
+            setLocalError(err?.message || "Impossible de supprimer cet article.");
+            setDeleting(false);
+        }
+    };
+
     useEffect(() => {
         if (!localError) return;
         const timer = setTimeout(() => setLocalError(null), 3000);
@@ -59,33 +73,45 @@ export default function ProductCard({ product, allowOutOfStock = false }) {
 
     return (
         <div className="card">
-            <div className="card-header">
+            <div className="card-header flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {author.id ? (
-                        <Link
-                            to={`/profile/${author.id}`}
-                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                        >
-                            {sellerInfo}
-                        </Link>
-                    ) : (
-                        <div className="flex items-center gap-2">{sellerInfo}</div>
-                    )}
-                    <div className="flex items-center gap-1 ml-3">
-                        <Star
-                            size={15}
-                            className="text-[var(--color-primary)]"
-                            fill="var(--color-primary)"
-                        />
-                        <span className="text-xs font-medium text-gray-700">
-                            {author?.sellerRating ?? '—'}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                            ({author?.sellerReviewCount ?? 0})
-                        </span>
-                    </div>
-                </div>
+                <Link
+                    to={`/profile/${author.id}`}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                    {sellerInfo}
+                </Link>
+            ) : (
+                <div className="flex items-center gap-2">{sellerInfo}</div>
+            )}
+            <div className="flex items-center gap-1 ml-3">
+                <Star
+                    size={15}
+                    className="text-[var(--color-primary)]"
+                    fill="var(--color-primary)"
+                />
+                <span className="text-xs font-medium text-gray-700">
+                    {author?.sellerRating ?? '—'}
+                </span>
+                <span className="text-xs text-gray-500">
+                    ({author?.sellerReviewCount ?? 0})
+                </span>
             </div>
+        </div>
+
+    {isOwner && (
+        <button
+            onClick={handleDelete}
+            disabled={deleting}
+            title="Supprimer l'annonce"
+            aria-label="Supprimer l'annonce"
+            className="p-1.5 rounded-full text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors disabled:opacity-50"
+        >
+            <Trash2 size={16} />
+        </button>
+    )}
+</div>
 
             <Link to={`/products/${product.id}`}>
                 <div className="relative w-full aspect-square overflow-hidden rounded-xl bg-[var(--color-surface-hover)]">

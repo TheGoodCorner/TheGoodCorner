@@ -128,18 +128,26 @@ export const useProductStore = create((set, get) => ({
 
   // DELETE /products/:id
   deleteProduct: async (id) => {
-    set({ loading: true, error: null });
-    try {
-      await deleteProductRequest(id);
-      set((state) => ({
-        products: state.products.filter((p) => String(p.id) !== String(id)),
-        loading: false,
-      }));
-    } catch (err) {
-      set({ error: err.message, loading: false });
-      throw err;
+  set({ loading: true, error: null });
+  try {
+    await deleteProductRequest(id);
+    set((state) => ({
+      products: state.products.filter((p) => String(p.id) !== String(id)),
+      loading: false,
+    }));
+
+    const { user, setUser } = useUserStore.getState();
+    if (user?.product) {
+      setUser({
+        ...user,
+        product: user.product.filter((p) => String(p.id) !== String(id)),
+      });
     }
-  },
+  } catch (err) {
+    set({ error: err.message, loading: false });
+    throw err;
+  }
+},
 
   // Filtrage avec déduplication intégrée
   getFilteredProducts: () => {
