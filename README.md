@@ -1,4 +1,4 @@
-# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous*
+# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous.*
 
 <!-- ![Docker.png](docker.png) -->
 
@@ -174,11 +174,28 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Video : Best backend Framework in 2025](https://www.youtube.com/watch?v=qZ6w9_MhmJ0)  
 
 
-
-
 # Team Information
+**Project Manager (PM) ** **
+- Organizes team meetings and planning sessions
+- Tracks progress and deadlines
+- Ensures team communication
+
+**Product Owner (PO) ** **
+- Communicates with stakeholders (evaluators, peer)
+- Validates completed work
+
+**Lead Tech ** **
+- Defines technical architecture
+- Makes technology decisions
+
+**Developers **
+- Develop the various features
 
 # Project Management
+
+- We held an initial meeting to assign tasks and roles. Communication took place primarily via messaging (Discord).
+
+- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.
 
 # Technical Stack
 ### Frontend
@@ -238,6 +255,7 @@ erDiagram
     USER ||--o{ MESSAGE : "sends & receives"
     USER ||--o{ FRIENDREQUEST : "sends & receives"
     USER ||--o{ REVIEW : "writes & receives"
+    USER ||--o{ NOTIFICATION : receives
     USER ||--o{ REFRESHTOKEN : has
     USER }o--|| LOCATION : "lives in"
     PRODUCT }o--|| CATEGORY : "belongs to"
@@ -338,6 +356,15 @@ erDiagram
         timestamp expiresAt
         timestamp revokedAt
         string replacedBy
+        timestamp createdAt
+    }
+
+    NOTIFICATION {
+        int id PK
+        int userId FK
+        string type
+        json content
+        bool read
         timestamp createdAt
     }
 ```
