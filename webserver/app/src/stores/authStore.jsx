@@ -18,10 +18,14 @@ export const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
-  login: async (email, password) => {
+  login: async (email, password, code) => {
     set({ loading: true, error: null })
     try {
-      const { user, token } = await loginRequest(email, password)
+      const { user, token, requiresTwoFactor } = await loginRequest(email, password, code)
+      if (requiresTwoFactor) {
+        set({ loading: false })
+        return 'two-factor'
+      }
 	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       // login renvoie déjà le profil complet : on le pousse directement

@@ -68,5 +68,5 @@ export function decryptSecret(value: string) {
   cipher.setAuthTag(data.subarray(12, 28));
   return Buffer.concat([cipher.update(data.subarray(28)), cipher.final()]).toString('utf8');
 }
-export const recoveryHash = (code: string) => createHash('sha256').update(code.trim().toLowerCase()).digest('hex');
+export const recoveryHash = (code: string) => createHash('sha256').update(code.toLowerCase()).digest('hex');
 export const newRecoveryCodes = () => Array.from({ length: 10 }, () => randomBytes(10).toString('hex'));

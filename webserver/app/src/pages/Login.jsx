@@ -8,6 +8,7 @@ function Login() {
   const navigate = useNavigate();
   const {
     isRegister,
+    requiresTwoFactor,
     form,
     submitting,
     isShaking,
@@ -88,6 +89,12 @@ function Login() {
                 placeholder="••••••••"
                 disabled={submitting}
               />
+
+              {requiresTwoFactor && (
+                <FormField icon={Lock} id="two-factor-code" label="Code de l’application ou code de secours"
+                  type="text" autoComplete="one-time-code" value={form.code}
+                  onChange={handleChange('code')} disabled={submitting} />
+              )}
 
               {error && (
                 <p className="text-sm text-[var(--color-danger)]" role="alert">

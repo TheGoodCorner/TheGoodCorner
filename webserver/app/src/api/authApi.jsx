@@ -1,11 +1,12 @@
 import { apiClient } from './client';
 import { SESSION_KEY } from '../utils/constants';
 
-export async function loginRequest(email, password) {
+export async function loginRequest(email, password, code) {
   // axios retourne ce que le serveur renvoie (data) + des metadonnee
   // En destructurant '{ data }' on garde que ce qui nous interesse (les donnees renvoyer par le back)
-  const { data } = await apiClient.post('/auth/login', { email, password });
+  const { data } = await apiClient.post('/auth/login', { email, password, code });
   return {
+    requiresTwoFactor: data.requiresTwoFactor,
     user: data.data,
     token: data.accessToken,
   };

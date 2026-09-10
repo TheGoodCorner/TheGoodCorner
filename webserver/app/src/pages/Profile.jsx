@@ -1,3 +1,4 @@
+import { TwoFactorSettings } from '../components/profile/TwoFactorSettings';
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom'
 import { MessageCircle, PackageSearch, Lock } from "lucide-react";
@@ -198,6 +199,8 @@ function Profile() {
           className="py-16 bg-[var(--color-surface-hover)]"
         />
       )}
+
+      <TwoFactorSettings />
 
       <section className="bg-[var(--color-surface)]">
         <div className="px-6 sm:px-8 lg:px-12 py-16">

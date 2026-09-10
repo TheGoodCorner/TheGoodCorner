@@ -1,3 +1,4 @@
+import { consumeFactor } from '../services/twoFactor.js';
 import { Request, Response } from "express";
 import { PrismaClient, Prisma } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
@@ -74,6 +75,12 @@ const userController =
 			if (!passMatch)
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential'}));
 			
+            const factor = await prisma.twoFactor.findUnique({ where: { userId: existingUser.id } });
+            if (factor?.enabled) {
+                if (!req.body.code) return res.set('Cache-Control', 'no-store').status(200).json({ requiresTwoFactor: true });
+                const result = await consumeFactor(existingUser.id, req.body.code, 'login');
+                if (!result.ok) return res.status(result.limited ? 429 : 400).json({ message: result.limited ? 'Trop de tentatives' : 'Code incorrect ou déjà utilisé' });
+            }
 			const {accessToken, refreshToken} = generateTokens(existingUser.id, existingUser.email);
 			const hashedRefreshToken = hashIt(refreshToken);
 			await saveRefreshToken(existingUser.id, hashedRefreshToken);
