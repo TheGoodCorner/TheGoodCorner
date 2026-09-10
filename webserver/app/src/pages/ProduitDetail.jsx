@@ -10,6 +10,7 @@ import { useMessageStore } from '../stores/messageStore';
 import { Button } from '../components/UI/Button';
 import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
+import { getCategoryLabel } from '../utils/constants';
 import NotFound from './NotFound';
 
 function ProductDetailSkeleton() {
@@ -188,7 +189,7 @@ function ProductDetail() {
 
           <div className="flex flex-col">
             <span className="text-sm font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">
-              {product.category?.name || 'Non catégorisé'}
+              {getCategoryLabel(product.category?.name)}
             </span>
             <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">{product.name}</h1>
             <p className="text-3xl font-bold text-[var(--color-primary)] mb-6">

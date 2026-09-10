@@ -3,15 +3,7 @@ import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
 import { FileInput } from '../UI/FileInput';
 import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
-import { PRODUCT_PRICE_MAX } from '../../utils/constants';
-
-const CATEGORIES = [
-  { value: 'Training', label: 'Entrainement' },
-  { value: 'Professionnal', label: 'Professionnel' },
-  { value: 'Combat', label: 'combat' },
-  { value: 'Cardio', label: 'cardio' },
-  { value: 'other', label: 'Autre' },
-];
+import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
   const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
