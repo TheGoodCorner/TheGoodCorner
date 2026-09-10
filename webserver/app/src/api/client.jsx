@@ -54,11 +54,11 @@ apiClient.interceptors.response.use(
       if (!rateLimitBlocked) {
         rateLimitBlocked = true;
         redirectTo('/rate-limiting');
-        // Se réarme après la fenêtre de blocage : un futur 429 (plus tard,
-        // sur une autre action) redéclenchera bien la redirection.
         setTimeout(() => { rateLimitBlocked = false; }, BLOCK_DURATION);
       }
-      return Promise.reject(new Error('Trop de requêtes, veuillez patienter.'));
+      const rateLimitError = new Error('Trop de requêtes, veuillez patienter.');
+      rateLimitError.isRateLimited = true;
+      return Promise.reject(rateLimitError);
     }
     // =========================================================
 
@@ -86,7 +86,9 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         pendingRequests = [];
-        useAuthStore.getState().logout();
+        if (!refreshError?.isRateLimited) {
+          useAuthStore.getState().logout();
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

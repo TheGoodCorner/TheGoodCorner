@@ -67,7 +67,7 @@ export const useAuthStore = create((set) => ({
 	  if (!token) {
         localStorage.removeItem(SESSION_KEY);
         useUserStore.getState().setUser(null);
-        set({ user: null, token: null, isAuthenticated: false, initializing: false });
+        set({ token: null, isAuthenticated: false, initializing: false });
         return;
       }
       set({user, token, isAuthenticated: true, initializing: false })
@@ -75,17 +75,23 @@ export const useAuthStore = create((set) => ({
       useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
       useNotificationStore.getState().fetchNotifications()
-    } catch {
+    } catch (err) {
+      if (err?.isRateLimited) {
+      // Rate-limité, pas une session invalide : on ne touche à rien,
+      // juste on arrête l'état "initializing" pour ne pas bloquer l'UI.
+      set({ initializing: false });
+      return;
+    }
 		localStorage.removeItem(SESSION_KEY);
 		useUserStore.getState().setUser(null);
-      set({ user: null, token: null, isAuthenticated: false, initializing: false })
+      set({ token: null, isAuthenticated: false, initializing: false })
     }
   },
 
   logout: async () => {
     // Même si l'appel échoue, on déconnecte quand même côté client.
     localStorage.removeItem(SESSION_KEY)
-    set({ user: null, token: null, isAuthenticated: false, error: null })
+    set({ token: null, isAuthenticated: false, error: null })
     useCartStore.getState().switchUser(null)
     useUserStore.getState().logout()
     useMessageStore.getState().reset()
