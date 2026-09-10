@@ -33,8 +33,6 @@ const Messagerie = lazy(() => import('./pages/Messagerie'));
 const Login = lazy(() => import('./pages/Login'));
 const ProductDetail = lazy(() => import('./pages/ProduitDetail'));
 const Produits = lazy(() => import('./pages/Produits'));
-const NotFound = lazy(() => import ('./pages/NotFound'));
-const TooManyRequest = lazy(() => import ('./pages/TooManyRequest'))
 
 function App() {
   const theme = useThemeStore((state) => state.theme)

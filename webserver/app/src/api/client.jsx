@@ -43,17 +43,6 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const status = error.response?.status;
-
-    // 1. Détection 429 ou verrouillage déjà en cours : redirection immédiate
-    if (status === 429 || isRedirectingTo429) {
-      isRedirectingTo429 = true;
-      if (!window.location.pathname.startsWith('/TooManyRequest')) {
-        window.location.replace('/TooManyRequest');
-      }
-      // Promesse suspendue : empêche les catch() React/Zustand de s'exécuter
-      return new Promise(() => {});
-    }
-
     const originalRequest = error.config;
     const isAuthEndpoint = ['/auth/login', '/auth/register', '/auth/refresh'].some((path) =>
       originalRequest?.url?.includes(path)
