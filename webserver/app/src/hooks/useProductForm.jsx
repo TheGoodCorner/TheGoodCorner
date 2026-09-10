@@ -85,7 +85,6 @@ export function useProductForm(initialProduct = null) {
         success = await updateProduct(initialProduct.id, {
           name: form.name.trim(),
           price: parseFloat(form.price),
-          // TODO: le backend attend categoryId (int, FK vers Category), pas un nom
           category: finalCategory,
           description: form.description.trim(),
         });
@@ -94,7 +93,6 @@ export function useProductForm(initialProduct = null) {
           name: form.name.trim(),
           image: form.image,
           price: parseFloat(form.price),
-          // TODO: le backend attend categoryId (int, FK vers Category), pas un nom
           category: finalCategory,
           description: form.description.trim(),
           stock: 1,

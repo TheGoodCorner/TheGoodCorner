@@ -169,7 +169,7 @@ function Profile() {
 
       <div className="flex justify-start ml-12 gap-10 pt-6">
         <TabButton active={activeTab === "products"} onClick={() => setActiveTab("products")}>
-          Mes Annonces ({user?.product?.filter((product) => product.quantity >= 1).length || 0})
+          Mes Annonces ({user?.product?.length || 0})
         </TabButton>
         <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")}>
           Avis ({reviewCount || 0})
@@ -187,7 +187,7 @@ function Profile() {
       {activeTab === "products" ? (
         user?.product?.length > 0 ? (
           <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
-            {user?.product?.filter((product) => product.quantity >= 1).map((product) => (
+            {user?.product?.map((product) => (
               <ProductCard
               key={product.id}
               product={{ ...product, author: user }}

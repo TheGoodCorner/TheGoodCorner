@@ -119,6 +119,13 @@ export const useProductStore = create((set, get) => ({
             : state.currentProduct,
         loading: false,
       }));
+      const { user, setUser } = useUserStore.getState();
+      if (user?.product) {
+        setUser({
+          ...user,
+          product: user.product.map((p) => (String(p.id) === String(id) ? data : p)),
+        });
+      }
       return data;
     } catch (err) {
       set({ error: err.message, loading: false });
