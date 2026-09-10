@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 import { refreshRequest } from './authApi';
+import { redirectTo } from '../utils/navigate';
 
 export const apiClient = axios.create({
   baseURL: '/api',
@@ -30,6 +31,9 @@ let isRedirectingTo429 = false;
 let isRefreshing = false;
 let pendingRequests = [];
 
+const BLOCK_DURATION = 4000;
+let rateLimitBlocked = false;
+
 function onRefreshed(newToken) {
   pendingRequests.forEach((callback) => callback(newToken));
   pendingRequests = [];
@@ -55,8 +59,23 @@ apiClient.interceptors.response.use(
       originalRequest?.url?.includes(path)
     );
 
-    // 2. Gestion du 401 et renouvellement silencieux
-    if (status === 401 && !originalRequest?._retry && !isAuthEndpoint) {
+  // ===== 429 : redirection + blocage, une seule fois =====
+    if (error.response?.status === 429) {
+      if (!rateLimitBlocked) {
+        rateLimitBlocked = true;
+        redirectTo('/rate-limiting');
+        setTimeout(() => { rateLimitBlocked = false; }, BLOCK_DURATION);
+      }
+      const rateLimitError = new Error('Trop de requêtes, veuillez patienter.');
+      rateLimitError.isRateLimited = true;
+      return Promise.reject(rateLimitError);
+    }
+    // =========================================================
+
+    // Un 401 sur une route "normale" (pas login/register/refresh eux-mêmes,
+    // et pas déjà rejouée une fois) déclenche une tentative de refresh
+    // silencieux avant d'abandonner.
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve) => {
           pendingRequests.push((newToken) => {
@@ -77,18 +96,9 @@ apiClient.interceptors.response.use(
         return apiClient(originalRequest);
       } catch (refreshError) {
         pendingRequests = [];
-
-        // Si le refresh lui-même subit un rate-limit, pas de déconnexion
-        const refreshStatus = refreshError?.response?.status || refreshError?.status;
-        if (refreshStatus === 429 || isRedirectingTo429) {
-          isRedirectingTo429 = true;
-          if (!window.location.pathname.startsWith('/TooManyRequest')) {
-            window.location.replace('/TooManyRequest');
-          }
-          return new Promise(() => {});
+        if (!refreshError?.isRateLimited) {
+          useAuthStore.getState().logout();
         }
-
-        useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
