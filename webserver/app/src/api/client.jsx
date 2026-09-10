@@ -16,6 +16,8 @@ export const apiClient = axios.create({
 });
 
 // Attache automatiquement le token d'auth (s'il existe) à CHAQUE requête.
+// useAuthStore.getState() lit l'état du store en dehors de tout composant
+// React (un intercepteur n'est pas un composant, donc pas de hook ici).
 apiClient.interceptors.request.use((config) => {
   const token = useAuthStore.getState().token;
   if (token) {
@@ -24,10 +26,10 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
-// Verrou anti-spam : dès qu'un 429 est rencontré, on bloque toutes les autres
-// requêtes concurrentes pour empêcher tout logout intempestif.
-let isRedirectingTo429 = false;
-
+// File d'attente : si plusieurs requêtes échouent en 401 en même temps
+// (ex: 3 appels en vol juste avant l'expiration de l'access token), on ne
+// veut déclencher qu'UN SEUL refresh, pas trois en parallèle. Les requêtes
+// suivantes attendent le résultat du premier refresh puis rejouent.
 let isRefreshing = false;
 let pendingRequests = [];
 
@@ -42,7 +44,6 @@ function onRefreshed(newToken) {
 apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const status = error.response?.status;
     const originalRequest = error.config;
     const isAuthEndpoint = ['/auth/login', '/auth/register', '/auth/refresh'].some((path) =>
       originalRequest?.url?.includes(path)
@@ -94,12 +95,11 @@ apiClient.interceptors.response.use(
       }
     }
 
-    const isLoginOrRegister = ['/auth/refresh', '/auth/login', '/auth/register'].some((path) =>
+    const isLoginOrRegister = ['/auth/login', '/auth/register'].some((path) =>
       originalRequest?.url?.includes(path)
     );
 
-    // 3. Déconnexion uniquement si aucune redirection 429 n'est en cours
-    if ((status === 401 || status === 403) && !isLoginOrRegister && !isRedirectingTo429) {
+    if ((error.response?.status === 401 || error.response?.status === 403) && !isLoginOrRegister) {
       useAuthStore.getState().logout();
     }
 
