@@ -153,7 +153,7 @@ export default function Orders() {
               Vous n'avez passé aucune commande pour le moment.
             </p>
             <Link
-              to="/produits"
+              to="/products"
               className="text-sm text-[var(--color-primary)] hover:opacity-80 underline font-medium"
             >
               Découvrir les produits

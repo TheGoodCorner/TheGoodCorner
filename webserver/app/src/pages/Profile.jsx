@@ -13,11 +13,13 @@ import { TabButton } from "../components/UI/TabButton";
 import { EmptyState } from "../components/UI/EmptyState";
 import { formatMonthYear } from "../utils/date";
 import { Button } from "../components/UI/Button";
+import { useProductStore } from '../stores/productStore';
 import Avatar from "../components/UI/Avatar";
 
 function Profile() {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { isAuthenticated, initializing } = useAuthStore();
+  const deleteProduct = useProductStore((state) => state.deleteProduct);
   const navigate = useNavigate();
 
   const {
@@ -188,9 +190,11 @@ function Profile() {
           <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
             {user?.product?.map((product) => (
               <ProductCard
-                key={product.id}
-                product={{ ...product, author: user }}
-				allowOutOfStock={true}
+              key={product.id}
+              product={{ ...product, author: user }}
+              allowOutOfStock={true}
+              isOwner={true}
+              onDelete={deleteProduct}
               />
             ))}
           </div>
@@ -439,7 +443,7 @@ function Profile() {
                 Ajouter un produit
               </h2>
               <p className="text-[var(--color-text-muted)]">
-                Remplire les informations pour créer un nouveau produit
+                Remplir les informations pour créer un nouveau produit
               </p>
             </div>
             <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />
