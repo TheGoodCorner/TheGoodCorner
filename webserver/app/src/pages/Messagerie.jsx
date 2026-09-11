@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { MessageCircle, Plus } from 'lucide-react';
+import { Trans } from '@lingui/react/macro';
 import { useUserStore } from '../stores/userStore';
 import { useAuthStore } from '../stores/authStore';
 import { useMessageStore } from '../stores/messageStore';
@@ -131,7 +132,11 @@ function Messagerie() {
   };
 
   if (initializing) {
-    return <div className="container py-16 text-center text-[var(--color-text-muted)]">Chargement...</div>;
+    return (
+      <div className="container py-16 text-center text-[var(--color-text-muted)]">
+        <Trans>Chargement...</Trans>
+      </div>
+    );
   }
 
   if (!isAuthenticated || !currentUser?.id) {
@@ -140,12 +145,14 @@ function Messagerie() {
         <div className="container py-16 text-center">
           <MessageCircle size={40} className="text-[var(--color-text)] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-2">
-            Connecte-toi pour accéder à ta messagerie
+            <Trans>Connecte-toi pour accéder à ta messagerie</Trans>
           </h1>
           <p className="text-[var(--color-text)] mb-6">
-            Retrouve ici toutes tes conversations avec les autres utilisateurs.
+            <Trans>Retrouve ici toutes tes conversations avec les autres utilisateurs.</Trans>
           </p>
-          <Button to="/authentication" variant="primary">Se connecter</Button>
+          <Button to="/authentication" variant="primary">
+            <Trans>Se connecter</Trans>
+          </Button>
         </div>
       </div>
     );
@@ -155,9 +162,11 @@ function Messagerie() {
     <div className="bg-[var(--color-bg)]">
       <div className="container py-8">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">Messagerie</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-[var(--color-text)]">
+            <Trans>Messagerie</Trans>
+          </h1>
           <Button variant="primary" icon={Plus} onClick={() => setShowUserModal(true)}>
-            Nouvelle discussion
+            <Trans>Nouvelle discussion</Trans>
           </Button>
         </div>
 

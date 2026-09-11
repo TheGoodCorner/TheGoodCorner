@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { StarRating } from '../UI/StarRating';
 import Avatar from '../UI/Avatar';
 import { Button } from '../UI/Button';
@@ -16,6 +17,7 @@ export const ReviewCard = ({
   onSave,
   onDelete,
 }) => {
+  const { t } = useLingui();
   const isAuthor = currentUserId && authorId && String(currentUserId) === String(authorId);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -38,18 +40,19 @@ export const ReviewCard = ({
 
   const handleSave = async () => {
     if (draftRating < 1 || draftRating > 5) {
-      setError('Choisis une note entre 1 et 5 étoiles.');
+      setError(t`Choisis une note entre 1 et 5 étoiles.`);
       return;
     }
 
     const trimmedContent = (draftContent || '').trim();
 
     if (!trimmedContent) {
-      setError('Le commentaire ne peut pas être vide.');
+      setError(t`Le commentaire ne peut pas être vide.`);
       return;
     }
+
     if (trimmedContent.length > 5000) {
-      setError('Le commentaire ne peut pas être aussi long.');
+      setError(t`Le commentaire ne peut pas être aussi long.`);
       return;
     }
 
@@ -59,7 +62,7 @@ export const ReviewCard = ({
       await onSave({ reviews: trimmedContent, reviewRating: draftRating });
       setIsEditing(false);
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || t`Une erreur est survenue lors de l'enregistrement.`);
     } finally {
       setSaving(false);
     }
@@ -93,7 +96,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Edit2}
               iconOnly
-              aria-label="Modifier cet avis"
+              aria-label={t`Modifier cet avis`}
               onClick={startEditing}
             />
             <Button
@@ -101,7 +104,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Trash2}
               iconOnly
-              aria-label="Supprimer cet avis"
+              aria-label={t`Supprimer cet avis`}
               onClick={onDelete}
             />
           </div>
@@ -113,7 +116,7 @@ export const ReviewCard = ({
               size="sm"
               icon={X}
               iconOnly
-              aria-label="Annuler"
+              aria-label={t`Annuler`}
               onClick={cancelEditing}
               disabled={saving}
             />
@@ -122,7 +125,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Check}
               iconOnly
-              aria-label="Sauvegarder"
+              aria-label={t`Sauvegarder`}
               onClick={handleSave}
               loading={saving}
             />
@@ -138,6 +141,7 @@ export const ReviewCard = ({
             onChange={(e) => setDraftContent(e.target.value)}
             rows={3}
             disabled={saving}
+            aria-label={t`Modifier le commentaire`}
             className="w-full text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors disabled:opacity-60 review-content"
           />
           {error && (
@@ -155,7 +159,9 @@ export const ReviewCard = ({
       {/* Produit (optionnel) */}
       {product && (
         <p className="text-xs text-[var(--color-text-muted)] italic">
-          Produit : <span className="font-medium">{product}</span>
+          <Trans>
+            Produit : <span className="font-medium">{product}</span>
+          </Trans>
         </p>
       )}
     </div>

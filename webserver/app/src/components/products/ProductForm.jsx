@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useProductForm } from '../../hooks/useProductForm';
 import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
@@ -6,7 +8,19 @@ import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
 import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
+  const { t } = useLingui();
   const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
+
+  const categories = useMemo(
+    () => [
+      { value: 'Training', label: t`Entraînement` },
+      { value: 'Professionnal', label: t`Professionnel` },
+      { value: 'Combat', label: t`Combat` },
+      { value: 'Cardio', label: t`Cardio` },
+      { value: 'other', label: t`Autre` },
+    ],
+    [t]
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,39 +28,41 @@ export function ProductForm({ product = null, onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className='space-y-6' noValidate>
+    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       {/* Ligne 1: Nom + Catégorie */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <FormField
-          id='product-name'
-          label='Nom du produit'
+          id="product-name"
+          label={t`Nom du produit`}
           icon={Package}
-          type='text'
+          type="text"
           value={form.name}
           onChange={handleChange('name')}
-          placeholder='Ex: Chaise ergonomique'
+          placeholder={t`Ex: Chaise ergonomique`}
           disabled={submitting}
         />
 
         <div>
-          <label htmlFor='category' className='block text-sm font-semibold text-[var(--color-text)] mb-2'>
-            Catégorie
+          <label htmlFor="category" className="block text-sm font-semibold text-[var(--color-text)] mb-2">
+            <Trans>Catégorie</Trans>
           </label>
-          <div className='relative'>
+          <div className="relative">
             <Tag
               size={18}
-              className='absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none'
-              aria-hidden='true'
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
+              aria-hidden="true"
             />
             <select
-              id='category'
-              className='w-full pl-10 pr-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60'
+              id="category"
+              className="w-full pl-10 pr-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60"
               value={form.category}
               onChange={handleChange('category')}
               disabled={submitting}
             >
-              <option value=''>-- Sélectionne une catégorie --</option>
-              {CATEGORIES.map(cat => (
+              <option value="">
+                {t`-- Sélectionne une catégorie --`}
+              </option>
+              {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
@@ -58,15 +74,15 @@ export function ProductForm({ product = null, onSuccess }) {
 
       {/* Champ affiché uniquement si "Autre" est sélectionné */}
       {form.category === 'other' && (
-        <div className='animate-in fade-in slide-in-from-top-2 duration-200'>
+        <div className="animate-in fade-in slide-in-from-top-2 duration-200">
           <FormField
-            id='custom-category'
-            label='Précise la catégorie personnalisée'
+            id="custom-category"
+            label={t`Précise la catégorie personnalisée`}
             icon={PlusCircle}
-            type='text'
+            type="text"
             value={form.customCategory || ''}
             onChange={handleChange('customCategory')}
-            placeholder='Ex: Équipements de frappe'
+            placeholder={t`Ex: Équipements de frappe`}
             disabled={submitting}
             required
           />
@@ -76,24 +92,24 @@ export function ProductForm({ product = null, onSuccess }) {
       {/* Ligne 2: Prix + Image */}
       <div className={isEditMode ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 sm:grid-cols-2 gap-6'}>
         <FormField
-          id='price'
-          label='Prix (€)'
+          id="price"
+          label={t`Prix (€)`}
           icon={Euro}
-          type='number'
-          step='0.01'
-          min='0'
+          type="number"
+          step="0.01"
+          min="0"
           max={PRODUCT_PRICE_MAX}
           value={form.price}
           onChange={handleChange('price')}
-          placeholder='29.99'
+          placeholder="29.99"
           disabled={submitting}
         />
 
         {!isEditMode && (
           <FileInput
-            id='image-file'
-            label='Image du produit'
-            accept='.png,.jpeg,.jpg,image/png,image/jpeg'
+            id="image-file"
+            label={t`Image du produit`}
+            accept=".png,.jpeg,.jpg,image/png,image/jpeg"
             value={form.image}
             onChange={handleChange('image')}
             disabled={submitting}
@@ -102,37 +118,37 @@ export function ProductForm({ product = null, onSuccess }) {
       </div>
 
       {isEditMode && form.existingImageUrl && (
-        <div className='flex items-center gap-3'>
+        <div className="flex items-center gap-3">
           <img
             src={form.existingImageUrl}
-            alt='Image actuelle'
-            className='w-14 h-14 object-cover rounded-[var(--radius-sm)] border border-[var(--color-border)]'
+            alt={t`Image actuelle`}
+            className="w-14 h-14 object-cover rounded-[var(--radius-sm)] border border-[var(--color-border)]"
           />
-          <p className='text-xs text-[var(--color-text-muted)]'>
-            L'image ne peut pas être modifiée depuis ce formulaire pour l'instant.
+          <p className="text-xs text-[var(--color-text-muted)]">
+            <Trans>L'image ne peut pas être modifiée depuis ce formulaire pour l'instant.</Trans>
           </p>
         </div>
       )}
 
       {/* Ligne 3: Description */}
       <FormField
-        id='description'
-        label='Description'
+        id="description"
+        label={t`Description`}
         icon={FileText}
-        type='text'
-        as='textarea'
+        type="text"
+        as="textarea"
         value={form.description}
         onChange={handleChange('description')}
-        placeholder='Décris ton produit en détail...'
+        placeholder={t`Décris ton produit en détail...`}
         disabled={submitting}
-        className='resize-none'
-        rows='5'
+        className="resize-none"
+        rows="5"
       />
 
       {/* Message d'erreur */}
       {error && (
-        <div className='p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]'>
-          <p className='text-sm text-[var(--color-danger)] font-medium' role='alert'>
+        <div className="p-4 bg-[var(--color-danger-surface)] border border-[var(--color-danger)] rounded-[var(--radius-md)]">
+          <p className="text-sm text-[var(--color-danger)] font-medium" role="alert">
             {error}
           </p>
         </div>
@@ -140,12 +156,13 @@ export function ProductForm({ product = null, onSuccess }) {
 
       {/* Bouton Submit */}
       <Button
-        variant='primary'
+        type="submit"
+        variant="primary"
         fullWidth
         loading={submitting}
-        className='bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] py-3 rounded-[var(--radius-md)] font-semibold transition-colors'
+        className="bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] py-3 rounded-[var(--radius-md)] font-semibold transition-colors"
       >
-        {isEditMode ? 'Enregistrer les modifications' : 'Créer le produit'}
+        {isEditMode ? t`Enregistrer les modifications` : t`Créer le produit`}
       </Button>
     </form>
   );
