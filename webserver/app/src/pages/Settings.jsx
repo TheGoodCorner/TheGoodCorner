@@ -25,6 +25,7 @@ export default function Settings() {
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
 
+
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
   const currentUser = useUserStore((state) => state.user);
@@ -36,6 +37,8 @@ export default function Settings() {
 
   const locale = useLanguageStore((state) => state.locale);
   const setLocale = useLanguageStore((state) => state.setLocale);
+  const [isLangOpen, setIsLangOpen] = useState(false);
+  const currentLangObj = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
 
   const [show2FASettings, setShow2FASettings] = useState(false);
   const [isDevUnlocked, setIsDevUnlocked] = useState(false);
@@ -227,22 +230,20 @@ export default function Settings() {
 
         {/* Langue */}
         <div
-          className="mb-6 pb-6"
+          className="mb-6 pb-6 relative"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
         >
           <label
-            htmlFor="language-select"
             className="block text-sm font-medium mb-2"
             style={{ color: 'var(--color-text-muted)' }}
           >
             <Trans>Langue de l'application</Trans>
           </label>
-          <select
-            id="language-select"
-            value={locale}
-            onChange={handleLanguageChange}
-            aria-label={t`Langue de l'application`}
-            className="w-full rounded-[var(--radius-md)] p-3 text-base outline-none focus:ring-2 cursor-pointer"
+
+          <button
+            type="button"
+            onClick={() => setIsLangOpen((prev) => !prev)}
+            className="w-full flex items-center justify-between rounded-[var(--radius-md)] p-3 text-base outline-none focus:ring-2 cursor-pointer"
             style={{
               backgroundColor: 'var(--color-surface-hover)',
               borderColor: 'var(--color-border)',
@@ -250,12 +251,39 @@ export default function Settings() {
               color: 'var(--color-text)',
             }}
           >
-            {LANGUAGES.map((lang) => (
-              <option key={lang.code} value={lang.code}>
-                {lang.flag} {lang.label}
-              </option>
-            ))}
-          </select>
+            <span>{currentLangObj.flag} {currentLangObj.label}</span>
+            <span className="text-xs text-[var(--color-text-muted)]">▼</span>
+          </button>
+
+          {isLangOpen && (
+            <div
+              className="absolute top-full left-0 w-full mt-1.5 rounded-[var(--radius-md)] shadow-lg z-50 overflow-hidden"
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                borderColor: 'var(--color-border)',
+                borderWidth: '1px',
+              }}
+            >
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  type="button"
+                  onClick={() => {
+                    setLocale(lang.code);
+                    setIsLangOpen(false);
+                  }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-left text-base transition hover:opacity-80"
+                  style={{
+                    color: 'var(--color-text)',
+                    backgroundColor: locale === lang.code ? 'var(--color-surface-hover)' : 'transparent',
+                  }}
+                >
+                  <span>{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Mode sombre */}
