@@ -11,16 +11,20 @@ export function ProductForm({ product = null, onSuccess }) {
   const { t } = useLingui();
   const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
 
-  const categories = useMemo(
-    () => [
-      { value: 'Training', label: t`Entraînement` },
-      { value: 'Professionnal', label: t`Professionnel` },
-      { value: 'Combat', label: t`Combat` },
-      { value: 'Cardio', label: t`Cardio` },
-      { value: 'other', label: t`Autre` },
-    ],
-    [t]
-  );
+  const categories = useMemo(() => {
+    const categoryLabels = {
+      Training: t`Entraînement`,
+      Professional: t`Professionnel`,
+      Combat: t`Combat`,
+      Cardio: t`Cardio`,
+      other: t`Autre`,
+    };
+
+    return CATEGORIES.map((cat) => ({
+      value: cat,
+      label: categoryLabels[cat] ?? cat,
+    }));
+  }, [t]);
 
   const handleSubmit = (e) => {
     e.preventDefault();

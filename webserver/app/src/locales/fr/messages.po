@@ -20,7 +20,7 @@ msgstr "-- Sélectionne une catégorie --"
 #. placeholder {0}: product.name
 #: src/components/products/ProductCard.jsx
 msgid "\"{0}\" sera définitivement supprimée. Cette action est irréversible."
-msgstr "\"{0}\" sera définitivement supprimé. Cette action est irréversible."
+msgstr "\"{0}\" sera définitivement supprimée. Cette action est irréversible."
 
 #. placeholder {0}: item.stock
 #. placeholder {1}: item.stock > 1 ? 'disponibles' : 'disponible'
@@ -964,6 +964,10 @@ msgstr "La messagerie sert à échanger avec d'autres utilisateurs dans le cadre
 msgid "La navigation sur la liste des annonces est publique. En revanche, un compte personnel est nécessaire pour déposer un article, ajouter un favori, discuter avec un vendeur ou laisser une évaluation."
 msgstr "La navigation sur la liste des annonces est publique. En revanche, un compte personnel est nécessaire pour déposer un article, ajouter un favori, discuter avec un vendeur ou laisser une évaluation."
 
+#: src/pages/NotFound.jsx
+msgid "La page que tu cherches n'existe pas."
+msgstr "La page que tu cherches n'existe pas."
+
 #: src/components/profile/ProfilInfos.jsx
 msgid "Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant."
 msgstr "Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant."
@@ -1061,6 +1065,10 @@ msgstr "Mémoriser vos préférences (thème, panier) pour une expérience plus 
 #: src/components/layouts/Navbar.jsx
 msgid "Menu"
 msgstr "Menu"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Merci de patienter quelques instants..."
+msgstr "Merci de patienter quelques instants..."
 
 #: src/pages/SuccessCheckout.jsx
 msgid "Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation."
@@ -1286,6 +1294,10 @@ msgstr "Oui, la messagerie et les alertes d'évaluation exploitent des websocket
 #: src/pages/Produits.jsx
 msgid "Page {page}"
 msgstr "Page {page}"
+
+#: src/pages/NotFound.jsx
+msgid "Page introuvable"
+msgstr "Page introuvable"
 
 #: src/pages/Produits.jsx
 msgid "Page précédente"
@@ -1569,9 +1581,17 @@ msgstr "Retirer l'article du panier"
 msgid "Retour"
 msgstr "Retour"
 
+#: src/pages/NotFound.jsx
+msgid "Retour à l'accueil"
+msgstr "Retour à l'accueil"
+
 #: src/pages/Login.jsx
 msgid "Retour à la boutique"
 msgstr "Retour à la boutique"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Retour automatique dans {secondsLeft}s"
+msgstr "Retour automatique dans {secondsLeft}s"
 
 #: src/components/chat/ChatThread.jsx
 msgid "Retour aux conversations"
@@ -1815,6 +1835,10 @@ msgstr "Tous"
 msgid "Traitement en cours..."
 msgstr "Traitement en cours..."
 
+#: src/pages/TooManyRequests.jsx
+msgid "Trop de requêtes envoyées, laisse le serveur respirer"
+msgstr "Trop de requêtes envoyées, laisse le serveur respirer"
+
 #: src/pages/SellerProfile.jsx
 msgid "Tu as déjà laissé un avis pour ce vendeur."
 msgstr "Tu as déjà laissé un avis pour ce vendeur."
@@ -1989,6 +2013,10 @@ msgstr "Votre panier"
 #: src/pages/Checkout.jsx
 msgid "Votre panier est vide"
 msgstr "Votre panier est vide"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Vous allez donc être déconnecté de votre session"
+msgstr "Vous allez donc être déconnecté de votre session"
 
 #: src/pages/Checkout.jsx
 msgid "Vous devez être connecté pour passer votre commande."

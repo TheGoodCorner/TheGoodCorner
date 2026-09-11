@@ -36,7 +36,7 @@ msgstr "({0} {1})"
 #. placeholder {0}: product.quantity
 #: src/pages/ProduitDetail.jsx
 msgid "({0} en stock)"
-msgstr "({0} En existencia)"
+msgstr "({0} en stock)"
 
 #: src/pages/ProduitDetail.jsx
 msgid "(Victime de son succès)"
@@ -51,7 +51,7 @@ msgstr "{0, plural, one {# producto encontrado} other {# productos encontrados}}
 #. placeholder {1}: activeReviews.length
 #: src/pages/SellerProfile.jsx
 msgid "{0} ({1} avis)"
-msgstr "{0} ({1} reseña)"
+msgstr "{0} ({1, plural, one {# reseña} other {# reseñas}})"
 
 #. placeholder {0}: cartItems.length > 1 ? 'Articles' : 'Article'
 #. placeholder {1}: cartItems.length
@@ -367,7 +367,7 @@ msgstr "Reseñas ({0})"
 
 #: src/pages/TermsOfService.jsx
 msgid "Avis et évaluations"
-msgstr "reseñas y valoraciones"
+msgstr "Reseñas y valoraciones"
 
 #: src/pages/Settings.jsx
 msgid "Basculer le mode sombre"
@@ -482,7 +482,7 @@ msgstr "Combate"
 #. placeholder {0}: order.id
 #: src/pages/Orders.jsx
 msgid "Commande #{0}"
-msgstr "Pedido n.º {0}"
+msgstr "Pedido #{0}"
 
 #: src/pages/Faq.jsx
 msgid "Comment déposer une annonce ?"
@@ -964,6 +964,10 @@ msgstr "La mensajería permite comunicarse con otros usuarios en el marco de una
 msgid "La navigation sur la liste des annonces est publique. En revanche, un compte personnel est nécessaire pour déposer un article, ajouter un favori, discuter avec un vendeur ou laisser une évaluation."
 msgstr "La navegación por la lista de anuncios es pública. Sin embargo, se requiere una cuenta personal para publicar un artículo, añadir un favorito, chatear con un vendedor o dejar una valoración."
 
+#: src/pages/NotFound.jsx
+msgid "La page que tu cherches n'existe pas."
+msgstr "La página que buscas no existe."
+
 #: src/components/profile/ProfilInfos.jsx
 msgid "Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant."
 msgstr "Deja todos los campos en blanco si por ahora no deseas indicar una dirección."
@@ -1061,6 +1065,10 @@ msgstr "Recordar tus preferencias (tema, cesta) para una experiencia más fluida
 #: src/components/layouts/Navbar.jsx
 msgid "Menu"
 msgstr "Menú"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Merci de patienter quelques instants..."
+msgstr "Por favor, espera unos instantes..."
 
 #: src/pages/SuccessCheckout.jsx
 msgid "Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation."
@@ -1287,6 +1295,10 @@ msgstr "Sí, la mensajería y las alertas de valoraciones utilizan websockets (S
 msgid "Page {page}"
 msgstr "Página {page}"
 
+#: src/pages/NotFound.jsx
+msgid "Page introuvable"
+msgstr "Página no encontrada"
+
 #: src/pages/Produits.jsx
 msgid "Page précédente"
 msgstr "Página anterior"
@@ -1392,7 +1404,7 @@ msgstr "Monedero"
 
 #: src/pages/Faq.jsx
 msgid "Possibilité d'activer l'authentification à double facteur (2FA) dans les paramètres."
-msgstr "Posibilidad de activar la autenticación en dos pasos (2FA) en los ajustes."
+msgstr "Posibilidad de activar la autenticación en dos pasos (2FA) en la configuración."
 
 #: src/pages/Profile.jsx
 #~ msgid "Poster votre premier produit en remplissant le formulaire ci-dessous."
@@ -1569,9 +1581,17 @@ msgstr "Eliminar artículo de la cesta"
 msgid "Retour"
 msgstr "Volver"
 
+#: src/pages/NotFound.jsx
+msgid "Retour à l'accueil"
+msgstr "Volver al inicio"
+
 #: src/pages/Login.jsx
 msgid "Retour à la boutique"
 msgstr "Volver a la tienda"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Retour automatique dans {secondsLeft}s"
+msgstr "Redirección automática en {secondsLeft} s"
 
 #: src/components/chat/ChatThread.jsx
 msgid "Retour aux conversations"
@@ -1815,6 +1835,10 @@ msgstr "Todos"
 msgid "Traitement en cours..."
 msgstr "Procesando..."
 
+#: src/pages/TooManyRequests.jsx
+msgid "Trop de requêtes envoyées, laisse le serveur respirer"
+msgstr "Demasiadas peticiones enviadas, deja que el servidor respire"
+
 #: src/pages/SellerProfile.jsx
 msgid "Tu as déjà laissé un avis pour ce vendeur."
 msgstr "Ya has dejado una reseña para este vendedor."
@@ -1887,7 +1911,7 @@ msgstr "Procesando pago..."
 #: src/components/chat/MessageBubble.jsx
 #: src/pages/Settings.jsx
 msgid "Valider"
-msgstr "Guardar"
+msgstr "Confirmar"
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Vendeur"
@@ -1989,6 +2013,10 @@ msgstr "Tu cesta"
 #: src/pages/Checkout.jsx
 msgid "Votre panier est vide"
 msgstr "Tu cesta está vacía"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Vous allez donc être déconnecté de votre session"
+msgstr "Por lo tanto, se cerrará tu sesión"
 
 #: src/pages/Checkout.jsx
 msgid "Vous devez être connecté pour passer votre commande."

@@ -477,7 +477,7 @@ msgstr "App code or backup code"
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Combat"
-msgstr "Combat"
+msgstr "Fighting"
 
 #. placeholder {0}: order.id
 #: src/pages/Orders.jsx
@@ -964,6 +964,10 @@ msgstr "Messaging is used to communicate with other users regarding transactions
 msgid "La navigation sur la liste des annonces est publique. En revanche, un compte personnel est nécessaire pour déposer un article, ajouter un favori, discuter avec un vendeur ou laisser une évaluation."
 msgstr "Browsing the listings is public. However, a personal account is required to list an item, add favorites, chat with a seller, or post a review."
 
+#: src/pages/NotFound.jsx
+msgid "La page que tu cherches n'existe pas."
+msgstr "The page your are looking for doesn't exist."
+
 #: src/components/profile/ProfilInfos.jsx
 msgid "Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant."
 msgstr "Leave all fields blank if you do not wish to provide an address for now."
@@ -1061,6 +1065,10 @@ msgstr "Store your preferences (theme, cart) for a smoother experience."
 #: src/components/layouts/Navbar.jsx
 msgid "Menu"
 msgstr "Menu"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Merci de patienter quelques instants..."
+msgstr "Merci de patienter quelques instants..."
 
 #: src/pages/SuccessCheckout.jsx
 msgid "Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation."
@@ -1286,6 +1294,10 @@ msgstr "Yes, messaging and review alerts use websockets (Socket.IO). You receive
 #: src/pages/Produits.jsx
 msgid "Page {page}"
 msgstr "Page {page}"
+
+#: src/pages/NotFound.jsx
+msgid "Page introuvable"
+msgstr "Page not found"
 
 #: src/pages/Produits.jsx
 msgid "Page précédente"
@@ -1569,9 +1581,17 @@ msgstr "Remove item from cart"
 msgid "Retour"
 msgstr "Back"
 
+#: src/pages/NotFound.jsx
+msgid "Retour à l'accueil"
+msgstr "Go to home"
+
 #: src/pages/Login.jsx
 msgid "Retour à la boutique"
 msgstr "Back to shop"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Retour automatique dans {secondsLeft}s"
+msgstr "Retour automatique dans {secondsLeft}s"
 
 #: src/components/chat/ChatThread.jsx
 msgid "Retour aux conversations"
@@ -1815,6 +1835,10 @@ msgstr "All"
 msgid "Traitement en cours..."
 msgstr "Processing..."
 
+#: src/pages/TooManyRequests.jsx
+msgid "Trop de requêtes envoyées, laisse le serveur respirer"
+msgstr "Trop de requêtes envoyées, laisse le serveur respirer"
+
 #: src/pages/SellerProfile.jsx
 msgid "Tu as déjà laissé un avis pour ce vendeur."
 msgstr "You have already left a review for this seller."
@@ -1989,6 +2013,10 @@ msgstr "Your Cart"
 #: src/pages/Checkout.jsx
 msgid "Votre panier est vide"
 msgstr "Your cart is empty"
+
+#: src/pages/TooManyRequests.jsx
+msgid "Vous allez donc être déconnecté de votre session"
+msgstr "Vous allez donc être déconnecté de votre session"
 
 #: src/pages/Checkout.jsx
 msgid "Vous devez être connecté pour passer votre commande."
