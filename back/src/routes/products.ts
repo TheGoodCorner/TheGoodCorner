@@ -19,7 +19,7 @@ const productRouter = Router();
  *         multipart/form-data:
  *           schema:
  *             type: object
- *             required: [name, price, description, categoryId]
+ *             required: [name, price, description, category]
  *             properties:
  *               name:
  *                 type: string
@@ -27,8 +27,9 @@ const productRouter = Router();
  *                 type: number
  *               description:
  *                 type: string
- *               categoryId:
- *                 type: integer
+ *               category:
+ *                 type: string
+ *                 description: Category name (created if it does not exist)
  *               quantity:
  *                 type: integer
  *               image:
