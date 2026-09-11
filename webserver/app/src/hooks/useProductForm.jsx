@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useProductStore } from '../stores/productStore';
 import { PRODUCT_PRICE_MAX } from '../utils/constants';
 
@@ -41,6 +41,13 @@ export function useProductForm(initialProduct = null) {
   const [submitting, setSubmitting] = useState(false);
   const [isShaking, setIsShaking] = useState(false);
 
+  useEffect(() => {
+    if (isShaking) {
+      const timer = setTimeout(() => setIsShaking(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isShaking]);
+
   const handleChange = (field) => (e) => {
     let value = e.target.value;
 
@@ -58,10 +65,11 @@ export function useProductForm(initialProduct = null) {
 
   const validate = () => {
     if (!form.name.trim()) return 'Le nom du produit est requis.';
-    if (!isEditMode && !form.image) return 'Ajoute une image.';
+    if (!form.category.trim()) return 'Sélectionne une catégorie.';
+    if (form.category === 'other' && !form.customCategory.trim()) return 'Précise la catégorie personnalisée.';
     if (!form.price || isNaN(parseFloat(form.price))) return 'Le prix doit être un nombre valide.';
     if (parseFloat(form.price) <= 0 || parseFloat(form.price) > PRODUCT_PRICE_MAX) return 'Le prix doit être supérieur à 0 et inferieur a 10 000.';
-    if (form.category === 'other' && !form.customCategory.trim()) return 'Précise la catégorie personnalisée.';
+    if (!isEditMode && !form.image) return 'Ajoute une image.';
     if (!form.description.trim()) return 'Ajoute une description.';
     if (form.description.length < 10) return 'La description doit faire au moins 10 caractères.';
     return null;
@@ -111,9 +119,9 @@ export function useProductForm(initialProduct = null) {
           });
         }
         onSuccess?.(success);
+      } else {
+        setIsShaking(true);
       }
-    } catch (err) {
-      setIsShaking(true);
     } finally {
       setSubmitting(false);
     }
