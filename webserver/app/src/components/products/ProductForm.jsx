@@ -21,8 +21,8 @@ export function ProductForm({ product = null, onSuccess }) {
     };
 
     return CATEGORIES.map((cat) => ({
-      value: cat,
-      label: categoryLabels[cat] ?? cat,
+      value: cat.value,
+      label: cat.label,
     }));
   }, [t]);
 
