@@ -39,7 +39,7 @@ export function TwoFactorSettings() {
       <p className="mb-4">{enabled === null ? 'Chargement…' : enabled ? '2FA activée' : 'Active la double authentification'}</p>
       {recoveryCodes.length > 0 ? (
         <div className="space-y-3">
-          <p>Codes de secours</p>
+          <p>Voici vos codes de secours à usage unique. Ils vous serviront en cas de perte de votre secret. Gardez les précieusement et ne les partagez pas.</p>
           <pre className="select-all">{recoveryCodes.join('\n')}</pre>
           <Button onClick={() => setRecoveryCodes([])}>Continuer</Button>
         </div>
@@ -47,7 +47,7 @@ export function TwoFactorSettings() {
         <form onSubmit={submit} className="max-w-md space-y-4">
           <FormField icon={Lock} id="2fa-password" label="Mot de passe" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} disabled={busy} />
           {secret && <div className="space-y-2">
-            <p>TOTP</p>
+            <p>Enregistrez le secret dans votre application d'authentification. Ne le partagez à personne.</p>
             <code className="block break-all select-all">{secret}</code>
           </div>}
           {(enabled || secret) && <FormField icon={Lock} id="2fa-code" label={enabled ? 'Code de l’application ou code de secours' : 'Code à six chiffres'} type="text" autoComplete="one-time-code" required value={code} onChange={e => setCode(e.target.value)} disabled={busy} />}
