@@ -3,6 +3,7 @@ import { Trash2, CreditCard, Store, Minus, Plus, Wallet } from 'lucide-react';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 import { apiClient } from '../api/client';
 import { Button } from '../components/UI/Button';
 import { useNavigate } from 'react-router-dom';
@@ -11,7 +12,7 @@ import { useUIStore } from '../stores/uiStore';
 export function CartPopover() {
   const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCartStore();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user ?? state.currentUser);
+  const user = useUserStore((state) => state.user);
   const closeUi = useUIStore((state) => state.closeUi);
   const navigate = useNavigate();
 

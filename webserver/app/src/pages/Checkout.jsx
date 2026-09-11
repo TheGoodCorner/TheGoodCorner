@@ -6,6 +6,7 @@ import { createPayment } from '../api/paymentApi';
 import { apiClient } from '../api/client';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 import CheckoutForm from '../components/checkout/checkoutForm';
 import { useThemeStore } from '../stores/themeStore';
 import { motion, AnimatePresence } from 'motion/react';
@@ -62,7 +63,7 @@ export default function Checkout() {
     const navigate = useNavigate();
     const { cartItems, clearCart, isHydrated } = useCartStore();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-    const storeUser = useAuthStore((state) => state.user ?? state.currentUser);
+    const storeUser = useUserStore((state) => state.user);
 
     const [walletBudget, setWalletBudget] = useState(
         storeUser?.budget ?? parseFloat(localStorage.getItem('wallet_balance') || '0')

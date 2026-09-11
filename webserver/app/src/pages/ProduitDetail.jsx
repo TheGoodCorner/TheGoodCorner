@@ -88,14 +88,6 @@ function ProductDetail() {
     }
   }, [product?.quantity]);
 
-  useEffect(() => {
-    if (!localError) return;
-    const timer = setTimeout(() => {
-      setLocalError(null);
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, [localError]);
-
   if (!product && !currentProductError) {
     return <ProductDetailSkeleton />;
   }
