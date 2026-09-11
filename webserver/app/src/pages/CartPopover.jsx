@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Trash2, CreditCard, Store, Minus, Plus, Wallet } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
@@ -9,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUIStore } from '../stores/uiStore';
 
 export function CartPopover() {
+  const { t } = useLingui();
   const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCartStore();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user ?? state.currentUser);
@@ -40,17 +42,21 @@ export function CartPopover() {
   return (
     <Popover id="cart-popover" position="right" showCloseButton={true} width="w-[700px]">
       <div className="flex flex-col h-full bg-[var(--color-surface)]">
-        <h3 className="font-semibold text-xl mb-6 text-[var(--color-text)]">Votre Panier</h3>
+        <h3 className="font-semibold text-xl mb-6 text-[var(--color-text)]">
+          <Trans>Votre Panier</Trans>
+        </h3>
 
         <div className="flex-1 overflow-hidden">
           {cartItems.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full py-12 bg-[var(--color-surface-hover)] rounded-lg">
-              <div className="text-center text-[var(--color-text-muted)] mb-6">Panier vide</div>
+              <div className="text-center text-[var(--color-text-muted)] mb-6">
+                <Trans>Panier vide</Trans>
+              </div>
               <Button
                 icon={Store}
                 className="bg-[var(--color-primary)] text-[var(--color-on-primary)] px-6 py-2 rounded-lg hover:bg-[var(--color-primary-hover)] transition font-medium"
-                title="Continuer vos achats"
-                aria-label="Continuer vos achats"
+                title={t`Continuer vos achats`}
+                aria-label={t`Continuer vos achats`}
                 to="/products"
               >
                 Découvrir les produits
@@ -69,7 +75,7 @@ export function CartPopover() {
                       {item.quantity} × {item.price.toFixed(2)} €
                     </p>
                     <span className="text-[10px] text-[var(--color-text-muted)] mt-1 flex items-center gap-1">
-                      ({item.stock} disponible)
+                      <Trans>({item.stock} disponible)</Trans>
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -81,7 +87,7 @@ export function CartPopover() {
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         disabled={item.quantity <= 1}
                         className="text-[var(--color-text)] hover:text-[var(--color-primary)]"
-                        aria-label="Diminuer la quantité"
+                        aria-label={t`Diminuer la quantité`}
                       />
                       <span className="w-8 text-center text-sm text-[var(--color-text)]">
                         {item.quantity}
@@ -93,7 +99,7 @@ export function CartPopover() {
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         disabled={item.quantity >= item.stock}
                         className="text-[var(--color-text)] hover:text-[var(--color-primary)]"
-                        aria-label="Augmenter la quantité"
+                        aria-label={t`Augmenter la quantité`}
                       />
                     </div>
 
@@ -102,8 +108,8 @@ export function CartPopover() {
                       variant="danger"
                       icon={Trash2}
                       className="text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] rounded transition"
-                      title="Retirer article du panier"
-                      aria-label="Retirer article du panier"
+                      title={t`Retirer article du panier`}
+                      aria-label={t`Retirer article du panier`}
                     />
                   </div>
                 </div>
@@ -119,7 +125,7 @@ export function CartPopover() {
               <div className="flex justify-between items-center px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] text-sm">
                 <span className="text-slate-500 flex items-center gap-2">
                   <Wallet size={16} className="text-blue-400" />
-                  Solde portefeuille :
+                  <Trans>Solde portefeuille :</Trans>
                 </span>
                 <span className="font-mono font-semibold text-[var(--color-text)]">
                   {Number(walletBudget).toFixed(2)} €
@@ -128,7 +134,9 @@ export function CartPopover() {
             )}
 
             <div className="flex justify-between items-center">
-              <span className="font-semibold text-base text-[var(--color-text)]">Total :</span>
+              <span className="font-semibold text-base text-[var(--color-text)]">
+                <Trans>Total :</Trans>
+              </span>
               <span className="text-2xl font-bold text-green-500">
                 {cartTotal.toFixed(2)} €
               </span>
@@ -138,10 +146,10 @@ export function CartPopover() {
               onClick={handleGotoCheckout}
               icon={CreditCard}
               className="w-full bg-[var(--color-primary)] text-[var(--color-on-primary)] py-3 rounded-lg hover:bg-[var(--color-primary-hover)] transition font-medium text-base"
-              title="Aller au paiement"
-              aria-label="Aller au paiement"
+              title={t`Aller au paiement`}
+              aria-label={t`Aller au paiement`}
             >
-              Procéder au paiement
+              <Trans>Procéder au paiement</Trans>
             </Button>
           </div>
         )}

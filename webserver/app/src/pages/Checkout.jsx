@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import { createPayment } from '../api/paymentApi';
@@ -27,7 +28,7 @@ const getStripe = () => {
         stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
     }
     return stripePromise;
-}
+};
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -60,6 +61,7 @@ const buttonVariants = {
 
 export default function Checkout() {
     const navigate = useNavigate();
+    const { t } = useLingui();
     const { cartItems, clearCart, isHydrated } = useCartStore();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
     const storeUser = useAuthStore((state) => state.user ?? state.currentUser);
@@ -75,38 +77,37 @@ export default function Checkout() {
     const isDark = theme === 'dark';
 
     const options = useMemo(() => {
-    if (!clientSecret)
-        return (null);
+        if (!clientSecret) return null;
 
-    return {
-        clientSecret,
-        appearance: {
-            theme: isDark ? 'night' : 'stripe',
-            variables: {
-                colorPrimary: '#3b82f6',
-                colorBackground: isDark ? '#161a22' : '#ffffff',
-                colorText: isDark ? '#f3f4f6' : '#0f172a',
-                colorDanger: '#ef4444',
-                borderRadius: '8px',
-                fontFamily: 'inherit',
+        return {
+            clientSecret,
+            appearance: {
+                theme: isDark ? 'night' : 'stripe',
+                variables: {
+                    colorPrimary: '#3b82f6',
+                    colorBackground: isDark ? '#161a22' : '#ffffff',
+                    colorText: isDark ? '#f3f4f6' : '#0f172a',
+                    colorDanger: '#ef4444',
+                    borderRadius: '8px',
+                    fontFamily: 'inherit',
+                },
+                rules: {
+                    '.Label': {
+                        color: isDark ? '#94a3b8' : '#475569',
+                        marginBottom: '6px',
+                        fontWeight: '500',
+                    },
+                    '.Input': {
+                        borderColor: isDark ? '#334155' : '#cbd5e1',
+                        boxShadow: 'none',
+                    },
+                    '.Input:focus': {
+                        borderColor: '#3b82f6',
+                    },
+                },
             },
-            rules: {
-                '.Label': {
-                    color: isDark ? '#94a3b8' : '#475569',
-                    marginBottom: '6px',
-                    fontWeight: '500',
-                },
-                '.Input': {
-                    borderColor: isDark ? '#334155' : '#cbd5e1',
-                    boxShadow: 'none',
-                },
-                '.Input:focus': {
-                    borderColor: '#3b82f6',
-                },
-            },
-        },
-    };
-}, [clientSecret, isDark]);
+        };
+    }, [clientSecret, isDark]);
 
     const total =
         cartItems?.reduce((acc, item) => acc + item.price * (item.quantity || 1), 0) || 0;
@@ -130,16 +131,16 @@ export default function Checkout() {
         fetchBudget();
     }, [isAuthenticated]);
 
-	useEffect(() => {
-	  return () => {
-	    // Supprime toutes les iframes Stripe persistantes du body en quittant la page
-	    const elements = document.querySelectorAll(
-	      'iframe[name^="__privateStripe"], iframe[src*="stripe.com"], div[class*="stripe"]'
-	    );
-	    elements.forEach((el) => el.remove());
-		stripePromise = null;
-	  };
-	}, []);
+    useEffect(() => {
+        return () => {
+            const elements = document.querySelectorAll(
+                'iframe[name^="__privateStripe"], iframe[src*="stripe.com"], div[class*="stripe"]'
+            );
+            elements.forEach((el) => el.remove());
+            stripePromise = null;
+        };
+    }, []);
+
     const hasEnoughBudget = walletBudget >= total;
 
     if (!isHydrated) {
@@ -160,7 +161,9 @@ export default function Checkout() {
                     >
                         <Loader size={48} className="text-[var(--color-primary)]" />
                     </motion.div>
-                    <p className="text-[var(--color-text-muted)]">Chargement du panier...</p>
+                    <p className="text-[var(--color-text-muted)]">
+                        <Trans>Chargement du panier...</Trans>
+                    </p>
                 </div>
             </motion.div>
         );
@@ -169,7 +172,7 @@ export default function Checkout() {
     const handleCheckout = async () => {
         try {
             if (!isAuthenticated) {
-                setError('Vous devez être connecté pour passer votre commande.');
+                setError(t`Vous devez être connecté pour passer votre commande.`);
                 return;
             }
             setLoading(true);
@@ -199,7 +202,7 @@ export default function Checkout() {
             if (secret) {
                 setClientSecret(secret);
             } else {
-                setError("Impossible d'initialiser le formulaire de paiement.");
+                setError(t`Impossible d'initialiser le formulaire de paiement.`);
             }
         } catch (err) {
             console.error('Erreur lors du paiement :', err);
@@ -233,10 +236,10 @@ export default function Checkout() {
                         <ShoppingCart size={64} className="text-[var(--color-primary)] mx-auto" />
                     </motion.div>
                     <h2 className="text-3xl font-bold text-[var(--color-text)] mb-4">
-                        Votre panier est vide
+                        <Trans>Votre panier est vide</Trans>
                     </h2>
                     <p className="text-[var(--color-text)] mb-8">
-                        Découvrez nos produits et commencez à faire vos achats
+                        <Trans>Découvrez nos produits et commencez à faire vos achats</Trans>
                     </p>
                     <motion.button
                         variants={buttonVariants}
@@ -246,7 +249,7 @@ export default function Checkout() {
                         onClick={() => navigate('/products')}
                         className="px-8 py-3 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-[var(--color-on-primary)] rounded-lg font-semibold transition-colors"
                     >
-                        Continuer les achats
+                        <Trans>Continuer les achats</Trans>
                     </motion.button>
                 </motion.div>
             </motion.div>
@@ -261,14 +264,11 @@ export default function Checkout() {
             exit="exit"
             className="relative min-h-screen bg-[var(--color-bg)] p-6 overflow-x-hidden"
         >
-            {/* Logo 42 en filigrane centré */}
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] md:w-[750px] lg:w-[900px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
                 <img src="/icons/42.svg" alt="42 Logo" className="w-full h-full object-contain neon-42" />
             </div>
 
-            {/* Contenu principal de Checkout */}
             <div className="relative z-10 max-w-2xl mx-auto">
-                {/* Header */}
                 <motion.div variants={itemVariants} className="mb-8">
                     <motion.button
                         onClick={() => navigate('/products')}
@@ -276,22 +276,21 @@ export default function Checkout() {
                         className="flex items-center gap-2 text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] mb-6 transition-colors"
                     >
                         <ArrowLeft size={20} />
-                        Retour
+                        <Trans>Retour</Trans>
                     </motion.button>
                     <h1 className="text-4xl font-bold text-[var(--color-text)]">
-                        Récapitulatif de commande
+                        <Trans>Récapitulatif de commande</Trans>
                     </h1>
                 </motion.div>
                 <motion.div
                     variants={itemVariants}
                     className="bg-[var(--color-bg)] backdrop-blur-2xl rounded-2xl border border-[var(--color-border)] p-8 shadow-2xl"
                 >
-                    {/* Items List */}
                     <motion.div className="mb-6">
                         <div className="flex items-center gap-2 mb-6">
                             <Package size={24} className="text-[var(--color-primary)]" />
                             <h2 className="text-lg font-semibold text-[var(--color-text)]">
-                                Articles ({cartItems.length})
+                                <Trans>Articles ({cartItems.length})</Trans>
                             </h2>
                         </div>
                         <div className="space-y-4">
@@ -310,7 +309,9 @@ export default function Checkout() {
                                                 {item.title || item.name}
                                             </p>
                                             <p className="text-sm text-[var(--color-text-muted)]">
-                                                Quantité: <span className="font-semibold">{item.quantity || 1}</span>
+                                                <Trans>
+                                                    Quantité: <span className="font-semibold">{item.quantity || 1}</span>
+                                                </Trans>
                                             </p>
                                         </div>
                                         <motion.div
@@ -337,38 +338,39 @@ export default function Checkout() {
                                 </div>
                                 <div>
                                     <span className="text-sm font-medium text-[var(--color-text)] block">
-                                        Solde de votre portefeuille
+                                        <Trans>Solde de votre portefeuille</Trans>
                                     </span>
                                     {!hasEnoughBudget && (
                                         <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                                            Solde insuffisant pour finaliser cet achat
+                                            <Trans>Solde insuffisant pour finaliser cet achat</Trans>
                                         </span>
                                     )}
                                 </div>
                             </div>
                             <span
-                                className={`text-lg font-bold font-mono ${hasEnoughBudget
-                                    ? 'text-emerald-600 dark:text-emerald-400'
-                                    : 'text-red-600 dark:text-red-400'
-                                    }`}
+                                className={`text-lg font-bold font-mono ${
+                                    hasEnoughBudget
+                                        ? 'text-emerald-600 dark:text-emerald-400'
+                                        : 'text-red-600 dark:text-red-400'
+                                }`}
                             >
                                 {Number(walletBudget).toFixed(2)} €
                             </span>
                         </motion.div>
                     )}
 
-                    {/* Divider */}
                     <motion.div
                         variants={itemVariants}
                         className="h-px bg-gradient-to-r from-transparent via-[var(--color-border)] to-transparent my-6"
                     />
 
-                    {/* Total */}
                     <motion.div
                         variants={itemVariants}
                         className="flex justify-between items-center mb-8"
                     >
-                        <span className="text-xl font-semibold text-[var(--color-text)]">Total :</span>
+                        <span className="text-xl font-semibold text-[var(--color-text)]">
+                            <Trans>Total :</Trans>
+                        </span>
                         <motion.span
                             className="text-3xl font-bold text-[var(--color-primary)]"
                             initial={{ scale: 0.8 }}
@@ -379,7 +381,6 @@ export default function Checkout() {
                         </motion.span>
                     </motion.div>
 
-                    {/* Error Message */}
                     <AnimatePresence>
                         {error && (
                             <motion.div
@@ -398,7 +399,7 @@ export default function Checkout() {
                                             onClick={() => navigate('/authentication')}
                                             className="px-4 py-2 bg-[var(--color-danger)] hover:bg-[var(--color-danger-hover)] text-white rounded-lg font-semibold text-sm transition-colors"
                                         >
-                                            Se connecter
+                                            <Trans>Se connecter</Trans>
                                         </motion.button>
                                     )}
                                 </div>
@@ -406,7 +407,6 @@ export default function Checkout() {
                         )}
                     </AnimatePresence>
 
-                    {/* Payment Section */}
                     <AnimatePresence mode="wait">
                         {!clientSecret ? (
                             <motion.button
@@ -426,12 +426,16 @@ export default function Checkout() {
                                         <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>
                                             <Loader size={20} />
                                         </motion.div>
-                                        <span>Traitement en cours...</span>
+                                        <span>
+                                            <Trans>Traitement en cours...</Trans>
+                                        </span>
                                     </>
                                 ) : (
                                     <>
                                         <CreditCard size={20} />
-                                        <span>Payer {total.toFixed(2)} €</span>
+                                        <span>
+                                            <Trans>Payer {total.toFixed(2)} €</Trans>
+                                        </span>
                                     </>
                                 )}
                             </motion.button>
@@ -456,13 +460,14 @@ export default function Checkout() {
                     </AnimatePresence>
                 </motion.div>
 
-                {/* Trust Badge */}
                 <motion.div
                     variants={itemVariants}
                     className="mt-8 text-center text-sm text-[var(--color-text)] flex items-center justify-center gap-2"
                 >
                     <Lock size={16} />
-                    <p>Paiement sécurisé avec Stripe • Données chiffrées • 100% confidentiel</p>
+                    <p>
+                        <Trans>Paiement sécurisé avec Stripe • Données chiffrées • 100% confidentiel</Trans>
+                    </p>
                 </motion.div>
             </div>
         </motion.div>

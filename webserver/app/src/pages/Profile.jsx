@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack, Check, X } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
@@ -18,6 +19,7 @@ import { useNotificationStore } from '../stores/notificationStore'; // eslint-di
 import Avatar from "../components/UI/Avatar";
 
 function Profile() {
+  const { t } = useLingui();
   const [showAllReviews, setShowAllReviews] = useState(false);
   const { isAuthenticated, initializing } = useAuthStore();
   const deleteProduct = useProductStore((state) => state.deleteProduct);
@@ -38,26 +40,19 @@ function Profile() {
     save,
   } = useProfileEditForm();
 
-  const displayName = user?.name || user?.username || "Utilisateur";
+  const displayName = user?.name || user?.username || t`Utilisateur`;
   const userRating = user?.sellerRating || 0;
   const reviewCount = user?.sellerReviewCount || 0;
 
-  // Amitié : `friends`/`friendRequests`(reçues)/`sentFriendRequests`
-  // vivent dans userStore (comme avant), les actions d'écriture dans
-  // friendStore. On aliase submitting/error de friendStore car
-  // useProfileEditForm() a déjà déclaré ces deux noms plus haut — c'est
-  // d'ailleurs ce qui manquait à l'ancienne version (elle les
-  // déstructurait sous fsubmitting/ferror sans alias, donc toujours
-  // undefined).
   const friends = useFriendStore((state) => state.friends);
   const receivedFriendRequests = useFriendStore((state) => state.friendRequests);
   const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
-  const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest)
-  const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
-  const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest)
+  const acceptFriendRequest = useFriendStore((state) => state.acceptFriendRequest);
+  const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest);
+  const deleteFriendRequest = useFriendStore((state) => state.deleteFriendRequest);
   const onlineUserIds = useFriendStore((state) => state.onlineUserIds);
-  const friendError = useFriendStore((state) => state.error)
-  const { submitting: friendSubmitting, } = useFriendStore();
+  const friendError = useFriendStore((state) => state.error);
+  const { submitting: friendSubmitting } = useFriendStore();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'products';
@@ -109,15 +104,16 @@ function Profile() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-3">
-                Vous n'êtes pas connecté
+                <Trans>Vous n'êtes pas connecté</Trans>
               </h1>
 
               <p className="text-[var(--color-text-muted)] mb-8 text-lg">
-                Connectez-vous pour accéder à votre page profil, gérer vos
-                annonces et consulter vos avis.
+                <Trans>
+                  Connectez-vous pour accéder à votre page profil, gérer vos annonces et consulter vos avis.
+                </Trans>
               </p>
               <p className="text-[var(--color-text-muted)] mb-8 text-xs">
-                Bien tenté, petit fouineur !
+                <Trans>Bien tenté, petit fouineur !</Trans>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -125,13 +121,13 @@ function Profile() {
                   to="/authentication"
                   className="px-6 py-3 bg-[var(--color-primary)] text-[var(--color-primary-text)] font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
                 >
-                  Se connecter
+                  <Trans>Se connecter</Trans>
                 </Link>
                 <Link
                   to="/authentication"
                   className="px-6 py-3 border border-[var(--color-border)] text-[var(--color-text)] font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
                 >
-                  Créer un compte
+                  <Trans>Créer un compte</Trans>
                 </Link>
               </div>
             </div>
@@ -184,13 +180,13 @@ function Profile() {
 
       <div className="flex justify-start ml-12 gap-10 pt-6">
         <TabButton active={activeTab === "products"} onClick={() => setActiveTab("products")}>
-          Mes Annonces ({user?.product?.length || 0})
+          <Trans>Mes Annonces ({user?.product?.length || 0})</Trans>
         </TabButton>
         <TabButton active={activeTab === "reviews"} onClick={() => setActiveTab("reviews")}>
-          Avis ({reviewCount || 0})
+          <Trans>Avis ({reviewCount || 0})</Trans>
         </TabButton>
         <TabButton active={activeTab === "friends"} onClick={() => setActiveTab("friends")}>
-          Mes amis ({friends?.length || 0})
+          <Trans>Mes amis ({friends?.length || 0})</Trans>
           {receivedFriendRequests?.length > 0 && (
             <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold bg-[var(--color-danger)] text-[var(--color-on-danger)] rounded-full align-middle">
               {receivedFriendRequests.length}
@@ -204,19 +200,25 @@ function Profile() {
           <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
             {user?.product?.map((product) => (
               <ProductCard
+<<<<<<< HEAD
               key={product.id}
               product={{ ...product, author: user }}
               allowOutOfStock={true}
               isOwner={true}
               onDelete={deleteProduct}
+=======
+                key={product.id}
+                product={{ ...product, author: user }}
+                allowOutOfStock={true}
+>>>>>>> origin/languages
               />
             ))}
           </div>
         ) : (
           <EmptyState
             icon={PackageSearch}
-            title="Vous n'avez aucun article en vente."
-            description="Poster votre premier produit en remplissant le formulaire ci-dessous."
+            title={t`Vous n'avez aucun article en vente.`}
+            description={t`Poster votre premier produit en remplissant le formulaire ci-dessous.`}
             className="py-16 bg-[var(--color-surface-hover)]"
           />
         )
@@ -232,10 +234,10 @@ function Profile() {
                   />
                   <div>
                     <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)]">
-                      Mes avis
+                      <Trans>Mes avis</Trans>
                     </h2>
                     <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                      {reviewCount} avis des clients
+                      <Trans>{reviewCount} avis des clients</Trans>
                     </p>
                   </div>
                 </div>
@@ -261,7 +263,7 @@ function Profile() {
                     onClick={() => setShowAllReviews(true)}
                     className="mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors"
                   >
-                    Voir tous les avis ({reviewCount})
+                    <Trans>Voir tous les avis ({reviewCount})</Trans>
                   </button>
                 )}
 
@@ -270,7 +272,7 @@ function Profile() {
                     onClick={() => setShowAllReviews(false)}
                     className="mt-6 text-sm font-semibold text-[var(--color-primary)] hover:text-[var(--color-primary-hover)] transition-colors"
                   >
-                    Voir moins d'avis
+                    <Trans>Voir moins d'avis</Trans>
                   </button>
                 )}
               </div>
@@ -280,7 +282,7 @@ function Profile() {
           <EmptyState
             icon={MessageCircle}
             iconSize={30}
-            title="Personne vous a laisser d'avis pour l'instant"
+            title={t`Personne vous a laisser d'avis pour l'instant`}
             className="py-16 bg-[var(--color-surface-hover)]"
           />
         )
@@ -288,7 +290,7 @@ function Profile() {
         <div className="px-6 sm:px-8 lg:px-12 py-16 bg-[var(--color-bg)]">
           <div className="max-w-4xl">
             <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-8">
-              Amis
+              <Trans>Amis</Trans>
             </h2>
 
             {friendSubmitting && (
@@ -307,7 +309,7 @@ function Profile() {
             {receivedFriendRequests?.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-                  Demandes reçues ({receivedFriendRequests.length})
+                  <Trans>Demandes reçues ({receivedFriendRequests.length})</Trans>
                 </h3>
                 <div className="flex flex-col gap-3">
                   {receivedFriendRequests.map((request) => (
@@ -324,7 +326,7 @@ function Profile() {
                             {request.sender?.username}
                           </p>
                           <p className="text-xs text-[var(--color-text-muted)]">
-                            Souhaite devenir ami avec toi
+                            <Trans>Souhaite devenir ami avec toi</Trans>
                           </p>
                         </div>
                         <div className="flex items-center gap-2 flex-shrink-0">
@@ -335,7 +337,7 @@ function Profile() {
                             onClick={() => acceptFriendRequest(request.id)}
                             disabled={submitting}
                           >
-                            {submitting ? "Chargement..." : "Accepter"}
+                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Accepter</Trans>}
                           </Button>
                           <Button
                             icon={X}
@@ -344,7 +346,7 @@ function Profile() {
                             onClick={() => rejectFriendRequest(request.id)}
                             disabled={submitting}
                           >
-                            {submitting ? "Chargement..." : "Refuser"}
+                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Refuser</Trans>}
                           </Button>
                         </div>
                       </div>
@@ -358,7 +360,7 @@ function Profile() {
             {sentFriendRequests?.length > 0 && (
               <div className="mb-10">
                 <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-                  Demandes envoyées ({sentFriendRequests.length})
+                  <Trans>Demandes envoyées ({sentFriendRequests.length})</Trans>
                 </h3>
                 <div className="flex flex-col gap-3">
                   {sentFriendRequests.map((request) => (
@@ -378,7 +380,7 @@ function Profile() {
                             {request.receiver?.username}
                           </p>
                           <p className="text-xs text-[var(--color-text-muted)]">
-                            En attente de réponse
+                            <Trans>En attente de réponse</Trans>
                           </p>
                         </div>
                         <Button
@@ -388,7 +390,7 @@ function Profile() {
                           onClick={() => deleteFriendRequest(request.id)}
                           disabled={submitting}
                         >
-                          {submitting ? "Chargement..." : "Annuler"}
+                          {submitting ? <Trans>Chargement...</Trans> : <Trans>Annuler</Trans>}
                         </Button>
                       </div>
                     </div>
@@ -401,7 +403,7 @@ function Profile() {
             {friends && friends.length > 0 && (
               <>
                 <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-                  Mes amis ({friends.length})
+                  <Trans>Mes amis ({friends.length})</Trans>
                 </h3>
                 <div className="flex flex-col gap-4">
                   {friends.map((friend) => (
@@ -422,9 +424,9 @@ function Profile() {
                             className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
                             onClick={() => deleteFriendRequest(friend.friendRequestId)}
                             disabled={!friend.friendRequestId || submitting}
-                            title={!friend.friendRequestId ? "Introuvable, réessaie après rechargement" : undefined}
+                            title={!friend.friendRequestId ? t`Introuvable, réessaie après rechargement` : undefined}
                           >
-                            {submitting ? "Chargement..." : "Supprimer"}
+                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Supprimer</Trans>}
                           </Button>
                         </div>
                       </div>
@@ -435,18 +437,17 @@ function Profile() {
             )}
           </div>
 
-          {/* EmptyState - Complètement indépendant en dehors du max-w-4xl */}
+          {/* EmptyState */}
           {friends && friends.length === 0 && !receivedFriendRequests?.length && !sentFriendRequests?.length && (
             <EmptyState
               icon={HeartCrack}
               iconSize={30}
-              title="Vous n'avez pas d'amis pour l'instant"
-              description="Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
+              title={t`Vous n'avez pas d'amis pour l'instant`}
+              description={t`Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs`}
               className="py-16 bg-[var(--color-surface-hover)] rounded-[var(--radius-sm)]"
             />
           )}
         </div>
-
       )}
 
       <section className="bg-[var(--color-surface)]">
@@ -454,10 +455,10 @@ function Profile() {
           <div className="max-w-2xl">
             <div className="mb-10">
               <h2 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">
-                Ajouter un produit
+                <Trans>Ajouter un produit</Trans>
               </h2>
               <p className="text-[var(--color-text-muted)]">
-                Remplir les informations pour créer un nouveau produit
+                <Trans>Remplire les informations pour créer un nouveau produit</Trans>
               </p>
             </div>
             <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />

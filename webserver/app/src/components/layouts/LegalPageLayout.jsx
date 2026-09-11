@@ -1,3 +1,5 @@
+import { Trans, useLingui } from '@lingui/react/macro';
+
 /**
  * Layout partagé par les pages légales (confidentialité, CGU) : titre,
  * date de mise à jour, bandeau de contexte, sommaire ancré + contenu.
@@ -5,22 +7,28 @@
  * passés aux <LegalSection> à l'intérieur.
  */
 export function LegalPageLayout({ title, lastUpdated, sections, children }) {
+  const { t } = useLingui();
+
   return (
     <div className="bg-[var(--color-bg)]">
       <div className="container py-10 sm:py-14">
         <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text)] mb-2">{title}</h1>
-        <p className="text-sm text-[var(--color-text-muted)] mb-6">Dernière mise à jour : {lastUpdated}</p>
+        <p className="text-sm text-[var(--color-text-muted)] mb-6">
+          <Trans>Dernière mise à jour : {lastUpdated}</Trans>
+        </p>
 
         <div className="mb-10 p-4 bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-[var(--radius-md)] text-sm text-[var(--color-text-muted)]">
-          TheGoodCorner est un projet réalisé dans le cadre du projet de formation "ft_transcendence" du cursus de l'école 42-Paris. Il n'a pas
-          de valeur commerciale réelle, mais cette page est rédigée dans des conditions proches du réel pour
-          les besoins de l'exercice.
+          <Trans>
+            TheGoodCorner est un projet réalisé dans le cadre du projet de formation "ft_transcendence" du cursus de l'école 42-Paris. Il n'a pas
+            de valeur commerciale réelle, mais cette page est rédigée dans des conditions proches du réel pour
+            les besoins de l'exercice.
+          </Trans>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-10">
-          <nav aria-label="Sommaire" className="lg:sticky lg:top-24 lg:self-start">
+          <nav aria-label={t`Sommaire`} className="lg:sticky lg:top-24 lg:self-start">
             <p className="text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3">
-              Sommaire
+              <Trans>Sommaire</Trans>
             </p>
             <ul className="space-y-2 text-sm">
               {sections.map((s) => (

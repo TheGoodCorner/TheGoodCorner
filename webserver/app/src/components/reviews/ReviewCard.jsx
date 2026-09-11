@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { StarRating } from '../UI/StarRating';
 import Avatar from '../UI/Avatar';
 import { Button } from '../UI/Button';
@@ -16,6 +17,7 @@ export const ReviewCard = ({
   onSave,
   onDelete,
 }) => {
+  const { t } = useLingui();
   const isAuthor = currentUserId && authorId && String(currentUserId) === String(authorId);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -38,7 +40,7 @@ export const ReviewCard = ({
 
   const handleSave = async () => {
     if (draftRating < 1 || draftRating > 5) {
-      setError('Choisis une note entre 1 et 5 étoiles.');
+      setError(t`Choisis une note entre 1 et 5 étoiles.`);
       return;
     }
 
@@ -46,8 +48,6 @@ export const ReviewCard = ({
 
     if (!trimmedContent) {
       setError('Le commentaire ne peut pas être vide.');
-      return;
-    }
     if (trimmedContent.length > 5000) {
       setError('Le commentaire ne peut pas être aussi long.');
       return;
@@ -93,7 +93,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Edit2}
               iconOnly
-              aria-label="Modifier cet avis"
+              aria-label={t`Modifier cet avis`}
               onClick={startEditing}
             />
             <Button
@@ -101,7 +101,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Trash2}
               iconOnly
-              aria-label="Supprimer cet avis"
+              aria-label={t`Supprimer cet avis`}
               onClick={onDelete}
             />
           </div>
@@ -113,7 +113,7 @@ export const ReviewCard = ({
               size="sm"
               icon={X}
               iconOnly
-              aria-label="Annuler"
+              aria-label={t`Annuler`}
               onClick={cancelEditing}
               disabled={saving}
             />
@@ -122,7 +122,7 @@ export const ReviewCard = ({
               size="sm"
               icon={Check}
               iconOnly
-              aria-label="Sauvegarder"
+              aria-label={t`Sauvegarder`}
               onClick={handleSave}
               loading={saving}
             />
@@ -155,7 +155,9 @@ export const ReviewCard = ({
       {/* Produit (optionnel) */}
       {product && (
         <p className="text-xs text-[var(--color-text-muted)] italic">
-          Produit : <span className="font-medium">{product}</span>
+          <Trans>
+            Produit : <span className="font-medium">{product}</span>
+          </Trans>
         </p>
       )}
     </div>

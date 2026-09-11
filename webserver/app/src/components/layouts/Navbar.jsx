@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, Suspense, lazy, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useThemeStore } from '../../stores/themeStore';
 import { useCartStore } from '../../stores/cartStore';
 import { useMessageStore } from '../../stores/messageStore';
@@ -14,7 +15,7 @@ import { useClickOutside } from '../../hooks/useClickOutside';
 import { NotificationBell } from './NotificationBell';
 
 function Navbar() {
-
+  const { t } = useLingui();
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const cartCount = useCartStore((state) => state.cartCount);
@@ -33,6 +34,13 @@ function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useClickOutside(() => setProfileOpen(false), profileOpen);
+
+  const userMenuItems = useMemo(() => [
+    { to: '/profile', icon: UserRound, label: t`Mon profil` },
+    { to: '/messagerie', icon: MessageCircle, label: t`Messagerie` },
+    { to: '/orders', icon: Package, label: t`Mes commandes` },
+    { to: '/settings', icon: Settings, label: t`Paramètres` },
+  ], [t]);
 
   const handleLogout = () => {
     logout();
@@ -53,23 +61,59 @@ function Navbar() {
           </Link>
 
           <ul className="hidden md:flex items-center gap-1 flex-1">
-            <li><Link to="/" className={navLink}>Accueil</Link></li>
-            <li><Link to="/products" className={navLink}>Produits</Link></li>
-            {isAuthenticated && <li><Link to="/messagerie" className={navLink}>Messagerie</Link></li>}
+            <li>
+              <Link to="/" className={navLink}>
+                <Trans>Accueil</Trans>
+              </Link>
+            </li>
+            <li>
+              <Link to="/products" className={navLink}>
+                <Trans>Produits</Trans>
+              </Link>
+            </li>
+            {isAuthenticated && (
+              <li>
+                <Link to="/messagerie" className={navLink}>
+                  <Trans>Messagerie</Trans>
+                </Link>
+              </li>
+            )}
           </ul>
 
-          <div className="flex items-center gap-1">
-            <Button onClick={toggleTheme} variant="ghost" icon={theme === 'light' ? Moon : Sun} aria-label="Thème" />
+          <div className="hidden md:flex items-center gap-1">
+            <Button
+              onClick={toggleTheme}
+              variant="ghost"
+              icon={theme === 'light' ? Moon : Sun}
+              aria-label={t`Thème`}
+            />
 
             {isAuthenticated && (
-              <NotificationBell
-                notificationsEnabled={notificationsEnabled}
-                notificationCount={notificationCount}
-              />
+              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+                <Button
+                  onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }}
+                  variant="ghost"
+                  icon={Bell}
+                  aria-label={t`Notifications`}
+                />
+                {notificationsEnabled && notificationCount > 0 && (
+                  <div className={badge}>{notificationCount}</div>
+                )}
+                {notificationsEnabled && isNotifOpen && (
+                  <Suspense fallback={null}>
+                    <NotificationPopover />
+                  </Suspense>
+                )}
+              </div>
             )}
 
             <div className="relative">
-              <Button onClick={() => openUi('cart-popover')} variant="ghost" icon={ShoppingCart} aria-label="Panier" />
+              <Button
+                onClick={() => openUi('cart-popover')}
+                variant="ghost"
+                icon={ShoppingCart}
+                aria-label={t`Panier`}
+              />
               {cartCount > 0 && (
                 <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
                   {cartCount}
@@ -112,7 +156,75 @@ function Navbar() {
                         </button>
                       </div>
                     </div>
-                  )}
+                    {userMenuItems.map(({ to, icon: Icon, label }) => (
+                      <Link
+                        key={to}
+                        to={to}
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                      >
+                        <Icon size={16} /> {label}
+                      </Link>
+                    ))}
+                    <div className="border-t border-[var(--color-border)] mt-1">
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors"
+                      >
+                        <LogOut size={16} />
+                        <Trans>Se déconnecter</Trans>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                to="/authentication"
+                className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
+              >
+                <Trans>Se connecter</Trans>
+              </Link>
+            )}
+          </div>
+
+          <div className="flex md:hidden items-center gap-1">
+            <Button
+              onClick={toggleTheme}
+              variant="ghost"
+              icon={theme === 'light' ? Moon : Sun}
+              aria-label={t`Thème`}
+            />
+
+            {isAuthenticated && (
+              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+                <Button
+                  onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }}
+                  variant="ghost"
+                  icon={Bell}
+                  aria-label={t`Notifications`}
+                />
+                {notificationsEnabled && notificationCount > 0 && (
+                  <div className={badge}>{notificationCount}</div>
+                )}
+                {notificationsEnabled && (
+                  <Suspense fallback={null}>
+                    <NotificationPopover />
+                  </Suspense>
+                )}
+              </div>
+            )}
+
+            <div className="relative">
+              <Button
+                onClick={() => openUi('cart-popover')}
+                variant="ghost"
+                icon={ShoppingCart}
+                aria-label={t`Panier`}
+              />
+              {cartCount > 0 && (
+                <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
+                  {cartCount}
                 </div>
               ) : (
                 <Link to="/authentication" className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
@@ -123,8 +235,8 @@ function Navbar() {
 
             <button
               onClick={() => setMobileOpen((o) => !o)}
-              className="md:hidden p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
-              aria-label="Menu"
+              className="p-2 rounded-[var(--radius-md)] text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
+              aria-label={t`Menu`}
             >
               {mobileOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -135,14 +247,38 @@ function Navbar() {
       {mobileOpen && (
         <div className="md:hidden border-t border-[var(--color-border)] bg-[var(--color-surface)] py-2 px-4">
           <ul className="flex flex-col gap-1 mb-3">
-            <li><Link to="/" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Accueil</Link></li>
-            <li><Link to="/products" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Produits</Link></li>
+            <li>
+              <Link to="/" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                <Trans>Accueil</Trans>
+              </Link>
+            </li>
+            <li>
+              <Link to="/products" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                <Trans>Produits</Trans>
+              </Link>
+            </li>
             {isAuthenticated && (
               <>
-                <li><Link to="/messagerie" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Messagerie</Link></li>
-                <li><Link to="/profile" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Mon profil</Link></li>
-                <li><Link to="/orders" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Mes commandes</Link></li>
-                <li><Link to="/settings" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>Paramètres</Link></li>
+                <li>
+                  <Link to="/messagerie" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                    <Trans>Messagerie</Trans>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/profile" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                    <Trans>Mon profil</Trans>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/orders" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                    <Trans>Mes commandes</Trans>
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/settings" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                    <Trans>Paramètres</Trans>
+                  </Link>
+                </li>
               </>
             )}
           </ul>
@@ -156,13 +292,21 @@ function Navbar() {
                     <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
                   </div>
                 </div>
-                <button onClick={handleLogout} className="flex items-center gap-1 flex-shrink-0 px-3 py-1.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] rounded-[var(--radius-md)] transition-colors">
-                  <LogOut size={15} /> Déconnexion
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-1 flex-shrink-0 px-3 py-1.5 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] rounded-[var(--radius-md)] transition-colors"
+                >
+                  <LogOut size={15} />
+                  <Trans>Déconnexion</Trans>
                 </button>
               </div>
             ) : (
-              <Link to="/authentication" onClick={() => setMobileOpen(false)} className="block text-center px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
-                Se connecter
+              <Link
+                to="/authentication"
+                onClick={() => setMobileOpen(false)}
+                className="block text-center px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
+              >
+                <Trans>Se connecter</Trans>
               </Link>
             )}
           </div>

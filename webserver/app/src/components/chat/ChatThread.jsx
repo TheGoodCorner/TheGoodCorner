@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { MessageCircle, ArrowLeft, Send } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
 import MessageBubble from './MessageBubble';
@@ -23,13 +24,17 @@ function ChatThread({
   sending,
   onBack,
 }) {
+  const { t } = useLingui();
+
   if (!conversation) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center text-center px-6">
         <MessageCircle size={40} className="text-[var(--color-text-muted)] mb-4" />
-        <p className="font-semibold text-[var(--color-text)] mb-1">Sélectionne une conversation</p>
+        <p className="font-semibold text-[var(--color-text)] mb-1">
+          <Trans>Sélectionne une conversation</Trans>
+        </p>
         <p className="text-sm text-[var(--color-text-muted)]">
-          Choisis une discussion dans la liste, ou démarre-en une nouvelle.
+          <Trans>Choisis une discussion dans la liste, ou démarre-en une nouvelle.</Trans>
         </p>
       </div>
     );
@@ -40,7 +45,11 @@ function ChatThread({
   return (
     <>
       <div className="flex items-center gap-3 p-4 border-b border-[var(--color-border)] bg-[var(--color-surface)]">
-        <button onClick={onBack} className="sm:hidden text-[var(--color-text-muted)]" aria-label="Retour aux conversations">
+        <button
+          onClick={onBack}
+          className="sm:hidden text-[var(--color-text-muted)]"
+          aria-label={t`Retour aux conversations`}
+        >
           <ArrowLeft size={18} />
         </button>
         <Link to={`/profile/${interlocutor.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
@@ -58,7 +67,7 @@ function ChatThread({
           </div>
         ) : messages.length === 0 ? (
           <p className="text-center text-sm text-[var(--color-text-muted)] mt-8">
-            Aucun message pour le moment — dis bonjour !
+            <Trans>Aucun message pour le moment — dis bonjour !</Trans>
           </p>
         ) : (
           messages.map((message) => (

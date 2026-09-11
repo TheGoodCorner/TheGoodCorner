@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useProductForm } from '../../hooks/useProductForm';
 import { FormField } from '../UI/FormField';
 import { Button } from '../UI/Button';
@@ -7,6 +9,20 @@ import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
   const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
+export function ProductForm({ onSuccess }) {
+  const { t } = useLingui();
+  const { form, submitting, error, handleChange, submit } = useProductForm();
+
+  const categories = useMemo(
+    () => [
+      { value: 'Training', label: t`Entraînement` },
+      { value: 'Professionnal', label: t`Professionnel` },
+      { value: 'Combat', label: t`Combat` },
+      { value: 'Cardio', label: t`Cardio` },
+      { value: 'other', label: t`Autre` },
+    ],
+    [t]
+  );
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,18 +35,18 @@ export function ProductForm({ product = null, onSuccess }) {
       <div className='grid grid-cols-1 sm:grid-cols-2 gap-6'>
         <FormField
           id='product-name'
-          label='Nom du produit'
+          label={t`Nom du produit`}
           icon={Package}
           type='text'
           value={form.name}
           onChange={handleChange('name')}
-          placeholder='Ex: Chaise ergonomique'
+          placeholder={t`Ex: Chaise ergonomique`}
           disabled={submitting}
         />
 
         <div>
           <label htmlFor='category' className='block text-sm font-semibold text-[var(--color-text)] mb-2'>
-            Catégorie
+            <Trans>Catégorie</Trans>
           </label>
           <div className='relative'>
             <Tag
@@ -45,8 +61,10 @@ export function ProductForm({ product = null, onSuccess }) {
               onChange={handleChange('category')}
               disabled={submitting}
             >
-              <option value=''>-- Sélectionne une catégorie --</option>
-              {CATEGORIES.map(cat => (
+              <option value=''>
+                {t`-- Sélectionne une catégorie --`}
+              </option>
+              {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
                   {cat.label}
                 </option>
@@ -61,12 +79,12 @@ export function ProductForm({ product = null, onSuccess }) {
         <div className='animate-in fade-in slide-in-from-top-2 duration-200'>
           <FormField
             id='custom-category'
-            label='Précise la catégorie personnalisée'
+            label={t`Précise la catégorie personnalisée`}
             icon={PlusCircle}
             type='text'
             value={form.customCategory || ''}
             onChange={handleChange('customCategory')}
-            placeholder='Ex: Équipements de frappe'
+            placeholder={t`Ex: Équipements de frappe`}
             disabled={submitting}
             required
           />
@@ -77,7 +95,7 @@ export function ProductForm({ product = null, onSuccess }) {
       <div className={isEditMode ? 'grid grid-cols-1 gap-6' : 'grid grid-cols-1 sm:grid-cols-2 gap-6'}>
         <FormField
           id='price'
-          label='Prix (€)'
+          label={t`Prix (€)`}
           icon={Euro}
           type='number'
           step='0.01'
@@ -117,13 +135,13 @@ export function ProductForm({ product = null, onSuccess }) {
       {/* Ligne 3: Description */}
       <FormField
         id='description'
-        label='Description'
+        label={t`Description`}
         icon={FileText}
         type='text'
         as='textarea'
         value={form.description}
         onChange={handleChange('description')}
-        placeholder='Décris ton produit en détail...'
+        placeholder={t`Décris ton produit en détail...`}
         disabled={submitting}
         className='resize-none'
         rows='5'

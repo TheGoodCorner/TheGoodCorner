@@ -3,6 +3,7 @@ import { useMessageStore } from '../stores/messageStore';
 import { useNotificationStore } from '../stores/notificationStore';
 import { AnimatePresence, motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
+import { Trans } from '@lingui/react/macro';
 
 export function NotificationPopover() {
   const isOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false;
@@ -75,9 +76,13 @@ export function NotificationPopover() {
             className="w-80 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg shadow-xl overflow-hidden"
           >
             <div className="p-4">
-              <h3 className="font-semibold text-lg mb-4 text-[var(--color-text)]">Notifications</h3>
+              <h3 className="font-semibold text-lg mb-4 text-[var(--color-text)]">
+                <Trans>Notifications</Trans>
+              </h3>
               {!hasNotifications ? (
-                <p className="text-sm text-[var(--color-text-muted)]">Aucune notification</p>
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  <Trans>Aucune notification</Trans>
+                </p>
               ) : (
                 <ul className="flex flex-col gap-2">
                   {allNotifications.map((notif) =>
@@ -122,10 +127,12 @@ export function NotificationPopover() {
                       >
                         <div className="flex flex-col min-w-0">
                           <span className="text-sm font-semibold text-[var(--color-text)] truncate">
-                            Nouvel avis
+                            <Trans>Nouvel avis</Trans>
                           </span>
                           <span className="text-xs text-[var(--color-text-muted)] truncate">
-                            {notif.data.authorUsername} a laissé un avis ({notif.data.rating}★)
+                            <Trans>
+                              {notif.data.authorUsername} a laissé un avis ({notif.data.rating}★)
+                            </Trans>
                           </span>
                         </div>
                       </li>
@@ -137,14 +144,20 @@ export function NotificationPopover() {
                       >
                         <div className="flex flex-col min-w-0">
                           <span className="text-sm font-semibold text-[var(--color-text)] truncate">
-                            {notif.type === 'FRIEND_REQUEST' && "Demande d'ami"}
-                            {notif.type === 'FRIEND_ACCEPTED' && 'Demande acceptée'}
-                            {notif.type === 'FRIEND_REJECTED' && 'Demande refusée'}
+                            {notif.type === 'FRIEND_REQUEST' && <Trans>Demande d'ami</Trans>}
+                            {notif.type === 'FRIEND_ACCEPTED' && <Trans>Demande acceptée</Trans>}
+                            {notif.type === 'FRIEND_REJECTED' && <Trans>Demande refusée</Trans>}
                           </span>
                           <span className="text-xs text-[var(--color-text-muted)] truncate">
-                            {notif.type === 'FRIEND_REQUEST' && `${notif.data.sender?.username} veut vous ajouter`}
-                            {notif.type === 'FRIEND_ACCEPTED' && `${notif.data.acceptedBy?.username} a accepté votre demande`}
-                            {notif.type === 'FRIEND_REJECTED' && `${notif.data.rejectedBy?.username} a refusé votre demande`}
+                            {notif.type === 'FRIEND_REQUEST' && (
+                              <Trans>{notif.data.sender?.username} veut vous ajouter</Trans>
+                            )}
+                            {notif.type === 'FRIEND_ACCEPTED' && (
+                              <Trans>{notif.data.acceptedBy?.username} a accepté votre demande</Trans>
+                            )}
+                            {notif.type === 'FRIEND_REJECTED' && (
+                              <Trans>{notif.data.rejectedBy?.username} a refusé votre demande</Trans>
+                            )}
                           </span>
                         </div>
                       </li>

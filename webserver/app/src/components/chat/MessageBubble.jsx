@@ -1,4 +1,5 @@
 import { Edit2, Trash2, Check, X } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '../UI/Button';
 import { formatMessageTime } from '../../utils/date';
 
@@ -13,17 +14,26 @@ function MessageBubble({
   onCancelEdit,
   onDelete,
 }) {
+  const { t } = useLingui();
+
   return (
     <div className={`group flex items-end gap-1.5 ${isMine ? 'justify-end' : 'justify-start'}`}>
       {isMine && !isEditing && (
         <div className="flex items-center gap-0.5 mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button variant="ghost" size="sm" icon={Edit2} iconOnly aria-label="Modifier le message" onClick={onStartEdit} />
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={Edit2}
+            iconOnly
+            aria-label={t`Modifier le message`}
+            onClick={onStartEdit}
+          />
           <Button
             variant="ghost"
             size="sm"
             icon={Trash2}
             iconOnly
-            aria-label="Supprimer le message"
+            aria-label={t`Supprimer le message`}
             onClick={onDelete}
             className="hover:text-[var(--color-danger)]"
           />
@@ -50,10 +60,18 @@ function MessageBubble({
               autoFocus
               className="flex-1 min-w-0 text-sm bg-transparent border-b border-white/40 focus:outline-none focus:border-white"
             />
-            <button onClick={onSaveEdit} aria-label="Valider" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+            <button
+              onClick={onSaveEdit}
+              aria-label={t`Valider`}
+              className="flex-shrink-0 text-white/80 hover:text-white transition-colors"
+            >
               <Check size={16} />
             </button>
-            <button onClick={onCancelEdit} aria-label="Annuler" className="flex-shrink-0 text-white/80 hover:text-white transition-colors">
+            <button
+              onClick={onCancelEdit}
+              aria-label={t`Annuler`}
+              className="flex-shrink-0 text-white/80 hover:text-white transition-colors"
+            >
               <X size={16} />
             </button>
           </div>
@@ -62,7 +80,12 @@ function MessageBubble({
             <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
             <p className={`text-[10px] mt-1 ${isMine ? 'text-white/70' : 'text-[var(--color-text-muted)]'}`}>
               {formatMessageTime(message.createdAt)}
-              {message.modifiedAt ? ' · modifié' : ''}
+              {message.modifiedAt && (
+                <>
+                  {' · '}
+                  <Trans>modifié</Trans>
+                </>
+              )}
             </p>
           </>
         )}

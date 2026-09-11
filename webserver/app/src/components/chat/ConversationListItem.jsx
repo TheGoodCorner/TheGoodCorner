@@ -1,9 +1,12 @@
 import { Trash2 } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import Avatar from '../UI/Avatar';
 import { Button } from '../UI/Button';
 import { formatConversationTime } from '../../utils/date';
 
 function ConversationListItem({ interlocutor, lastMessage, unreadCount = 0, isActive, onClick, onDelete }) {
+  const { t } = useLingui();
+
   return (
     <div
       className={`group flex items-center border-b border-[var(--color-border)] transition-colors ${
@@ -24,7 +27,7 @@ function ConversationListItem({ interlocutor, lastMessage, unreadCount = 0, isAc
             )}
           </div>
           <p className="text-xs text-[var(--color-text-muted)] truncate mt-0.5">
-            {lastMessage?.content || 'Nouvelle conversation'}
+            {lastMessage?.content || <Trans>Nouvelle conversation</Trans>}
           </p>
         </div>
       </button>
@@ -38,7 +41,7 @@ function ConversationListItem({ interlocutor, lastMessage, unreadCount = 0, isAc
           size="sm"
           icon={Trash2}
           iconOnly
-          aria-label={`Supprimer la conversation avec ${interlocutor.username}`}
+          aria-label={t`Supprimer la conversation avec ${interlocutor.username}`}
           onClick={onDelete}
           className="opacity-0 group-hover:opacity-100 transition-opacity hover:text-[var(--color-danger)]"
         />

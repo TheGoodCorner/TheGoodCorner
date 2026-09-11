@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
+import { useLanguageStore } from '../stores/languageStore';
 import { apiClient } from '../api/client';
 import { useNotificationStore } from '../stores/notificationStore';
 import { TwoFactorSettings } from '../components/profile/TwoFactorSettings';
@@ -18,6 +22,7 @@ const DEV_SECRET = process.env.REACT_APP_DEV_PASS || '';
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { t } = useLingui();
 
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
@@ -46,9 +51,7 @@ export default function Settings() {
   const [error, setError] = useState(null);
 
   const handleLanguageChange = (e) => {
-    const selectedLang = e.target.value;
-    setLanguage(selectedLang);
-    localStorage.setItem('language', selectedLang);
+    setLocale(e.target.value);
   };
 
   const handleToggle2FA = () => {
@@ -63,10 +66,10 @@ export default function Settings() {
     e.preventDefault();
     if (secretInput.trim() === DEV_SECRET) {
       setIsDevUnlocked(true);
-      setDevFeedback({ type: 'success', message: 'Mode développeur activé !' });
+      setDevFeedback({ type: 'success', message: t`Developer mode unlocked!` });
       setSecretInput('');
     } else {
-      setDevFeedback({ type: 'error', message: 'Phrase secrète incorrecte.' });
+      setDevFeedback({ type: 'error', message: t`Invalid secret pass phrase.` });
     }
   };
 
@@ -75,7 +78,7 @@ export default function Settings() {
     const MAX_AMOUNT = 2147483646;
 
     if (!userId) {
-      setDevFeedback({ type: 'error', message: 'ID utilisateur introuvable dans le token.' });
+      setDevFeedback({ type: 'error', message: t`User ID not found in token.` });
       return;
     }
 
@@ -102,19 +105,19 @@ export default function Settings() {
       setCurrentBudget(updatedBudget);
       setDevFeedback({
         type: 'success',
-        message: `+${numericAmount}€ crédités avec succès ! (Nouveau solde: ${data.newBudget ?? 'mis à jour'}€)`,
+        message: t`+${numericAmount}€ successfully credited! (New balance: ${data.newBudget ?? 'updated'}€)`,
       });
     } catch (err) {
       setDevFeedback({
         type: 'error',
-        message: err.response?.data?.message || err.message || 'Erreur lors du crédit.',
+        message: err.response?.data?.message || err.message || t`Error crediting wallet.`,
       });
     }
   };
 
   const handleDeleteClick = () => {
     if (!userId) {
-      setError('Identifiant utilisateur introuvable.');
+      setError(t`User identifier not found.`);
       return;
     }
     setShowConfirm(true);
@@ -127,11 +130,13 @@ export default function Settings() {
 
     try {
       await apiClient.delete(`/user/${userId}`);
+
+      alert(t`Account deleted successfully.`);
       if (logout) logout();
       localStorage.removeItem('token');
       navigate('/');
     } catch (err) {
-      setError(err.message || 'Erreur lors de la suppression.');
+      setError(err.message || t`Error during deletion.`);
     } finally {
       setLoading(false);
     }
@@ -208,7 +213,7 @@ export default function Settings() {
         }}
       >
         <h1 className="text-2xl font-bold mb-6 tracking-wide" style={{ color: 'var(--color-text)' }}>
-          Paramètres
+          <Trans>Settings</Trans>
         </h1>
 
         {error && (
@@ -235,11 +240,11 @@ export default function Settings() {
             className="block text-sm font-medium mb-2"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            Langue de l'application
+            <Trans>Application language</Trans>
           </label>
           <select
             id="language-select"
-            value={language}
+            value={locale}
             onChange={handleLanguageChange}
             className="w-full rounded-[var(--radius-md)] p-3 text-base outline-none focus:ring-2 cursor-pointer"
             style={{
@@ -264,10 +269,10 @@ export default function Settings() {
         >
           <div>
             <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-              Mode sombre
+              <Trans>Dark mode</Trans>
             </h2>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              {isDarkMode ? 'Thème sombre actif' : 'Thème clair actif'}
+              {isDarkMode ? <Trans>Dark theme active</Trans> : <Trans>Light theme active</Trans>}
             </p>
           </div>
 
@@ -298,10 +303,14 @@ export default function Settings() {
         >
           <div>
             <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-              Notifications
+              <Trans>Notifications</Trans>
             </h2>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              {notificationsEnabled ? 'Notifications activées' : 'Notifications désactivées'}
+              {notificationsEnabled ? (
+                <Trans>Notifications enabled</Trans>
+              ) : (
+                <Trans>Notifications disabled</Trans>
+              )}
             </p>
           </div>
 
@@ -377,7 +386,7 @@ export default function Settings() {
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-primary)' }}>
-              🛠️ Mode Développeur
+              🛠️ <Trans>Developer Mode</Trans>
             </h2>
             {isDevUnlocked && (
               <span
@@ -389,7 +398,7 @@ export default function Settings() {
                   color: 'var(--color-on-primary)',
                 }}
               >
-                Déverrouillé
+                <Trans>Unlocked</Trans>
               </span>
             )}
           </div>
@@ -412,7 +421,7 @@ export default function Settings() {
             <form onSubmit={handleUnlockDev} className="flex gap-2">
               <input
                 type="password"
-                placeholder="Entrez la phrase secrète..."
+                placeholder={t`Enter secret passphrase...`}
                 value={secretInput}
                 onChange={(e) => setSecretInput(e.target.value)}
                 className="flex-1 rounded-[var(--radius-md)] px-3 py-2 text-sm outline-none focus:ring-2"
@@ -431,7 +440,7 @@ export default function Settings() {
                   color: 'var(--color-on-primary)',
                 }}
               >
-                Valider
+                <Trans>Validate</Trans>
               </button>
             </form>
           ) : (
@@ -444,7 +453,7 @@ export default function Settings() {
               }}
             >
               <label className="block text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
-                Ajouter des fonds au portefeuille (EUR) :
+                <Trans>Add funds to wallet (EUR):</Trans>
               </label>
               <div className="flex gap-2">
                 <input
@@ -470,7 +479,7 @@ export default function Settings() {
                     color: 'var(--color-on-primary)',
                   }}
                 >
-                  Créditer le compte
+                  <Trans>Credit Account</Trans>
                 </button>
               </div>
             </div>
@@ -487,10 +496,10 @@ export default function Settings() {
           }}
         >
           <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--color-danger)' }}>
-            Zone de danger
+            <Trans>Danger Zone</Trans>
           </h2>
           <p className="text-sm mb-5" style={{ color: 'var(--color-text-muted)' }}>
-            Une fois votre compte supprimé, toutes vos données seront définitivement effacées du système.
+            <Trans>Once your account is deleted, all your data will be permanently removed from the system.</Trans>
           </p>
           <button
             type="button"
@@ -504,7 +513,7 @@ export default function Settings() {
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
           >
-            {loading ? 'Suppression...' : 'Supprimer le compte'}
+            {loading ? <Trans>Deleting...</Trans> : <Trans>Delete Account</Trans>}
           </button>
         </div>
 
