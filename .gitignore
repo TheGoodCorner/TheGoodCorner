@@ -1,4 +1,5 @@
 .secrets
 .vscode
 node_modules
+back/node_modules
 build
