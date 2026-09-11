@@ -271,6 +271,7 @@ erDiagram
     USER ||--o{ FRIENDREQUEST : "sends & receives"
     USER ||--o{ REVIEW : "writes & receives"
     USER ||--o{ REFRESHTOKEN : has
+    USER ||--o| TWOFACTOR : "has (optional)"
     USER }o--|| LOCATION : "lives in"
     PRODUCT }o--|| CATEGORY : "belongs to"
     PRODUCT ||--o{ PAYMENT : "included in"
@@ -371,6 +372,17 @@ erDiagram
         timestamp revokedAt
         string replacedBy
         timestamp createdAt
+    }
+    
+    TWOFACTOR {
+        int userId PK "FK"
+        string secret
+        boolean enabled
+        timestamp setupExpiresAt
+        int lastStep
+        string[] recoveryHashes
+        int attempts
+        timestamp windowStart
     }
 ```
 
