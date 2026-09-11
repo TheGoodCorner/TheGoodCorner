@@ -12,7 +12,7 @@ const LANGUAGES = [
   { code: 'es', label: 'Español', flag: '🇪🇸' },
 ];
 
-const DEV_SECRET = 'GoodCornerPass';
+const DEV_SECRET = process.env.REACT_APP_DEV_PASS || '';
 
 export default function Settings() {
   const navigate = useNavigate();
