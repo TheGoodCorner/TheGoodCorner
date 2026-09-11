@@ -4,6 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
+import { useUserStore } from '../stores/userStore';
 import { apiClient } from '../api/client';
 import { Button } from '../components/UI/Button';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,7 @@ export function CartPopover() {
   const { t } = useLingui();
   const { cartItems, cartTotal, removeFromCart, updateQuantity } = useCartStore();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const user = useAuthStore((state) => state.user ?? state.currentUser);
+  const user = useUserStore((state) => state.user);
   const closeUi = useUIStore((state) => state.closeUi);
   const navigate = useNavigate();
 

@@ -61,7 +61,6 @@ function Profile() {
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       useFriendStore.getState().fetchReceivedFriendRequests();
-      useAuthStore.getState().initAuth();
       useFriendStore.getState().fetchFriends();
       useFriendStore.getState().fetchSentFriendRequests();
     }
@@ -336,7 +335,7 @@ function Profile() {
                             onClick={() => acceptFriendRequest(request.id)}
                             disabled={friendSubmitting}
                           >
-                            {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Accepter</Trans>}
+                            {friendSubmitting ? "Chargement..." : "Accepter"}
                           </Button>
                           <Button
                             icon={X}
@@ -346,7 +345,7 @@ function Profile() {
                             onClick={() => rejectFriendRequest(request.id)}
                             disabled={friendSubmitting}
                           >
-                            {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Refuser</Trans>}
+                            {friendSubmitting ? "Chargement..." : "Refuser"}
                           </Button>
                         </div>
                       </div>

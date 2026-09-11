@@ -9,7 +9,7 @@ import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
   const { t } = useLingui();
-  const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
+  const { form, submitting, error, isEditMode, handleChange, submit, isShaking } = useProductForm(product);
 
   const categories = useMemo(() => {
     const categoryLabels = {
@@ -32,7 +32,7 @@ export function ProductForm({ product = null, onSuccess }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+    <form onSubmit={handleSubmit} className={`space-y-6 transition-transform ${isShaking ? 'animate-shake' : ''}`} noValidate>
       {/* Ligne 1: Nom + Catégorie */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <FormField

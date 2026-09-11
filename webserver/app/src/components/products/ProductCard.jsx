@@ -94,29 +94,29 @@ export default function ProductCard({
             <div className="card-header flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     {author.id ? (
-                        <Link
-                            to={`/profile/${author.id}`}
-                            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                        >
-                            {sellerInfo}
-                        </Link>
-                    ) : (
-                        <div className="flex items-center gap-2">{sellerInfo}</div>
-                    )}
-                    <div className="flex items-center gap-1 ml-3">
-                        <Star
-                            size={15}
-                            className="text-[var(--color-primary)]"
-                            fill="var(--color-primary)"
-                        />
-                        <span className="text-xs font-medium text-gray-700">
-                            {author?.sellerRating ?? '—'}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                            ({author?.sellerReviewCount ?? 0})
-                        </span>
-                    </div>
-                </div>
+                <Link
+                    to={`/profile/${author.id}`}
+                    className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                >
+                    {sellerInfo}
+                </Link>
+            ) : (
+                <div className="flex items-center gap-2">{sellerInfo}</div>
+            )}
+            <div className="flex items-center gap-1 ml-3">
+                <Star
+                    size={15}
+                    className="text-[var(--color-primary)]"
+                    fill="var(--color-primary)"
+                />
+                <span className="text-xs font-medium text-[var(--color-text-muted)]">
+                    {author?.sellerRating ?? '—'}
+                </span>
+                <span className="text-xs text-[var(--color-text-muted)]">
+                    ({author?.sellerReviewCount ?? 0})
+                </span>
+            </div>
+        </div>
 
                 {isOwner && isInStock && (
                     <div className="flex items-center gap-1">
