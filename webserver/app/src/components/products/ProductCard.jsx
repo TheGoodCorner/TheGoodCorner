@@ -103,10 +103,10 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
                     className="text-[var(--color-primary)]"
                     fill="var(--color-primary)"
                 />
-                <span className="text-xs font-medium text-gray-700">
+                <span className="text-xs font-medium text-[var(--color-text-muted)]">
                     {author?.sellerRating ?? '—'}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-[var(--color-text-muted)]">
                     ({author?.sellerReviewCount ?? 0})
                 </span>
             </div>
