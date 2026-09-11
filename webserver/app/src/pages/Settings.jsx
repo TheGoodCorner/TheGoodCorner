@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 import { apiClient } from '../api/client';
 import { useNotificationStore } from '../stores/notificationStore';
 import { TwoFactorSettings } from '../components/profile/TwoFactorSettings';
+import { useUserStore } from '../stores/userStore';
+import { Button } from '../components/UI/Button';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -20,30 +22,19 @@ export default function Settings() {
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
 
-  const [show2FASettings, setShow2FASettings] = useState(false);
-
-  const token = useAuthStore((state) => state.token) || localStorage.getItem('token');
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);  
   const logout = useAuthStore((state) => state.logout);
-
+  const currentUser = useUserStore((state) => state.user);
+  const userId = currentUser?.id;
+  
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const isDarkMode = theme === 'dark';
-
-  const userId = useMemo(() => {
-    if (!token) return null;
-    try {
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-      const payload = JSON.parse(window.atob(base64));
-      return payload.id || payload.userId || payload.sub || null;
-    } catch (err) {
-      console.error('Erreur décodage JWT:', err);
-      return null;
-    }
-  }, [token]);
-
+  
+  
   const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'fr');
-
+  
+  const [show2FASettings, setShow2FASettings] = useState(false);
   const [isDevUnlocked, setIsDevUnlocked] = useState(false);
   const [secretInput, setSecretInput] = useState('');
   const [amountToAdd, setAmountToAdd] = useState(1000);
@@ -145,6 +136,63 @@ export default function Settings() {
       setLoading(false);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div
+        className="min-h-[calc(100vh-140px)] py-12 px-4 flex justify-center items-center"
+        style={{ backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }}
+      >
+        <div
+          className="w-full max-w-md rounded-[var(--radius-lg)] p-8 text-center shadow-2xl"
+          style={{
+            backgroundColor: 'var(--color-surface)',
+            borderColor: 'var(--color-border)',
+            borderWidth: '1px',
+          }}
+        >
+          {/* Icône */}
+          <div className="mb-6 text-6xl">🔐</div>
+
+          {/* Titre */}
+          <h1 className="text-2xl font-bold mb-3 tracking-wide" style={{ color: 'var(--color-text)' }}>
+            Accès aux paramètres
+          </h1>
+
+          {/* Description */}
+          <p className="mb-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+            Connectez-vous à votre compte pour accéder à vos paramètres personnels, gérer votre profil et vos préférences.
+          </p>
+
+          {/* Boutons */}
+          <div className="flex flex-col gap-3">
+            <Button
+              to={"/authentication"}
+              className="w-full py-3 px-4 rounded-[var(--radius-md)] font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+              variant='primary'
+            >
+              Se connecter
+            </Button>
+
+            <Button
+              to={"/authentication"}
+              className="w-full py-3 px-4 rounded-[var(--radius-md)] font-medium !text-[var(--color-primary)] !border !border-[var(--color-primary)] transition-all duration-200 focus:outline-none focus:ring-2"
+              variant='ghost'
+            >
+              Créer un compte
+            </Button>
+          </div>
+
+          {/* Texte d'aide */}
+          <p className="mt-6 text-xs" style={{ color: 'var(--color-text-muted)' }}>
+            <Link to={'/'} className="underline hover:no-underline transition-all text-[var(--color-primary)]">
+              Retourner a l'acceuil
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
