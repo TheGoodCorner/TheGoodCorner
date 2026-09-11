@@ -66,7 +66,6 @@ function Profile() {
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       useFriendStore.getState().fetchReceivedFriendRequests();
-      useAuthStore.getState().initAuth();
       useFriendStore.getState().fetchFriends();
       useFriendStore.getState().fetchSentFriendRequests();
     }
