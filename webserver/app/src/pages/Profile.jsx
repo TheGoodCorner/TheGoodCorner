@@ -333,18 +333,18 @@ function Profile() {
                             variant="primary"
                             size="sm"
                             onClick={() => acceptFriendRequest(request.id)}
-                            disabled={submitting}
+                            disabled={friendSubmitting}
                           >
-                            {submitting ? "Chargement..." : "Accepter"}
+                            {friendSubmitting ? "Chargement..." : "Accepter"}
                           </Button>
                           <Button
                             icon={X}
                             variant="outline"
                             size="sm"
                             onClick={() => rejectFriendRequest(request.id)}
-                            disabled={submitting}
+                            disabled={friendSubmitting}
                           >
-                            {submitting ? "Chargement..." : "Refuser"}
+                            {friendSubmitting ? "Chargement..." : "Refuser"}
                           </Button>
                         </div>
                       </div>
