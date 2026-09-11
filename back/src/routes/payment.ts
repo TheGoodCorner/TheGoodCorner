@@ -17,17 +17,27 @@ const paymentRouter = Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [cart]
+ *             required: [productId, quantity, cartSnapshot]
  *             properties:
- *               cart:
+ *               productId:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Array of product IDs
+ *               quantity:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: Array of quantities (same order as productId)
+ *               cartSnapshot:
  *                 type: array
  *                 items:
  *                   type: object
- *                   properties:
- *                     productId:
- *                       type: integer
- *                     quantity:
- *                       type: integer
+ *                 description: Cart snapshot for record keeping
+ *               stripeCurrency:
+ *                 type: string
+ *                 default: eur
+ *                 description: Currency code (default eur)
  *     responses:
  *       200:
  *         description: Payment created
@@ -65,7 +75,8 @@ paymentRouter.get('/transactions', AuthenticateToken, paymentController.getAllTr
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         description: Stripe Payment Intent ID (e.g. pi_3Mtwb...)
  *     responses:
  *       200:
  *         description: Transaction found

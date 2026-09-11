@@ -32,6 +32,19 @@ const friendRouter = Router();
  *     summary: Get all friend requests
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: type
+ *         schema:
+ *           type: string
+ *           enum: [received, sent]
+ *         description: Filter by direction (omit for all)
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, ACCEPTED, REJECTED]
+ *         description: Filter by status
  *     responses:
  *       200:
  *         description: List of friend requests

@@ -83,6 +83,10 @@ productRouter.post('/products', AuthenticateToken , uploadMiddleware.single('ima
  *                 type: number
  *               description:
  *                 type: string
+ *               category:
+ *                 type: string
+ *               quantity:
+ *                 type: integer
  *               image:
  *                 type: string
  *                 format: binary

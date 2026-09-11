@@ -52,7 +52,7 @@ userRouter.post(`/auth/register`, userController.createUser);
  *                 type: string
  *               password:
  *                 type: string
- *               twoFactorCode:
+ *               code:
  *                 type: string
  *                 description: Required if 2FA is enabled
  *     responses:
@@ -207,10 +207,22 @@ userRouter.post('/auth/2fa/disable', AuthenticateToken, changeFactor('disable'))
  *           schema:
  *             type: object
  *             properties:
+ *               email:
+ *                 type: string
  *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               name:
  *                 type: string
  *               bio:
  *                 type: string
+ *               phoneNumber:
+ *                 type: string
+ *                 description: 10 digits, leave empty to remove
+ *               location:
+ *                 type: string
+ *                 description: JSON stringified object with country, region, city, street, house_number, additionnal_infos
  *               image:
  *                 type: string
  *                 format: binary
