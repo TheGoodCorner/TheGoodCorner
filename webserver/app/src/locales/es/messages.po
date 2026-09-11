@@ -17,10 +17,21 @@ msgstr ""
 msgid "-- Sélectionne une catégorie --"
 msgstr "-- Selecciona una categoría --"
 
+#. placeholder {0}: product.name
+#: src/components/products/ProductCard.jsx
+msgid "\"{0}\" sera définitivement supprimée. Cette action est irréversible."
+msgstr "\"{0}\" se eliminará definitivamente. Esta acción es irreversible."
+
+#. placeholder {0}: item.stock
+#. placeholder {1}: item.stock > 1 ? 'disponibles' : 'disponible'
+#: src/pages/CartPopover.jsx
+msgid "({0} {1})"
+msgstr "({0} {1})"
+
 #. placeholder {0}: item.stock
 #: src/pages/CartPopover.jsx
-msgid "({0} disponible)"
-msgstr "({0} disponible)"
+#~ msgid "({0} disponible)"
+#~ msgstr "({0} disponible)"
 
 #. placeholder {0}: product.quantity
 #: src/pages/ProduitDetail.jsx
@@ -41,6 +52,12 @@ msgstr "{0, plural, one {# producto encontrado} other {# productos encontrados}}
 #: src/pages/SellerProfile.jsx
 msgid "{0} ({1} avis)"
 msgstr "{0} ({1} reseña)"
+
+#. placeholder {0}: cartItems.length > 1 ? 'Articles' : 'Article'
+#. placeholder {1}: cartItems.length
+#: src/pages/Checkout.jsx
+msgid "{0} ({1})"
+msgstr "{0} ({1})"
 
 #. placeholder {0}: userRating.toFixed(1)
 #: src/components/profile/ProfilHeader.jsx
@@ -69,17 +86,26 @@ msgid "{0} veut vous ajouter"
 msgstr "{0} quiere añadirte"
 
 #: src/pages/Profile.jsx
-msgid "{reviewCount} avis des clients"
-msgstr "{reviewCount} reseñas de clientes"
+msgid "{reviewCount, plural, one {# avis client} other {# avis des clients}}"
+msgstr "{reviewCount, plural, one {# reseña de cliente} other {# reseñas de clientes}}"
+
+#: src/pages/Profile.jsx
+#~ msgid "{reviewCount} avis des clients"
+#~ msgstr "{reviewCount} reseñas de clientes"
 
 #: src/components/layouts/Footer.jsx
 msgid "© 2026 TheGoodCorner. Tous droits réservés."
 msgstr "© 2026 TheGoodCorner. Todos los derechos reservados."
 
+#. placeholder {0}: data.newBudget ?? 'mis à jour'
+#: src/pages/Settings.jsx
+msgid "+{numericAmount}€ crédités avec succès ! (Nouveau solde : {0}€)"
+msgstr "¡+{numericAmount} € acreditados con éxito! (Nuevo saldo: {0} €)"
+
 #. placeholder {0}: data.newBudget ?? 'updated'
 #: src/pages/Settings.jsx
-msgid "+{numericAmount}€ successfully credited! (New balance: {0}€)"
-msgstr "¡+{numericAmount} € acreditados con éxito! (Nuevo saldo: {0} €)"
+#~ msgid "+{numericAmount}€ successfully credited! (New balance: {0}€)"
+#~ msgstr "¡+{numericAmount} € acreditados con éxito! (Nuevo saldo: {0} €)"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "<0>Accès et rectification</0> : modifiables directement depuis votre page Profil."
@@ -133,6 +159,10 @@ msgstr "<0>Portabilidad</0> de tus datos."
 msgid "2 à 4 jours ouvrés"
 msgstr "2 a 4 días laborables"
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "2FA activée"
+msgstr "2FA activada"
+
 #: src/pages/PrivacyPolicy.jsx
 #: src/pages/TermsOfService.jsx
 msgid "31 août 2026"
@@ -154,9 +184,17 @@ msgstr "Aceptación"
 msgid "Accepter"
 msgstr "Aceptar"
 
+#: src/pages/Profile.jsx
+msgid "Accepter la demande d'ami"
+msgstr "Aceptar la solicitud de amistad"
+
 #: src/pages/Settings.jsx
-msgid "Account deleted successfully."
-msgstr "Cuenta eliminada con éxito."
+msgid "Accès aux paramètres"
+msgstr "Acceso a la configuración"
+
+#: src/pages/Settings.jsx
+#~ msgid "Account deleted successfully."
+#~ msgstr "Cuenta eliminada con éxito."
 
 #: src/components/layouts/Footer.jsx
 #: src/components/layouts/Navbar.jsx
@@ -168,9 +206,17 @@ msgstr "Inicio"
 msgid "Acheter & Vendre"
 msgstr "Comprar y vender"
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Active la double authentification"
+msgstr "Activa la autenticación en dos pasos"
+
 #: src/pages/Settings.jsx
-msgid "Add funds to wallet (EUR):"
-msgstr "Añadir fondos al monedero (EUR):"
+msgid "Activer ou désactiver la double authentification"
+msgstr "Activar o desactivar la autenticación de doble factor"
+
+#: src/pages/Settings.jsx
+#~ msgid "Add funds to wallet (EUR):"
+#~ msgstr "Añadir fondos al monedero (EUR):"
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Adresse"
@@ -183,6 +229,10 @@ msgstr "Dirección completa"
 #: src/pages/Faq.jsx
 msgid "Adresse e-mail valide requise à l'inscription."
 msgstr "Se requiere una dirección de correo electrónico válida para registrarse."
+
+#: src/pages/Settings.jsx
+msgid "Afficher les options de sécurité 2FA"
+msgstr "Mostrar las opciones de seguridad 2FA"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Afficher rapidement l'aperçu de vos conversations au chargement de la messagerie"
@@ -200,6 +250,10 @@ msgstr "Edad mínima"
 #: src/pages/ProduitDetail.jsx
 msgid "Ajouter au panier"
 msgstr "Añadir a la cesta"
+
+#: src/pages/Settings.jsx
+msgid "Ajouter des fonds au portefeuille (EUR) :"
+msgstr "Añadir fondos al monedero (EUR):"
 
 #: src/pages/Profile.jsx
 msgid "Ajouter un produit"
@@ -219,20 +273,27 @@ msgid "Annonces ({0})"
 msgstr "Anuncios ({0})"
 
 #: src/components/chat/MessageBubble.jsx
+#: src/components/products/ProductCard.jsx
 #: src/components/profile/ProfilHeader.jsx
 #: src/components/reviews/ReviewCard.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Profile.jsx
+#: src/pages/Settings.jsx
 msgid "Annuler"
 msgstr "Cancelar"
 
+#: src/pages/Profile.jsx
+msgid "Annuler la demande d'ami"
+msgstr "Cancelar la solicitud de amistad"
+
 #: src/pages/Settings.jsx
-msgid "Application language"
-msgstr "Idioma de la aplicación"
+#~ msgid "Application language"
+#~ msgstr "Idioma de la aplicación"
 
 #. placeholder {0}: cartItems.length
 #: src/pages/Checkout.jsx
-msgid "Articles ({0})"
-msgstr "Artículos ({0})"
+#~ msgid "Articles ({0})"
+#~ msgstr "Artículos ({0})"
 
 #. placeholder {0}: mergedItems.length
 #: src/pages/Orders.jsx
@@ -285,6 +346,14 @@ msgstr "Ninguna notificación"
 msgid "Augmenter la quantité"
 msgstr "Aumentar la cantidad"
 
+#: src/pages/Produits.jsx
+msgid "Augmenter le prix maximum"
+msgstr "Aumentar el precio máximo"
+
+#: src/pages/Produits.jsx
+msgid "Augmenter le prix minimum"
+msgstr "Aumentar el precio mínimo"
+
 #: src/components/products/ProductForm.jsx
 msgid "Autre"
 msgstr "Otro"
@@ -299,6 +368,14 @@ msgstr "Reseñas ({0})"
 #: src/pages/TermsOfService.jsx
 msgid "Avis et évaluations"
 msgstr "reseñas y valoraciones"
+
+#: src/pages/Settings.jsx
+msgid "Basculer le mode sombre"
+msgstr "Alternar el modo oscuro"
+
+#: src/pages/Settings.jsx
+msgid "Basculer les notifications"
+msgstr "Alternar las notificaciones"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Base légale"
@@ -317,6 +394,7 @@ msgid "Bienvenue sur TheGoodCorner"
 msgstr "Bienvenido a TheGoodCorner"
 
 #: src/components/products/ProductForm.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Cardio"
 msgstr "Cardio"
@@ -346,6 +424,10 @@ msgstr "Este vendedor aún no ha recibido reseñas de clientes."
 msgid "Ces CGU peuvent évoluer. La date de dernière mise à jour est indiquée en haut de cette page."
 msgstr "Estas CGU pueden cambiar. La fecha de la última actualización se indica en la parte superior de esta página."
 
+#: src/pages/Settings.jsx
+msgid "Cette action est définitive et irréversible. Toutes vos données seront perdues."
+msgstr "Esta acción es definitiva e irreversible. Todos tus datos se perderán."
+
 #: src/pages/PrivacyPolicy.jsx
 msgid "Cette politique peut évoluer. La date de dernière mise à jour est indiquée en haut de cette page."
 msgstr "Esta política puede cambiar. La fecha de la última actualización se indica en la parte superior de esta página."
@@ -367,6 +449,10 @@ msgstr "Cargando la cesta..."
 msgid "Chargement..."
 msgstr "Cargando..."
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Chargement…"
+msgstr "Cargando…"
+
 #: src/components/chat/ChatThread.jsx
 msgid "Choisis une discussion dans la liste, ou démarre-en une nouvelle."
 msgstr "Elige una conversación de la lista o inicia una nueva."
@@ -375,7 +461,20 @@ msgstr "Elige una conversación de la lista o inicia una nueva."
 msgid "Choisis une note entre 1 et 5 étoiles."
 msgstr "Elige una puntuación de 1 a 5 estrellas."
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "code"
+msgstr "código"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Code à six chiffres"
+msgstr "Código de seis dígitos"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Code de l’application ou code de secours"
+msgstr "Código de la aplicación o código de emergencia"
+
 #: src/components/products/ProductForm.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Combat"
 msgstr "Combate"
@@ -405,6 +504,10 @@ msgstr "Información adicional (opcional)"
 msgid "Compte & Inscription"
 msgstr "Cuenta y registro"
 
+#: src/pages/Settings.jsx
+msgid "Compte supprimé avec succès."
+msgstr "Cuenta eliminada con éxito."
+
 #: src/components/layouts/Footer.jsx
 msgid "Conditions générales"
 msgstr "Términos y condiciones"
@@ -412,6 +515,18 @@ msgstr "Términos y condiciones"
 #: src/pages/TermsOfService.jsx
 msgid "Conditions générales d'utilisation"
 msgstr "Condiciones generales de uso"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Configurer"
+msgstr "Configurar"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Confirmer l’activation"
+msgstr "Confirmar activación"
+
+#: src/pages/ProduitDetail.jsx
+msgid "Confirmer la suppression"
+msgstr "Confirmar la eliminación"
 
 #: src/components/checkout/checkoutForm.jsx
 msgid "Confirmer le règlement"
@@ -424,6 +539,10 @@ msgstr "De conformidad con el RGPD, dispones de los siguientes derechos sobre tu
 #: src/pages/Messagerie.jsx
 msgid "Connecte-toi pour accéder à ta messagerie"
 msgstr "Inicia sesión para acceder a tu mensajería"
+
+#: src/pages/Settings.jsx
+msgid "Connectez-vous à votre compte pour accéder à vos paramètres personnels, gérer votre profil et vos préférences."
+msgstr "Inicia sesión en tu cuenta para acceder a tu configuración personal, gestionar tu perfil y tus preferencias."
 
 #: src/pages/Profile.jsx
 msgid "Connectez-vous pour accéder à votre page profil, gérer vos annonces et consulter vos avis."
@@ -458,6 +577,10 @@ msgstr "Me alegro de verte de nuevo"
 msgid "Contenus interdits"
 msgstr "Contenidos prohibidos"
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Continuer"
+msgstr "Continuar"
+
 #: src/pages/Checkout.jsx
 msgid "Continuer les achats"
 msgstr "Continuar comprando"
@@ -483,7 +606,11 @@ msgid "Cookies et stockage local"
 msgstr "Cookies y almacenamiento local"
 
 #: src/pages/Settings.jsx
-msgid "Credit Account"
+#~ msgid "Credit Account"
+#~ msgstr "Acreditar cuenta"
+
+#: src/pages/Settings.jsx
+msgid "Créditer le compte"
 msgstr "Acreditar cuenta"
 
 #: src/pages/Login.jsx
@@ -503,20 +630,21 @@ msgid "Créer mon compte"
 msgstr "Crear mi cuenta"
 
 #: src/pages/Profile.jsx
+#: src/pages/Settings.jsx
 msgid "Créer un compte"
 msgstr "Crear una cuenta"
 
 #: src/pages/Settings.jsx
-msgid "Danger Zone"
-msgstr "Zona de peligro"
+#~ msgid "Danger Zone"
+#~ msgstr "Zona de peligro"
 
 #: src/pages/Settings.jsx
-msgid "Dark mode"
-msgstr "Modo oscuro"
+#~ msgid "Dark mode"
+#~ msgstr "Modo oscuro"
 
 #: src/pages/Settings.jsx
-msgid "Dark theme active"
-msgstr "Tema oscuro activo"
+#~ msgid "Dark theme active"
+#~ msgstr "Tema oscuro activo"
 
 #: src/pages/Orders.jsx
 msgid "Date inconnue"
@@ -531,13 +659,14 @@ msgid "Découvrez nos meilleurs produits ou pas pour vous"
 msgstr "Descubre nuestros mejores productos pensados para ti"
 
 #: src/pages/CartPopover.jsx
-msgid "Decouvrez nos produits"
-msgstr "Descubre nuestros productos"
+#~ msgid "Decouvrez nos produits"
+#~ msgstr "Descubre nuestros productos"
 
 #: src/pages/Checkout.jsx
 msgid "Découvrez nos produits et commencez à faire vos achats"
 msgstr "Descubre nuestros productos y empieza a hacer tus compras"
 
+#: src/pages/CartPopover.jsx
 #: src/pages/Orders.jsx
 msgid "Découvrir les produits"
 msgstr "Descubrir los productos"
@@ -559,12 +688,12 @@ msgid "Délai estimé"
 msgstr "Plazo estimado"
 
 #: src/pages/Settings.jsx
-msgid "Delete Account"
-msgstr "Eliminar cuenta"
+#~ msgid "Delete Account"
+#~ msgstr "Eliminar cuenta"
 
 #: src/pages/Settings.jsx
-msgid "Deleting..."
-msgstr "Eliminando..."
+#~ msgid "Deleting..."
+#~ msgstr "Eliminando..."
 
 #: src/pages/NotificationPopover.jsx
 msgid "Demande acceptée"
@@ -600,6 +729,10 @@ msgstr "Última actualización: {lastUpdated}"
 msgid "Dernière mise à jour : 8 septembre 2026"
 msgstr "Última actualización: 8 de septiembre de 2026"
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Désactiver"
+msgstr "Desactivar"
+
 #: src/components/products/ProductForm.jsx
 msgid "Description"
 msgstr "Descripción"
@@ -609,21 +742,41 @@ msgid "Description à venir."
 msgstr "Descripción próximamente."
 
 #: src/pages/Settings.jsx
-msgid "Developer Mode"
-msgstr "Modo desarrollador"
+#~ msgid "Developer Mode"
+#~ msgstr "Modo desarrollador"
 
 #: src/pages/Settings.jsx
-msgid "Developer mode unlocked!"
-msgstr "¡Modo desarrollador desbloqueado!"
+#~ msgid "Developer mode unlocked!"
+#~ msgstr "¡Modo desarrollador desbloqueado!"
+
+#: src/pages/Settings.jsx
+msgid "Déverrouillé"
+msgstr "Desbloqueado"
 
 #: src/pages/CartPopover.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Diminuer la quantité"
 msgstr "Reducir la cantidad"
 
+#: src/pages/Produits.jsx
+msgid "Diminuer le prix maximum"
+msgstr "Reducir el precio máximo"
+
+#: src/pages/Produits.jsx
+msgid "Diminuer le prix minimum"
+msgstr "Reducir el precio mínimo"
+
 #: src/pages/PrivacyPolicy.jsx
 msgid "Données que nous collectons"
 msgstr "Datos que recopilamos"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Double authentification"
+msgstr "Doble autenticación"
+
+#: src/pages/Settings.jsx
+msgid "Double authentification (2FA)"
+msgstr "Autenticación de dos factores (2FA)"
 
 #: src/pages/TermsOfService.jsx
 msgid "Droit applicable"
@@ -650,14 +803,27 @@ msgstr "En espera"
 msgid "En attente de réponse"
 msgstr "Esperando respuesta"
 
+#: src/components/products/ProductForm.jsx
+msgid "Enregistrer les modifications"
+msgstr "Guardar los cambios"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Enregistrez le secret dans votre application d'authentification (TOTP).<0/>Ne le partagez à personne car il permet la génération de codes d'accès."
+msgstr "Guarda el secreto en tu aplicación de autenticación (TOTP).<0/>No lo compartas con nadie, ya que permite generar códigos de acceso."
+
 #: src/pages/Settings.jsx
-msgid "Enter secret passphrase..."
-msgstr "Introduce la frase de contraseña secreta..."
+#~ msgid "Enter secret passphrase..."
+#~ msgstr "Introduce la frase de contraseña secreta..."
 
 #: src/components/products/ProductForm.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Entraînement"
 msgstr "Entrenamiento"
+
+#: src/pages/Settings.jsx
+msgid "Entrez la phrase secrète..."
+msgstr "Introduce la frase secreta..."
 
 #: src/components/chat/ChatThread.jsx
 msgid "Envoyer"
@@ -667,13 +833,22 @@ msgstr "Enviar"
 msgid "Envoyez des demandes d'amitié pour rejoindre d'autres utilisateurs"
 msgstr "Envía solicitudes de amistad para conectar con otros usuarios"
 
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Settings.jsx
-msgid "Error crediting wallet."
-msgstr "Error al acreditar el monedero."
+msgid "Erreur lors de la suppression."
+msgstr "Error al eliminar."
 
 #: src/pages/Settings.jsx
-msgid "Error during deletion."
-msgstr "Error durante la eliminación."
+msgid "Erreur lors du rechargement du portefeuille."
+msgstr "Error al recargar el monedero."
+
+#: src/pages/Settings.jsx
+#~ msgid "Error crediting wallet."
+#~ msgstr "Error al acreditar el monedero."
+
+#: src/pages/Settings.jsx
+#~ msgid "Error during deletion."
+#~ msgstr "Error durante la eliminación."
 
 #: src/components/products/ProductForm.jsx
 msgid "Ex: Chaise ergonomique"
@@ -688,6 +863,7 @@ msgid "FAQ"
 msgstr "Preguntas frecuentes"
 
 #: src/components/chat/SelectUserModal.jsx
+#: src/components/products/ProductCard.jsx
 msgid "Fermer"
 msgstr "Cerrar"
 
@@ -723,9 +899,17 @@ msgstr "Generalidades"
 msgid "Grâce à notre Service Worker intégré, le site dispose d'une résilience hors-ligne. Vous pouvez continuer à consulter les pages mises en cache et un écran de secours s'affiche si la connexion au serveur est totalement rompue."
 msgstr "Gracias a nuestro Service Worker integrado, el sitio cuenta con resistencia sin conexión. Puedes seguir consultando las páginas en caché y se mostrará una pantalla de respaldo si se interrumpe por completo la conexión con el servidor."
 
+#: src/pages/Settings.jsx
+msgid "Identifiant utilisateur introuvable."
+msgstr "Identificador de usuario no encontrado."
+
 #: src/components/profile/ProfilInfos.jsx
 msgid "Île-de-France"
 msgstr "Isla de Francia"
+
+#: src/components/products/ProductForm.jsx
+msgid "Image actuelle"
+msgstr "Imagen actual"
 
 #: src/components/products/ProductForm.jsx
 msgid "Image du produit"
@@ -744,6 +928,10 @@ msgstr "No se puede inicializar el formulario de pago."
 msgid "Impossible de charger vos commandes."
 msgstr "No se pueden cargar tus pedidos."
 
+#: src/components/products/ProductCard.jsx
+msgid "Impossible de supprimer cet article."
+msgstr "No se puede eliminar este artículo."
+
 #: src/pages/TermsOfService.jsx
 msgid "Inscription et compte"
 msgstr "Registro y cuenta"
@@ -753,8 +941,12 @@ msgid "Introuvable, réessaie après rechargement"
 msgstr "No encontrado, inténtalo de nuevo tras recargar"
 
 #: src/pages/Settings.jsx
-msgid "Invalid secret pass phrase."
-msgstr "Frase de contraseña secreta no válida."
+#~ msgid "Invalid secret pass phrase."
+#~ msgstr "Frase de contraseña secreta no válida."
+
+#: src/components/products/ProductForm.jsx
+msgid "L'image ne peut pas être modifiée depuis ce formulaire pour l'instant."
+msgstr "Por ahora, la imagen no se puede modificar desde este formulario."
 
 #: src/pages/TermsOfService.jsx
 msgid "L'utilisation du site implique l'acceptation pleine et entière des présentes conditions générales d'utilisation (CGU). La navigation et la consultation des annonces sont libres ; la création d'un compte est nécessaire pour vendre, laisser un avis ou envoyer un message."
@@ -780,13 +972,21 @@ msgstr "Deja todos los campos en blanco si por ahora no deseas indicar una direc
 msgid "Laisser un avis"
 msgstr "Dejar una reseña"
 
+#: src/pages/Settings.jsx
+msgid "Langue de l'application"
+msgstr "Idioma de la aplicación"
+
 #: src/pages/Checkout.jsx
-msgid "Le budget est insuffisant !"
-msgstr "¡El saldo es insuficiente!"
+#~ msgid "Le budget est insuffisant !"
+#~ msgstr "¡El saldo es insuficiente!"
 
 #: src/pages/TermsOfService.jsx
 msgid "Le code, le design et la marque TheGoodCorner sont la propriété de l'équipe du projet. Les photos et descriptions que vous publiez restent votre propriété ; en les publiant, vous accordez à TheGoodCorner le droit de les afficher sur la plateforme dans le cadre de son fonctionnement normal."
 msgstr "El código, el diseño y la marca TheGoodCorner son propiedad del equipo del proyecto. Las fotos y descripciones que publicas siguen siendo de tu propiedad; al publicarlas, concedes a TheGoodCorner el derecho a mostrarlas en la plataforma dentro del marco de su funcionamiento ordinario."
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Le commentaire ne peut pas être aussi long."
+msgstr "El comentario no puede ser tan largo."
 
 #: src/components/reviews/ReviewCard.jsx
 msgid "Le commentaire ne peut pas être vide."
@@ -805,6 +1005,10 @@ msgstr "El servicio está reservado a mayores de edad (18 años o más)."
 msgid "Le site fonctionne-t-il sans connexion Internet ?"
 msgstr "¿El sitio funciona sin conexión a Internet?"
 
+#: src/pages/Settings.jsx
+msgid "Le solde total ne peut pas dépasser {MAX_AMOUNT}€. (Solde actuel : {currentBudget}€)"
+msgstr "El saldo total no puede superar los {MAX_AMOUNT} €. (Saldo actual: {currentBudget} €)"
+
 #: src/pages/Faq.jsx
 msgid "Le système intègre un tunnel de test (ex: Stripe sandbox ou solde virtuel de portefeuille). Aucune vraie coordonnée bancaire n'est débitée. La remise de l'article peut également s'organiser en main propre via le chat."
 msgstr "El sistema incluye un entorno de prueba (p. ej., Stripe sandbox o saldo virtual de monedero). No se carga ninguna cuenta bancaria real. La entrega del artículo también puede organizarse en mano a través del chat."
@@ -822,16 +1026,24 @@ msgid "Les présentes CGU sont soumises au droit français."
 msgstr "Las presentes CGU están sujetas a la legislación francesa."
 
 #: src/pages/Settings.jsx
-msgid "Light theme active"
-msgstr "Tema claro activo"
+#~ msgid "Light theme active"
+#~ msgstr "Tema claro activo"
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Localisation"
 msgstr "Ubicación"
 
+#: src/pages/Checkout.jsx
+msgid "Logo 42"
+msgstr "Logotipo 42"
+
 #: src/pages/Faq.jsx
 msgid "Longueur minimale de 6 caractères."
 msgstr "Longitud mínima de 6 caracteres."
+
+#: src/pages/Settings.jsx
+msgid "Masquer le panneau de configuration"
+msgstr "Ocultar el panel de control"
 
 #: src/pages/ProduitDetail.jsx
 #: src/pages/SellerProfile.jsx
@@ -899,6 +1111,18 @@ msgstr "Mensajería"
 msgid "Messagerie & Notifications"
 msgstr "Mensajería y notificaciones"
 
+#: src/pages/Settings.jsx
+msgid "Mode Développeur"
+msgstr "Modo desarrollador"
+
+#: src/pages/Settings.jsx
+msgid "Mode développeur déverrouillé !"
+msgstr "¡Modo desarrollador desbloqueado!"
+
+#: src/pages/Settings.jsx
+msgid "Mode sombre"
+msgstr "Modo oscuro"
+
 #: src/pages/TermsOfService.jsx
 msgid "Modification des CGU"
 msgstr "Modificación de las CGU"
@@ -919,6 +1143,14 @@ msgstr "Editar"
 msgid "Modifier cet avis"
 msgstr "Editar esta reseña"
 
+#: src/components/products/ProductCard.jsx
+msgid "Modifier l'annonce"
+msgstr "Editar el anuncio"
+
+#: src/components/reviews/ReviewCard.jsx
+msgid "Modifier le commentaire"
+msgstr "Editar el comentario"
+
 #: src/components/chat/MessageBubble.jsx
 msgid "Modifier le message"
 msgstr "Editar mensaje"
@@ -927,6 +1159,11 @@ msgstr "Editar mensaje"
 msgid "Mon profil"
 msgstr "Mi perfil"
 
+#: src/pages/Settings.jsx
+msgid "Montant à créditer"
+msgstr "Importe a acreditar"
+
+#: src/components/profile/TwoFactorSettings.jsx
 #: src/pages/Login.jsx
 msgid "Mot de passe"
 msgstr "Contraseña"
@@ -948,8 +1185,8 @@ msgid "Nom du produit"
 msgstr "Nombre del producto"
 
 #: src/pages/ProduitDetail.jsx
-msgid "Non catégorisé"
-msgstr "Sin categorizar"
+#~ msgid "Non catégorisé"
+#~ msgstr "Sin categorizar"
 
 #: src/components/profile/ProfilInfos.jsx
 #: src/components/UI/InfoCard.jsx
@@ -972,19 +1209,26 @@ msgstr "Nuestros productos en venta"
 msgid "Note moyenne"
 msgstr "Puntuación media"
 
-#: src/components/layouts/Navbar.jsx
 #: src/pages/NotificationPopover.jsx
 #: src/pages/Settings.jsx
 msgid "Notifications"
 msgstr "Notificaciones"
 
 #: src/pages/Settings.jsx
-msgid "Notifications disabled"
+msgid "Notifications activées"
+msgstr "Notificaciones activadas"
+
+#: src/pages/Settings.jsx
+msgid "Notifications désactivées"
 msgstr "Notificaciones desactivadas"
 
 #: src/pages/Settings.jsx
-msgid "Notifications enabled"
-msgstr "Notificaciones activadas"
+#~ msgid "Notifications disabled"
+#~ msgstr "Notificaciones desactivadas"
+
+#: src/pages/Settings.jsx
+#~ msgid "Notifications enabled"
+#~ msgstr "Notificaciones activadas"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Nous n'utilisons pas vos données à des fins de prospection commerciale, de publicité ciblée ou de revente à des tiers."
@@ -1032,12 +1276,24 @@ msgid "Objet"
 msgstr "Objeto"
 
 #: src/pages/Settings.jsx
-msgid "Once your account is deleted, all your data will be permanently removed from the system."
-msgstr "Una vez eliminada tu cuenta, todos tus datos se borrarán permanentemente del sistema."
+#~ msgid "Once your account is deleted, all your data will be permanently removed from the system."
+#~ msgstr "Una vez eliminada tu cuenta, todos tus datos se borrarán permanentemente del sistema."
 
 #: src/pages/Faq.jsx
 msgid "Oui, la messagerie et les alertes d'évaluation exploitent des websockets (Socket.IO). Vous recevez les nouveaux messages et mises à jour de statut utilisateur en direct sans avoir à rafraîchir la page."
 msgstr "Sí, la mensajería y las alertas de valoraciones utilizan websockets (Socket.IO). Recibirás nuevos mensajes y actualizaciones del estado de los usuarios en directo sin necesidad de recargar la página."
+
+#: src/pages/Produits.jsx
+msgid "Page {page}"
+msgstr "Página {page}"
+
+#: src/pages/Produits.jsx
+msgid "Page précédente"
+msgstr "Página anterior"
+
+#: src/pages/Produits.jsx
+msgid "Page suivante"
+msgstr "Página siguiente"
 
 #: src/pages/Faq.jsx
 msgid "Paiement & Sécurité"
@@ -1060,6 +1316,7 @@ msgid "Panier vide"
 msgstr "Cesta vacía"
 
 #: src/components/layouts/Navbar.jsx
+#: src/pages/Settings.jsx
 msgid "Paramètres"
 msgstr "Configuración"
 
@@ -1101,16 +1358,28 @@ msgid "Pays"
 msgstr "País"
 
 #: src/pages/Settings.jsx
-msgid "Permanently delete your account? This cannot be undone."
-msgstr "¿Eliminar permanentemente tu cuenta? Esta acción no se puede deshacer."
+#~ msgid "Permanently delete your account? This cannot be undone."
+#~ msgstr "¿Eliminar permanentemente tu cuenta? Esta acción no se puede deshacer."
 
 #: src/pages/Profile.jsx
-msgid "Personne vous a laisser d'avis pour l'instant"
+msgid "Personne ne vous a laissé d'avis pour l'instant"
 msgstr "Nadie te ha dejado una reseña por el momento"
 
+#: src/pages/Profile.jsx
+#~ msgid "Personne vous a laisser d'avis pour l'instant"
+#~ msgstr "Nadie te ha dejado una reseña por el momento"
+
 #: src/pages/Settings.jsx
-msgid "Please enter a valid amount."
-msgstr "Por favor, introduce un importe válido."
+msgid "Phrase secrète"
+msgstr "Frase secreta"
+
+#: src/pages/Settings.jsx
+msgid "Phrase secrète invalide."
+msgstr "Frase secreta no válida."
+
+#: src/pages/Settings.jsx
+#~ msgid "Please enter a valid amount."
+#~ msgstr "Por favor, introduce un importe válido."
 
 #: src/components/layouts/Footer.jsx
 #: src/pages/PrivacyPolicy.jsx
@@ -1126,8 +1395,12 @@ msgid "Possibilité d'activer l'authentification à double facteur (2FA) dans le
 msgstr "Posibilidad de activar la autenticación en dos pasos (2FA) en los ajustes."
 
 #: src/pages/Profile.jsx
-msgid "Poster votre premier produit en remplissant le formulaire ci-dessous."
-msgstr "Publica tu primer producto rellenando el siguiente formulario."
+#~ msgid "Poster votre premier produit en remplissant le formulaire ci-dessous."
+#~ msgstr "Publica tu primer producto rellenando el siguiente formulario."
+
+#: src/pages/Profile.jsx
+msgid "Postez votre premier produit en remplissant le formulaire ci-dessous."
+msgstr "Publica tu primer producto completando el formulario a continuación."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Pour exercer ces droits, contactez-nous à <0>contact@thegoodcorner.fr</0>. Vous disposez également d'un droit de réclamation auprès de la <1>CNIL</1>."
@@ -1156,6 +1429,10 @@ msgstr "Precio"
 #: src/components/products/ProductForm.jsx
 msgid "Prix (€)"
 msgstr "Precio (€)"
+
+#: src/pages/Produits.jsx
+msgid "Prix maximum"
+msgstr "Precio máximo"
 
 #: src/pages/CartPopover.jsx
 msgid "Procéder au paiement"
@@ -1188,6 +1465,7 @@ msgid "Produits similaires"
 msgstr "Productos similares"
 
 #: src/components/products/ProductForm.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Professionnel"
 msgstr "Profesional"
@@ -1219,8 +1497,13 @@ msgstr "Cantidad: {0}"
 
 #. placeholder {0}: item.quantity || 1
 #: src/pages/Checkout.jsx
-msgid "Quantité: <0>{0}</0>"
+msgid "Quantité : <0>{0}</0>"
 msgstr "Cantidad: <0>{0}</0>"
+
+#. placeholder {0}: item.quantity || 1
+#: src/pages/Checkout.jsx
+#~ msgid "Quantité: <0>{0}</0>"
+#~ msgstr "Cantidad: <0>{0}</0>"
 
 #: src/pages/Faq.jsx
 msgid "Quelles sont les exigences pour le mot de passe ?"
@@ -1246,16 +1529,28 @@ msgstr "Buscar un usuario..."
 msgid "Rechercher une conversation..."
 msgstr "Buscar una conversación..."
 
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Recommencer"
+msgstr "Reiniciar"
+
 #: src/pages/Profile.jsx
 msgid "Refuser"
 msgstr "Rechazar"
+
+#: src/pages/Profile.jsx
+msgid "Refuser la demande d'ami"
+msgstr "Rechazar la solicitud de amistad"
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Région"
 msgstr "Región"
 
 #: src/pages/Profile.jsx
-msgid "Remplire les informations pour créer un nouveau produit"
+#~ msgid "Remplire les informations pour créer un nouveau produit"
+#~ msgstr "Rellena los datos para crear un nuevo producto"
+
+#: src/pages/Profile.jsx
+msgid "Remplis les informations pour créer un nouveau produit"
 msgstr "Rellena los datos para crear un nuevo producto"
 
 #: src/pages/SellerProfile.jsx
@@ -1286,6 +1581,10 @@ msgstr "Volver a las conversaciones"
 #: src/pages/SellerProfile.jsx
 msgid "Retour aux produits"
 msgstr "Volver a los productos"
+
+#: src/pages/Settings.jsx
+msgid "Retourner à l'accueil"
+msgstr "Volver al inicio"
 
 #: src/pages/SuccessCheckout.jsx
 msgid "Retourner sur les produits"
@@ -1333,6 +1632,7 @@ msgstr "Saber si una sesión está potencialmente activa al cargar"
 #: src/pages/Login.jsx
 #: src/pages/Messagerie.jsx
 #: src/pages/Profile.jsx
+#: src/pages/Settings.jsx
 msgid "Se connecter"
 msgstr "Iniciar sesión"
 
@@ -1353,8 +1653,8 @@ msgid "Selon votre usage du site, nous collectons :"
 msgstr "Según el uso que hagas del sitio, recopilamos:"
 
 #: src/pages/Settings.jsx
-msgid "Settings"
-msgstr "Configuración"
+#~ msgid "Settings"
+#~ msgstr "Configuración"
 
 #: src/pages/Checkout.jsx
 msgid "Solde de votre portefeuille"
@@ -1401,6 +1701,12 @@ msgstr "Soporte"
 msgid "Support & Contact"
 msgstr "Soporte y contacto"
 
+#: src/pages/Settings.jsx
+msgid "Suppression..."
+msgstr "Eliminando..."
+
+#: src/components/products/ProductCard.jsx
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Profile.jsx
 msgid "Supprimer"
 msgstr "Eliminar"
@@ -1409,14 +1715,38 @@ msgstr "Eliminar"
 msgid "Supprimer cet avis"
 msgstr "Eliminar esta reseña"
 
+#: src/pages/Profile.jsx
+msgid "Supprimer de la liste d'amis"
+msgstr "Eliminar de la lista de amigos"
+
+#: src/pages/Settings.jsx
+msgid "Supprimer définitivement"
+msgstr "Eliminar definitivamente"
+
+#: src/components/products/ProductCard.jsx
+msgid "Supprimer l'annonce"
+msgstr "Eliminar el anuncio"
+
+#: src/components/products/ProductCard.jsx
+msgid "Supprimer l'annonce ?"
+msgstr "¿Eliminar el anuncio?"
+
 #. placeholder {0}: interlocutor.username
 #: src/components/chat/ConversationListItem.jsx
 msgid "Supprimer la conversation avec {0}"
 msgstr "Eliminar la conversación con {0}"
 
+#: src/pages/Settings.jsx
+msgid "Supprimer le compte"
+msgstr "Eliminar cuenta"
+
 #: src/components/chat/MessageBubble.jsx
 msgid "Supprimer le message"
 msgstr "Eliminar el mensaje"
+
+#: src/pages/Settings.jsx
+msgid "Supprimer votre compte ?"
+msgstr "¿Eliminar tu cuenta?"
 
 #: src/pages/TermsOfService.jsx
 msgid "Suspension et résiliation"
@@ -1463,11 +1793,20 @@ msgstr "TheGoodCorner es una plataforma que pone en contacto a particulares que 
 msgid "Thème"
 msgstr "Tema"
 
+#: src/pages/Settings.jsx
+msgid "Thème clair activé"
+msgstr "Tema claro activado"
+
+#: src/pages/Settings.jsx
+msgid "Thème sombre activé"
+msgstr "Tema oscuro activado"
+
 #: src/pages/CartPopover.jsx
 #: src/pages/Checkout.jsx
 msgid "Total :"
 msgstr "Total:"
 
+#: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Tous"
 msgstr "Todos"
@@ -1488,9 +1827,25 @@ msgstr "Tipo"
 msgid "Un compte est personnel : vous êtes responsable de la confidentialité de votre mot de passe et de toute activité effectuée depuis votre compte."
 msgstr "Una cuenta es personal: eres responsable de la confidencialidad de tu contraseña y de cualquier actividad realizada desde tu cuenta."
 
+#: src/components/reviews/ReviewCard.jsx
+msgid "Une erreur est survenue lors de l'enregistrement."
+msgstr "Se produjo un error al guardar."
+
+#: src/pages/Checkout.jsx
+msgid "Une erreur est survenue lors de l'initialisation du paiement."
+msgstr "Se produjo un error al inicializar el pago."
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Une erreur est survenue."
+msgstr "Se ha producido un error."
+
 #: src/pages/Faq.jsx
 msgid "Une fois connecté, rendez-vous sur votre profil ou sur la page Produits pour remplir le formulaire d'ajout (nom du produit, prix, catégorie, description et photo de couverture)."
 msgstr "Una vez conectado, dirígete a tu perfil o a la página de Productos para rellenar el formulario de alta (nombre del producto, precio, categoría, descripción y foto de portada)."
+
+#: src/pages/Settings.jsx
+msgid "Une fois votre compte supprimé, toutes vos données seront définitivement effacées du système."
+msgstr "Una vez eliminada tu cuenta, todos tus datos se borrarán permanentemente del sistema."
 
 #: src/pages/Faq.jsx
 msgid "Une question supplémentaire sur le projet ? Contactez l'équipe de développement à l'adresse : <0>contact@thegoodcorner.fr</0>."
@@ -1505,16 +1860,16 @@ msgid "Une question sur vos données ? <0>contact@thegoodcorner.fr</0>"
 msgstr "¿Tienes dudas sobre tus datos? <0>contact@thegoodcorner.fr</0>"
 
 #: src/pages/Settings.jsx
-msgid "Unlocked"
-msgstr "Desbloqueado"
+#~ msgid "Unlocked"
+#~ msgstr "Desbloqueado"
 
 #: src/pages/Settings.jsx
-msgid "User ID not found in token."
-msgstr "ID de usuario no encontrado en el token."
+#~ msgid "User ID not found in token."
+#~ msgstr "ID de usuario no encontrado en el token."
 
 #: src/pages/Settings.jsx
-msgid "User identifier not found."
-msgstr "Identificador de usuario no encontrado."
+#~ msgid "User identifier not found."
+#~ msgstr "Identificador de usuario no encontrado."
 
 #: src/pages/Profile.jsx
 #: src/pages/SellerProfile.jsx
@@ -1522,14 +1877,15 @@ msgid "Utilisateur"
 msgstr "Usuario"
 
 #: src/pages/Settings.jsx
-msgid "Validate"
-msgstr "Validar"
+#~ msgid "Validate"
+#~ msgstr "Validar"
 
 #: src/components/checkout/checkoutForm.jsx
 msgid "Validation en cours..."
 msgstr "Procesando pago..."
 
 #: src/components/chat/MessageBubble.jsx
+#: src/pages/Settings.jsx
 msgid "Valider"
 msgstr "Guardar"
 
@@ -1559,6 +1915,10 @@ msgstr "Vendedor no encontrado"
 msgid "Vendu par"
 msgstr "Vendido por"
 
+#: src/pages/Settings.jsx
+msgid "Veuillez saisir un montant valide."
+msgstr "Por favor, introduce un importe válido."
+
 #: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Victime de son succès"
@@ -1567,6 +1927,10 @@ msgstr "Víctima de su éxito"
 #: src/components/profile/ProfilInfos.jsx
 msgid "Ville"
 msgstr "Ciudad"
+
+#: src/components/profile/TwoFactorSettings.jsx
+msgid "Voici une liste de codes individuels de secours, ils sont à usage unique.<0/>Ils vous serviront en cas de perte de votre secret.<1/>Gardez-les précieusement et ne les partagez pas."
+msgstr "Aquí tienes una lista de códigos de emergencia individuales, son de un solo uso.<0/>Te servirán en caso de pérdida de tu clave secreta.<1/>Guárdalos cuidadosamente y no los compartas."
 
 #: src/components/profile/ProfilInfos.jsx
 msgid "Voir le détail de l'adresse"
@@ -1661,3 +2025,7 @@ msgstr "Puedes dejar una reseña (valoración y comentario) en el perfil de un v
 #: src/pages/TermsOfService.jsx
 msgid "Vous vous engagez à fournir des informations exactes lors de votre inscription."
 msgstr "Te comprometes a facilitar información exacta durante tu registro."
+
+#: src/pages/Settings.jsx
+msgid "Zone de danger"
+msgstr "Zona de peligro"

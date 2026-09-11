@@ -1,12 +1,10 @@
-import { useState, Suspense, lazy, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useThemeStore } from '../../stores/themeStore';
 import { useCartStore } from '../../stores/cartStore';
-import { useMessageStore } from '../../stores/messageStore';
 import { useUIStore } from '../../stores/uiStore';
 import { useAuthStore } from '../../stores/authStore';
-import { useNotificationStore } from '../../stores/notificationStore';
 import { useUserStore } from '../../stores/userStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
@@ -30,16 +28,9 @@ function Navbar() {
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const cartCount = useCartStore((state) => state.cartCount);
-  const unreadCounts = useMessageStore((state) => state.unreadCounts);
-  const notifications = useNotificationStore((state) => state.notifications);
-  const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const { isAuthenticated, logout, initializing } = useAuthStore();
   const user = useUserStore((state) => state.user);
   const navigate = useNavigate();
-
-  const unreadNotifCount = (notifications || []).filter((n) => !n.read).length;
-  const notificationCount =
-    Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
 
   const openUi = useUIStore((state) => state.openUi);
 
@@ -106,30 +97,8 @@ function Navbar() {
               aria-label={t`Thème`}
             />
 
-            {isAuthenticated && (
-              <div
-                className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`}
-                ref={notifRef}
-              >
-                <Button
-                  onClick={() => {
-                    if (!notificationsEnabled) return;
-                    toggleUi('notification-popover');
-                  }}
-                  variant="ghost"
-                  icon={Bell}
-                  aria-label={t`Notifications`}
-                />
-                {notificationsEnabled && notificationCount > 0 && (
-                  <div className={badge}>{notificationCount}</div>
-                )}
-                {notificationsEnabled && isNotifOpen && (
-                  <Suspense fallback={null}>
-                    <NotificationPopover />
-                  </Suspense>
-                )}
-              </div>
-            )}
+            {/* Desktop Notification Bell */}
+            {isAuthenticated && <NotificationBell />}
 
             <div className="relative">
               <Button
@@ -215,30 +184,8 @@ function Navbar() {
               aria-label={t`Thème`}
             />
 
-            {isAuthenticated && (
-              <div
-                className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`}
-                ref={notifRef}
-              >
-                <Button
-                  onClick={() => {
-                    if (!notificationsEnabled) return;
-                    toggleUi('notification-popover');
-                  }}
-                  variant="ghost"
-                  icon={Bell}
-                  aria-label={t`Notifications`}
-                />
-                {notificationsEnabled && notificationCount > 0 && (
-                  <div className={badge}>{notificationCount}</div>
-                )}
-                {notificationsEnabled && (
-                  <Suspense fallback={null}>
-                    <NotificationPopover />
-                  </Suspense>
-                )}
-              </div>
-            )}
+            {/* Mobile Notification Bell */}
+            {isAuthenticated && <NotificationBell />}
 
             <div className="relative">
               <Button
