@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { Button } from '../UI/Button';
 import { useCartStore } from '../../stores/cartStore';
 import { useUIStore } from '../../stores/uiStore';
-import { PlusCircle, Star, Trash2 } from 'lucide-react';
+import { PlusCircle, Star, Trash2, Pencil, X } from 'lucide-react';
 import Avatar from '../UI/Avatar';
+import { ProductForm } from './ProductForm';
 
 export default function ProductCard({ product, allowOutOfStock = false, isOwner = false, onDelete }) {
 
     const [showConfirm, setShowConfirm] = useState(false);
+    const [showEdit, setShowEdit] = useState(false);
     const [deleting, setDeleting] = useState(false);
     const [localError, setLocalError] = useState(null);
     const addToCart = useCartStore((state) => state.addToCart);
@@ -39,6 +41,11 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
         }
     };
 
+    const handleEditClick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setShowEdit(true);
+    };
 
     const handleDeleteClick = (e) => {
         e.preventDefault();
@@ -105,16 +112,27 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
             </div>
         </div>
 
-        {isOwner && (
-            <button
-            onClick={handleDeleteClick}
-            disabled={deleting}
-            title="Supprimer l'annonce"
-            aria-label="Supprimer l'annonce"
-            className="p-1.5 rounded-full text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors disabled:opacity-50"
-        >
-            <Trash2 size={16} />
-        </button>
+        {isOwner && isInStock && (
+            <div className="flex items-center gap-1">
+                <button
+                    onClick={handleEditClick}
+                    disabled={deleting}
+                    title="Modifier l'annonce"
+                    aria-label="Modifier l'annonce"
+                    className="p-1.5 rounded-full text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors disabled:opacity-50"
+                >
+                    <Pencil size={16} />
+                </button>
+                <button
+                    onClick={handleDeleteClick}
+                    disabled={deleting}
+                    title="Supprimer l'annonce"
+                    aria-label="Supprimer l'annonce"
+                    className="p-1.5 rounded-full text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors disabled:opacity-50"
+                >
+                    <Trash2 size={16} />
+                </button>
+            </div>
         )}
         </div>
 
@@ -190,6 +208,35 @@ export default function ProductCard({ product, allowOutOfStock = false, isOwner 
                                 Supprimer
                             </Button>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showEdit && (
+                <div
+                    className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowEdit(false); }}
+                >
+                    <div
+                        className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-semibold text-[var(--color-text)]">
+                                Modifier l'annonce
+                            </h3>
+                            <button
+                                onClick={() => setShowEdit(false)}
+                                aria-label="Fermer"
+                                className="p-1.5 rounded-full text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+                        <ProductForm
+                            product={product}
+                            onSuccess={() => setShowEdit(false)}
+                        />
                     </div>
                 </div>
             )}
