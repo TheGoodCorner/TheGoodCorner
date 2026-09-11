@@ -26,6 +26,7 @@ function Messagerie() {
   const messagesLoading = useMessageStore((state) => state.messagesLoading);
   const sendMessage = useMessageStore((state) => state.sendMessage);
   const sending = useMessageStore((state) => state.sending);
+  const error = useMessageStore((state) => state.error);
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
   const updateMessage = useMessageStore((state) => state.updateMessage);
   const deleteMessage = useMessageStore((state) => state.deleteMessage);
@@ -105,29 +106,44 @@ function Messagerie() {
     setShowThreadOnMobile(true);
   };
 
+  const handleMessageTextChange = (text) => {
+    setMessageText(text);
+    if (sendError) {
+      setSendError(null);
+    }
+  };
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-	setSendError(null);
+    setSendError(null);
     const trimmed = messageText.trim();
     
-    // Sécurité de longueur et contenu vide
-    if (!trimmed || !activeConversationId || trimmed.length > 5000) {
-		setSendError('Le message est trop long (maximum 5000 caractères).');
-		return;
-	}
+    if (!trimmed) {
+      setSendError('Le message ne peut pas être vide.');
+      setTimeout(() => setSendError(null), 5000);
+      return;
+    }
+
+    if (!activeConversationId || !activeConversation) {
+      setSendError('Aucune conversation sélectionnée.');
+      setTimeout(() => setSendError(null), 5000);
+      return;
+    }
+
+    if (trimmed.length > 5000) {
+      setSendError('Le message est trop long (maximum 5000 caractères).');
+      setTimeout(() => setSendError(null), 5000);
+      return;
+    }
 
     setMessageText('');
     try {
       await sendMessage(activeConversationId, trimmed);
     } catch (err) {
-      setMessageText(trimmed); // Restauration en cas d'échec
-	  setSendError(err?.message || 'Erreur lors de l\'envoi du message');
+      setMessageText(trimmed); // Restaure le texte
+      setSendError(err?.message || 'Erreur lors de l\'envoi du message');
+      setTimeout(() => setSendError(null), 5000);
     }
-	const handleMessageTextChange = (text) => {
-	  setMessageText(text);
-	  if (sendError)
-		setSendError(null);
-	};
   };
 
   if (initializing) {
@@ -185,14 +201,14 @@ function Messagerie() {
               currentUserId={currentUser.id}
               editingMessageId={editingMessageId}
               editingContent={editingContent}
-			  sendError={sendError}
+              sendError={sendError || error}
               onEditingContentChange={setEditingContent}
               onStartEdit={startEditingMessage}
               onSaveEdit={saveEditingMessage}
               onCancelEdit={cancelEditingMessage}
               onDeleteMessage={handleDeleteMessage}
               messageText={messageText}
-              onMessageTextChange={setMessageText}
+              onMessageTextChange={handleMessageTextChange}
               onSendMessage={handleSendMessage}
               sending={sending}
               onBack={() => setShowThreadOnMobile(false)}

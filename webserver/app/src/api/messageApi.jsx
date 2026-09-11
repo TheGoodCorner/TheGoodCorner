@@ -6,29 +6,25 @@ export async function SendMessage(receiver_id, content) {
     const userId = useUserStore.getState().user?.id;
     
     if (!userId) {
-        console.error('Pas d\'userId trouvé');
-        return;
+        throw new Error('Pas d\'userId trouvé');
     }
-	if (!receiver_id) {
-        console.error('Pas de destinataire trouvé');
-        return;
+    if (!receiver_id) {
+        throw new Error('Pas de destinataire trouvé');
     }
-	const text = typeof content === 'string' ? content.trim() :  '';
-	if (!text)
-	{
-		console.error('Le contenu du message ne peut pas etre vide');
-		return ;
-	}
-	if (text.length > 5000)
-	{
-		console.error('Contenu du message trop long');
-        return;
-	}
-	if (!socket || !socket.connected)
-	{
-		console.error('Socket non connecte');
-        return;
-	}
+    
+    const text = typeof content === 'string' ? content.trim() : '';
+    if (!text) {
+        throw new Error('Le contenu du message ne peut pas être vide');
+    }
+    
+    if (text.length > 5000) {
+        throw new Error('Contenu du message trop long');
+    }
+    
+    if (!socket || !socket.connected) {
+        throw new Error('Socket non connecté');
+    }
+    
     socket.emit('send_direct_message', {
         senderId: userId,
         receiverId: receiver_id,
@@ -50,7 +46,6 @@ export async function GetAllMessages()
 
 
 
-// DELETE ET UPDATE A MIGRER SUR SOCKET AUSSI A FAIRE PLUS TARD
 export async function UpdateMessage(message_id, content)
 {
     const { data } = await apiClient.put(`/message/${message_id}`, {
@@ -58,7 +53,6 @@ export async function UpdateMessage(message_id, content)
     })
     return data.data
 }
-
 
 export async function DeleteMessage(message_id)
 {
