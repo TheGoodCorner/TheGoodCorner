@@ -5,7 +5,6 @@ import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
 import { ProfilHeader } from "../components/profile/ProfilHeader";
 import { ProfilInfos } from "../components/profile/ProfilInfos";
-import { TwoFactorSettings } from "../components/profile/TwoFactorSettings";
 import { ReviewCard } from "../components/reviews/ReviewCard";
 import ProductCard from "../components/products/ProductCard";
 import { useAuthStore } from "../stores/authStore";
@@ -449,8 +448,6 @@ function Profile() {
         </div>
 
       )}
-
-      <TwoFactorSettings />
 
       <section className="bg-[var(--color-surface)]">
         <div className="px-6 sm:px-8 lg:px-12 py-16">

@@ -4,6 +4,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
 import { apiClient } from '../api/client';
 import { useNotificationStore } from '../stores/notificationStore';
+import { TwoFactorSettings } from '../components/profile/TwoFactorSettings';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', flag: '🇬🇧' },
@@ -18,10 +19,13 @@ export default function Settings() {
 
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
+
+  const [show2FASettings, setShow2FASettings] = useState(false);
+
   const token = useAuthStore((state) => state.token) || localStorage.getItem('token');
   const logout = useAuthStore((state) => state.logout);
 
-   const theme = useThemeStore((state) => state.theme);
+  const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const isDarkMode = theme === 'dark';
 
@@ -56,6 +60,10 @@ export default function Settings() {
     localStorage.setItem('language', selectedLang);
   };
 
+  const handleToggle2FA = () => {
+    setShow2FASettings((prev) => !prev);
+  };
+
   const handleToggleNotifications = () => {
     toggleNotifications();
   };
@@ -85,8 +93,11 @@ export default function Settings() {
       return;
     }
     if (currentBudget + numericAmount > MAX_AMOUNT) {
-    setDevFeedback({type: 'error', message: `Le solde total ne peut pas dépasser ${MAX_AMOUNT}€. (Solde actuel : ${currentBudget}€)`,});
-    return;
+      setDevFeedback({
+        type: 'error',
+        message: `Le solde total ne peut pas dépasser ${MAX_AMOUNT}€. (Solde actuel : ${currentBudget}€)`,
+      });
+      return;
     }
 
     try {
@@ -112,27 +123,27 @@ export default function Settings() {
 
   const handleDeleteClick = () => {
     if (!userId) {
-        setError('Identifiant utilisateur introuvable.');
-        return;
+      setError('Identifiant utilisateur introuvable.');
+      return;
     }
     setShowConfirm(true);
   };
 
   const confirmDeleteAccount = async () => {
-      setShowConfirm(false);
-      setLoading(true);
-      setError(null);
+    setShowConfirm(false);
+    setLoading(true);
+    setError(null);
 
-      try {
-          await apiClient.delete(`/user/${userId}`);
-          if (logout) logout();
-          localStorage.removeItem('token');
-          navigate('/');
-      } catch (err) {
-          setError(err.message || 'Erreur lors de la suppression.');
-      } finally {
-          setLoading(false);
-      }
+    try {
+      await apiClient.delete(`/user/${userId}`);
+      if (logout) logout();
+      localStorage.removeItem('token');
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'Erreur lors de la suppression.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -166,6 +177,7 @@ export default function Settings() {
           </div>
         )}
 
+        {/* Langue */}
         <div
           className="mb-6 pb-6"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -187,7 +199,6 @@ export default function Settings() {
               borderColor: 'var(--color-border)',
               borderWidth: '1px',
               color: 'var(--color-text)',
-              focusRingColor: 'var(--color-primary)',
             }}
           >
             {LANGUAGES.map((lang) => (
@@ -198,6 +209,7 @@ export default function Settings() {
           </select>
         </div>
 
+        {/* Mode sombre */}
         <div
           className="mb-6 pb-6 flex items-center justify-between"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -219,7 +231,6 @@ export default function Settings() {
             className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
             style={{
               backgroundColor: isDarkMode ? 'var(--color-primary)' : 'var(--color-surface-hover)',
-              focusRingColor: 'var(--color-primary)',
             }}
           >
             <span
@@ -232,6 +243,7 @@ export default function Settings() {
           </button>
         </div>
 
+        {/* Notifications */}
         <div
           className="mb-6 pb-6 flex items-center justify-between"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -253,7 +265,6 @@ export default function Settings() {
             className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
             style={{
               backgroundColor: notificationsEnabled ? 'var(--color-primary)' : 'var(--color-surface-hover)',
-              focusRingColor: 'var(--color-primary)',
             }}
           >
             <span
@@ -266,6 +277,52 @@ export default function Settings() {
           </button>
         </div>
 
+        {/* 2FA Toggle & Section */}
+        <div
+          className="mb-6 pb-6"
+          style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
+        >
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+                Double authentification (2FA)
+              </h2>
+              <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
+                {show2FASettings ? 'Masquer le panneau de configuration' : 'Afficher les options de sécurité 2FA'}
+              </p>
+            </div>
+
+            <button
+              type="button"
+              role="switch"
+              aria-checked={show2FASettings}
+              onClick={handleToggle2FA}
+              className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
+              style={{
+                backgroundColor: show2FASettings ? 'var(--color-primary)' : 'var(--color-surface-hover)',
+              }}
+            >
+              <span
+                className="inline-block h-5 w-5 rounded-full shadow-lg transition duration-200"
+                style={{
+                  backgroundColor: 'var(--color-on-primary)',
+                  transform: show2FASettings ? 'translateX(20px)' : 'translateX(0)',
+                }}
+              />
+            </button>
+          </div>
+
+          {show2FASettings && (
+            <div
+              className="mt-4 rounded-[var(--radius-md)] border overflow-hidden"
+              style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface-hover)' }}
+            >
+              <TwoFactorSettings />
+            </div>
+          )}
+        </div>
+
+        {/* Mode Développeur */}
         <div
           className="mb-8 pb-8"
           style={{ borderBottomColor: 'var(--color-border)', borderBottomWidth: '1px' }}
@@ -372,6 +429,7 @@ export default function Settings() {
           )}
         </div>
 
+        {/* Zone de danger */}
         <div
           className="p-5 rounded-[var(--radius-lg)]"
           style={{
@@ -397,11 +455,12 @@ export default function Settings() {
               opacity: loading ? 0.6 : 1,
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
-          > 
+          >
             {loading ? 'Suppression...' : 'Supprimer le compte'}
           </button>
         </div>
 
+        {/* Confirmation Modal */}
         {showConfirm && (
           <div
             className="fixed inset-0 flex items-center justify-center z-50"

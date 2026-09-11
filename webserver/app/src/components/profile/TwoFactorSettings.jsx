@@ -39,15 +39,15 @@ export function TwoFactorSettings() {
       <p className="mb-4">{enabled === null ? 'Chargement…' : enabled ? '2FA activée' : 'Active la double authentification'}</p>
       {recoveryCodes.length > 0 ? (
         <div className="space-y-3">
-          <p>Voici vos codes de secours à usage unique. Ils vous serviront en cas de perte de votre secret. Gardez les précieusement et ne les partagez pas.</p>
-          <pre className="select-all">{recoveryCodes.join('\n')}</pre>
+          <p>Voici une liste de codes individuels de secours, ils sont à usage unique.<br /> Ils vous serviront en cas de perte de votre secret.<br /> Gardez les précieusement et ne les partagez pas.</p>
+          <pre className="select-all">{recoveryCodes.map((item, index) => `code ${index + 1} - ${item}`).join('\n')}</pre>
           <Button onClick={() => setRecoveryCodes([])}>Continuer</Button>
         </div>
       ) : enabled !== null && (
         <form onSubmit={submit} className="max-w-md space-y-4">
           <FormField icon={Lock} id="2fa-password" label="Mot de passe" type="password" autoComplete="current-password" required value={password} onChange={e => setPassword(e.target.value)} disabled={busy} />
           {secret && <div className="space-y-2">
-            <p>Enregistrez le secret dans votre application d'authentification. Ne le partagez à personne.</p>
+            <p>Enregistrez le secret dans votre application d'authentification (TOTP)<br />. Ne le partagez à personne car il permet la generation de code d'acces.</p>
             <code className="block break-all select-all">{secret}</code>
           </div>}
           {(enabled || secret) && <FormField icon={Lock} id="2fa-code" label={enabled ? 'Code de l’application ou code de secours' : 'Code à six chiffres'} type="text" autoComplete="one-time-code" required value={code} onChange={e => setCode(e.target.value)} disabled={busy} />}
