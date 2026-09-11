@@ -64,13 +64,10 @@ function Products() {
                     </p>
                 </div>
 
-                {/* Contenu Responsive */}
                 <div className="flex flex-col lg:flex-row gap-6 items-start">
-
                     {/* Sidebar Filtres */}
                     <aside className="w-full lg:w-64 shrink-0 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 lg:sticky lg:top-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
-
                             {/* Section Catégories */}
                             <div>
                                 <div className="flex items-center gap-2 font-semibold text-sm text-[var(--color-text)] mb-2.5">
@@ -81,7 +78,7 @@ function Products() {
                                 </div>
 
                                 <div className="flex flex-wrap lg:flex-col gap-1.5">
-                                    {RAW_STANDARD_CATEGORIES.map((categoryKey) => {
+                                    {STANDARD_CATEGORIES.map((categoryKey) => {
                                         const isSelected =
                                             categoryKey === "All"
                                                 ? filters.selectedCategory === ""
@@ -97,11 +94,7 @@ function Products() {
                                                     : "bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                                                     }`}
                                             >
-<<<<<<< HEAD
-                                                {category === "All" ? "Tous" : getCategoryLabel(category)}
-=======
-                                                {categoryLabels[categoryKey] || categoryKey}
->>>>>>> origin/languages
+                                                {categoryLabels[categoryKey] ?? getCategoryLabel(categoryKey)}
                                             </button>
                                         );
                                     })}
@@ -133,6 +126,7 @@ function Products() {
                                         <div className="flex items-center justify-between bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-md px-2 py-1 flex-1">
                                             <button
                                                 type="button"
+                                                aria-label={t`Diminuer le prix minimum`}
                                                 onClick={() =>
                                                     setFilters({
                                                         ...filters,
@@ -146,6 +140,7 @@ function Products() {
                                             <span className="font-medium">{filters.minPrice || 0}€</span>
                                             <button
                                                 type="button"
+                                                aria-label={t`Augmenter le prix minimum`}
                                                 onClick={() =>
                                                     setFilters({
                                                         ...filters,
@@ -168,6 +163,7 @@ function Products() {
                                         <div className="flex items-center justify-between bg-[var(--color-surface-hover)] border border-[var(--color-border)] rounded-md px-2 py-1 flex-1">
                                             <button
                                                 type="button"
+                                                aria-label={t`Diminuer le prix maximum`}
                                                 onClick={() =>
                                                     setFilters({
                                                         ...filters,
@@ -186,6 +182,7 @@ function Products() {
                                             </span>
                                             <button
                                                 type="button"
+                                                aria-label={t`Augmenter le prix maximum`}
                                                 onClick={() =>
                                                     setFilters({
                                                         ...filters,
@@ -204,6 +201,7 @@ function Products() {
 
                                     <input
                                         type="range"
+                                        aria-label={t`Prix maximum`}
                                         min="0"
                                         max={PRODUCT_PRICE_MAX}
                                         step="5"
@@ -221,7 +219,6 @@ function Products() {
                                     />
                                 </div>
                             </div>
-
                         </div>
                     </aside>
 
@@ -261,6 +258,9 @@ function Products() {
                                     breakLabel="..."
                                     nextLabel={<ChevronRight size={18} />}
                                     previousLabel={<ChevronLeft size={18} />}
+                                    ariaLabelBuilder={(page) => t`Page ${page}`}
+                                    previousAriaLabel={t`Page précédente`}
+                                    nextAriaLabel={t`Page suivante`}
                                     onPageChange={handlePageClick}
                                     pageRangeDisplayed={2}
                                     marginPagesDisplayed={1}
@@ -282,7 +282,7 @@ function Products() {
                             </div>
                         )}
 
-                        {/* Footer de résultats avec Plural */}
+                        {/* Footer de résultats */}
                         <div className="border-t border-[var(--color-border)] pt-4 mt-6">
                             <p className="text-sm text-[var(--color-text-muted)]">
                                 <Plural

@@ -10,7 +10,18 @@ import { useNotificationStore } from '../../stores/notificationStore';
 import { useUserStore } from '../../stores/userStore';
 import { Button } from '../UI/Button';
 import Avatar from '../UI/Avatar';
-import { Moon, Sun, ShoppingCart, Menu, X, LogOut, UserRound, MessageCircle, Settings, Package } from 'lucide-react';
+import {
+  Moon,
+  Sun,
+  ShoppingCart,
+  Menu,
+  X,
+  LogOut,
+  UserRound,
+  MessageCircle,
+  Settings,
+  Package,
+} from 'lucide-react';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { NotificationBell } from './NotificationBell';
 
@@ -27,7 +38,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   const unreadNotifCount = (notifications || []).filter((n) => !n.read).length;
-  const notificationCount = Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
+  const notificationCount =
+    Object.values(unreadCounts).reduce((sum, n) => sum + n, 0) + unreadNotifCount;
 
   const openUi = useUIStore((state) => state.openUi);
 
@@ -35,12 +47,15 @@ function Navbar() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useClickOutside(() => setProfileOpen(false), profileOpen);
 
-  const userMenuItems = useMemo(() => [
-    { to: '/profile', icon: UserRound, label: t`Mon profil` },
-    { to: '/messagerie', icon: MessageCircle, label: t`Messagerie` },
-    { to: '/orders', icon: Package, label: t`Mes commandes` },
-    { to: '/settings', icon: Settings, label: t`Paramètres` },
-  ], [t]);
+  const userMenuItems = useMemo(
+    () => [
+      { to: '/profile', icon: UserRound, label: t`Mon profil` },
+      { to: '/messagerie', icon: MessageCircle, label: t`Messagerie` },
+      { to: '/orders', icon: Package, label: t`Mes commandes` },
+      { to: '/settings', icon: Settings, label: t`Paramètres` },
+    ],
+    [t]
+  );
 
   const handleLogout = () => {
     logout();
@@ -49,14 +64,17 @@ function Navbar() {
     setProfileOpen(false);
   };
 
-  const navLink = "px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors";
+  const navLink =
+    'px-3 py-2 rounded-[var(--radius-md)] text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors';
 
   return (
     <nav className="sticky top-0 z-50 bg-[var(--color-surface)] border-b border-[var(--color-border)] shadow-sm">
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-4">
-
-          <Link to="/" className="text-xl font-bold text-[var(--color-primary)] whitespace-nowrap flex-shrink-0">
+          <Link
+            to="/"
+            className="text-xl font-bold text-[var(--color-primary)] whitespace-nowrap flex-shrink-0"
+          >
             🛍️ TheGoodCorner
           </Link>
 
@@ -89,9 +107,15 @@ function Navbar() {
             />
 
             {isAuthenticated && (
-              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+              <div
+                className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`}
+                ref={notifRef}
+              >
                 <Button
-                  onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }}
+                  onClick={() => {
+                    if (!notificationsEnabled) return;
+                    toggleUi('notification-popover');
+                  }}
                   variant="ghost"
                   icon={Bell}
                   aria-label={t`Notifications`}
@@ -130,62 +154,57 @@ function Navbar() {
                     onClick={() => setProfileOpen((o) => !o)}
                     className="flex items-center gap-2 px-3 py-1.5 rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
                   >
-                    <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
-                    <span className="text-sm font-medium text-[var(--color-text)] max-w-[100px] truncate">{user?.username}</span>
+                    <Avatar
+                      src={user?.avatar}
+                      alt={user?.username}
+                      name={user?.username}
+                      size="sm"
+                    />
+                    <span className="text-sm font-medium text-[var(--color-text)] max-w-[100px] truncate">
+                      {user?.username}
+                    </span>
                   </button>
                   {profileOpen && (
                     <div className="absolute right-0 top-full mt-2 w-52 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] shadow-xl py-1 z-50">
                       <div className="px-3 py-2 border-b border-[var(--color-border)]">
-                        <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
-                        <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                        <p className="text-sm font-semibold text-[var(--color-text)] truncate">
+                          {user?.username}
+                        </p>
+                        <p className="text-xs text-[var(--color-text-muted)] truncate">
+                          {user?.email}
+                        </p>
                       </div>
-                      {[
-                        { to: '/profile', icon: UserRound, label: 'Mon profil' },
-                        { to: '/messagerie', icon: MessageCircle, label: 'Messagerie' },
-                        { to: '/orders', icon: Package, label: 'Mes commandes' },
-                        { to: '/settings', icon: Settings, label: 'Paramètres' },
-                      ].map(({ to, icon: Icon, label }) => (
-                        <Link key={to} to={to} onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors">
+                      {userMenuItems.map(({ to, icon: Icon, label }) => (
+                        <Link
+                          key={to}
+                          to={to}
+                          onClick={() => setProfileOpen(false)}
+                          className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors"
+                        >
                           <Icon size={16} /> {label}
                         </Link>
                       ))}
                       <div className="border-t border-[var(--color-border)] mt-1">
-                        <button onClick={handleLogout} className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors">
-                          <LogOut size={16} /> Se déconnecter
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors"
+                        >
+                          <LogOut size={16} />
+                          <Trans>Se déconnecter</Trans>
                         </button>
                       </div>
                     </div>
-                    {userMenuItems.map(({ to, icon: Icon, label }) => (
-                      <Link
-                        key={to}
-                        to={to}
-                        onClick={() => setProfileOpen(false)}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors"
-                      >
-                        <Icon size={16} /> {label}
-                      </Link>
-                    ))}
-                    <div className="border-t border-[var(--color-border)] mt-1">
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-danger-surface)] transition-colors"
-                      >
-                        <LogOut size={16} />
-                        <Trans>Se déconnecter</Trans>
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <Link
-                to="/authentication"
-                className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
-              >
-                <Trans>Se connecter</Trans>
-              </Link>
-            )}
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to="/authentication"
+                  className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
+                >
+                  <Trans>Se connecter</Trans>
+                </Link>
+              )}
+            </div>
           </div>
 
           <div className="flex md:hidden items-center gap-1">
@@ -197,9 +216,15 @@ function Navbar() {
             />
 
             {isAuthenticated && (
-              <div className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`} ref={notifRef}>
+              <div
+                className={`relative ${!notificationsEnabled ? 'opacity-40 pointer-events-none' : ''}`}
+                ref={notifRef}
+              >
                 <Button
-                  onClick={() => { if (!notificationsEnabled) return; toggleUi('notification-popover'); }}
+                  onClick={() => {
+                    if (!notificationsEnabled) return;
+                    toggleUi('notification-popover');
+                  }}
                   variant="ghost"
                   icon={Bell}
                   aria-label={t`Notifications`}
@@ -226,12 +251,17 @@ function Navbar() {
                 <div className="absolute -top-1 -right-1 bg-green-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold pointer-events-none">
                   {cartCount}
                 </div>
-              ) : (
-                <Link to="/authentication" className="px-4 py-2 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-sm font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors">
-                  Se connecter
-                </Link>
               )}
             </div>
+
+            {!isAuthenticated && (
+              <Link
+                to="/authentication"
+                className="px-3 py-1.5 bg-[var(--color-primary)] text-[var(--color-on-primary)] text-xs font-semibold rounded-[var(--radius-md)] hover:bg-[var(--color-primary-hover)] transition-colors"
+              >
+                <Trans>Se connecter</Trans>
+              </Link>
+            )}
 
             <button
               onClick={() => setMobileOpen((o) => !o)}
@@ -260,22 +290,38 @@ function Navbar() {
             {isAuthenticated && (
               <>
                 <li>
-                  <Link to="/messagerie" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                  <Link
+                    to="/messagerie"
+                    onClick={() => setMobileOpen(false)}
+                    className={`block ${navLink}`}
+                  >
                     <Trans>Messagerie</Trans>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/profile" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileOpen(false)}
+                    className={`block ${navLink}`}
+                  >
                     <Trans>Mon profil</Trans>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/orders" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                  <Link
+                    to="/orders"
+                    onClick={() => setMobileOpen(false)}
+                    className={`block ${navLink}`}
+                  >
                     <Trans>Mes commandes</Trans>
                   </Link>
                 </li>
                 <li>
-                  <Link to="/settings" onClick={() => setMobileOpen(false)} className={`block ${navLink}`}>
+                  <Link
+                    to="/settings"
+                    onClick={() => setMobileOpen(false)}
+                    className={`block ${navLink}`}
+                  >
                     <Trans>Paramètres</Trans>
                   </Link>
                 </li>
@@ -286,10 +332,19 @@ function Navbar() {
             {isAuthenticated ? (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Avatar src={user?.avatar} alt={user?.username} name={user?.username} size="sm" />
+                  <Avatar
+                    src={user?.avatar}
+                    alt={user?.username}
+                    name={user?.username}
+                    size="sm"
+                  />
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[var(--color-text)] truncate">{user?.username}</p>
-                    <p className="text-xs text-[var(--color-text-muted)] truncate">{user?.email}</p>
+                    <p className="text-sm font-semibold text-[var(--color-text)] truncate">
+                      {user?.username}
+                    </p>
+                    <p className="text-xs text-[var(--color-text-muted)] truncate">
+                      {user?.email}
+                    </p>
                   </div>
                 </div>
                 <button

@@ -59,7 +59,7 @@ export function CartPopover() {
                 aria-label={t`Continuer vos achats`}
                 to="/products"
               >
-                Découvrir les produits
+                <Trans>Découvrir les produits</Trans>
               </Button>
             </div>
           ) : (
@@ -75,7 +75,9 @@ export function CartPopover() {
                       {item.quantity} × {item.price.toFixed(2)} €
                     </p>
                     <span className="text-[10px] text-[var(--color-text-muted)] mt-1 flex items-center gap-1">
-                      <Trans>({item.stock} disponible)</Trans>
+                      <Trans>
+                        ({item.stock} {item.stock > 1 ? 'disponibles' : 'disponible'})
+                      </Trans>
                     </span>
                   </div>
                   <div className="flex items-center gap-2">

@@ -1,9 +1,7 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle, Trash2 } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
+import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle, Trash2 } from 'lucide-react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { ArrowLeft, Minus, Plus, ShoppingCart, Calendar, MessageCircle } from 'lucide-react';
 import { useProductStore } from '../stores/productStore';
 import { useCartStore } from '../stores/cartStore';
 import { useUIStore } from '../stores/uiStore';
@@ -58,11 +56,11 @@ function ProductDetail() {
   const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   const categoryLabels = useMemo(() => ({
-        All: t`Tous`,
-        Training: t`Entraînement`,
-        Professional: t`Professionnel`,
-        Combat: t`Combat`,
-        Cardio: t`Cardio`,
+    All: t`Tous`,
+    Training: t`Entraînement`,
+    Professional: t`Professionnel`,
+    Combat: t`Combat`,
+    Cardio: t`Cardio`,
   }), [t]);
 
   useEffect(() => {
@@ -91,7 +89,7 @@ function ProductDetail() {
       await deleteProduct(id);
       navigate('/products');
     } catch {
-      setLocalError("Erreur lors de la suppression.");
+      setLocalError(t`Erreur lors de la suppression.`);
       setDeleteConfirm(false);
     }
   };
@@ -134,7 +132,7 @@ function ProductDetail() {
       imageUrl: product.imageUrl,
       quantity,
       stock: product.quantity,
-      authorId: product.author?.id
+      authorId: product.author?.id,
     });
 
     if (success) {
@@ -192,7 +190,6 @@ function ProductDetail() {
           <Trans>Retour aux produits</Trans>
         </Link>
 
-        {/* Grille principale produit */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="flex items-center justify-center bg-[var(--color-surface-hover)] rounded-[var(--radius-lg)] p-8">
             <img
@@ -204,7 +201,7 @@ function ProductDetail() {
 
           <div className="flex flex-col">
             <span className="text-sm font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">
-              {getCategoryLabel(product.category?.name)}
+              {categoryLabels[product.category?.name] ?? getCategoryLabel(product.category?.name)}
             </span>
             <h1 className="text-3xl font-bold text-[var(--color-text)] mb-4">{product.name}</h1>
             <p className="text-3xl font-bold text-[var(--color-primary)] mb-6">
@@ -222,7 +219,6 @@ function ProductDetail() {
               </div>
             )}
 
-            {/* Sélecteur de quantité */}
             <div className="flex items-center gap-4 mb-6">
               <span className="text-sm font-medium text-[var(--color-text)]">
                 <Trans>Quantité</Trans>
@@ -257,7 +253,6 @@ function ProductDetail() {
               </span>
             </div>
 
-            {/* Bouton d'action panier */}
             <Button
               icon={ShoppingCart}
               variant="primary"
@@ -272,9 +267,8 @@ function ProductDetail() {
           </div>
         </div>
 
-        <div className="my-16 border-t border-[var(--color-border)]"></div>
+        <div className="my-16 border-t border-[var(--color-border)]" />
 
-        {/* Section Vendeur */}
         <section className="mb-16">
           <h3 className="text-xl font-semibold text-[var(--color-text)] mb-6">
             <Trans>Vendu par</Trans>
@@ -305,15 +299,16 @@ function ProductDetail() {
                   size="md"
                   icon={Trash2}
                   onClick={handleDelete}
+                  aria-label={deleteConfirm ? t`Confirmer la suppression` : t`Supprimer`}
                 >
-                  {deleteConfirm ? 'Confirmer la suppression' : 'Supprimer'}
+                  {deleteConfirm ? <Trans>Confirmer la suppression</Trans> : <Trans>Supprimer</Trans>}
                 </Button>
                 {deleteConfirm && (
                   <button
                     onClick={() => setDeleteConfirm(false)}
                     className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text)] transition-colors"
                   >
-                    Annuler
+                    <Trans>Annuler</Trans>
                   </button>
                 )}
               </div>
@@ -325,7 +320,6 @@ function ProductDetail() {
           </div>
         </section>
 
-        {/* Produits similaires */}
         {relatedProducts.length > 0 && (
           <section className="mt-16">
             <h2 className="text-2xl font-bold text-[var(--color-text)] mb-6">

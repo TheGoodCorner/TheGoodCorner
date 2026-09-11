@@ -151,7 +151,7 @@ export default function Checkout() {
                 className="relative flex items-center justify-center min-h-screen bg-[var(--color-bg)] overflow-hidden"
             >
                 <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
-                    <img src="/icons/42.svg" alt="42 Logo" className="w-full h-full object-contain neon-42" />
+                    <img src="/icons/42.svg" alt={t`Logo 42`} className="w-full h-full object-contain neon-42" />
                 </div>
                 <div className="relative z-10 text-center">
                     <motion.div
@@ -206,7 +206,11 @@ export default function Checkout() {
             }
         } catch (err) {
             console.error('Erreur lors du paiement :', err);
-            setError(err.response?.data?.message || err.message || "Une erreur est survenue lors de l'initialisation du paiement.");
+            setError(
+                err.response?.data?.message ||
+                err.message ||
+                t`Une erreur est survenue lors de l'initialisation du paiement.`
+            );
         } finally {
             setLoading(false);
         }
@@ -220,7 +224,7 @@ export default function Checkout() {
                 className="relative flex flex-col items-center justify-center min-h-screen bg-[var(--color-bg)] p-6 overflow-hidden"
             >
                 <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] md:w-[700px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
-                    <img src="/42.svg" alt="42 Logo" className="w-full h-full object-contain neon-42" />
+                    <img src="/42.svg" alt={t`Logo 42`} className="w-full h-full object-contain neon-42" />
                 </div>
                 <motion.div
                     variants={containerVariants}
@@ -265,7 +269,7 @@ export default function Checkout() {
             className="relative min-h-screen bg-[var(--color-bg)] p-6 overflow-x-hidden"
         >
             <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] md:w-[750px] lg:w-[900px] aspect-square pointer-events-none select-none z-0 flex items-center justify-center">
-                <img src="/icons/42.svg" alt="42 Logo" className="w-full h-full object-contain neon-42" />
+                <img src="/icons/42.svg" alt={t`Logo 42`} className="w-full h-full object-contain neon-42" />
             </div>
 
             <div className="relative z-10 max-w-2xl mx-auto">
@@ -290,7 +294,9 @@ export default function Checkout() {
                         <div className="flex items-center gap-2 mb-6">
                             <Package size={24} className="text-[var(--color-primary)]" />
                             <h2 className="text-lg font-semibold text-[var(--color-text)]">
-                                <Trans>Articles ({cartItems.length})</Trans>
+                                <Trans>
+                                    {cartItems.length > 1 ? 'Articles' : 'Article'} ({cartItems.length})
+                                </Trans>
                             </h2>
                         </div>
                         <div className="space-y-4">
@@ -310,7 +316,7 @@ export default function Checkout() {
                                             </p>
                                             <p className="text-sm text-[var(--color-text-muted)]">
                                                 <Trans>
-                                                    Quantité: <span className="font-semibold">{item.quantity || 1}</span>
+                                                    Quantité : <span className="font-semibold">{item.quantity || 1}</span>
                                                 </Trans>
                                             </p>
                                         </div>

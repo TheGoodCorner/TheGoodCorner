@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Trans, useLingui } from "@lingui/react/macro";
+import { Trans, Plural, useLingui } from "@lingui/react/macro";
 import { MessageCircle, PackageSearch, Lock, UserRoundX, HeartCrack, Check, X } from "lucide-react";
 import { ProductForm } from "../components/products/ProductForm";
 import { useProfileEditForm } from "../hooks/useProfileEditForm";
@@ -85,7 +85,7 @@ function Profile() {
     return (
       <div className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]" />
         </div>
       </div>
     );
@@ -200,17 +200,11 @@ function Profile() {
           <div className="products-grid px-6 sm:px-8 lg:px-12 pt-8">
             {user?.product?.map((product) => (
               <ProductCard
-<<<<<<< HEAD
-              key={product.id}
-              product={{ ...product, author: user }}
-              allowOutOfStock={true}
-              isOwner={true}
-              onDelete={deleteProduct}
-=======
                 key={product.id}
                 product={{ ...product, author: user }}
                 allowOutOfStock={true}
->>>>>>> origin/languages
+                isOwner={true}
+                onDelete={deleteProduct}
               />
             ))}
           </div>
@@ -218,7 +212,7 @@ function Profile() {
           <EmptyState
             icon={PackageSearch}
             title={t`Vous n'avez aucun article en vente.`}
-            description={t`Poster votre premier produit en remplissant le formulaire ci-dessous.`}
+            description={t`Postez votre premier produit en remplissant le formulaire ci-dessous.`}
             className="py-16 bg-[var(--color-surface-hover)]"
           />
         )
@@ -237,7 +231,11 @@ function Profile() {
                       <Trans>Mes avis</Trans>
                     </h2>
                     <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                      <Trans>{reviewCount} avis des clients</Trans>
+                      <Plural
+                        value={reviewCount}
+                        one="# avis client"
+                        other="# avis des clients"
+                      />
                     </p>
                   </div>
                 </div>
@@ -282,7 +280,7 @@ function Profile() {
           <EmptyState
             icon={MessageCircle}
             iconSize={30}
-            title={t`Personne vous a laisser d'avis pour l'instant`}
+            title={t`Personne ne vous a laissé d'avis pour l'instant`}
             className="py-16 bg-[var(--color-surface-hover)]"
           />
         )
@@ -295,7 +293,7 @@ function Profile() {
 
             {friendSubmitting && (
               <div className="text-center py-8">
-                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]"></div>
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--color-primary)]" />
               </div>
             )}
 
@@ -334,19 +332,21 @@ function Profile() {
                             icon={Check}
                             variant="primary"
                             size="sm"
+                            aria-label={t`Accepter la demande d'ami`}
                             onClick={() => acceptFriendRequest(request.id)}
-                            disabled={submitting}
+                            disabled={friendSubmitting}
                           >
-                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Accepter</Trans>}
+                            {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Accepter</Trans>}
                           </Button>
                           <Button
                             icon={X}
                             variant="outline"
                             size="sm"
+                            aria-label={t`Refuser la demande d'ami`}
                             onClick={() => rejectFriendRequest(request.id)}
-                            disabled={submitting}
+                            disabled={friendSubmitting}
                           >
-                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Refuser</Trans>}
+                            {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Refuser</Trans>}
                           </Button>
                         </div>
                       </div>
@@ -387,10 +387,11 @@ function Profile() {
                           icon={X}
                           variant="ghost"
                           size="sm"
+                          aria-label={t`Annuler la demande d'ami`}
                           onClick={() => deleteFriendRequest(request.id)}
-                          disabled={submitting}
+                          disabled={friendSubmitting}
                         >
-                          {submitting ? <Trans>Chargement...</Trans> : <Trans>Annuler</Trans>}
+                          {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Annuler</Trans>}
                         </Button>
                       </div>
                     </div>
@@ -412,7 +413,13 @@ function Profile() {
                       className="p-3 w-90 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-[var(--radius-md)] hover:bg-[var(--color-surface-hover)] transition-colors"
                     >
                       <div className="flex items-center gap-3 mb-2">
-                        <Avatar src={friend.avatar} alt={friend.username} name={friend.username} status={onlineUserIds[friend.id] ? 'online' : 'offline'} size="md"/>
+                        <Avatar
+                          src={friend.avatar}
+                          alt={friend.username}
+                          name={friend.username}
+                          status={onlineUserIds[friend.id] ? 'online' : 'offline'}
+                          size="md"
+                        />
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-[var(--color-text)]">{friend.username}</p>
                           <p className="text-xs text-[var(--color-text-muted)] truncate">{friend.name}</p>
@@ -423,10 +430,11 @@ function Profile() {
                             variant="ghost"
                             className="px-3 py-1 flex-shrink-0 text-sm whitespace-nowrap font-semibold text-[var(--color-danger)] border border-[var(--color-danger)] rounded-[var(--radius-sm)] hover:bg-[var(--color-danger-surface)] transition-colors"
                             onClick={() => deleteFriendRequest(friend.friendRequestId)}
-                            disabled={!friend.friendRequestId || submitting}
+                            disabled={!friend.friendRequestId || friendSubmitting}
                             title={!friend.friendRequestId ? t`Introuvable, réessaie après rechargement` : undefined}
+                            aria-label={t`Supprimer de la liste d'amis`}
                           >
-                            {submitting ? <Trans>Chargement...</Trans> : <Trans>Supprimer</Trans>}
+                            {friendSubmitting ? <Trans>Chargement...</Trans> : <Trans>Supprimer</Trans>}
                           </Button>
                         </div>
                       </div>
@@ -458,7 +466,7 @@ function Profile() {
                 <Trans>Ajouter un produit</Trans>
               </h2>
               <p className="text-[var(--color-text-muted)]">
-                <Trans>Remplire les informations pour créer un nouveau produit</Trans>
+                <Trans>Remplis les informations pour créer un nouveau produit</Trans>
               </p>
             </div>
             <ProductForm onSuccess={(product) => navigate(`/products/${product.id}`)} />

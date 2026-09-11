@@ -95,10 +95,8 @@ function App() {
                         <Route path="/checkout" element={<Suspense fallback={null}><Checkout /></Suspense>} />
                         <Route path="/checkout/success" element={<Suspense fallback={null}><SuccessCheckout /></Suspense>} />
                     </Route>
-      
-      <Route path="*" element={<NotFound />} />
-      <Route path="/rate-limiting" element={<TooManyRequests />} />
-
+                        <Route path="*" element={<NotFound />} />
+                        <Route path="/rate-limiting" element={<TooManyRequests />} />
                 </Routes>
             </Router>
         </I18nProvider>

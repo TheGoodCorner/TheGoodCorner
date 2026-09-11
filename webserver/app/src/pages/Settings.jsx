@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import React, { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useAuthStore } from '../stores/authStore';
 import { useThemeStore } from '../stores/themeStore';
@@ -27,18 +25,18 @@ export default function Settings() {
   const notificationsEnabled = useNotificationStore((state) => state.notificationsEnabled);
   const toggleNotifications = useNotificationStore((state) => state.toggleNotifications);
 
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);  
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const logout = useAuthStore((state) => state.logout);
   const currentUser = useUserStore((state) => state.user);
   const userId = currentUser?.id;
-  
+
   const theme = useThemeStore((state) => state.theme);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const isDarkMode = theme === 'dark';
-  
-  
-  const [language, setLanguage] = useState(() => localStorage.getItem('language') || 'fr');
-  
+
+  const locale = useLanguageStore((state) => state.locale);
+  const setLocale = useLanguageStore((state) => state.setLocale);
+
   const [show2FASettings, setShow2FASettings] = useState(false);
   const [isDevUnlocked, setIsDevUnlocked] = useState(false);
   const [secretInput, setSecretInput] = useState('');
@@ -66,10 +64,10 @@ export default function Settings() {
     e.preventDefault();
     if (secretInput.trim() === DEV_SECRET) {
       setIsDevUnlocked(true);
-      setDevFeedback({ type: 'success', message: t`Developer mode unlocked!` });
+      setDevFeedback({ type: 'success', message: t`Mode développeur déverrouillé !` });
       setSecretInput('');
     } else {
-      setDevFeedback({ type: 'error', message: t`Invalid secret pass phrase.` });
+      setDevFeedback({ type: 'error', message: t`Phrase secrète invalide.` });
     }
   };
 
@@ -78,18 +76,18 @@ export default function Settings() {
     const MAX_AMOUNT = 2147483646;
 
     if (!userId) {
-      setDevFeedback({ type: 'error', message: t`User ID not found in token.` });
+      setDevFeedback({ type: 'error', message: t`Identifiant utilisateur introuvable.` });
       return;
     }
 
     if (isNaN(numericAmount) || numericAmount <= 0 || numericAmount > MAX_AMOUNT) {
-      setDevFeedback({ type: 'error', message: 'Veuillez saisir un montant valide.' });
+      setDevFeedback({ type: 'error', message: t`Veuillez saisir un montant valide.` });
       return;
     }
     if (currentBudget + numericAmount > MAX_AMOUNT) {
       setDevFeedback({
         type: 'error',
-        message: `Le solde total ne peut pas dépasser ${MAX_AMOUNT}€. (Solde actuel : ${currentBudget}€)`,
+        message: t`Le solde total ne peut pas dépasser ${MAX_AMOUNT}€. (Solde actuel : ${currentBudget}€)`,
       });
       return;
     }
@@ -105,19 +103,19 @@ export default function Settings() {
       setCurrentBudget(updatedBudget);
       setDevFeedback({
         type: 'success',
-        message: t`+${numericAmount}€ successfully credited! (New balance: ${data.newBudget ?? 'updated'}€)`,
+        message: t`+${numericAmount}€ crédités avec succès ! (Nouveau solde : ${data.newBudget ?? 'mis à jour'}€)`,
       });
     } catch (err) {
       setDevFeedback({
         type: 'error',
-        message: err.response?.data?.message || err.message || t`Error crediting wallet.`,
+        message: err.response?.data?.message || err.message || t`Erreur lors du rechargement du portefeuille.`,
       });
     }
   };
 
   const handleDeleteClick = () => {
     if (!userId) {
-      setError(t`User identifier not found.`);
+      setError(t`Identifiant utilisateur introuvable.`);
       return;
     }
     setShowConfirm(true);
@@ -131,12 +129,12 @@ export default function Settings() {
     try {
       await apiClient.delete(`/user/${userId}`);
 
-      alert(t`Account deleted successfully.`);
+      alert(t`Compte supprimé avec succès.`);
       if (logout) logout();
       localStorage.removeItem('token');
       navigate('/');
     } catch (err) {
-      setError(err.message || t`Error during deletion.`);
+      setError(err?.message || t`Erreur lors de la suppression.`);
     } finally {
       setLoading(false);
     }
@@ -156,42 +154,39 @@ export default function Settings() {
             borderWidth: '1px',
           }}
         >
-          {/* Icône */}
           <div className="mb-6 text-6xl">🔐</div>
 
-          {/* Titre */}
           <h1 className="text-2xl font-bold mb-3 tracking-wide" style={{ color: 'var(--color-text)' }}>
-            Accès aux paramètres
+            <Trans>Accès aux paramètres</Trans>
           </h1>
 
-          {/* Description */}
           <p className="mb-8 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            Connectez-vous à votre compte pour accéder à vos paramètres personnels, gérer votre profil et vos préférences.
+            <Trans>
+              Connectez-vous à votre compte pour accéder à vos paramètres personnels, gérer votre profil et vos préférences.
+            </Trans>
           </p>
 
-          {/* Boutons */}
           <div className="flex flex-col gap-3">
             <Button
-              to={"/authentication"}
+              to="/authentication"
               className="w-full py-3 px-4 rounded-[var(--radius-md)] font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
-              variant='primary'
+              variant="primary"
             >
-              Se connecter
+              <Trans>Se connecter</Trans>
             </Button>
 
             <Button
-              to={"/authentication"}
+              to="/authentication"
               className="w-full py-3 px-4 rounded-[var(--radius-md)] font-medium !text-[var(--color-primary)] !border !border-[var(--color-primary)] transition-all duration-200 focus:outline-none focus:ring-2"
-              variant='ghost'
+              variant="ghost"
             >
-              Créer un compte
+              <Trans>Créer un compte</Trans>
             </Button>
           </div>
 
-          {/* Texte d'aide */}
           <p className="mt-6 text-xs" style={{ color: 'var(--color-text-muted)' }}>
-            <Link to={'/'} className="underline hover:no-underline transition-all text-[var(--color-primary)]">
-              Retourner a l'acceuil
+            <Link to="/" className="underline hover:no-underline transition-all text-[var(--color-primary)]">
+              <Trans>Retourner à l'accueil</Trans>
             </Link>
           </p>
         </div>
@@ -213,7 +208,7 @@ export default function Settings() {
         }}
       >
         <h1 className="text-2xl font-bold mb-6 tracking-wide" style={{ color: 'var(--color-text)' }}>
-          <Trans>Settings</Trans>
+          <Trans>Paramètres</Trans>
         </h1>
 
         {error && (
@@ -240,12 +235,13 @@ export default function Settings() {
             className="block text-sm font-medium mb-2"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            <Trans>Application language</Trans>
+            <Trans>Langue de l'application</Trans>
           </label>
           <select
             id="language-select"
             value={locale}
             onChange={handleLanguageChange}
+            aria-label={t`Langue de l'application`}
             className="w-full rounded-[var(--radius-md)] p-3 text-base outline-none focus:ring-2 cursor-pointer"
             style={{
               backgroundColor: 'var(--color-surface-hover)',
@@ -269,10 +265,10 @@ export default function Settings() {
         >
           <div>
             <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-              <Trans>Dark mode</Trans>
+              <Trans>Mode sombre</Trans>
             </h2>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-              {isDarkMode ? <Trans>Dark theme active</Trans> : <Trans>Light theme active</Trans>}
+              {isDarkMode ? <Trans>Thème sombre activé</Trans> : <Trans>Thème clair activé</Trans>}
             </p>
           </div>
 
@@ -280,6 +276,7 @@ export default function Settings() {
             type="button"
             role="switch"
             aria-checked={isDarkMode}
+            aria-label={t`Basculer le mode sombre`}
             onClick={toggleTheme}
             className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
             style={{
@@ -307,9 +304,9 @@ export default function Settings() {
             </h2>
             <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
               {notificationsEnabled ? (
-                <Trans>Notifications enabled</Trans>
+                <Trans>Notifications activées</Trans>
               ) : (
-                <Trans>Notifications disabled</Trans>
+                <Trans>Notifications désactivées</Trans>
               )}
             </p>
           </div>
@@ -318,6 +315,7 @@ export default function Settings() {
             type="button"
             role="switch"
             aria-checked={notificationsEnabled}
+            aria-label={t`Basculer les notifications`}
             onClick={handleToggleNotifications}
             className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
             style={{
@@ -342,10 +340,14 @@ export default function Settings() {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
-                Double authentification (2FA)
+                <Trans>Double authentification (2FA)</Trans>
               </h2>
               <p className="text-xs mt-1" style={{ color: 'var(--color-text-muted)' }}>
-                {show2FASettings ? 'Masquer le panneau de configuration' : 'Afficher les options de sécurité 2FA'}
+                {show2FASettings ? (
+                  <Trans>Masquer le panneau de configuration</Trans>
+                ) : (
+                  <Trans>Afficher les options de sécurité 2FA</Trans>
+                )}
               </p>
             </div>
 
@@ -353,6 +355,7 @@ export default function Settings() {
               type="button"
               role="switch"
               aria-checked={show2FASettings}
+              aria-label={t`Activer ou désactiver la double authentification`}
               onClick={handleToggle2FA}
               className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2"
               style={{
@@ -386,7 +389,7 @@ export default function Settings() {
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-semibold flex items-center gap-2" style={{ color: 'var(--color-primary)' }}>
-              🛠️ <Trans>Developer Mode</Trans>
+              🛠️ <Trans>Mode Développeur</Trans>
             </h2>
             {isDevUnlocked && (
               <span
@@ -398,7 +401,7 @@ export default function Settings() {
                   color: 'var(--color-on-primary)',
                 }}
               >
-                <Trans>Unlocked</Trans>
+                <Trans>Déverrouillé</Trans>
               </span>
             )}
           </div>
@@ -421,9 +424,10 @@ export default function Settings() {
             <form onSubmit={handleUnlockDev} className="flex gap-2">
               <input
                 type="password"
-                placeholder={t`Enter secret passphrase...`}
+                placeholder={t`Entrez la phrase secrète...`}
                 value={secretInput}
                 onChange={(e) => setSecretInput(e.target.value)}
+                aria-label={t`Phrase secrète`}
                 className="flex-1 rounded-[var(--radius-md)] px-3 py-2 text-sm outline-none focus:ring-2"
                 style={{
                   backgroundColor: 'var(--color-surface-hover)',
@@ -440,7 +444,7 @@ export default function Settings() {
                   color: 'var(--color-on-primary)',
                 }}
               >
-                <Trans>Validate</Trans>
+                <Trans>Valider</Trans>
               </button>
             </form>
           ) : (
@@ -453,7 +457,7 @@ export default function Settings() {
               }}
             >
               <label className="block text-xs font-mono" style={{ color: 'var(--color-text-muted)' }}>
-                <Trans>Add funds to wallet (EUR):</Trans>
+                <Trans>Ajouter des fonds au portefeuille (EUR) :</Trans>
               </label>
               <div className="flex gap-2">
                 <input
@@ -462,6 +466,7 @@ export default function Settings() {
                   step="10"
                   value={amountToAdd}
                   onChange={(e) => setAmountToAdd(e.target.value)}
+                  aria-label={t`Montant à créditer`}
                   className="w-32 rounded-[var(--radius-md)] px-3 py-2 text-sm outline-none focus:ring-2"
                   style={{
                     backgroundColor: 'var(--color-surface-hover)',
@@ -479,7 +484,7 @@ export default function Settings() {
                     color: 'var(--color-on-primary)',
                   }}
                 >
-                  <Trans>Credit Account</Trans>
+                  <Trans>Créditer le compte</Trans>
                 </button>
               </div>
             </div>
@@ -496,10 +501,10 @@ export default function Settings() {
           }}
         >
           <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--color-danger)' }}>
-            <Trans>Danger Zone</Trans>
+            <Trans>Zone de danger</Trans>
           </h2>
           <p className="text-sm mb-5" style={{ color: 'var(--color-text-muted)' }}>
-            <Trans>Once your account is deleted, all your data will be permanently removed from the system.</Trans>
+            <Trans>Une fois votre compte supprimé, toutes vos données seront définitivement effacées du système.</Trans>
           </p>
           <button
             type="button"
@@ -513,7 +518,7 @@ export default function Settings() {
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
           >
-            {loading ? <Trans>Deleting...</Trans> : <Trans>Delete Account</Trans>}
+            {loading ? <Trans>Suppression...</Trans> : <Trans>Supprimer le compte</Trans>}
           </button>
         </div>
 
@@ -534,10 +539,10 @@ export default function Settings() {
               onClick={(e) => e.stopPropagation()}
             >
               <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--color-text)' }}>
-                Supprimer votre compte ?
+                <Trans>Supprimer votre compte ?</Trans>
               </h3>
               <p className="text-sm mb-6" style={{ color: 'var(--color-text-muted)' }}>
-                Cette action est définitive et irréversible. Toutes vos données seront perdues.
+                <Trans>Cette action est définitive et irréversible. Toutes vos données seront perdues.</Trans>
               </p>
               <div className="flex justify-end gap-3">
                 <button
@@ -551,7 +556,7 @@ export default function Settings() {
                     borderWidth: '1px',
                   }}
                 >
-                  Annuler
+                  <Trans>Annuler</Trans>
                 </button>
                 <button
                   type="button"
@@ -565,7 +570,7 @@ export default function Settings() {
                     cursor: loading ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  {loading ? 'Suppression...' : 'Supprimer définitivement'}
+                  {loading ? <Trans>Suppression...</Trans> : <Trans>Supprimer définitivement</Trans>}
                 </button>
               </div>
             </div>

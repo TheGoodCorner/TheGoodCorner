@@ -52,9 +52,19 @@ function ChatThread({
         >
           <ArrowLeft size={18} />
         </button>
-        <Link to={`/profile/${interlocutor.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <Avatar src={interlocutor.avatar} alt={interlocutor.username} name={interlocutor.username} size="md" />
-          <span className="font-semibold text-[var(--color-text)]">{interlocutor.username}</span>
+        <Link
+          to={`/profile/${interlocutor.id}`}
+          className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+        >
+          <Avatar
+            src={interlocutor.avatar}
+            alt={interlocutor.username}
+            name={interlocutor.username}
+            size="md"
+          />
+          <span className="font-semibold text-[var(--color-text)]">
+            {interlocutor.username}
+          </span>
         </Link>
       </div>
 
@@ -62,7 +72,12 @@ function ChatThread({
         {messagesLoading && messages.length === 0 ? (
           <div className="space-y-3 animate-pulse">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className={`h-10 w-2/3 rounded-[var(--radius-lg)] bg-[var(--color-surface-hover)] ${i % 2 ? 'ml-auto' : ''}`} />
+              <div
+                key={i}
+                className={`h-10 w-2/3 rounded-[var(--radius-lg)] bg-[var(--color-surface-hover)] ${
+                  i % 2 ? 'ml-auto' : ''
+                }`}
+              />
             ))}
           </div>
         ) : messages.length === 0 ? (
@@ -98,7 +113,7 @@ function ChatThread({
             type="text"
             value={messageText}
             onChange={(e) => onMessageTextChange(e.target.value)}
-            placeholder="Écris un message..."
+            placeholder={t`Écris un message...`}
             disabled={sending}
             className="flex-1 text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors disabled:opacity-60"
           />
@@ -108,7 +123,7 @@ function ChatThread({
             icon={Send}
             iconOnly
             disabled={sending || !messageText.trim()}
-            aria-label="Envoyer"
+            aria-label={t`Envoyer`}
           />
         </form>
       </div>

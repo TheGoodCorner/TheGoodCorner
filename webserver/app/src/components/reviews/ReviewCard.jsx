@@ -47,9 +47,12 @@ export const ReviewCard = ({
     const trimmedContent = (draftContent || '').trim();
 
     if (!trimmedContent) {
-      setError('Le commentaire ne peut pas être vide.');
+      setError(t`Le commentaire ne peut pas être vide.`);
+      return;
+    }
+
     if (trimmedContent.length > 5000) {
-      setError('Le commentaire ne peut pas être aussi long.');
+      setError(t`Le commentaire ne peut pas être aussi long.`);
       return;
     }
 
@@ -59,7 +62,7 @@ export const ReviewCard = ({
       await onSave({ reviews: trimmedContent, reviewRating: draftRating });
       setIsEditing(false);
     } catch (err) {
-      setError(err.message);
+      setError(err?.message || t`Une erreur est survenue lors de l'enregistrement.`);
     } finally {
       setSaving(false);
     }
@@ -138,6 +141,7 @@ export const ReviewCard = ({
             onChange={(e) => setDraftContent(e.target.value)}
             rows={3}
             disabled={saving}
+            aria-label={t`Modifier le commentaire`}
             className="w-full text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors disabled:opacity-60 review-content"
           />
           {error && (
