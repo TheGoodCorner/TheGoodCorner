@@ -18,7 +18,7 @@ export function FriendActionButton({ userId }) {
   const friendRequests = useFriendStore((state) => state.friendRequests);
   const sentFriendRequests = useFriendStore((state) => state.sentFriendRequests);
 
-  const actionLoadingId = useFriendStore((state) => state.actionLoadingId);
+  const submitting = useFriendStore((state) => state.submitting);
   const sendFriendRequest = useFriendStore((state) => state.sendFriendRequest);
   const acceptRequest = useFriendStore((state) => state.acceptFriendRequest);
   const rejectFriendRequest = useFriendStore((state) => state.rejectFriendRequest)
@@ -61,7 +61,7 @@ export function FriendActionButton({ userId }) {
       <Button
         variant="outline"
         icon={Clock}
-        loading={actionLoadingId === sentRequest.id}
+        loading={submitting}
         onClick={() => deleteFriendRequest(sentRequest.id)}
       >
         Demande envoyée · Annuler
@@ -75,7 +75,7 @@ export function FriendActionButton({ userId }) {
         <Button
           variant="primary"
           icon={Check}
-          loading={actionLoadingId === receivedRequest.id}
+          loading={submitting}
           onClick={() => acceptRequest(receivedRequest.id)}
         >
           Accepter
@@ -83,7 +83,7 @@ export function FriendActionButton({ userId }) {
         <Button
           variant="outline"
           icon={X}
-          loading={actionLoadingId === receivedRequest.id}
+          loading={submitting}
           onClick={() => rejectFriendRequest(receivedRequest.id)}
           aria-label="Refuser la demande"
           title="Refuser la demande"
@@ -96,7 +96,7 @@ export function FriendActionButton({ userId }) {
     <Button
       variant="primary"
       icon={UserPlus}
-      loading={actionLoadingId === `send-${userId}`}
+      loading={submitting}
       onClick={() => sendFriendRequest(userId)}
     >
       Ajouter en ami
