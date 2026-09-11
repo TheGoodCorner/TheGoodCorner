@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 import prisma from './services/db.js';
 import http from 'http'
 import { initializeWebServer } from './services/messages/messageSocket.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './conf/swagger.js';
 
 import productRouter from './routes/products.js'
 import generalRouter from './routes/generalGetRouter.js';
@@ -27,7 +29,8 @@ app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), payme
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
-app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
+app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 
 const rootPath = '/';
