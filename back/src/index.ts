@@ -29,9 +29,11 @@ app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), payme
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
-app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images
+app.use('/uploads', express.static(('/app/uploads'), {
+	maxAge: '1y',
+	etag: true
+})); // allow static file serving for images
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-// app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 
 const rootPath = '/';
 app.use(rootPath, generalRouter);		// general routes

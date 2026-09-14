@@ -87,6 +87,10 @@ To target and start a specific container, use:
 > make <container_name>
 >```
 
+To restart everything, use:
+>```bash
+> make re
+>```
 
 ### **Usage** :
 Access the website by typing:  
@@ -96,7 +100,11 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 
 # Resources
 
-#### Docs
+---
+
+<details>
+  <summary>📚 Documentation</summary>
+
 [Documentation : Offline PWA](https://www.itnetwork.fr/blog/application-web-hors-ligne/)  
 [Documentation : SEO Scoring - Lighthouse validation](https://nginx.org/en/docs/beginners_guide.html#conf_structure)  
 [Documentation : SEO Scoring - Lighthouse validation](https://developer.chrome.com/docs/lighthouse/seo/meta-description?utm_source=lighthouse&utm_medium=devtools&hl=fr)  
@@ -105,17 +113,24 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : React](https://www.reddit.com/r/react/comments/15925t3/understanding_usestate_useeffect_and_usecontext/)  
 [Documentation : Stripe test payment](https://docs.stripe.com/testing)  
 [Documentation : Stripe CLI](https://docs.stripe.com/cli)  
-[Documentation : Stripe metadata](https://docs.stripe.com/api/metadata)  
+[Documentation : Stripe metadata](https://docs.stripe.com/taapi/medata)  
 [Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
 [Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
+[Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
 [Documentation : NGINX ConfigurationFile](https://nginx.org/en/linux_packages.html#Debian)  
 [Documentaiton : NGINX RequestProcess](https://nginx.org/en/docs/http/request_processing.html)  
+[Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : API - LoadBalancer - ReverseProxy](https://www.reddit.com/r/devops/comments/py1q54/difference_between_reverse_proxy_load_balancer/)  
 [Documentation : CORS principles](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/CORS)  
 [Documentation : CORS principles](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers)  
 [Documentation : CORS principles](https://portswigger.net/web-security/cors/access-control-allow-origin)  
+[Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
+[Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
+[Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
+[Documentation : Multer](https://medium.com/@julien.maffar/impl%C3%A9mentation-de-multer-dans-une-api-node-js-e358dd513e64)  
+[Documentation : Multer](https://expressjs.com/fr/resources/middleware/multer/)  
 [Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
 [Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
 [Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
@@ -136,7 +151,6 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Javascript tutorials ](https://js.muthu.co/posts/implicit-explicit-nominal-structuring-and-duck-typing/)  
 [Documentation : Javascript tutorials](https://www.geeksforgeeks.org/javascript/how-to-check-for-null-undefined-or-blank-variables-in-javascript/)  
 [Documentation : Javascript tutorials](https://stackoverflow.com/questions/35706164/typescript-import-as-vs-import-require)  
-[Documentation : Javascript tutorials](https://fr.wikipedia.org/wiki/Document_Object_Model)  
 [Documentation : Docker Compose](https://docs.docker.com/compose/how-tos/environment-variables/set-environment-variables/)  
 [Documentation : Docker Compose](https://lours.me/posts/compose-tip-020-docker-compose-logs/)  
 [Documentation : Docker](https://docs.docker.com/build/building/best-practices/#minimize-the-number-of-layers)  
@@ -146,6 +160,13 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Docker](https://docs.docker.com/engine/volumes/)  
 [Documentation : Docker](https://docs.docker.com/reference/compose-file/volumes/)  
 [Documentation : Network Bridge](https://en.wikipedia.org/wiki/Network_bridge)  
+[Documentation : Create React App](https://create-react-app.dev/)  
+[Documentation : React UI](https://fr.react.dev/learn/describing-the-ui)  
+[Documentation : Introduction to React](https://legacy.reactjs.org/tutorial/tutorial.html)  
+[Documentation : Motion Library](https://motion.dev/)  
+[Documentation : HTML Balises](https://facemweb.com/blog/creation-site/liste-balises-html/)  
+[Documentation : Zustand Library](https://zustand.docs.pmnd.rs/)  
+[Documentation : Lucid Icons Library](https://lucide.dev/guide/)  
 [Documentation : Prisma](https://www.prisma.io/docs/orm/v7/more/dev-environment/environment-variables)  
 [Documentation : Sockets](https://medium.com/@basukori8463/build-a-real-time-chat-app-from-scratch-with-node-js-and-socket-io-9714)  
 [Documentation : Prisma](https://www.prisma.io/docs/orm/reference/error-reference)  
@@ -166,41 +187,51 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : NodeJs releases](https://nodejs.org/en/about/previous-releases)  
 [Documentation : Tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)  
 [Documentation : Basic SQL syntaxe](https://www.w3schools.com/sql/sql_syntax.asp)  
-[Documentation : i18n](https://www.i18next.com/)  
-[Documentation : i18n](https://www.reddit.com/r/reactjs/comments/11mvp51/what_is_the_best_way_to_handle_a_multilanguage/)  
+[Documentation : REST API](https://fr.wikipedia.org/wiki/Representational_state_transfer)  
+[Documentation : REST API](https://www.redhat.com/fr/topics/api/what-is-a-rest-api)  
 
-#### Videos
+</details>
+
+---
+
+<details>
+  <summary>🎓 Tutoriels</summary>
+
 [Video : Docker Essentials](https://www.youtube.com/watch?v=pg19Z8LL06w)  
 [Video : NGINX linuxServer](https://www.youtube.com/watch?v=MP3Wm9dtHSQ)  
 [Video : NGINX capabilities](https://www.youtube.com/watch?v=OEFZUj_RQKc)  
-[Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)  
+[Video : NGINX linuxServer](https://www.youtube.com/watch?v=n7vKxkMIBM0)
 [Video : Best backend Framework in 2025](https://www.youtube.com/watch?v=qZ6w9_MhmJ0)  
+[Video : React tuto](https://www.youtube.com/watch?v=h2a0cSC1Vz8&t=15s)  
+[Video : Building Shopping Cart](https://www.youtube.com/watch?v=AdmB2CJ9I9E)  
+[Video : Authentication in React with JWTs, Access & Refresh Tokens](https://www.youtube.com/watch?v=AcYF18oGn6Y)  
+[Video : Complete tuto User managment](https://www.youtube.com/watch?v=VOmHs6-NNgc&list=PLSJnlFr3D-mHNQYzpfBCt9ezHxbgxaAZi)  
+[Video : API Authentication](https://www.youtube.com/watch?v=bP1mo3UbhNg)  
+[Video : Authentication Concepts](https://www.youtube.com/watch?v=iX8g4LqF8p8)  
 
+</details>
+
+---
 
 # Team Information
-**Project Manager (PM) ** **
-- Organizes team meetings and planning sessions
-- Tracks progress and deadlines
-- Ensures team communication
 
-**Product Owner (PO) ** **
-- Communicates with stakeholders (evaluators, peer)
-- Validates completed work
-
-**Lead Tech ** **
-- Defines technical architecture
-- Makes technology decisions
-
-**Developers **
-- Develop the various features
+| 42 login | Name | Role(s) | Responsibilities |
+| --- | --- | --- | --- |
+| `mchanlia` | Maxence Chanliat | PO/PM / Backend/Frontend Developer | Backend development, Backend API, DevOps, Debugging, Frontend support |
+| `tgomez-f` | Thomas Gomez | PO/PM / Frontend/Backend Developer | Frontend development, Frontend and Backend API, Mocking, UI Integration, Backend support, Nginx infrastructure configuration, Debugging |
+| `dpaiva` | Delphine Paiva | Tech Lead / Full-Stack Developer| |
+| `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
+| `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
 
 # Project Management
 
+- We used Github over the whole course of the project for project synchronization between the group members. We worked over several branches : 'main' being the production branche and 'dev' being the development branch. We had individual branches for feature development and when tested and working we merged to dev and deleted local and remote individual branches. Until the project was complete and pushed into production.
+- We used Trello and Confluence for task managements and ressource sharing but quickly dropped them as they were mostly slowing de project development down instead of speeding it up by adding layers of complexity and unecessary tedious tasks.
 - We held an initial meeting to assign tasks and roles. Communication took place primarily via messaging (Discord).
-
-- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.
+- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.  
 
 # Technical Stack
+
 ### Frontend
 
 | Technology | Purpose | Justification |
@@ -246,6 +277,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | Technology | Purpose |
 |-----------|---------|
 | **Stripe** | Payment processing and secure transaction handling |
+| **Lingui** | i18n service for easy regional translation handling |
 
 ---
 
@@ -260,6 +292,7 @@ erDiagram
     USER ||--o{ REVIEW : "writes & receives"
     USER ||--o{ NOTIFICATION : receives
     USER ||--o{ REFRESHTOKEN : has
+    USER ||--o| TWOFACTOR : "has (optional)"
     USER }o--|| LOCATION : "lives in"
     PRODUCT }o--|| CATEGORY : "belongs to"
     PRODUCT ||--o{ PAYMENT : "included in"
@@ -361,6 +394,17 @@ erDiagram
         string replacedBy
         timestamp createdAt
     }
+    
+    TWOFACTOR {
+        int userId PK "FK"
+        string secret
+        boolean enabled
+        timestamp setupExpiresAt
+        int lastStep
+        string[] recoveryHashes
+        int attempts
+        timestamp windowStart
+    }
 
     NOTIFICATION {
         int id PK
@@ -374,29 +418,118 @@ erDiagram
 
 # Features List
 
-| Fonctionnalité | Description |
+| Feature | Description |
 |---|---|
-| 🔐 **Authentification & gestion de session** | Inscription et connexion par email/mot de passe, déconnexion. Session maintenue via access token en mémoire et refresh token en cookie httpOnly. Reconnexion silencieuse au chargement avec refresh automatique de token sur réponse 401. |
-| 🛍️ **Catalogue produits (marketplace)** | Liste paginée des produits avec filtres par catégorie (standards et personnalisées) et fourchette de prix. Page de détail avec image, description, sélecteur de quantité, informations vendeur et suggestions de produits similaires. |
-| ➕ **Publication de produits** | Formulaire de création d'annonce (nom, prix, catégorie, description, image) avec validation côté client et upload multipart. |
-| 🛒 **Panier d'achat** | Ajout, retrait et modification de quantité d'articles. Vérification du stock disponible et blocage d'achat de son propre produit. Panier persisté en localStorage et accessible via popover dans la Navbar. |
-| 💳 **Paiement (Stripe) & portefeuille virtuel** | Tunnel de paiement intégré via Stripe Elements (PaymentElement). Affichage du solde du portefeuille virtuel avant validation et page de confirmation après paiement réussi. |
-| 📋 **Historique des commandes** | Page listant les transactions passées avec statut, date, montant et détail des articles achetés (image et quantité). |
-| 👤 **Profil utilisateur** | Consultation et édition du profil personnel (email, téléphone, bio, adresse, avatar) avec validation. Profil public vendeur avec annonces, note moyenne et date d'inscription. Suppression de compte. |
-| ⭐ **Avis & notation des vendeurs** | Système de notation (1-5 étoiles) avec commentaire. Un seul avis par vendeur, éditable et supprimable. Badge « Vendeur Elite » automatique à partir de 20 avis. |
-| 💬 **Messagerie instantanée** | Messagerie privée en temps réel (Socket.IO). Conversations avec recherche, fil de discussion, envoi/édition/suppression de messages. Badges de messages non lus et masquage de conversation. |
-| 👥 **Système d'amis** | Envoi, acceptation, refus et annulation de demandes d'ami. Liste d'amis avec indicateur de statut en ligne/hors-ligne mis à jour en temps réel. |
-| 🔔 **Notifications** | Centre de notifications regroupant messages non lus, nouveaux avis et demandes d'ami, mis à jour en temps réel. Activables/désactivables depuis les paramètres. |
-| 🌓 **Thème clair / sombre** | Bascule entre thème clair et sombre depuis la Navbar ou les Paramètres. Préférence persistée en localStorage et propagée via tokens CSS. |
-| ⚙️ **Paramètres du compte** | Choix de la langue d'affichage, bascule du thème et des notifications, mode développeur (crédit fictif pour tests), suppression définitive du compte. |
-| 📄 **Pages légales & FAQ** | Pages statiques : Politique de confidentialité, Conditions générales d'utilisation et FAQ avec sommaire ancré. |
-| 📱 **PWA & résilience hors-ligne** | Service Worker en production pour mise en cache des ressources et consultation hors-ligne. Détection automatique des nouvelles versions avec invite de rechargement. |
-| 🔗 **Robustesse couche API** | Client HTTP centralisé (Axios) avec attachement automatique du token, file d'attente lors du refresh et retry automatique avec backoff exponentiel sur erreur 429. |
-| 🎨 **Design system / UI Kit** | Bibliothèque de composants réutilisables (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) pilotés par tokens CSS pour cohérence visuelle et compatibilité clair/sombre. |
+| 🔐 **Authentication & Session Management** | Registration and login via email/password, logout. Session maintained via in-memory access token and httpOnly cookie refresh token. Silent reconnection on page load with automatic token refresh on 401 response. |
+| 🛡️ **Two-Factor Authentication (2FA with TOTP)** | Optional TOTP-based two-factor authentication for enhanced account security. Users can enable 2FA in account settings, generating a code. Backup codes provided for account recovery. 2FA verification required on login if enabled. |
+| 🛍️ **Product Catalog (Marketplace)** | Paginated product list with filters by category (standard and custom) and price range. Detail page with image, description, quantity selector, seller information and similar product suggestions. |
+| ➕ **Product Listing** | Announcement creation form (name, price, category, description, image) with client-side validation and multipart upload. |
+| 🛒 **Shopping Cart** | Add, remove and modify item quantities. Stock availability verification and prevention of buying own products. Cart persisted in localStorage and accessible via navbar popover. |
+| 💳 **Payment (Stripe) & Virtual Wallet** | Integrated payment flow via Stripe Elements (PaymentElement). Virtual wallet balance display before checkout and confirmation page after successful payment. |
+| 📋 **Order History** | Page listing past transactions with status, date, amount and details of purchased items (image and quantity). |
+| 👤 **User Profile** | View and edit personal profile (email, phone, bio, address, avatar) with validation. Public seller profile with listings, average rating and registration date. Account deletion. |
+| ⭐ **Reviews & Seller Ratings** | Rating system (1-5 stars) with comments. One review per seller, editable and deletable. Automatic "Elite Seller" badge at 20+ reviews. |
+| 💬 **Instant Messaging** | Real-time private messaging (Socket.IO). Conversations with search, message thread, send/edit/delete messages. Unread message badges and conversation hiding. |
+| 👥 **Friends System** | Send, accept, decline and cancel friend requests. Friends list with real-time online/offline status indicator. |
+| 🔔 **Notifications** | Notification center grouping unread messages, new reviews and friend requests, updated in real-time. Enable/disable from settings. |
+| 🌓 **Light/Dark Theme** | Toggle between light and dark theme from Navbar or Settings. Preference persisted in localStorage and applied via CSS tokens. |
+| ⚙️ **Account Settings** | Language selection, theme and notification toggle, developer mode (fictional credit for testing), permanent account deletion. |
+| 📄 **Legal Pages & FAQ** | Static pages: Privacy Policy, Terms of Use and FAQ with anchored table of contents. |
+| 📚 **API Documentation (Swagger)** | Comprehensive Swagger/OpenAPI documentation page accessible exclusively in HTTP development environment. Includes interactive endpoint testing, request/response examples, complete schema definitions and authentication details for all REST API endpoints. |
+| 📱 **PWA & Offline Resilience** | Production Service Worker for resource caching and offline browsing. Automatic version detection with reload prompt. |
+| 🔗 **API Layer Robustness** | Centralized HTTP client (Axios) with automatic token attachment, queue during refresh and rate limiting handling on 429 error. |
+| 🎨 **Design System / UI Kit** | Reusable component library (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) driven by CSS tokens for visual consistency and light/dark compatibility. |
+| 🌐 **Multi-language Support (EN/FR/ES)** | Complete interface translation in English, French and Spanish. Language selector in Settings with persistent selection in localStorage. Dynamic language switching without page reload via i18n system (Lingui). All UI strings, error messages, notifications and help text localized. Support for RTL languages ready for future expansion. |
 
 ---
 
 # Modules
+Take into consideration that this is our point of view on the matter and what we believe represent best the project and how it should be evaluated. At the end of the day this is the evaluator's tasks to determine wether our choices are justified and the modules are validated or not.  
+
+Each major module is worth 2 points | Each minor module is worth 1 point
+
+| Module Category | Module Name | Module type |
+| --- | --- | --- |
+| WEB | Frontend+Backend Framework | Major |
+| WEB | WebSockets | Major |
+| WEB | Users interactions | Major |
+| WEB | Public API | Major |
+| WEB | Database ORM | Minor |
+| WEB | Notification system | Minor |
+| WEB | PWA + offline support | Minor |
+| WEB | React Components | Minor |
+| WEB | Advanced search functionnality | Minor |
+| WEB | File upload and management system | Minor |
+| ACCESSIBILITY / I18N | Language support | Minor |
+| ACCESSIBILITY / I18N | Multiple browser support | Minor |
+| USER MANAGEMENT | User management and auth | Major |
+| USER MANAGEMENT | 2FA | Minor |
+| MODULE OF CHOICE | Stripe | Major |
+
+#### [-- Total : 21 pts --]
 
 # Individual Contributions
+
+### `mchanlia` - Maxence Chanliat
+
+- Designed and implemented the project infrastructure (Docker containers, Dockerfiles, Docker Compose and scripts)
+- Implemented backend logic (Express logic, routes, controllers for various features, JWT registration).
+- Worked on database implementation and schema file
+- implemented backend Sockets for chat support
+- Debugging throughout the project's lifespan
+
+The main challenge was getting used to a new language (javascript), aswell as gaining perspective on how to setup a larger scale infrastructure and designing a system thats as easy as possible to read for my groupmates and not too hard to improve over and maintain.
+
+### `tgomez-f` - Thomas Gomez
+
+- Designed and implemented the UI React tree structure, and the routing of the pages
+- Implemented JWT authentication logic with refresh token
+- Implemented user profile, products, reviews, friends-requests, and auhtentication related APIs
+- Implemented the frontend part of Websockets, for the Messaging feature, and online friend status
+- Participation in creating the nginx configuration file
+- Coordination and debugging of the project throughout the entire duration.
+
+The main challenge was learning multiple programming languages and tech stacks from scratch while producing clean, coherent results without losing focus—all under tight time constraints. And also maintain good resilience when facing these challenges, uncertainties, and changes in the project's organization.
+
+
+### `dpaiva` - Delphine Paiva
+
+- Complete notification system for all creation, update, and deletion actions (friend request, product review, messages and purchase of a product) in database
+- Complete message system with badges (as notification) 
+- Impletemented products with CRUD (create, read, update, delete) method in real-time with socket per user
+- API documentation with swagger
+
+The main challenge was understanding each concept, because the features I was working on (like notifications) touched upon many parts of the project and could therefore create a lot of bugs. The CSS part was also very challenging for me, as it can be quite tricky.
+
+### `chlimous` - Charles Limousin
+
+- Implemented two-factor authentication (2FA) for user login
+- Contributed to both frontend and backend development across several features
+- Debugging throughout the project's lifespan
+
+The main challenge was integrating 2FA cleanly into the existing authentication flow without breaking the user experience, while also switching between frontend and backend work and keeping both sides consistent.
+
+
+### `chdoe` - Chloé Doe
+
+- Acted as Product Manager: defined the project scope, prioritized features, and coordinated tasks across the team
+- Designed the monolithic backend architecture (single server, shared codebase) and defined the overall project structure
+- Designed the graphic identity and frontend UI/UX (mockups, layout, styling)
+- Debugging throughout the project's lifespan
+
+The main challenge was balancing the product management role with the technical work, making sure priorities stayed clear for the team while also keeping the monolithic architecture simple enough to scale and remain maintainable as new features were added.
+
+
 # Known limitations
+
+- .env management over a group project and scaling over docker-compose
+- Github versionning and orgnization
+- Github Actions not implemented
+- Self signed certificate and browser security acknoledgment
+- Controlled and limited development environment at school (no privilege)
+- Team split in August
+- Short deadlines for group members
+
+## License / Credits
+
+This project was created for learning and evaluation as part of the 42 curriculum. When using external data and APIs, follow the terms of service of providers such as TOTP Danhersam, Stripe, and Google Gemini.
