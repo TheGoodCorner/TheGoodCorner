@@ -511,15 +511,16 @@ The main challenge was understanding each concept, because the features I was wo
 The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
 
 
-### `chdoe` - Chloé Bond
+### `chdoe` - Chloé Doe
 
 - Designed and implemented the Django/DRF backend API structure
 - Implemented JWT authentication, registration, login, logout, and password change
 - Implemented user profile, follow, report, and user-ban related APIs
 - Implemented Django Channels chat models and WebSocket consumer
 - Built core domain constraints, serializers, and views
+- Handled project management and documentation: meeting notes, task tracking, README.md structuring, code testing, and general quality improvements (syntax and spelling fixes, added options)
 
-The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+The main challenge was juggling technical development with the organizational side of the project, keeping documentation and task tracking up to date while the codebase kept evolving, and making sure the team stayed aligned throughout.
 
 
 # Known limitations
