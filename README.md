@@ -87,6 +87,10 @@ To target and start a specific container, use:
 > make <container_name>
 >```
 
+To restart everything, use:
+>```bash
+> make re
+>```
 
 ### **Usage** :
 Access the website by typing:  
@@ -212,7 +216,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | --- | --- | --- | --- |
 | `mchanlia` | Maxence Chanliat | PO/PM / Backend/Frontend Developer | Backend development, Backend API, DevOps, Debugging, Frontend support |
 | `tgomez-f` | Thomas Gomez | PO/PM / Frontend/Backend Developer | Frontend development, Frontend API, Mocking, UI Integration, Backend support |
-| `dpaiva` | Delphine Paiva | PM/Tech Lead / Frontend Developer / Frontend development, Notification service | Frontend architecture, UI integration|
+| `dpaiva` | Delphine Paiva | Tech Lead / Full-Stack Developer| |
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
 
@@ -485,16 +489,14 @@ The main challenge was getting used to a new language (javascript), aswell as ga
 The main challenge was learning multiple programming languages and tech stacks from scratch while producing clean, coherent results without losing focus—all under tight time constraints. And also maintain good resilience when facing these challenges, uncertainties, and changes in the project's organization.
 
 
-### `Dpaiva` - Delphine Paiva
+### `dpaiva` - Delphine Paiva
 
-- Designed and implemented the Django/DRF backend API structure
-- Implemented JWT authentication, registration, login, logout, and password change
-- Implemented user profile, follow, report, and user-ban related APIs
-- Implemented Django Channels chat models and WebSocket consumer
-- Built core domain constraints, serializers, and views
+- Complete notification system for all creation, update, and deletion actions (friend request, product review, messages and purchase of a product) in database
+- Complete message system with badges (as notification) 
+- Impletemented products with CRUD (create, read, update, delete) method in real-time with socket per user
+- API documentation with swagger
 
-The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
-
+The main challenge was understanding each concept, because the features I was working on (like notifications) touched upon many parts of the project and could therefore create a lot of bugs. The CSS part was also very challenging for me, as it can be quite tricky.
 
 ### `chlimous` - Charles Limousin
 
