@@ -354,7 +354,7 @@ msgstr "Aumentar el precio máximo"
 msgid "Augmenter le prix minimum"
 msgstr "Aumentar el precio mínimo"
 
-#: src/components/products/ProductForm.jsx
+#: src/utils/constants.jsx
 msgid "Autre"
 msgstr "Otro"
 
@@ -393,9 +393,9 @@ msgstr "¡Buen intento, curioso!"
 msgid "Bienvenue sur TheGoodCorner"
 msgstr "Bienvenido a TheGoodCorner"
 
-#: src/components/products/ProductForm.jsx
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
+#: src/utils/constants.jsx
 msgid "Cardio"
 msgstr "Cardio"
 
@@ -473,9 +473,9 @@ msgstr "Código de seis dígitos"
 msgid "Code de l’application ou code de secours"
 msgstr "Código de la aplicación o código de emergencia"
 
-#: src/components/products/ProductForm.jsx
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
+#: src/utils/constants.jsx
 msgid "Combat"
 msgstr "Combate"
 
@@ -815,7 +815,10 @@ msgstr "Guarda el secreto en tu aplicación de autenticación (TOTP).<0/>No lo c
 #~ msgid "Enter secret passphrase..."
 #~ msgstr "Introduce la frase de contraseña secreta..."
 
-#: src/components/products/ProductForm.jsx
+#: src/utils/constants.jsx
+msgid "Entrainement"
+msgstr "Entrenamiento"
+
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
 msgid "Entraînement"
@@ -1192,9 +1195,9 @@ msgstr "Nombre de usuario"
 msgid "Nom du produit"
 msgstr "Nombre del producto"
 
-#: src/pages/ProduitDetail.jsx
-#~ msgid "Non catégorisé"
-#~ msgstr "Sin categorizar"
+#: src/utils/constants.jsx
+msgid "Non catégorisé"
+msgstr "Sin categorizar"
 
 #: src/components/profile/ProfilInfos.jsx
 #: src/components/UI/InfoCard.jsx
@@ -1476,9 +1479,9 @@ msgstr "Productos publicados"
 msgid "Produits similaires"
 msgstr "Productos similares"
 
-#: src/components/products/ProductForm.jsx
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx
+#: src/utils/constants.jsx
 msgid "Professionnel"
 msgstr "Profesional"
 
