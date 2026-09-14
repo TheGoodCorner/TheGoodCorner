@@ -209,6 +209,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
 # Project Management
+  
 
 # Technical Stack
 
@@ -416,3 +417,7 @@ Charles:
 - groupe split fin aout
 - deadlines shorts
 - blackhole ?
+
+## License / Credits
+
+This project was created for learning and evaluation as part of the 42 curriculum. When using external data and APIs, follow the terms of service of providers such as TOTP Danhersam, Stripe, and Google Gemini.
