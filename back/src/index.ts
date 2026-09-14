@@ -4,6 +4,8 @@ import cookieParser from 'cookie-parser';
 import prisma from './services/db.js';
 import http from 'http'
 import { initializeWebServer } from './services/messages/messageSocket.js';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './conf/swagger.js';
 
 import productRouter from './routes/products.js'
 import generalRouter from './routes/generalGetRouter.js';
@@ -13,7 +15,7 @@ import messageRouter from './routes/messages.js';
 import paymentRouter from './routes/payment.js';
 import paymentController from './controllers/paymentController.js';
 import friendRouter from './routes/friends.js';
-// import { printRequest } from './utils/printHttpRequest.js';
+import notificationRouter from './routes/notifications.js';
 
 const app = express(); // server initialization
 const port = Number(process.env.port) || 3000; // port number
@@ -27,17 +29,19 @@ app.post('/newPayment/confirm', express.raw({ type: 'application/json' }), payme
 app.use(express.json()); // enable json body parsing
 app.use(express.urlencoded({ extended: true })); // allow processing of urls encoded forms (json) to access as object
 app.use(cookieParser()); // allow processing of cookie headers to access as objects
-app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images 
+app.use('/uploads', express.static(('/app/uploads'))); // allow static file serving for images
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 // app.set('trust proxy', 1);// pas sur necessaire sauf si reverse proxy ?
 
 const rootPath = '/';
-app.use(rootPath, generalRouter); // general routes
-app.use(rootPath, productRouter); // product routes
-app.use(rootPath, userRouter); // Users routes
-app.use(rootPath, reviewsRouter); // reviews routes
-app.use(rootPath, messageRouter); // message routes
-app.use(rootPath, paymentRouter); // payment routes
-app.use(rootPath, friendRouter);// friend routes
+app.use(rootPath, generalRouter);		// general routes
+app.use(rootPath, productRouter);		// product routes
+app.use(rootPath, userRouter);			// Users routes
+app.use(rootPath, reviewsRouter);		// reviews routes
+app.use(rootPath, messageRouter);		// message routes
+app.use(rootPath, paymentRouter);		// payment routes
+app.use(rootPath, friendRouter);		// friend routes
+app.use(rootPath, notificationRouter);	// notification routes
 
 const socketServer = http.createServer(app);
 const io = initializeWebServer(socketServer);

@@ -19,7 +19,7 @@ const paymentController =
 			if (!userId)
 				return (res.status(401).json({ status: 'ERROR', message: 'Unauthorized' }));
 
-			const { stripeCurrency = 'eur', productId = [], quantity = [] } = req.body;
+			const { stripeCurrency = 'eur', productId = [], quantity = [], cartSnapshot = [] } = req.body;
 
 			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
 				return (res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' }));
@@ -49,7 +49,13 @@ const paymentController =
 
 			if (products.length !== productId.length)
 				return (res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' }));
+			
+			if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0)
+				return (res.status(400).json({ status: 'ERROR', message: 'Snapshot du panier invalide' }));
 
+			if (cartSnapshot.length !== productId.length)
+				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence: snapshot ne match pas le cart' }));
+			
 			const numericPrice = products.reduce((sum, item) => {
 				const itemQty = quantityMap.get(item.id) || 0;
 				return (sum + (Number(item.price) * itemQty));
@@ -105,6 +111,7 @@ const paymentController =
 							currency: stripeCurrency,
 							status: 'PENDING',
 							userId: userId,
+							cartSnapshot: cartSnapshot,
 							products: {
 								connect: productId.map((id: number) => ({ id })),
 						}}
@@ -159,6 +166,7 @@ const paymentController =
 			const rawCart = paymentIntent.metadata?.cart;
 			const cart: Array<{ id: number; qty: number }> = rawCart ? JSON.parse(rawCart) : [];
 			const amountToDeduct = transaction.amount;
+			const soldNotifIds = new Map<number, number>();
 
 			try {
 				await prisma.$transaction(async (tx) => {
@@ -171,10 +179,23 @@ const paymentController =
 						console.log(`[STOCK] Produit #${updatedProduct.id} décrémenté de ${item.qty} (restant: ${updatedProduct.quantity})`);
 						if (updatedProduct.userId) {
 							const sellerGain = Number(item.qty) * Number(updatedProduct.price);
-							const updatedSellerBudget = await tx.user.update({
+							await tx.user.update({
 								where: { id: updatedProduct.userId },
 								data: { budget: { increment: sellerGain } }
-							})
+							});
+							const notif = await tx.notification.create({
+								data: {
+									userId: updatedProduct.userId,
+									type: 'PRODUCT_SOLD',
+									content: {
+										productId: updatedProduct.id,
+										productName: updatedProduct.name,
+										quantity: Number(item.qty),
+										gain: sellerGain,
+									},
+								},
+							});
+							soldNotifIds.set(Number(item.id), notif.id);
 						}
 					}
 					// 2. Decrement user budget securely
@@ -189,6 +210,24 @@ const paymentController =
 					});
 				});
 				console.log(`Payment ${paymentIntent.id} successfully processed.`);
+				const io = req.app.get('io');
+				if (io) {
+					for (const item of cart) {
+						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
+						if (product) {
+							if (product.userId) {
+								io.to(`user_${product.userId}`).emit('product_sold', {
+									notifId: soldNotifIds.get(Number(item.id)),
+									productId: product.id,
+									productName: product.name,
+									quantity: Number(item.qty),
+									gain: Number(item.qty) * Number(product.price),
+								});
+							}
+							io.emit('product_updated', { id: product.id, quantity: product.quantity });
+						}
+					}
+				}
 			} catch (dbError: any) {
 				console.error('Error applying DB updates:', dbError);
 				return (res.status(500).end()); // Let Stripe retry later
@@ -263,14 +302,16 @@ const paymentController =
 			const userId = Number(req.params.id);
 			const amount = Number(req.body.amount);
 			if (!userId || isNaN(userId))
-				return res.status(400).json({ message: 'Invalid userId', status: 400 });
-			if (Number.isNaN(amount) || amount <= 0 || amount > 100000)
-				return (res.status(403).json({ message: 'invalid parameter provided', Status: 400 }));
+				return res.status(400).json({ message: 'Invalid userId'});
+			if (Number.isNaN(amount) || amount <= 0 || amount > 2147483646)
+				return (res.status(403).json({ message: 'invalid amount parameter provided'}));
 			const user = await prisma.user.findUnique({
 				where: { id: userId }
 			})
 			if (!user)
-				return (res.status(404).json({ message: 'unable to find user', Status: 400 }));
+				return (res.status(404).json({ message: 'unable to find user'}));
+			if (user.budget + amount > 2147483646)
+				return (res.status(403).json({ message: 'budget is set too high'}));
 
 			const updatedUser = await prisma.user.update({
 				where: { id: userId },
@@ -282,7 +323,7 @@ const paymentController =
 		}
 		catch (error) {
 			console.error('Erreur topUp:', error);
-			return (res.status(500).json({ message: 'internal server Error', Status: 500 }));
+			return (res.status(500).json({ message: 'internal server Error'}));
 		}
 	}
 }

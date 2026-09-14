@@ -1,4 +1,4 @@
-# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous*
+# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous.*
 
 <!-- ![Docker.png](docker.png) -->
 
@@ -112,13 +112,20 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
 [Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
+[Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
 [Documentation : NGINX ConfigurationFile](https://nginx.org/en/linux_packages.html#Debian)  
 [Documentaiton : NGINX RequestProcess](https://nginx.org/en/docs/http/request_processing.html)  
+[Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : API - LoadBalancer - ReverseProxy](https://www.reddit.com/r/devops/comments/py1q54/difference_between_reverse_proxy_load_balancer/)  
 [Documentation : CORS principles](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/CORS)  
 [Documentation : CORS principles](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers)  
 [Documentation : CORS principles](https://portswigger.net/web-security/cors/access-control-allow-origin)  
+[Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
+[Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
+[Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
+[Documentation : Multer](https://medium.com/@julien.maffar/impl%C3%A9mentation-de-multer-dans-une-api-node-js-e358dd513e64)  
+[Documentation : Multer](https://expressjs.com/fr/resources/middleware/multer/)  
 [Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
 [Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
 [Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
@@ -208,7 +215,13 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | `dpaiva` | Delphine Paiva | PM/Tech Lead / Frontend Developer / Frontend development, Notification service | Frontend architecture, UI integration|
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
+
 # Project Management
+
+- We used Github over the whole course of the project for project synchronization between the group members. We worked over several branches : 'main' being the production branche and 'dev' being the development branch. We had individual branches for feature development and when tested and working we merged to dev and deleted local and remote individual branches. Until the project was complete and pushed into production.
+- We used Trello and Confluence for task managements and ressource sharing but quickly dropped them as they were mostly slowing de project development down instead of speeding it up by adding layers of complexity and unecessary tedious tasks.
+- We held an initial meeting to assign tasks and roles. Communication took place primarily via messaging (Discord).
+- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.  
 
 # Technical Stack
 
@@ -257,7 +270,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | Technology | Purpose |
 |-----------|---------|
 | **Stripe** | Payment processing and secure transaction handling |
-| **Lingui** | i18n service for easy regional translations handling |
+| **Lingui** | i18n service for easy regional translation handling |
 
 ---
 
@@ -270,6 +283,7 @@ erDiagram
     USER ||--o{ MESSAGE : "sends & receives"
     USER ||--o{ FRIENDREQUEST : "sends & receives"
     USER ||--o{ REVIEW : "writes & receives"
+    USER ||--o{ NOTIFICATION : receives
     USER ||--o{ REFRESHTOKEN : has
     USER ||--o| TWOFACTOR : "has (optional)"
     USER }o--|| LOCATION : "lives in"
@@ -384,6 +398,15 @@ erDiagram
         int attempts
         timestamp windowStart
     }
+
+    NOTIFICATION {
+        int id PK
+        int userId FK
+        string type
+        json content
+        bool read
+        timestamp createdAt
+    }
 ```
 
 # Features List
@@ -412,20 +435,96 @@ erDiagram
 ---
 
 # Modules
-- Module 1 | Major 2pts
-- Module 2 | Minor 1pts
--
+Take into consideration that this is our point of view on the matter and what we believe represent best the project and how it should be evaluated. At the end of the day this is the evaluator's tasks to determine wether our choices are justified and the modules are validated or not.  
+
+Each major module is worth 2 points | Each minor module is worth 1 point
+
+| Module Category | Module Name | Module type |
+| --- | --- | --- |
+| WEB | Frontend+Backend Framework | Major |
+| WEB | WebSockets | Major |
+| WEB | Users interactions | Major |
+| WEB | Public API | Major |
+| WEB | Database ORM | Minor |
+| WEB | Notification system | Minor |
+| WEB | PWA + offline support | Minor |
+| WEB | React Components | Minor |
+| WEB | Advanced search functionnality | Minor |
+| WEB | File upload and management system | Minor |
+| ACCESSIBILITY / I18N | Language support | Minor |
+| ACCESSIBILITY / I18N | Multiple browser support | Minor |
+| USER MANAGEMENT | User management and auth | Major |
+| USER MANAGEMENT | 2FA | Minor |
+| MODULE OF CHOICE | Stripe | Major |
+
+#### [-- Total : 21 pts --]
 
 # Individual Contributions
 
-Maxence:
-Thomas:
-Delphine:
-Chloé:
-Charles:
+### `mchanlia` - Maxence Chanliat
+
+- Designed and implemented the project infrastructure (Docker containers, Dockerfiles, Docker Compose and scripts)
+- Implemented backend logic (Express logic, routes, controllers for various features, JWT registration).
+- Worked on database implementation and schema file
+- implemented backend Sockets for chat support
+- Debugging throughout the project's lifespan
+
+The main challenge was getting used to a new language (javascript), aswell as gaining perspective on how to setup a larger scale infrastructure and designing a system thats as easy as possible to read for my groupmates and not too hard to improve over and maintain.
+
+### `tgomez-f` - Thomas Gomez
+
+- Designed and implemented the Django/DRF backend API structure
+- Implemented JWT authentication, registration, login, logout, and password change
+- Implemented user profile, follow, report, and user-ban related APIs
+- Implemented Django Channels chat models and WebSocket consumer
+- Built core domain constraints, serializers, and views
+
+The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+
+
+### `Dpaiva` - Delphine Paiva
+
+- Designed and implemented the Django/DRF backend API structure
+- Implemented JWT authentication, registration, login, logout, and password change
+- Implemented user profile, follow, report, and user-ban related APIs
+- Implemented Django Channels chat models and WebSocket consumer
+- Built core domain constraints, serializers, and views
+
+The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+
+
+### `chlimous` - Charles Limousin
+
+- Designed and implemented the Django/DRF backend API structure
+- Implemented JWT authentication, registration, login, logout, and password change
+- Implemented user profile, follow, report, and user-ban related APIs
+- Implemented Django Channels chat models and WebSocket consumer
+- Built core domain constraints, serializers, and views
+
+The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+
+
+### `chdoe` - Chloé Bond
+
+- Designed and implemented the Django/DRF backend API structure
+- Implemented JWT authentication, registration, login, logout, and password change
+- Implemented user profile, follow, report, and user-ban related APIs
+- Implemented Django Channels chat models and WebSocket consumer
+- Built core domain constraints, serializers, and views
+
+The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+
 
 # Known limitations
 
-- groupe split fin aout
-- deadlines shorts
-- blackhole ?
+- .env management over a group project and scaling over docker-compose
+- Github versionning and orgnization
+- Github Actions not implemented
+- Self signed certificate and browser security acknoledgment
+- Controlled and limited development environment at school (no privilege)
+- Team split in August
+- Short deadlines for group members
+
+## License / Credits
+
+This project was created for learning and evaluation as part of the 42 curriculum. When using external data and APIs, follow the terms of service of providers such as TOTP Danhersam, Stripe, and Google Gemini.

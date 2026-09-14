@@ -43,7 +43,7 @@ export async function createProductRequest(productData) {
 // côté backend si c'est voulu.
 export async function updateProductRequest(id, updates) {
   const { data } = await apiClient.put(`/products/${id}`, updates);
-  return data;
+  return data.data;
 }
 
 // DELETE /products/:id — AuthenticateToken

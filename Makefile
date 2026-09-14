@@ -132,4 +132,9 @@ webserver:
 		echo -e "$(GREEN)[DONE]$(RESET) $(WEB_SERVER_CONT) is running."; \
 	fi
 
-.PHONY: all up down back database webserver stripe clean re
+studio:
+	@set -a; . ./back/.env; set +a; \
+	DATABASE_URL=$$(printf '%s' "$$DATABASE_URL" | sed 's/@postgresql:/@localhost:/') \
+	npm --prefix back run db:studio
+
+.PHONY: all up down back database webserver stripe clean re studio

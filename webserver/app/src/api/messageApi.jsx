@@ -9,6 +9,26 @@ export async function SendMessage(receiver_id, content) {
         console.error('Pas d\'userId trouvé');
         return;
     }
+	if (!receiver_id) {
+        console.error('Pas de destinataire trouvé');
+        return;
+    }
+	const text = typeof content === 'string' ? content.trim() :  '';
+	if (!text)
+	{
+		console.error('Le contenu du message ne peut pas etre vide');
+		return ;
+	}
+	if (text.length > 5000)
+	{
+		console.error('Contenu du message trop long');
+        return;
+	}
+	if (!socket || !socket.connected)
+	{
+		console.error('Socket non connecte');
+        return;
+	}
     socket.emit('send_direct_message', {
         senderId: userId,
         receiverId: receiver_id,

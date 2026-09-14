@@ -1,3 +1,4 @@
+import { consumeFactor } from '../services/twoFactor.js';
 import { Request, Response } from "express";
 import { PrismaClient, Prisma } from '@prisma/client';
 import { comparePassword, hashIt } from "../utils/securityUtils.js";
@@ -76,6 +77,12 @@ const userController =
 			if (!passMatch)
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid credential'}));
 			
+            const factor = await prisma.twoFactor.findUnique({ where: { userId: existingUser.id } });
+            if (factor?.enabled) {
+                if (!req.body.code) return res.set('Cache-Control', 'no-store').status(200).json({ requiresTwoFactor: true });
+                const result = await consumeFactor(existingUser.id, req.body.code, 'login');
+                if (!result.ok) return res.status(result.limited ? 429 : 400).json({ message: result.limited ? 'Trop de tentatives' : 'Code incorrect ou déjà utilisé' });
+            }
 			const {accessToken, refreshToken} = generateTokens(existingUser.id, existingUser.email);
 			const hashedRefreshToken = hashIt(refreshToken);
 			await saveRefreshToken(existingUser.id, hashedRefreshToken);
@@ -126,13 +133,13 @@ const userController =
 			});
 			if (!storedToken || storedToken.expiresAt < new Date()) {
 				res.clearCookie('refreshToken', BASIC_COOKIE); // clear the invalid token
-				return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
+				return (res.status(401).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 			}
 
 			const { accessToken } = generateTokens(decodedPayload.id, decodedPayload.email); // generate new tokens for the old token's id and email (user)
 			const userObject = await prisma.user.findUnique({
 				where: {id: decodedPayload.id},
-				include: {product: true, location: true, receivedReviews: {include: {reviewAuthor: true}}, authoredReviews: true}
+				include: {product: true, location: true, receivedReviews: {include: {reviewAuthor: { select: { id: true, username: true, name: true, avatar: true } }}}, authoredReviews: true}
 			});
 			if (!userObject)
 				throw new Error ("user not found");
@@ -143,7 +150,7 @@ const userController =
 		catch (error){
 			console.error(error);
 			res.clearCookie('refreshToken', REFRESH_COOKIE_OPTIONS); // clear the token 
-			return (res.status(403).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
+			return (res.status(401).json({ status: 'ERROR', message: 'Invalid or expired access token... Please refresh the page' }));
 		}
 	},
 	getUser: async (req:Request<{ id:string}>, res:Response) => 
@@ -182,7 +189,7 @@ const userController =
 			if ('error' in dbUser)
 				return(res.status(dbUser.status).json({message: dbUser.error}));
 			if (userId !== dbUser.id)
-				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t delete someone else than yourself !' });
+				return res.status(401).json({ status: 'ERROR', message: 'Forbidden: You can\'t delete someone else than yourself !' });
 			const deletedUser = await prisma.user.delete({
 				where: {id: dbUser.id},
 			});
@@ -202,7 +209,7 @@ const userController =
 			if (isNaN(paramId))
 				return (res.status(400).json({ status: 'ERROR', message: 'Invalid user ID' }));
 			if (userId !== paramId)
-				return res.status(403).json({ status: 'ERROR', message: 'Forbidden: You can\'t update someone else than yourself !' });
+				return res.status(401).json({ status: 'ERROR', message: 'Forbidden: You can\'t update someone else than yourself !' });
 			const dbUser = await findReturnUser(req.params.id);
 			if ('error' in dbUser)
 				return(res.status(dbUser.status).json({message: dbUser.error}));
