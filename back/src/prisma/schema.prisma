@@ -46,6 +46,8 @@ model User {
   locationId Int?
   location   Location? @relation(fields: [locationId], references: [id])
   refreshToken RefreshToken[]
+  twoFactor TwoFactor?
+  notifications Notification[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -59,6 +61,7 @@ model Payment {
   status String
   userId Int
   user  User  @relation(fields: [userId], references: [id], onDelete:Cascade)
+  cartSnapshot  Json?
   products  Product[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -148,22 +151,50 @@ model Location {
   additionnal_infos String?
 }
 
-model Review{
+model Notification {
   id        Int      @id @default(autoincrement())
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      String
+  content   Json
+  read      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Review {
+  id              Int      @id @default(autoincrement())
   
-  reviewRating Int
-  reviews    String
+  reviewRating    Int
+  reviews         String
 
-  authorId Int
-  reviewAuthor      User      @relation("AuthoredReviews", fields: [authorId], references: [id], onDelete: Cascade)
-  reviewedUserId Int
-  reviewedUser      User      @relation("ReceivedReviews",fields: [reviewedUserId], references: [id], onDelete: Cascade)
+  authorId        Int
+  reviewAuthor    User      @relation("AuthoredReviews", fields: [authorId], references: [id], onDelete: Cascade)
+  reviewedUserId  Int
+  reviewedUser    User      @relation("ReceivedReviews",fields: [reviewedUserId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime @default(now())
-  deletedAt  DateTime?
-  modifiedAt  DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  deletedAt       DateTime?
+  modifiedAt      DateTime @updatedAt
 
   @@unique([authorId, reviewedUserId])
   @@index([reviewedUserId])
   @@index([authorId])
+}
+
+model TwoFactor {
+  userId Int @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret String
+  enabled Boolean @default(false)
+  setupExpiresAt DateTime
+  lastStep Int @default(-1)
+  recoveryHashes String[]
+  attempts Int @default(0)
+  windowStart DateTime @default(now())
 }

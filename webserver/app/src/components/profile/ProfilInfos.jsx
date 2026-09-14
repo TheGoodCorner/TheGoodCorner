@@ -1,15 +1,13 @@
 import React from 'react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { InfoCard } from '../UI/InfoCard';
 import { FormField } from '../UI/FormField';
 import { Dropdown } from '../UI/Dropdown';
 import {
-  Mail, Phone, Award, TrendingUp, MapPin, Star, Wallet,
+  Mail, Phone, Award, MapPin, Star, Wallet,
   Globe, Map, Building2, Route, Hash, FileText, ChevronDown,
 } from 'lucide-react';
 
-// Compose une adresse lisible à partir des champs Location (résumé une
-// ligne pour la grille). additionnal_infos volontairement absent ici —
-// visible dans le détail via LocationInfoCard.
 function formatAddress(location) {
   if (!location) return null;
   const line1 = [location.houseNumber, location.street].filter(Boolean).join(' ');
@@ -17,8 +15,6 @@ function formatAddress(location) {
   return [line1, line2].filter(Boolean).join(', ') || null;
 }
 
-// "06 12 34 56 78" — purement pour l'affichage en lecture ; l'input en
-// édition reste en chiffres bruts, plus simple à taper/corriger.
 function formatPhone(phone) {
   if (!phone) return null;
   const digits = phone.replace(/\D/g, '');
@@ -36,9 +32,8 @@ function LocationDetailRow({ label, value }) {
   );
 }
 
-// Carte "Localisation" de la grille : résumé + petit dropdown pour voir le
-// détail complet (y compris additionnal_infos, jamais affiché ailleurs).
 function LocationInfoCard({ location }) {
+  const { t } = useLingui();
   const address = formatAddress(location);
   const streetLine = location ? [location.houseNumber, location.street].filter(Boolean).join(' ') : '';
 
@@ -47,31 +42,33 @@ function LocationInfoCard({ location }) {
       <MapPin size={20} className='text-[var(--color-primary)] flex-shrink-0 mt-0.5' />
       <div className='min-w-0 flex-1'>
         <p className='text-xs font-semibold text-[var(--color-text-muted)] uppercase tracking-wide'>
-          Localisation
+          <Trans>Localisation</Trans>
         </p>
         <div className='flex items-center gap-1 mt-0.5'>
           <p className='text-sm font-medium text-[var(--color-text)] truncate'>
-            {address || 'Non renseigné'}
+            {address || t`Non renseigné`}
           </p>
           {location && (
             <Dropdown>
               <Dropdown.Trigger
                 className='p-0.5 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-surface-hover)] transition-colors flex-shrink-0'
-                aria-label="Voir le détail de l'adresse"
+                aria-label={t`Voir le détail de l'adresse`}
               >
                 <ChevronDown size={14} />
               </Dropdown.Trigger>
               <Dropdown.Menu align='left'>
                 <Dropdown.Label>
-                  <p className='text-sm font-semibold text-[var(--color-text)]'>Adresse complète</p>
+                  <p className='text-sm font-semibold text-[var(--color-text)]'>
+                    <Trans>Adresse complète</Trans>
+                  </p>
                 </Dropdown.Label>
                 <Dropdown.Separator />
                 <div className='px-4 py-2'>
-                  <LocationDetailRow label='Adresse' value={streetLine} />
-                  <LocationDetailRow label='Ville' value={location.city} />
-                  <LocationDetailRow label='Région' value={location.region} />
-                  <LocationDetailRow label='Pays' value={location.country} />
-                  <LocationDetailRow label='Complément' value={location.additionnal_infos} />
+                  <LocationDetailRow label={t`Adresse`} value={streetLine} />
+                  <LocationDetailRow label={t`Ville`} value={location.city} />
+                  <LocationDetailRow label={t`Région`} value={location.region} />
+                  <LocationDetailRow label={t`Pays`} value={location.country} />
+                  <LocationDetailRow label={t`Complément`} value={location.additionnal_infos} />
                 </div>
               </Dropdown.Menu>
             </Dropdown>
@@ -83,13 +80,15 @@ function LocationInfoCard({ location }) {
 }
 
 export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, onFieldChange, onLocationFieldChange }) {
+  const { t } = useLingui();
+
   return (
     <>
       {/* Grille d'infos */}
       <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 mb-8 pb-8 border-b border-[var(--color-border)]'>
         <InfoCard 
           icon={Mail}
-          label='Email'
+          label={t`Email`}
           value={isEditing ? form.email : user?.email}
           editable
           isEditing={isEditing}
@@ -98,7 +97,7 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
         />
         <InfoCard 
           icon={Phone}
-          label='Téléphone'
+          label={t`Téléphone`}
           value={isEditing ? form.phoneNumber : formatPhone(user?.phoneNumber)}
           editable
           isEditing={isEditing}
@@ -107,88 +106,86 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
         />
         <InfoCard 
           icon={Award}
-          label='Produits publiés'
+          label={t`Produits publiés`}
           value={user?.product?.length || '0'}
         />
         <LocationInfoCard location={user?.location} />
         <InfoCard 
           icon={Star}
-          label='Note moyenne'
-          value={userRating > 0 ? `${userRating.toFixed(1)}/5.0` : 'Aucune note'}
+          label={t`Note moyenne`}
+          value={userRating > 0 ? `${userRating.toFixed(1)}/5.0` : t`Aucune note`}
         />
         <InfoCard 
           icon={Wallet}
-          label='Portefeuille'
+          label={t`Portefeuille`}
           value={user?.budget}
         />
         <InfoCard 
           icon={Award}
-          label='Statut'
-          value={reviewCount > 20 ? 'Vendeur Elite' : 'Vendeur'}
+          label={t`Statut`}
+          value={reviewCount > 20 ? t`Vendeur Elite` : t`Vendeur`}
         />
       </div>
 
-      {/* Adresse — édition uniquement. 5 champs obligatoires côté backend
-          (voir schema Prisma Location), ça ne tenait pas dans une seule
-          InfoCard, d'où ce bloc dédié qui n'apparaît qu'en editing. */}
+      {/* Adresse — édition uniquement */}
       {isEditing && (
         <div className='mb-8 pb-8 border-b border-[var(--color-border)]'>
           <h3 className='text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-4'>
-            Adresse
+            <Trans>Adresse</Trans>
           </h3>
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl'>
             <FormField
               id='loc-country'
-              label='Pays'
+              label={t`Pays`}
               icon={Globe}
               value={form.location.country}
               onChange={onLocationFieldChange('country')}
-              placeholder='France'
+              placeholder={t`France`}
             />
             <FormField
               id='loc-region'
-              label='Région'
+              label={t`Région`}
               icon={Map}
               value={form.location.region}
               onChange={onLocationFieldChange('region')}
-              placeholder='Île-de-France'
+              placeholder={t`Île-de-France`}
             />
             <FormField
               id='loc-city'
-              label='Ville'
+              label={t`Ville`}
               icon={Building2}
               value={form.location.city}
               onChange={onLocationFieldChange('city')}
-              placeholder='Paris'
+              placeholder={t`Paris`}
             />
             <FormField
               id='loc-street'
-              label='Rue'
+              label={t`Rue`}
               icon={Route}
               value={form.location.street}
               onChange={onLocationFieldChange('street')}
-              placeholder='Rue de Rivoli'
+              placeholder={t`Rue de Rivoli`}
             />
             <FormField
               id='loc-house-number'
-              label='Numéro'
+              label={t`Numéro`}
               icon={Hash}
               type='number'
               value={form.location.house_number}
               onChange={onLocationFieldChange('house_number')}
-              placeholder='12'
+              placeholder="12"
             />
             <FormField
               id='loc-additional'
-              label='Complément (optionnel)'
+              label={t`Complément (optionnel)`}
               icon={FileText}
               value={form.location.additionnal_infos}
               onChange={onLocationFieldChange('additionnal_infos')}
-              placeholder='Bâtiment B, 3e étage...'
+              placeholder={t`Bâtiment B, 3e étage...`}
             />
           </div>
           <p className='text-xs text-[var(--color-text-muted)] mt-3'>
-            Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant.
+            <Trans>Laisse tous les champs vides si tu ne veux pas renseigner d'adresse pour l'instant.</Trans>
           </p>
         </div>
       )}
@@ -196,19 +193,19 @@ export function ProfilInfos({ user, userRating, reviewCount, isEditing, form, on
       {/* Bio / Description */}
       <div>
         <h3 className='text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wide mb-3'>
-          À propos
+          <Trans>À propos</Trans>
         </h3>
         {isEditing ? (
           <textarea
             value={form.bio}
             onChange={onFieldChange('bio')}
             rows={4}
-            placeholder='Parle un peu de toi...'
+            placeholder={t`Parle un peu de toi...`}
             className='w-full max-w-2xl text-sm text-[var(--color-text)] leading-relaxed bg-[var(--color-bg)] border border-[var(--color-border)] rounded-[var(--radius-md)] p-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] resize-none transition-colors'
           />
         ) : (
           <p className='text-sm text-[var(--color-text)] leading-relaxed max-w-2xl'>
-            {user?.bio || 'Aucune description fournie'}
+            {user?.bio || <Trans>Aucune description fournie</Trans>}
           </p>
         )}
       </div>

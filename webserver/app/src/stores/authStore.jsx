@@ -19,17 +19,23 @@ export const useAuthStore = create((set) => ({
   loading: false,
   error: null,
 
-  login: async (email, password) => {
+  login: async (email, password, code) => {
     set({ loading: true, error: null })
     try {
-      const { user, token } = await loginRequest(email, password)
+      const { user, token, requiresTwoFactor } = await loginRequest(email, password, code)
+      if (requiresTwoFactor) {
+        set({ loading: false })
+        return 'two-factor'
+      }
 	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       // login renvoie déjà le profil complet : on le pousse directement
       // dans userStore, pas de fetch séparé (GET /user/:id est publique et
       // ne renverrait que la version publique).
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
+      useNotificationStore.getState().fetchNotifications()
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -44,7 +50,9 @@ export const useAuthStore = create((set) => ({
 	  localStorage.setItem(SESSION_KEY, 'true')
       set({token, isAuthenticated: true, loading: false })
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
+      useNotificationStore.getState().fetchNotifications()
       return true
     } catch (err) {
       set({ error: err.message, loading: false })
@@ -63,24 +71,32 @@ export const useAuthStore = create((set) => ({
 	  if (!token) {
         localStorage.removeItem(SESSION_KEY);
         useUserStore.getState().setUser(null);
-        set({ user: null, token: null, isAuthenticated: false, initializing: false });
+        set({ token: null, isAuthenticated: false, initializing: false });
         return;
       }
       set({user, token, isAuthenticated: true, initializing: false })
       useUserStore.getState().setUser(user)
+      useCartStore.getState().switchUser(user.id)
       connectSocket(user.id)
-    } catch {
+      useNotificationStore.getState().fetchNotifications()
+    } catch (err) {
+      if (err?.isRateLimited) {
+      // Rate-limité, pas une session invalide : on ne touche à rien,
+      // juste on arrête l'état "initializing" pour ne pas bloquer l'UI.
+      set({ initializing: false });
+      return;
+    }
 		localStorage.removeItem(SESSION_KEY);
 		useUserStore.getState().setUser(null);
-      set({ user: null, token: null, isAuthenticated: false, initializing: false })
+      set({ token: null, isAuthenticated: false, initializing: false })
     }
   },
 
   logout: async () => {
     // Même si l'appel échoue, on déconnecte quand même côté client.
     localStorage.removeItem(SESSION_KEY)
-    set({ user: null, token: null, isAuthenticated: false, error: null })
-    useCartStore.getState().clearCart()
+    set({ token: null, isAuthenticated: false, error: null })
+    useCartStore.getState().switchUser(null)
     useUserStore.getState().logout()
     useMessageStore.getState().reset()
     useNotificationStore.getState().reset()

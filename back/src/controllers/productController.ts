@@ -62,9 +62,26 @@ const ProductController =
 				body: req.body,
 				file: req.file,
 			}),
+			include: {
+				category: true,
+				author: {
+					select: {
+						id: true,
+						username: true,
+						name: true,
+						email: true,
+						avatar: true,
+						bio: true,
+						sellerRating: true,
+						sellerReviewCount: true,
+					}
+				},
+			},
 		});
 		console.log(`User updated product ID ${updatedProduct.id}`);
-		return (res.status(200).json({ status: 'OK', data: product }));
+		const io = req.app.get('io');
+		if (io) io.emit('product_edited', updatedProduct);
+		return (res.status(200).json({ status: 'OK', data: updatedProduct }));
 	},
 	deleteProduct: async (req: AuthenticatedRequest<{ id: string }>, res: Response) => {
 		try {

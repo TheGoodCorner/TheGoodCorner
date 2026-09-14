@@ -54,6 +54,24 @@ export const useProductStore = create((set, get) => ({
     }
   },
 
+  updateProduct_socket: (product) => {
+    set((state) => ({
+      products: state.products.map((p) => String(p.id) === String(product.id) ? product : p),
+      currentProduct:
+        state.currentProduct && String(state.currentProduct.id) === String(product.id)
+          ? product
+          : state.currentProduct,
+    }));
+  },
+
+  updateProductStock: ({ id, quantity }) => {
+    set((state) => ({
+      products: state.products.map((p) =>
+        String(p.id) === String(id) ? { ...p, quantity } : p
+      ),
+    }));
+  },
+
   // Utilisé notamment par les WebSockets
   addProduct: (product) => {
     if (!product || !product.id) return;
@@ -111,6 +129,13 @@ export const useProductStore = create((set, get) => ({
             : state.currentProduct,
         loading: false,
       }));
+      const { user, setUser } = useUserStore.getState();
+      if (user?.product) {
+        setUser({
+          ...user,
+          product: user.product.map((p) => (String(p.id) === String(id) ? data : p)),
+        });
+      }
       return data;
     } catch (err) {
       set({ error: err.message, loading: false });
@@ -120,18 +145,26 @@ export const useProductStore = create((set, get) => ({
 
   // DELETE /products/:id
   deleteProduct: async (id) => {
-    set({ loading: true, error: null });
-    try {
-      await deleteProductRequest(id);
-      set((state) => ({
-        products: state.products.filter((p) => String(p.id) !== String(id)),
-        loading: false,
-      }));
-    } catch (err) {
-      set({ error: err.message, loading: false });
-      throw err;
+  set({ loading: true, error: null });
+  try {
+    await deleteProductRequest(id);
+    set((state) => ({
+      products: state.products.filter((p) => String(p.id) !== String(id)),
+      loading: false,
+    }));
+
+    const { user, setUser } = useUserStore.getState();
+    if (user?.product) {
+      setUser({
+        ...user,
+        product: user.product.filter((p) => String(p.id) !== String(id)),
+      });
     }
-  },
+  } catch (err) {
+    set({ error: err.message, loading: false });
+    throw err;
+  }
+},
 
   // Filtrage avec déduplication intégrée
   getFilteredProducts: () => {

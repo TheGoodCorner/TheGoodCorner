@@ -12,7 +12,7 @@
  * le build sont eux gérés automatiquement par staleWhileRevalidate).
  */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `tgc-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `tgc-runtime-${CACHE_VERSION}`;
 const API_CACHE = `tgc-api-${CACHE_VERSION}`;
@@ -94,7 +94,6 @@ self.addEventListener('fetch', (event) => {
   // 4. Ignorer les websockets, uploads backend et routes d'authentification
   if (
     url.pathname.startsWith('/socket.io/') ||
-    url.pathname.startsWith('/uploads/') ||
     url.pathname === '/register' ||
     url.pathname === '/login'
   ) {

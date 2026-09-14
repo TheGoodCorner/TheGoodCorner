@@ -1,4 +1,4 @@
-# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous*
+# *This project has been created as part of the 42 curriculum by mchanlia, tgomez-f, dpaiva, chdoe and chlimous.*
 
 <!-- ![Docker.png](docker.png) -->
 
@@ -112,13 +112,20 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Stripe payment methods](https://docs.stripe.com/api/payment_methods/object)  
 [Documentation : Stripe payment integration](https://medium.com/@harshilsharmaa51/integrate-stripe-payment-with-nodejs-and-save-it-in-database-42a6b53c479b)  
 [Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
+[Documentation : NGINX HTTPS configuration](https://nginx.org/en/docs/http/configuring_https_servers.html)  
 [Documentation : NGINX ConfigurationFile](https://nginx.org/en/linux_packages.html#Debian)  
 [Documentaiton : NGINX RequestProcess](https://nginx.org/en/docs/http/request_processing.html)  
+[Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : NGINX limit req command](https://nginx.org/en/docs/http/ngx_http_limit_req_module.html)  
 [Documentation : API - LoadBalancer - ReverseProxy](https://www.reddit.com/r/devops/comments/py1q54/difference_between_reverse_proxy_load_balancer/)  
 [Documentation : CORS principles](https://developer.mozilla.org/fr/docs/Web/HTTP/Guides/CORS)  
 [Documentation : CORS principles](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Access-Control-Allow-Headers)  
 [Documentation : CORS principles](https://portswigger.net/web-security/cors/access-control-allow-origin)  
+[Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
+[Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
+[Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
+[Documentation : Multer](https://medium.com/@julien.maffar/impl%C3%A9mentation-de-multer-dans-une-api-node-js-e358dd513e64)  
+[Documentation : Multer](https://expressjs.com/fr/resources/middleware/multer/)  
 [Documentation : HTPP](https://blog.postman.com/what-are-http-headers/)  
 [Documentation : HTPP](https://fr.wikipedia.org/wiki/Liste_des_codes_HTTP)  
 [Documentation : Port](https://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers)  
@@ -209,7 +216,10 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
 # Project Management
-  
+
+- We held an initial meeting to assign tasks and roles. Communication took place primarily via messaging (Discord).
+
+- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.
 
 # Technical Stack
 
@@ -271,6 +281,7 @@ erDiagram
     USER ||--o{ MESSAGE : "sends & receives"
     USER ||--o{ FRIENDREQUEST : "sends & receives"
     USER ||--o{ REVIEW : "writes & receives"
+    USER ||--o{ NOTIFICATION : receives
     USER ||--o{ REFRESHTOKEN : has
     USER }o--|| LOCATION : "lives in"
     PRODUCT }o--|| CATEGORY : "belongs to"
@@ -371,6 +382,15 @@ erDiagram
         timestamp expiresAt
         timestamp revokedAt
         string replacedBy
+        timestamp createdAt
+    }
+
+    NOTIFICATION {
+        int id PK
+        int userId FK
+        string type
+        json content
+        bool read
         timestamp createdAt
     }
 ```

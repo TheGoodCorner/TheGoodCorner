@@ -103,8 +103,58 @@ export const useUserStore = create(
         });
       },
 
+      updateReview: (review) => {
+        set((state) => {
+          const updatedUser = state.user?.receivedReviews
+            ? {
+                ...state.user,
+                receivedReviews: state.user.receivedReviews.map((r) =>
+                  r.id === review.id ? review : r
+                ),
+              }
+            : state.user;
+          const updatedViewedUser = state.viewedUser?.receivedReviews
+            ? {
+                ...state.viewedUser,
+                receivedReviews: state.viewedUser.receivedReviews.map((r) =>
+                  r.id === review.id ? review : r
+                ),
+              }
+            : state.viewedUser;
+          return { user: updatedUser, viewedUser: updatedViewedUser };
+        });
+      },
+
       clearError: () => {
         set({ error: null });
+      },
+
+      updateViewedUserProduct_full: (product) => {
+        set((state) => {
+          if (!state.viewedUser?.product) return state;
+          return {
+            viewedUser: {
+              ...state.viewedUser,
+              product: state.viewedUser.product.map((p) =>
+                String(p.id) === String(product.id) ? product : p
+              ),
+            },
+          };
+        });
+      },
+
+      updateViewedUserProduct: (id, quantity) => {
+        set((state) => {
+          if (!state.viewedUser?.product) return state;
+          return {
+            viewedUser: {
+              ...state.viewedUser,
+              product: state.viewedUser.product.map((p) =>
+                String(p.id) === String(id) ? { ...p, quantity } : p
+              ),
+            },
+          };
+        });
       },
     })
 );

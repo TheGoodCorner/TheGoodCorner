@@ -1,8 +1,10 @@
+import { useLingui } from "@lingui/react/macro";
 import { useUIStore } from "../../stores/uiStore";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { Button } from "./Button";
-import { X, PanelRightClose } from "lucide-react";
+import { PanelRightClose } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+
 /**
  * Popover générique réutilisable
  * @param {string} id - identifiant unique (pour le store UI)
@@ -17,9 +19,10 @@ export function Popover({
   children,
   position = "right",
   showCloseButton = true,
-  width="w-96",
+  width = "w-96",
 }) {
-  const { openUi, toggleUi, closeUi } = useUIStore();
+  const { t } = useLingui();
+  const { openUi, closeUi } = useUIStore();
   const isOpen = useUIStore((state) => state.UserInterfaces[id]) || false;
 
   const ref = useClickOutside(() => closeUi(id), isOpen);
@@ -43,19 +46,19 @@ export function Popover({
             transition={{ type: "spring", damping: 20, stiffness: 100 }}
             className={`fixed ${positionClass} ${width} top-5 bottom-5 bg-[var(--color-surface)] z-50 rounded-lg shadow-3xl border border-[var(--color-border)] overflow-hidden text-[var(--color-text)]`}
           >
-              {/* Header avec close button */}
-              {showCloseButton && (
-                <Button
-                  onClick={() => closeUi(id)}
-                  className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
-                  variant="primary"
-                  icon={PanelRightClose}
-                  title="Fermer popover"
-                  aria-label="Fermer popover"
-                />
-              )}
-              {/* Contenu */}
-              <div className="p-6 h-full overflow-y-auto">{children}</div>
+            {/* Header avec close button */}
+            {showCloseButton && (
+              <Button
+                onClick={() => closeUi(id)}
+                className="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded transition"
+                variant="primary"
+                icon={PanelRightClose}
+                title={t`Fermer popover`}
+                aria-label={t`Fermer popover`}
+              />
+            )}
+            {/* Contenu */}
+            <div className="p-6 h-full overflow-y-auto">{children}</div>
           </motion.div>
         )}
       </AnimatePresence>

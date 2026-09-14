@@ -144,6 +144,11 @@ html {
   align-items: center;
   text-align: center;
 }
+.review-content {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
 
 .transition-smooth {
   @apply transition-all duration-300 ease-in-out;

@@ -1,11 +1,12 @@
 import { apiClient } from './client';
 import { SESSION_KEY } from '../utils/constants';
 
-export async function loginRequest(email, password) {
+export async function loginRequest(email, password, code) {
   // axios retourne ce que le serveur renvoie (data) + des metadonnee
   // En destructurant '{ data }' on garde que ce qui nous interesse (les donnees renvoyer par le back)
-  const { data } = await apiClient.post('/auth/login', { email, password });
+  const { data } = await apiClient.post('/auth/login', { email, password, code });
   return {
+    requiresTwoFactor: data.requiresTwoFactor,
     user: data.data,
     token: data.accessToken,
   };
@@ -23,19 +24,12 @@ export async function registerRequest(email, password, username) {
 // de client.jsx quand un access token expire. Le cookie refresh httpOnly part
 // automatiquement avec la requête (withCredentials) — rien à lui passer ici.
 export async function refreshRequest() {
-	try{
 		const { data } = await apiClient.post('/auth/refresh');
 		return {
 		  user: data.data,
 		  token: data.accessToken,
 		};
 	}
-	catch(err){
-	if (err.response?.status === 401 || err.response?.status === 403)
-		return null;
-	throw err;
-	}
-}
 
 export async function logoutRequest() {
   try {

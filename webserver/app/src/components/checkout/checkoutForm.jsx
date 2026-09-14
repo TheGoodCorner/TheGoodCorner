@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Trans } from '@lingui/react/macro';
 import { useProductStore } from '../../stores/productStore';
-import { useAuthStore } from '../../stores/authStore';
-import { Wallet } from 'lucide-react';
 
 export default function CheckoutForm({ onSuccess }) {
   const stripe = useStripe();
@@ -14,13 +13,11 @@ export default function CheckoutForm({ onSuccess }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Stripe.js has not yet loaded.
     if (!stripe || !elements) return;
 
     setIsProcessing(true);
     setErrorMessage(null);
 
-    // Trigger form validation and wallet collection
     const { error: submitError } = await elements.submit();
     if (submitError) {
       setErrorMessage(submitError.message);
@@ -33,11 +30,10 @@ export default function CheckoutForm({ onSuccess }) {
       confirmParams: {
         return_url: `${window.location.origin}/checkout/success`,
       },
-      redirect: 'if_required', // Prevents unnecessary page reload if 3DS is not required
+      redirect: 'if_required',
     });
 
     if (error) {
-      // Show error to your customer (e.g., payment details incomplete, card declined)
       setErrorMessage(error.message);
       setIsProcessing(false);
     } else if (paymentIntent && paymentIntent.status === 'succeeded') {
@@ -45,17 +41,20 @@ export default function CheckoutForm({ onSuccess }) {
       onSuccess();
     }
   };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4 mt-6">
       <div className="p-4 border border-[var(--color-border)] rounded-lg bg-[var(--color-surface)]">
-        <PaymentElement options={{
-          layout: 'tabs', 
-          wallets: {
-            applePay: 'never',
-            googlePay: 'never',
-          },
-		  paymentMethodOrder: ['card'],
-		}} />
+        <PaymentElement
+          options={{
+            layout: 'tabs',
+            wallets: {
+              applePay: 'never',
+              googlePay: 'never',
+            },
+            paymentMethodOrder: ['card'],
+          }}
+        />
       </div>
 
       {errorMessage && (
@@ -67,7 +66,11 @@ export default function CheckoutForm({ onSuccess }) {
         disabled={!stripe || isProcessing}
         className="w-full bg-[var(--color-primary)] text-white py-3 rounded-lg font-medium hover:opacity-90 disabled:opacity-50 transition"
       >
-        {isProcessing ? 'Validation en cours...' : 'Confirmer le règlement'}
+        {isProcessing ? (
+          <Trans>Validation en cours...</Trans>
+        ) : (
+          <Trans>Confirmer le règlement</Trans>
+        )}
       </button>
     </form>
   );

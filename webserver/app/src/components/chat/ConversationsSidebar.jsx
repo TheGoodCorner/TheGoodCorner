@@ -1,4 +1,5 @@
 import { Search, Plus } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '../UI/Button';
 import { EmptyState } from '../UI/EmptyState';
 import ConversationListItem from './ConversationListItem';
@@ -16,6 +17,8 @@ function ConversationsSidebar({
   onDeleteConversation,
   className = '',
 }) {
+  const { t } = useLingui();
+
   const visibleConversations = conversations.filter(
     (c) => !hiddenConversationIds.includes(String(c.interlocutor.id))
   );
@@ -33,7 +36,7 @@ function ConversationsSidebar({
             type="text"
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="Rechercher une conversation..."
+            placeholder={t`Rechercher une conversation...`}
             className="w-full pl-9 pr-3 py-2 text-sm rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] transition-colors"
           />
         </div>
@@ -48,10 +51,10 @@ function ConversationsSidebar({
           </div>
         ) : filteredConversations.length === 0 ? (
           <EmptyState
-            description="Aucune conversation pour l'instant."
+            description={t`Aucune conversation pour l'instant.`}
             action={
               <Button variant="outline" size="sm" icon={Plus} onClick={onNewConversation}>
-                Démarrer une discussion
+                <Trans>Démarrer une discussion</Trans>
               </Button>
             }
             className="h-full px-6 py-16"

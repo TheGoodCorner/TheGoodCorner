@@ -57,8 +57,53 @@ socket.on('new_product', (product) => {
   useProductStore.getState().addProduct(product);
 });
 
+socket.on('product_edited', (product) => {
+  useProductStore.getState().updateProduct_socket(product);
+  useUserStore.getState().updateViewedUserProduct_full(product);
+  const { user, setUser } = useUserStore.getState();
+  if (user?.product?.some((p) => String(p.id) === String(product.id))) {
+    setUser({
+      ...user,
+      product: user.product.map((p) => String(p.id) === String(product.id) ? product : p),
+    });
+  }
+});
+
+socket.on('product_updated', (payload) => {
+  useProductStore.getState().updateProductStock(payload);
+  const { user, setUser } = useUserStore.getState();
+  if (user?.product) {
+    const updatedProduct = user.product.find((p) => String(p.id) === String(payload.id));
+    if (updatedProduct) {
+      setUser({
+        ...user,
+        product: user.product.map((p) =>
+          String(p.id) === String(payload.id) ? { ...p, quantity: payload.quantity } : p
+        ),
+      });
+    }
+  }
+  useUserStore.getState().updateViewedUserProduct(payload.id, payload.quantity);
+});
+
+socket.on('product_sold', (payload) => {
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'PRODUCT_SOLD',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
+});
+
+socket.on('review_updated', ({ review }) => {
+  useUserStore.getState().updateReview(review);
+});
+
 socket.on('review_deleted', ({ reviewId }) => {
-  useNotificationStore.getState().removeReviewNotification(reviewId);
+  const notifs = useNotificationStore.getState().notifications;
+  const toRemove = notifs.find((n) => n.type === 'REVIEW' && n.content?.reviewId === reviewId);
+  if (toRemove) useNotificationStore.getState().removeNotification(toRemove.id);
   const { user, setUser } = useUserStore.getState();
   if (user) {
     setUser({
@@ -70,7 +115,13 @@ socket.on('review_deleted', ({ reviewId }) => {
 });
 
 socket.on('new_review', (payload) => {
-  useNotificationStore.getState().addReviewNotification(payload);
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'REVIEW',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   const { user, setUser } = useUserStore.getState();
   if (user) {
     setUser({
@@ -83,18 +134,36 @@ socket.on('new_review', (payload) => {
 
 // --- Notifications amis ---
 socket.on('new_friend_request', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'request', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_REQUEST',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchReceivedFriendRequests();
 });
 
 socket.on('friend_request_accepted', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'accepted', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_ACCEPTED',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchFriends();
   useFriendStore.getState().fetchSentFriendRequests();
 });
 
 socket.on('friend_request_rejected', (payload) => {
-  useNotificationStore.getState().addFriendNotification({ type: 'rejected', ...payload });
+  useNotificationStore.getState().addNotification({
+    id: payload.notifId,
+    type: 'FRIEND_REJECTED',
+    content: payload,
+    read: false,
+    createdAt: new Date().toISOString(),
+  });
   useFriendStore.getState().fetchSentFriendRequests();
 });
 
