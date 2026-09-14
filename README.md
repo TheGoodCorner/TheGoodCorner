@@ -270,7 +270,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | Technology | Purpose |
 |-----------|---------|
 | **Stripe** | Payment processing and secure transaction handling |
-| **Lingui** | i18n service for easy regional translations handling |
+| **Lingui** | i18n service for easy regional translation handling |
 
 ---
 
@@ -427,7 +427,7 @@ Take into consideration that this is our point of view on the matter and what we
 Each major module is worth 2 points | Each minor module is worth 1 point
 
 | Module Category | Module Name | Module type |
-| --- | --- | --- | --- |
+| --- | --- | --- |
 | WEB | Frontend+Backend Framework | Major |
 | WEB | WebSockets | Major |
 | WEB | Users interactions | Major |
@@ -439,9 +439,11 @@ Each major module is worth 2 points | Each minor module is worth 1 point
 | WEB | Advanced search functionnality | Minor |
 | ACCESSIBILITY / I18N | Language support | Minor |
 | ACCESSIBILITY / I18N | Multiple browser support | Minor |
-| USER MANAGEMENT | user management and auth | Major |
+| USER MANAGEMENT | User management and auth | Major |
 | USER MANAGEMENT | 2FA | Minor |
-| MODULES OF CHOICE | Stripe | Major |
+| MODULE OF CHOICE | Stripe | Major |
+
+#### [-- Total : 20 pts --]
 
 # Individual Contributions
 
