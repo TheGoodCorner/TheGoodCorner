@@ -437,25 +437,26 @@ Each major module is worth 2 points | Each minor module is worth 1 point
 | WEB | PWA + offline support | Minor |
 | WEB | React Components | Minor |
 | WEB | Advanced search functionnality | Minor |
+| WEB | File upload and management system | Minor |
 | ACCESSIBILITY / I18N | Language support | Minor |
 | ACCESSIBILITY / I18N | Multiple browser support | Minor |
 | USER MANAGEMENT | User management and auth | Major |
 | USER MANAGEMENT | 2FA | Minor |
 | MODULE OF CHOICE | Stripe | Major |
 
-#### [-- Total : 20 pts --]
+#### [-- Total : 21 pts --]
 
 # Individual Contributions
 
 ### `mchanlia` - Maxence Chanliat
 
-- Designed and implemented the Django/DRF backend API structure
-- Implemented JWT authentication, registration, login, logout, and password change
-- Implemented user profile, follow, report, and user-ban related APIs
-- Implemented Django Channels chat models and WebSocket consumer
-- Built core domain constraints, serializers, and views
+- Designed and implemented the project infrastructure (Docker containers, Dockerfiles, Docker Compose and scripts)
+- Implemented backend logic (Express logic, routes, controllers for various features, JWT registration).
+- Worked on database implementation and schema file
+- implemented backend Sockets for chat support
+- Debugging throughout the project's lifespan
 
-The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+The main challenge was getting used to a new language (javascript), aswell as gaining perspective on how to setup a larger scale infrastructure and designing a system thats as easy as possible to read for my groupmates and not too hard to improve over and maintain.
 
 ### `tgomez-f` - Thomas Gomez
 
