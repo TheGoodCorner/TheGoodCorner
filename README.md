@@ -414,6 +414,7 @@ erDiagram
 | Feature | Description |
 |---|---|
 | 🔐 **Authentication & Session Management** | Registration and login via email/password, logout. Session maintained via in-memory access token and httpOnly cookie refresh token. Silent reconnection on page load with automatic token refresh on 401 response. |
+| 🛡️ **Two-Factor Authentication (2FA with TOTP)** | Optional TOTP-based two-factor authentication for enhanced account security. Users can enable 2FA in account settings, generating a code. Backup codes provided for account recovery. 2FA verification required on login if enabled. |
 | 🛍️ **Product Catalog (Marketplace)** | Paginated product list with filters by category (standard and custom) and price range. Detail page with image, description, quantity selector, seller information and similar product suggestions. |
 | ➕ **Product Listing** | Announcement creation form (name, price, category, description, image) with client-side validation and multipart upload. |
 | 🛒 **Shopping Cart** | Add, remove and modify item quantities. Stock availability verification and prevention of buying own products. Cart persisted in localStorage and accessible via navbar popover. |
@@ -427,6 +428,7 @@ erDiagram
 | 🌓 **Light/Dark Theme** | Toggle between light and dark theme from Navbar or Settings. Preference persisted in localStorage and applied via CSS tokens. |
 | ⚙️ **Account Settings** | Language selection, theme and notification toggle, developer mode (fictional credit for testing), permanent account deletion. |
 | 📄 **Legal Pages & FAQ** | Static pages: Privacy Policy, Terms of Use and FAQ with anchored table of contents. |
+| 📚 **API Documentation (Swagger)** | Comprehensive Swagger/OpenAPI documentation page accessible exclusively in HTTP development environment. Includes interactive endpoint testing, request/response examples, complete schema definitions and authentication details for all REST API endpoints. |
 | 📱 **PWA & Offline Resilience** | Production Service Worker for resource caching and offline browsing. Automatic version detection with reload prompt. |
 | 🔗 **API Layer Robustness** | Centralized HTTP client (Axios) with automatic token attachment, queue during refresh and rate limiting handling on 429 error. |
 | 🎨 **Design System / UI Kit** | Reusable component library (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) driven by CSS tokens for visual consistency and light/dark compatibility. |
