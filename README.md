@@ -432,7 +432,7 @@ erDiagram
 | 📱 **PWA & Offline Resilience** | Production Service Worker for resource caching and offline browsing. Automatic version detection with reload prompt. |
 | 🔗 **API Layer Robustness** | Centralized HTTP client (Axios) with automatic token attachment, queue during refresh and rate limiting handling on 429 error. |
 | 🎨 **Design System / UI Kit** | Reusable component library (Button, Dropdown, Avatar, FormField, Popover, EmptyState, StarRating, etc.) driven by CSS tokens for visual consistency and light/dark compatibility. |
-| 🌐 **Multi-language Support (EN/ES)** | Complete interface translation in English and Spanish. Language selector in Settings with persistent selection in localStorage. Dynamic language switching without page reload via i18n system (Lingui). All UI strings, error messages, notifications and help text localized. Support for RTL languages ready for future expansion. |
+| 🌐 **Multi-language Support (EN/FR/ES)** | Complete interface translation in English, French and Spanish. Language selector in Settings with persistent selection in localStorage. Dynamic language switching without page reload via i18n system (Lingui). All UI strings, error messages, notifications and help text localized. Support for RTL languages ready for future expansion. |
 
 ---
 
