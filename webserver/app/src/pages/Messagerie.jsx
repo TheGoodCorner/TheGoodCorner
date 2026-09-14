@@ -74,14 +74,7 @@ function Messagerie() {
     const original = activeMessages.find((m) => m.id === messageId)?.content;
     setEditingMessageId(null);
 
-    // Sécurité de longueur et de contenu
-    if (!trimmed || !activeConversationId || trimmed === original || trimmed.length > 5000) return;
-
-    try {
-      await updateMessage(messageId, activeConversationId, trimmed);
-    } catch {
-      // rollback déjà appliqué dans le store
-    }
+    await updateMessage(messageId, activeConversationId, trimmed);
   };
 
   const handleDeleteConversation = (interlocutorId) => {
@@ -89,11 +82,7 @@ function Messagerie() {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    try {
-      await deleteMessage(messageId, activeConversationId);
-    } catch {
-      // rollback déjà appliqué dans le store
-    }
+    await deleteMessage(messageId, activeConversationId);
   };
 
   const handleSelectConversation = (conversationId) => {
@@ -124,11 +113,11 @@ function Messagerie() {
       setMessageText(trimmed); // Restauration en cas d'échec
 	  setSendError(err?.message || 'Erreur lors de l\'envoi du message');
     }
-	const handleMessageTextChange = (text) => {
-	  setMessageText(text);
-	  if (sendError)
-		setSendError(null);
-	};
+	// const handleMessageTextChange = (text) => {
+	//   setMessageText(text);
+	//   if (sendError)
+	// 	setSendError(null);
+	// };
   };
 
   if (initializing) {

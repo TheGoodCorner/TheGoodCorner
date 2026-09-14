@@ -51,9 +51,6 @@ export default function Settings() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleLanguageChange = (e) => {
-    setLocale(e.target.value);
-  };
 
   const handleToggle2FA = () => {
     setShow2FASettings((prev) => !prev);
