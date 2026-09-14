@@ -2126,6 +2126,10 @@ msgstr "Tu cesta está vacía"
 msgid "Vous allez donc être déconnecté de votre session"
 msgstr "Por lo tanto, se cerrará tu sesión"
 
+#: src/pages/ProduitDetail.jsx
+msgid "Vous devez être connecté pour contacter le vendeur"
+msgstr "Debe iniciar sesión para contactar con el vendedor."
+
 #: src/pages/Checkout.jsx
 msgid "Vous devez être connecté pour passer votre commande."
 msgstr "Debes iniciar sesión para realizar tu pedido."

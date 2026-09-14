@@ -2126,6 +2126,10 @@ msgstr "Your cart is empty"
 msgid "Vous allez donc être déconnecté de votre session"
 msgstr "Vous allez donc être déconnecté de votre session"
 
+#: src/pages/ProduitDetail.jsx
+msgid "Vous devez être connecté pour contacter le vendeur"
+msgstr "You must be logged in to contact the seller."
+
 #: src/pages/Checkout.jsx
 msgid "Vous devez être connecté pour passer votre commande."
 msgstr "You must be logged in to place an order."

@@ -314,9 +314,16 @@ function ProductDetail() {
                 )}
               </div>
             ) : (
+            <div className="flex flex-col items-start gap-2">
               <Button variant="outline" size="md" icon={MessageCircle} onClick={handleContactSeller}>
                 <Trans>Contacter le vendeur</Trans>
               </Button>
+              {!isAuthenticated && (
+                <p className="text-sm text-[var(--color-text-muted)]">
+                  <Trans>Vous devez être connecté pour contacter le vendeur</Trans>
+                </p>
+              )}
+            </div>
             )}
           </div>
         </section>
