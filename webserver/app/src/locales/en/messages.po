@@ -180,9 +180,9 @@ msgstr "About"
 msgid "Acceptation"
 msgstr "Acceptance"
 
-#: src/pages/Profile.jsx
-#~ msgid "Accepter"
-#~ msgstr "Accept"
+#: src/components/friends/FriendActionButton.jsx
+msgid "Accepter"
+msgstr "Accept"
 
 #: src/pages/Profile.jsx
 msgid "Accepter la demande d'ami"
@@ -197,6 +197,7 @@ msgstr "Access to settings"
 #~ msgstr "Account deleted successfully."
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Accueil"
 msgstr "Home"
@@ -266,6 +267,10 @@ msgstr "Add to cart"
 msgid "Ajouter des fonds au portefeuille (EUR) :"
 msgstr "Add funds to wallet (EUR):"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Ajouter en ami"
+msgstr "Add as a friend"
+
 #: src/pages/Profile.jsx
 msgid "Ajouter un produit"
 msgstr "Add a product"
@@ -274,6 +279,7 @@ msgstr "Add a product"
 msgid "Aller au paiement"
 msgstr "Proceed to checkout"
 
+#: src/components/friends/FriendActionButton.jsx
 #: src/pages/Profile.jsx
 msgid "Amis"
 msgstr "Friends"
@@ -365,7 +371,6 @@ msgstr "Increase maximum price"
 msgid "Augmenter le prix minimum"
 msgstr "Increase minimum price"
 
-#: src/utils/constants.jsx
 #: src/utils/constants.jsx
 msgid "Autre"
 msgstr "Other"
@@ -668,8 +673,8 @@ msgid "Date inconnue"
 msgstr "Unknown date"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Déconnexion"
-#~ msgstr "Log out"
+msgid "Déconnexion"
+msgstr "Log out"
 
 #: src/pages/Home.jsx
 msgid "Découvrez nos meilleurs produits ou pas pour vous"
@@ -719,6 +724,10 @@ msgstr "Request accepted"
 #: src/pages/NotificationPopover.jsx
 msgid "Demande d'ami"
 msgstr "Friend request"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Demande envoyée · Annuler"
+msgstr "Request sent · Cancel"
 
 #: src/pages/NotificationPopover.jsx
 msgid "Demande refusée"
@@ -1119,8 +1128,8 @@ msgid "Mémoriser vos préférences (thème, panier) pour une expérience plus f
 msgstr "Store your preferences (theme, cart) for a smoother experience."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Menu"
-#~ msgstr "Menu"
+msgid "Menu"
+msgstr "Menu"
 
 #: src/pages/TooManyRequests.jsx
 msgid "Merci de patienter quelques instants..."
@@ -1162,8 +1171,8 @@ msgid "Mes avis"
 msgstr "My reviews"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mes commandes"
-#~ msgstr "My orders"
+msgid "Mes commandes"
+msgstr "My orders"
 
 #: src/pages/Orders.jsx
 msgid "Mes Commandes"
@@ -1173,6 +1182,7 @@ msgstr "My Orders"
 msgid "Mes Discussions"
 msgstr "My Chats"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Messagerie.jsx
 #: src/pages/TermsOfService.jsx
 msgid "Messagerie"
@@ -1227,8 +1237,8 @@ msgid "Modifier le message"
 msgstr "Edit message"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mon profil"
-#~ msgstr "My profile"
+msgid "Mon profil"
+msgstr "My profile"
 
 #: src/pages/Settings.jsx
 msgid "Montant à créditer"
@@ -1387,13 +1397,14 @@ msgid "Paiement sécurisé avec Stripe • Données chiffrées • 100% confiden
 msgstr "Secure payment with Stripe • Encrypted data • 100% confidential"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Panier"
-#~ msgstr "Cart"
+msgid "Panier"
+msgstr "Cart"
 
 #: src/pages/CartPopover.jsx
 msgid "Panier vide"
 msgstr "Empty cart"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Settings.jsx
 msgid "Paramètres"
 msgstr "Settings"
@@ -1528,11 +1539,16 @@ msgstr "Product: <0>{product}</0>"
 msgid "Produit indisponible"
 msgstr "Product unavailable"
 
+#: src/hooks/useCartError.jsx
+msgid "Produit invalide."
+msgstr "Invalid product."
+
 #: src/pages/Orders.jsx
 msgid "Produit supprimé"
 msgstr "Product removed"
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Produits"
 msgstr "Products"
@@ -1617,6 +1633,10 @@ msgstr "Start over"
 #: src/pages/Profile.jsx
 #~ msgid "Refuser"
 #~ msgstr "Decline"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Refuser la demande"
+msgstr "Decline the request"
 
 #: src/pages/Profile.jsx
 msgid "Refuser la demande d'ami"
@@ -1716,6 +1736,7 @@ msgstr "Save"
 msgid "Savoir si une session est potentiellement active au chargement"
 msgstr "Detect if a session might be active on page load"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Checkout.jsx
 #: src/pages/Login.jsx
 #: src/pages/Messagerie.jsx
@@ -1724,9 +1745,13 @@ msgstr "Detect if a session might be active on page load"
 msgid "Se connecter"
 msgstr "Log in"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Se connecter pour ajouter en ami"
+msgstr "Log in to add as a friend"
+
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Se déconnecter"
-#~ msgstr "Log out"
+msgid "Se déconnecter"
+msgstr "Log out"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Sécurité"
@@ -1784,6 +1809,17 @@ msgstr "Status"
 #: src/pages/Orders.jsx
 msgid "Statut inconnu"
 msgstr "Unknown status"
+
+#. placeholder {0}: error.currentCount
+#. placeholder {1}: error.maxStock
+#: src/hooks/useCartError.jsx
+msgid "Stock insuffisant : vous avez déjà {0} article(s) dans le panier pour un stock de {1}."
+msgstr "Insufficient stock: you already have {0} item(s) in your cart, with a stock level of {1}."
+
+#. placeholder {0}: error.stock
+#: src/hooks/useCartError.jsx
+msgid "Stock limité à {0} unité(s)."
+msgstr "Stock limited to {0} unit(s)."
 
 #: src/components/layouts/Footer.jsx
 msgid "Support"
@@ -1882,8 +1918,8 @@ msgid "TheGoodCorner est une plateforme qui met en relation des particuliers sou
 msgstr "TheGoodCorner is a platform connecting individuals who want to buy or sell second-hand goods. TheGoodCorner acts as a technical intermediary and is not a party to any transaction concluded between users."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Thème"
-#~ msgstr "Theme"
+msgid "Thème"
+msgstr "Theme"
 
 #: src/pages/Settings.jsx
 msgid "Thème clair activé"
@@ -1898,7 +1934,8 @@ msgstr "Dark theme active"
 msgid "Total :"
 msgstr "Total:"
 
-#: src/utils/constants.jsx
+#: src/pages/ProduitDetail.jsx
+#: src/pages/Produits.jsx
 msgid "Tous"
 msgstr "All"
 
@@ -2108,6 +2145,10 @@ msgstr "You haven't placed any orders yet."
 #: src/pages/Profile.jsx
 msgid "Vous n'êtes pas connecté"
 msgstr "You are not logged in"
+
+#: src/hooks/useCartError.jsx
+msgid "Vous ne pouvez pas ajouter votre propre produit au panier."
+msgstr "You cannot add your own product to the cart."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vous permettre de publier des annonces, laisser des avis et échanger des messages avec d'autres utilisateurs."

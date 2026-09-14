@@ -180,9 +180,9 @@ msgstr "Sobre mí"
 msgid "Acceptation"
 msgstr "Aceptación"
 
-#: src/pages/Profile.jsx
-#~ msgid "Accepter"
-#~ msgstr "Aceptar"
+#: src/components/friends/FriendActionButton.jsx
+msgid "Accepter"
+msgstr "Aceptar"
 
 #: src/pages/Profile.jsx
 msgid "Accepter la demande d'ami"
@@ -197,6 +197,7 @@ msgstr "Acceso a la configuración"
 #~ msgstr "Cuenta eliminada con éxito."
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Accueil"
 msgstr "Inicio"
@@ -266,6 +267,10 @@ msgstr "Añadir a la cesta"
 msgid "Ajouter des fonds au portefeuille (EUR) :"
 msgstr "Añadir fondos al monedero (EUR):"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Ajouter en ami"
+msgstr "Añadir como amigo"
+
 #: src/pages/Profile.jsx
 msgid "Ajouter un produit"
 msgstr "Añadir un producto"
@@ -274,6 +279,7 @@ msgstr "Añadir un producto"
 msgid "Aller au paiement"
 msgstr "Ir al pago"
 
+#: src/components/friends/FriendActionButton.jsx
 #: src/pages/Profile.jsx
 msgid "Amis"
 msgstr "Amigos"
@@ -365,7 +371,6 @@ msgstr "Aumentar el precio máximo"
 msgid "Augmenter le prix minimum"
 msgstr "Aumentar el precio mínimo"
 
-#: src/utils/constants.jsx
 #: src/utils/constants.jsx
 msgid "Autre"
 msgstr "Otro"
@@ -668,8 +673,8 @@ msgid "Date inconnue"
 msgstr "Fecha desconocida"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Déconnexion"
-#~ msgstr "Cerrar sesión"
+msgid "Déconnexion"
+msgstr "Cerrar sesión"
 
 #: src/pages/Home.jsx
 msgid "Découvrez nos meilleurs produits ou pas pour vous"
@@ -719,6 +724,10 @@ msgstr "Solicitud aceptada"
 #: src/pages/NotificationPopover.jsx
 msgid "Demande d'ami"
 msgstr "Solicitud de amistad"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Demande envoyée · Annuler"
+msgstr "Solicitud enviada · Cancelar"
 
 #: src/pages/NotificationPopover.jsx
 msgid "Demande refusée"
@@ -1119,8 +1128,8 @@ msgid "Mémoriser vos préférences (thème, panier) pour une expérience plus f
 msgstr "Recordar tus preferencias (tema, cesta) para una experiencia más fluida."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Menu"
-#~ msgstr "Menú"
+msgid "Menu"
+msgstr "Menú"
 
 #: src/pages/TooManyRequests.jsx
 msgid "Merci de patienter quelques instants..."
@@ -1162,8 +1171,8 @@ msgid "Mes avis"
 msgstr "Mis reseñas"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mes commandes"
-#~ msgstr "Mis pedidos"
+msgid "Mes commandes"
+msgstr "Mis pedidos"
 
 #: src/pages/Orders.jsx
 msgid "Mes Commandes"
@@ -1173,6 +1182,7 @@ msgstr "Mis pedidos"
 msgid "Mes Discussions"
 msgstr "Mis conversaciones"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Messagerie.jsx
 #: src/pages/TermsOfService.jsx
 msgid "Messagerie"
@@ -1227,8 +1237,8 @@ msgid "Modifier le message"
 msgstr "Editar mensaje"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mon profil"
-#~ msgstr "Mi perfil"
+msgid "Mon profil"
+msgstr "Mi perfil"
 
 #: src/pages/Settings.jsx
 msgid "Montant à créditer"
@@ -1387,13 +1397,14 @@ msgid "Paiement sécurisé avec Stripe • Données chiffrées • 100% confiden
 msgstr "Pago seguro con Stripe • Datos cifrados • 100 % confidencial"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Panier"
-#~ msgstr "Cesta"
+msgid "Panier"
+msgstr "Cesta"
 
 #: src/pages/CartPopover.jsx
 msgid "Panier vide"
 msgstr "Cesta vacía"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Settings.jsx
 msgid "Paramètres"
 msgstr "Configuración"
@@ -1528,11 +1539,16 @@ msgstr "Producto: <0>{product}</0>"
 msgid "Produit indisponible"
 msgstr "Producto no disponible"
 
+#: src/hooks/useCartError.jsx
+msgid "Produit invalide."
+msgstr "Producto inválido."
+
 #: src/pages/Orders.jsx
 msgid "Produit supprimé"
 msgstr "Producto eliminado"
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Produits"
 msgstr "Productos"
@@ -1617,6 +1633,10 @@ msgstr "Reiniciar"
 #: src/pages/Profile.jsx
 #~ msgid "Refuser"
 #~ msgstr "Rechazar"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Refuser la demande"
+msgstr "Rechazar la solicitud"
 
 #: src/pages/Profile.jsx
 msgid "Refuser la demande d'ami"
@@ -1716,6 +1736,7 @@ msgstr "Guardar"
 msgid "Savoir si une session est potentiellement active au chargement"
 msgstr "Saber si una sesión está potencialmente activa al cargar"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Checkout.jsx
 #: src/pages/Login.jsx
 #: src/pages/Messagerie.jsx
@@ -1724,9 +1745,13 @@ msgstr "Saber si una sesión está potencialmente activa al cargar"
 msgid "Se connecter"
 msgstr "Iniciar sesión"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Se connecter pour ajouter en ami"
+msgstr "Iniciar sesión para añadir como amigo"
+
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Se déconnecter"
-#~ msgstr "Cerrar sesión"
+msgid "Se déconnecter"
+msgstr "Cerrar sesión"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Sécurité"
@@ -1784,6 +1809,17 @@ msgstr "Estado"
 #: src/pages/Orders.jsx
 msgid "Statut inconnu"
 msgstr "Estado desconocido"
+
+#. placeholder {0}: error.currentCount
+#. placeholder {1}: error.maxStock
+#: src/hooks/useCartError.jsx
+msgid "Stock insuffisant : vous avez déjà {0} article(s) dans le panier pour un stock de {1}."
+msgstr ""
+
+#. placeholder {0}: error.stock
+#: src/hooks/useCartError.jsx
+msgid "Stock limité à {0} unité(s)."
+msgstr "Stock insuficiente: ya tiene {0} artículo(s) en el carrito para un stock de {1}."
 
 #: src/components/layouts/Footer.jsx
 msgid "Support"
@@ -1882,8 +1918,8 @@ msgid "TheGoodCorner est une plateforme qui met en relation des particuliers sou
 msgstr "TheGoodCorner es una plataforma que pone en contacto a particulares que desean vender o comprar artículos de segunda mano. TheGoodCorner actúa como intermediario técnico y no forma parte de ninguna transacción celebrada entre usuarios."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Thème"
-#~ msgstr "Tema"
+msgid "Thème"
+msgstr "Tema"
 
 #: src/pages/Settings.jsx
 msgid "Thème clair activé"
@@ -1898,7 +1934,8 @@ msgstr "Tema oscuro activado"
 msgid "Total :"
 msgstr "Total:"
 
-#: src/utils/constants.jsx
+#: src/pages/ProduitDetail.jsx
+#: src/pages/Produits.jsx
 msgid "Tous"
 msgstr "Todos"
 
@@ -2108,6 +2145,10 @@ msgstr "Aún no has realizado ningún pedido."
 #: src/pages/Profile.jsx
 msgid "Vous n'êtes pas connecté"
 msgstr "No has iniciado sesión"
+
+#: src/hooks/useCartError.jsx
+msgid "Vous ne pouvez pas ajouter votre propre produit au panier."
+msgstr "No puede añadir su propio producto a la cesta."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vous permettre de publier des annonces, laisser des avis et échanger des messages avec d'autres utilisateurs."

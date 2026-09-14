@@ -13,6 +13,7 @@ import { Button } from '../components/UI/Button';
 import Avatar from '../components/UI/Avatar';
 import ProductCard from '../components/products/ProductCard';
 import { getCategoryLabel } from '../utils/constants';
+import { useCartErrorMessage } from '../hooks/useCartError';
 import NotFound from './NotFound';
 
 function ProductDetailSkeleton() {
@@ -37,6 +38,7 @@ function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t } = useLingui();
+  const translateCartError = useCartErrorMessage();
   const currentLocale = useLanguageStore((state) => state.locale);
 
   const cachedProduct = useProductStore((state) => state.getProductById(id));
@@ -140,8 +142,7 @@ function ProductDetail() {
       openUi('cart-popover');
     } else {
       const lastError = useCartStore.getState().error;
-      const message = typeof lastError === 'object' ? lastError?.message : lastError;
-      setLocalError(message || t`Impossible d'ajouter cet article au panier.`);
+      setLocalError(translateCartError(lastError) || t`Impossible d'ajouter cet article au panier.`);
     }
   };
 

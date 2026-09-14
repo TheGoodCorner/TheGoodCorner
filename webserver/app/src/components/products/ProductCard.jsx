@@ -7,6 +7,7 @@ import { useUIStore } from '../../stores/uiStore';
 import { PlusCircle, Star, Trash2, Pencil, X } from 'lucide-react';
 import Avatar from '../UI/Avatar';
 import { ProductForm } from './ProductForm';
+import { useCartErrorMessage } from '../../hooks/useCartError';
 
 export default function ProductCard({
     product,
@@ -15,6 +16,8 @@ export default function ProductCard({
     onDelete,
 }) {
     const { t } = useLingui();
+    const translateCartError = useCartErrorMessage();
+    
     const [showConfirm, setShowConfirm] = useState(false);
     const [showEdit, setShowEdit] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -40,9 +43,7 @@ export default function ProductCard({
             openUi('cart-popover');
         } else {
             const lastError = useCartStore.getState().error;
-            const message = typeof lastError === 'object' ? lastError?.message : lastError;
-
-            setLocalError(message || t`Impossible d'ajouter cet article au panier.`);
+            setLocalError(translateCartError(lastError) || t`Impossible d'ajouter cet article au panier.`);
         }
     };
 

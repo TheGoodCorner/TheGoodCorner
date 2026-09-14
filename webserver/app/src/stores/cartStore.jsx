@@ -2,6 +2,13 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { useUserStore } from './userStore' 
 
+/**
+ * `error` stocke un CODE + les données brutes, jamais un message déjà
+ * traduit : ce store Zustand vit hors de l'arbre React, donc pas d'accès
+ * à useLingui() ici. La traduction se fait côté composant via
+ * hooks/useCartError.jsx (useCartErrorMessage), qui, lui, a accès à `t`.
+ * Codes possibles : INVALID_PRODUCT, OWN_PRODUCT, INSUFFICIENT_STOCK, STOCK_LIMITED.
+ */
 export const useCartStore = create(
   persist(
     (set, get) => ({
@@ -50,12 +57,12 @@ export const useCartStore = create(
 
       addToCart: (product) => {
         if (!product || !product.id || !product.price) {
-          set({ error: 'Produit invalide.' })
+          set({ error: { code: 'INVALID_PRODUCT' } })
           return false
         }
         const currentUser = useUserStore.getState().user        
         if (product.authorId === currentUser?.id) {
-          set({ error: {message: 'Vous ne pouvez pas ajouter votre propre produit au panier.',  productId: product.id} })
+          set({ error: { code: 'OWN_PRODUCT', productId: product.id } })
           return false
         }
         const maxStock = Number(product.stock ?? product.quantity) || 0;
@@ -68,7 +75,7 @@ export const useCartStore = create(
         // 1. Bloquer si la quantité cumulée dépasse le stock disponible
         if (currentCount + addCount > maxStock) {
           set({
-            error: {message: `Stock insuffisant : vous avez déjà ${currentCount} article(s) dans le panier pour un stock de ${maxStock}.`, productId: product.id}
+            error: { code: 'INSUFFICIENT_STOCK', currentCount, maxStock, productId: product.id }
           });
           return false;
         }
@@ -114,7 +121,7 @@ export const useCartStore = create(
               const validQuantity = Math.max(1, Math.min(quantity, item.stock))
               
               if (quantity > item.stock) {
-                set({ error: `Stock limité à ${item.stock} unité(s)` })
+                set({ error: { code: 'STOCK_LIMITED', stock: item.stock, productId } })
               }
 
               return { ...item, quantity: validQuantity }

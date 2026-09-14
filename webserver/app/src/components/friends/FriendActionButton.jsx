@@ -1,4 +1,5 @@
 import { UserPlus, UserCheck, Check, X, Clock } from 'lucide-react';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { Button } from '../UI/Button';
 import { useFriendStore } from '../../stores/friendStore';
 import { useAuthStore } from '../../stores/authStore';
@@ -11,6 +12,7 @@ import { useUserStore } from '../../stores/userStore';
  * ce composant serait réutilisé ailleurs plus tard).
  */
 export function FriendActionButton({ userId }) {
+  const { t } = useLingui();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const currentUser = useUserStore((state) => state.user);
 
@@ -31,7 +33,7 @@ export function FriendActionButton({ userId }) {
   if (!isAuthenticated) {
     return (
       <Button to="/authentication" variant="outline" icon={UserPlus}>
-        Se connecter pour ajouter en ami
+        <Trans>Se connecter pour ajouter en ami</Trans>
       </Button>
     );
   }
@@ -51,7 +53,7 @@ export function FriendActionButton({ userId }) {
         hover:bg-opacity-30 hover:gap-2.5">
         <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-on-primary)] animate-pulse"></div>
         <UserCheck size={14} />
-        Amis
+        <Trans>Amis</Trans>
       </span>
     );
   }
@@ -64,7 +66,7 @@ export function FriendActionButton({ userId }) {
         loading={submitting}
         onClick={() => deleteFriendRequest(sentRequest.id)}
       >
-        Demande envoyée · Annuler
+        <Trans>Demande envoyée · Annuler</Trans>
       </Button>
     );
   }
@@ -78,15 +80,15 @@ export function FriendActionButton({ userId }) {
           loading={submitting}
           onClick={() => acceptRequest(receivedRequest.id)}
         >
-          Accepter
+          <Trans>Accepter</Trans>
         </Button>
         <Button
           variant="outline"
           icon={X}
           loading={submitting}
           onClick={() => rejectFriendRequest(receivedRequest.id)}
-          aria-label="Refuser la demande"
-          title="Refuser la demande"
+          aria-label={t`Refuser la demande`}
+          title={t`Refuser la demande`}
         />
       </div>
     );
@@ -99,7 +101,7 @@ export function FriendActionButton({ userId }) {
       loading={submitting}
       onClick={() => sendFriendRequest(userId)}
     >
-      Ajouter en ami
+      <Trans>Ajouter en ami</Trans>
     </Button>
   );
 }

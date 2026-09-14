@@ -180,9 +180,9 @@ msgstr "À propos"
 msgid "Acceptation"
 msgstr "Acceptation"
 
-#: src/pages/Profile.jsx
-#~ msgid "Accepter"
-#~ msgstr "Accepter"
+#: src/components/friends/FriendActionButton.jsx
+msgid "Accepter"
+msgstr "Accepter"
 
 #: src/pages/Profile.jsx
 msgid "Accepter la demande d'ami"
@@ -197,6 +197,7 @@ msgstr "Accès aux paramètres"
 #~ msgstr "Compte supprimé avec succès."
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Accueil"
 msgstr "Accueil"
@@ -266,6 +267,10 @@ msgstr "Ajouter au panier"
 msgid "Ajouter des fonds au portefeuille (EUR) :"
 msgstr "Ajouter des fonds au portefeuille (EUR) :"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Ajouter en ami"
+msgstr "Ajouter en ami"
+
 #: src/pages/Profile.jsx
 msgid "Ajouter un produit"
 msgstr "Ajouter un produit"
@@ -274,6 +279,7 @@ msgstr "Ajouter un produit"
 msgid "Aller au paiement"
 msgstr "Aller au paiement"
 
+#: src/components/friends/FriendActionButton.jsx
 #: src/pages/Profile.jsx
 msgid "Amis"
 msgstr "Amis"
@@ -365,7 +371,6 @@ msgstr "Augmenter le prix maximum"
 msgid "Augmenter le prix minimum"
 msgstr "Augmenter le prix minimum"
 
-#: src/utils/constants.jsx
 #: src/utils/constants.jsx
 msgid "Autre"
 msgstr "Autre"
@@ -668,8 +673,8 @@ msgid "Date inconnue"
 msgstr "Date inconnue"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Déconnexion"
-#~ msgstr "Déconnexion"
+msgid "Déconnexion"
+msgstr "Déconnexion"
 
 #: src/pages/Home.jsx
 msgid "Découvrez nos meilleurs produits ou pas pour vous"
@@ -719,6 +724,10 @@ msgstr "Demande acceptée"
 #: src/pages/NotificationPopover.jsx
 msgid "Demande d'ami"
 msgstr "Demande d'ami"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Demande envoyée · Annuler"
+msgstr "Demande envoyée · Annuler"
 
 #: src/pages/NotificationPopover.jsx
 msgid "Demande refusée"
@@ -1119,8 +1128,8 @@ msgid "Mémoriser vos préférences (thème, panier) pour une expérience plus f
 msgstr "Mémoriser vos préférences (thème, panier) pour une expérience plus fluide."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Menu"
-#~ msgstr "Menu"
+msgid "Menu"
+msgstr "Menu"
 
 #: src/pages/TooManyRequests.jsx
 msgid "Merci de patienter quelques instants..."
@@ -1162,8 +1171,8 @@ msgid "Mes avis"
 msgstr "Mes avis"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mes commandes"
-#~ msgstr "Mes commandes"
+msgid "Mes commandes"
+msgstr "Mes commandes"
 
 #: src/pages/Orders.jsx
 msgid "Mes Commandes"
@@ -1173,6 +1182,7 @@ msgstr "Mes commandes"
 msgid "Mes Discussions"
 msgstr "Mes discussions"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Messagerie.jsx
 #: src/pages/TermsOfService.jsx
 msgid "Messagerie"
@@ -1227,8 +1237,8 @@ msgid "Modifier le message"
 msgstr "Modifier le message"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Mon profil"
-#~ msgstr "Mon profil"
+msgid "Mon profil"
+msgstr "Mon profil"
 
 #: src/pages/Settings.jsx
 msgid "Montant à créditer"
@@ -1387,13 +1397,14 @@ msgid "Paiement sécurisé avec Stripe • Données chiffrées • 100% confiden
 msgstr "Paiement sécurisé avec Stripe • Données chiffrées • 100% confidentiel"
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Panier"
-#~ msgstr "Panier"
+msgid "Panier"
+msgstr "Panier"
 
 #: src/pages/CartPopover.jsx
 msgid "Panier vide"
 msgstr "Panier vide"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Settings.jsx
 msgid "Paramètres"
 msgstr "Paramètres"
@@ -1528,11 +1539,16 @@ msgstr "Produit : <0>{product}</0>"
 msgid "Produit indisponible"
 msgstr "Produit indisponible"
 
+#: src/hooks/useCartError.jsx
+msgid "Produit invalide."
+msgstr "Produit invalide."
+
 #: src/pages/Orders.jsx
 msgid "Produit supprimé"
 msgstr "Produit supprimé"
 
 #: src/components/layouts/Footer.jsx
+#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Produits"
 msgstr "Produits"
@@ -1617,6 +1633,10 @@ msgstr "Recommencer"
 #: src/pages/Profile.jsx
 #~ msgid "Refuser"
 #~ msgstr "Refuser"
+
+#: src/components/friends/FriendActionButton.jsx
+msgid "Refuser la demande"
+msgstr "Refuser la demande"
 
 #: src/pages/Profile.jsx
 msgid "Refuser la demande d'ami"
@@ -1716,6 +1736,7 @@ msgstr "Sauvegarder"
 msgid "Savoir si une session est potentiellement active au chargement"
 msgstr "Savoir si une session est potentiellement active au chargement"
 
+#: src/components/layouts/Navbar.jsx
 #: src/pages/Checkout.jsx
 #: src/pages/Login.jsx
 #: src/pages/Messagerie.jsx
@@ -1724,9 +1745,13 @@ msgstr "Savoir si une session est potentiellement active au chargement"
 msgid "Se connecter"
 msgstr "Se connecter"
 
+#: src/components/friends/FriendActionButton.jsx
+msgid "Se connecter pour ajouter en ami"
+msgstr "Se connecter pour ajouter en ami"
+
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Se déconnecter"
-#~ msgstr "Se déconnecter"
+msgid "Se déconnecter"
+msgstr "Se déconnecter"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Sécurité"
@@ -1784,6 +1809,17 @@ msgstr "Statut"
 #: src/pages/Orders.jsx
 msgid "Statut inconnu"
 msgstr "Statut inconnu"
+
+#. placeholder {0}: error.currentCount
+#. placeholder {1}: error.maxStock
+#: src/hooks/useCartError.jsx
+msgid "Stock insuffisant : vous avez déjà {0} article(s) dans le panier pour un stock de {1}."
+msgstr "Stock insuffisant : vous avez déjà {0} article(s) dans le panier pour un stock de {1}."
+
+#. placeholder {0}: error.stock
+#: src/hooks/useCartError.jsx
+msgid "Stock limité à {0} unité(s)."
+msgstr "Stock limité à {0} unité(s)."
 
 #: src/components/layouts/Footer.jsx
 msgid "Support"
@@ -1882,8 +1918,8 @@ msgid "TheGoodCorner est une plateforme qui met en relation des particuliers sou
 msgstr "TheGoodCorner est une plateforme qui met en relation des particuliers souhaitant vendre ou acheter des articles d'occasion. TheGoodCorner agit comme intermédiaire technique et n'est partie à aucune transaction conclue entre utilisateurs."
 
 #: src/components/layouts/Navbar.jsx
-#~ msgid "Thème"
-#~ msgstr "Thème"
+msgid "Thème"
+msgstr "Thème"
 
 #: src/pages/Settings.jsx
 msgid "Thème clair activé"
@@ -1898,7 +1934,8 @@ msgstr "Thème sombre activé"
 msgid "Total :"
 msgstr "Total :"
 
-#: src/utils/constants.jsx
+#: src/pages/ProduitDetail.jsx
+#: src/pages/Produits.jsx
 msgid "Tous"
 msgstr "Tous"
 
@@ -2108,6 +2145,10 @@ msgstr "Vous n'avez passé aucune commande pour le moment."
 #: src/pages/Profile.jsx
 msgid "Vous n'êtes pas connecté"
 msgstr "Vous n'êtes pas connecté"
+
+#: src/hooks/useCartError.jsx
+msgid "Vous ne pouvez pas ajouter votre propre produit au panier."
+msgstr "Vous ne pouvez pas ajouter votre propre produit au panier."
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Vous permettre de publier des annonces, laisser des avis et échanger des messages avec d'autres utilisateurs."
