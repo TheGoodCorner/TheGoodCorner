@@ -215,11 +215,13 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | `dpaiva` | Delphine Paiva | PM/Tech Lead / Frontend Developer / Frontend development, Notification service | Frontend architecture, UI integration|
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
+
 # Project Management
 
+- We used Github over the whole course of the project for project synchronization between the group members. We worked over several branches : 'main' being the production branche and 'dev' being the development branch. We had individual branches for feature development and when tested and working we merged to dev and deleted local and remote individual branches. Until the project was complete and pushed into production.
+- We used Trello and Confluence for task managements and ressource sharing but quickly dropped them as they were mostly slowing de project development down instead of speeding it up by adding layers of complexity and unecessary tedious tasks.
 - We held an initial meeting to assign tasks and roles. Communication took place primarily via messaging (Discord).
-
-- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.
+- We mainly used Discord to communicate with one another. This user-friendly platform allowed us to create a dedicated project server and ensure that every step of progress was recorded in the appropriate channels.  
 
 # Technical Stack
 
@@ -420,9 +422,26 @@ erDiagram
 ---
 
 # Modules
-- Module 1 | Major 2pts
-- Module 2 | Minor 1pts
--
+Take into consideration that this is our point of view on the matter and what we believe represent best the project and how it should be evaluated. At the end of the day this is the evaluator's tasks to determine wether our choices are justified and the modules are validated or not.  
+
+Each major module is worth 2 points | Each minor module is worth 1 point
+
+| Module Category | Module Name | Module type |
+| --- | --- | --- | --- |
+| WEB | Frontend+Backend Framework | Major |
+| WEB | WebSockets | Major |
+| WEB | Users interactions | Major |
+| WEB | Public API | Major |
+| WEB | Database ORM | Minor |
+| WEB | Notification system | Minor |
+| WEB | PWA + offline support | Minor |
+| WEB | React Components | Minor |
+| WEB | Advanced search functionnality | Minor |
+| ACCESSIBILITY / I18N | Language support | Minor |
+| ACCESSIBILITY / I18N | Multiple browser support | Minor |
+| USER MANAGEMENT | user management and auth | Major |
+| USER MANAGEMENT | 2FA | Minor |
+| MODULES OF CHOICE | Stripe | Major |
 
 # Individual Contributions
 
@@ -434,9 +453,13 @@ Charles:
 
 # Known limitations
 
-- groupe split fin aout
-- deadlines shorts
-- blackhole ?
+- .env management over a group project and scaling over docker-compose
+- Github versionning and orgnization
+- Github Actions not implemented
+- Self signed certificate and browser security acknoledgment
+- Controlled and limited development environment at school (no privilege)
+- Team split in August
+- Short deadlines for group members
 
 ## License / Credits
 
