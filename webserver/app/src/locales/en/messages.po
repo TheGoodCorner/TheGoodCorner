@@ -23,10 +23,10 @@ msgid "\"{0}\" sera définitivement supprimée. Cette action est irréversible."
 msgstr "\"{0}\" will be permanently deleted. This action is irreversible."
 
 #. placeholder {0}: item.stock
-#. placeholder {1}: item.stock > 1 ? 'disponibles' : 'disponible'
+#. placeholder {1}: item.stock > 1 ? 'availables' : 'available'
 #: src/pages/CartPopover.jsx
-msgid "({0} {1})"
-msgstr "({0} {1})"
+#~ msgid "({0} {1})"
+#~ msgstr "({0} {1})"
 
 #. placeholder {0}: item.stock
 #: src/pages/CartPopover.jsx
@@ -41,6 +41,11 @@ msgstr "({0} in stock)"
 #: src/pages/ProduitDetail.jsx
 msgid "(Victime de son succès)"
 msgstr "(Sold out)"
+
+#. placeholder {0}: item.stock
+#: src/pages/CartPopover.jsx
+msgid "{0, plural, one {# disponible} other {# disponibles}}"
+msgstr "{0, plural, one {# available} other {# availables}}"
 
 #. placeholder {0}: filteredProducts.length
 #: src/pages/Produits.jsx

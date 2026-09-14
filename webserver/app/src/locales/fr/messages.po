@@ -25,8 +25,8 @@ msgstr "\"{0}\" sera définitivement supprimée. Cette action est irréversible.
 #. placeholder {0}: item.stock
 #. placeholder {1}: item.stock > 1 ? 'disponibles' : 'disponible'
 #: src/pages/CartPopover.jsx
-msgid "({0} {1})"
-msgstr "({0} {1})"
+#~ msgid "({0} {1})"
+#~ msgstr "({0} {1})"
 
 #. placeholder {0}: item.stock
 #: src/pages/CartPopover.jsx
@@ -41,6 +41,11 @@ msgstr "({0} en stock)"
 #: src/pages/ProduitDetail.jsx
 msgid "(Victime de son succès)"
 msgstr "(Victime de son succès)"
+
+#. placeholder {0}: item.stock
+#: src/pages/CartPopover.jsx
+msgid "{0, plural, one {# disponible} other {# disponibles}}"
+msgstr "{0, plural, one {# disponible} other {# disponibles}}"
 
 #. placeholder {0}: filteredProducts.length
 #: src/pages/Produits.jsx
@@ -232,7 +237,7 @@ msgstr "Adresse e-mail valide requise à l'inscription."
 
 #: src/hooks/useProfileEditForm.jsx
 msgid "Adresse incomplète : remplis tous les champs (pays, région, ville, rue, numéro), ou laisse-les tous vides."
-msgstr ""
+msgstr "Adresse incomplète : remplis tous les champs (pays, région, ville, rue, numéro), ou laisse-les tous vides."
 
 #: src/pages/Settings.jsx
 msgid "Afficher les options de sécurité 2FA"
@@ -252,11 +257,11 @@ msgstr "Âge minimum"
 
 #: src/hooks/useProductForm.jsx
 msgid "Ajoute une description."
-msgstr ""
+msgstr "Ajoute une description."
 
 #: src/hooks/useProductForm.jsx
 msgid "Ajoute une image."
-msgstr ""
+msgstr "Ajoute une image."
 
 #: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
@@ -847,7 +852,7 @@ msgstr "Enregistrez le secret dans votre application d'authentification (TOTP).<
 
 #: src/utils/constants.jsx
 msgid "Entrainement"
-msgstr ""
+msgstr "Entrainement"
 
 #: src/pages/ProduitDetail.jsx
 #: src/pages/Produits.jsx

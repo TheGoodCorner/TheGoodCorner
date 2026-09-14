@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Trash2, CreditCard, Store, Minus, Plus, Wallet } from 'lucide-react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans, Plural, useLingui } from '@lingui/react/macro';
 import { Popover } from '../components/UI/Popover';
 import { useCartStore } from '../stores/cartStore';
 import { useAuthStore } from '../stores/authStore';
@@ -83,9 +83,13 @@ export function CartPopover() {
                       {item.quantity} × {item.price.toFixed(2)} €
                     </p>
                     <span className="text-[10px] text-[var(--color-text-muted)] mt-0.5 block">
-                      <Trans>
-                        ({item.stock} {item.stock > 1 ? 'disponibles' : 'disponible'})
-                      </Trans>
+                      (
+                      <Plural
+                        value={item.stock}
+                        one="# disponible"
+                        other="# disponibles"
+                      />
+                      )
                     </span>
                   </div>
 

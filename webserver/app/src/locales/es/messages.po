@@ -25,8 +25,8 @@ msgstr "\"{0}\" se eliminará definitivamente. Esta acción es irreversible."
 #. placeholder {0}: item.stock
 #. placeholder {1}: item.stock > 1 ? 'disponibles' : 'disponible'
 #: src/pages/CartPopover.jsx
-msgid "({0} {1})"
-msgstr "({0} {1})"
+#~ msgid "({0} {1})"
+#~ msgstr "({0} {1})"
 
 #. placeholder {0}: item.stock
 #: src/pages/CartPopover.jsx
@@ -41,6 +41,11 @@ msgstr "({0} en stock)"
 #: src/pages/ProduitDetail.jsx
 msgid "(Victime de son succès)"
 msgstr "(Víctima de su éxito)"
+
+#. placeholder {0}: item.stock
+#: src/pages/CartPopover.jsx
+msgid "{0, plural, one {# disponible} other {# disponibles}}"
+msgstr "{0, plural, one {# disponible} other {# disponibles}}"
 
 #. placeholder {0}: filteredProducts.length
 #: src/pages/Produits.jsx
@@ -1814,7 +1819,7 @@ msgstr "Estado desconocido"
 #. placeholder {1}: error.maxStock
 #: src/hooks/useCartError.jsx
 msgid "Stock insuffisant : vous avez déjà {0} article(s) dans le panier pour un stock de {1}."
-msgstr ""
+msgstr "Stock insuficiente: ya tienes {0} artículo(s) en la cesta para un stock de {1}"
 
 #. placeholder {0}: error.stock
 #: src/hooks/useCartError.jsx
