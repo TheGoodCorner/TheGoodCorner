@@ -164,7 +164,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : Introduction to React](https://legacy.reactjs.org/tutorial/tutorial.html)  
 [Documentation : Motion Library](https://motion.dev/)  
 [Documentation : HTML Balises](https://facemweb.com/blog/creation-site/liste-balises-html/)  
-[Documentation : Zustand Library](https://zustand.docs.pmnd.rs/)
+[Documentation : Zustand Library](https://zustand.docs.pmnd.rs/)  
 [Documentation : Lucid Icons Library](https://lucide.dev/guide/)  
 [Documentation : Prisma](https://www.prisma.io/docs/orm/v7/more/dev-environment/environment-variables)  
 [Documentation : Sockets](https://medium.com/@basukori8463/build-a-real-time-chat-app-from-scratch-with-node-js-and-socket-io-9714)  
