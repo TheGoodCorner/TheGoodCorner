@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
 import { useReviewStore } from '../stores/reviewStore';
 
 /**
@@ -10,6 +11,7 @@ import { useReviewStore } from '../stores/reviewStore';
  * porte receivedReviews, plus de liste séparée à mettre à jour ici.
  */
 export function useReviewForm(targetUserId, onSuccess) {
+  const { t } = useLingui();
   const createReview = useReviewStore((state) => state.createReview);
 
   const [rating, setRating] = useState(0);
@@ -19,8 +21,8 @@ export function useReviewForm(targetUserId, onSuccess) {
   const [success, setSuccess] = useState(false);
 
   const validate = () => {
-    if (rating < 1 || rating > 5) return 'Choisis une note entre 1 et 5 étoiles.';
-    if (!content.trim()) return 'Écris un commentaire avant de publier.';
+    if (rating < 1 || rating > 5) return t`Choisis une note entre 1 et 5 étoiles.`;
+    if (!content.trim()) return t`Écris un commentaire avant de publier.`;
     return null;
   };
 

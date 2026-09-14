@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLingui } from '@lingui/react/macro';
 import { useUserStore } from '../stores/userStore';
 
 /**
@@ -30,6 +31,7 @@ const LOCATION_REQUIRED_FIELDS = ['country', 'region', 'city', 'street', 'house_
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 Mo — ajuste si ton uploadMiddleware a une autre limite
 
 export function useProfileEditForm() {
+  const { t } = useLingui();
   const user = useUserStore((state) => state.user);
   const updateProfile = useUserStore((state) => state.updateProfile);
   const storeError = useUserStore((state) => state.error);
@@ -92,11 +94,11 @@ export function useProfileEditForm() {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      setValidationError('Le fichier doit être une image (PNG ou JPEG).');
+      setValidationError(t`Le fichier doit être une image (PNG ou JPEG).`);
       return;
     }
     if (file.size > MAX_AVATAR_SIZE) {
-      setValidationError('Image trop lourde (5 Mo max).');
+      setValidationError(t`Image trop lourde (5 Mo max).`);
       return;
     }
 
@@ -108,7 +110,7 @@ export function useProfileEditForm() {
 
   const save = async () => {
     if (!form.email.trim()) {
-      setValidationError("L'email ne peut pas être vide.");
+      setValidationError(t`L'email ne peut pas être vide.`);
       return;
     }
 
@@ -116,7 +118,7 @@ export function useProfileEditForm() {
     // renseigné, exactement 10 chiffres.
     const phoneDigits = form.phoneNumber.replace(/\D/g, '');
     if (form.phoneNumber.trim() !== '' && phoneDigits.length !== 10) {
-      setValidationError('Numéro de téléphone invalide (10 chiffres requis).');
+      setValidationError(t`Numéro de téléphone invalide (10 chiffres requis).`);
       return;
     }
 
@@ -127,7 +129,7 @@ export function useProfileEditForm() {
 
     if (hasAnyLocationField && !hasAllLocationFields) {
       setValidationError(
-        'Adresse incomplète : remplis tous les champs (pays, région, ville, rue, numéro), ou laisse-les tous vides.'
+        t`Adresse incomplète : remplis tous les champs (pays, région, ville, rue, numéro), ou laisse-les tous vides.`
       );
       return;
     }

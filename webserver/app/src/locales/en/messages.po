@@ -181,8 +181,8 @@ msgid "Acceptation"
 msgstr "Acceptance"
 
 #: src/pages/Profile.jsx
-msgid "Accepter"
-msgstr "Accept"
+#~ msgid "Accepter"
+#~ msgstr "Accept"
 
 #: src/pages/Profile.jsx
 msgid "Accepter la demande d'ami"
@@ -197,7 +197,6 @@ msgstr "Access to settings"
 #~ msgstr "Account deleted successfully."
 
 #: src/components/layouts/Footer.jsx
-#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Accueil"
 msgstr "Home"
@@ -230,6 +229,10 @@ msgstr "Full address"
 msgid "Adresse e-mail valide requise à l'inscription."
 msgstr "Valid email address required upon registration."
 
+#: src/hooks/useProfileEditForm.jsx
+msgid "Adresse incomplète : remplis tous les champs (pays, région, ville, rue, numéro), ou laisse-les tous vides."
+msgstr "Incomplete address: fill in all the fields (country, region, city, street, number) or leave them all blank."
+
 #: src/pages/Settings.jsx
 msgid "Afficher les options de sécurité 2FA"
 msgstr "Show 2FA security options"
@@ -245,6 +248,14 @@ msgstr "Display your seller profile (public) to other members."
 #: src/pages/PrivacyPolicy.jsx
 msgid "Âge minimum"
 msgstr "Minimum age"
+
+#: src/hooks/useProductForm.jsx
+msgid "Ajoute une description."
+msgstr "Add a description."
+
+#: src/hooks/useProductForm.jsx
+msgid "Ajoute une image."
+msgstr "Add an image."
 
 #: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
@@ -355,6 +366,7 @@ msgid "Augmenter le prix minimum"
 msgstr "Increase minimum price"
 
 #: src/utils/constants.jsx
+#: src/utils/constants.jsx
 msgid "Autre"
 msgstr "Other"
 
@@ -453,11 +465,16 @@ msgstr "Loading..."
 msgid "Chargement…"
 msgstr "Loading…"
 
+#: src/hooks/useLoginForm.jsx
+msgid "Choisis un nom d'utilisateur."
+msgstr "Choose a username."
+
 #: src/components/chat/ChatThread.jsx
 msgid "Choisis une discussion dans la liste, ou démarre-en une nouvelle."
 msgstr "Choose a conversation from the list, or start a new one."
 
 #: src/components/reviews/ReviewCard.jsx
+#: src/hooks/useReviewForm.jsx
 msgid "Choisis une note entre 1 et 5 étoiles."
 msgstr "Choose a rating between 1 and 5 stars."
 
@@ -651,8 +668,8 @@ msgid "Date inconnue"
 msgstr "Unknown date"
 
 #: src/components/layouts/Navbar.jsx
-msgid "Déconnexion"
-msgstr "Log out"
+#~ msgid "Déconnexion"
+#~ msgstr "Log out"
 
 #: src/pages/Home.jsx
 msgid "Découvrez nos meilleurs produits ou pas pour vous"
@@ -786,6 +803,10 @@ msgstr "Applicable law"
 msgid "Durée de conservation"
 msgstr "Retention period"
 
+#: src/hooks/useReviewForm.jsx
+msgid "Écris un commentaire avant de publier."
+msgstr "Write a comment before publishing."
+
 #: src/components/chat/ChatThread.jsx
 msgid "Écris un message..."
 msgstr "Write a message..."
@@ -918,6 +939,10 @@ msgstr "Current image"
 msgid "Image du produit"
 msgstr "Product image"
 
+#: src/hooks/useProfileEditForm.jsx
+msgid "Image trop lourde (5 Mo max)."
+msgstr "Image too large (5 MB max)."
+
 #: src/components/products/ProductCard.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Impossible d'ajouter cet article au panier."
@@ -947,6 +972,10 @@ msgstr "Not found, try again after reloading"
 #~ msgid "Invalid secret pass phrase."
 #~ msgstr "Invalid secret pass phrase."
 
+#: src/hooks/useProfileEditForm.jsx
+msgid "L'email ne peut pas être vide."
+msgstr "The email cannot be empty."
+
 #: src/components/products/ProductForm.jsx
 msgid "L'image ne peut pas être modifiée depuis ce formulaire pour l'instant."
 msgstr "The image cannot be changed from this form for now."
@@ -958,6 +987,10 @@ msgstr "Using the site implies full acceptance of these Terms of Service. Browsi
 #: src/pages/Faq.jsx
 msgid "La création de compte est-elle obligatoire ?"
 msgstr "Is account creation required?"
+
+#: src/hooks/useProductForm.jsx
+msgid "La description doit faire au moins 10 caractères."
+msgstr "The description must be at least 10 characters long."
 
 #: src/pages/TermsOfService.jsx
 msgid "La messagerie sert à échanger avec d'autres utilisateurs dans le cadre d'une transaction. Vous vous engagez à un usage loyal : pas de harcèlement, de contenu illicite ou de sollicitation commerciale non liée à la plateforme. Vos messages restent privés entre vous et votre interlocuteur."
@@ -999,9 +1032,29 @@ msgstr "Comment cannot be this long."
 msgid "Le commentaire ne peut pas être vide."
 msgstr "Comment cannot be empty."
 
+#: src/hooks/useProfileEditForm.jsx
+msgid "Le fichier doit être une image (PNG ou JPEG)."
+msgstr "The file must be an image (PNG or JPEG)."
+
 #: src/pages/TermsOfService.jsx
 msgid "Le mot de passe doit comporter au minimum 6 caractères."
 msgstr "The password must be at least 6 characters long."
+
+#: src/hooks/useLoginForm.jsx
+msgid "Le mot de passe doit faire au moins 6 caractères."
+msgstr "The password must be at least 6 characters long."
+
+#: src/hooks/useProductForm.jsx
+msgid "Le nom du produit est requis."
+msgstr "The product name is required."
+
+#: src/hooks/useProductForm.jsx
+msgid "Le prix doit être supérieur à 0 et inférieur à 10 000."
+msgstr "The price must be greater than 0 and less than 10,000."
+
+#: src/hooks/useProductForm.jsx
+msgid "Le prix doit être un nombre valide."
+msgstr "The price must be a valid number."
 
 #: src/pages/PrivacyPolicy.jsx
 #: src/pages/TermsOfService.jsx
@@ -1066,12 +1119,20 @@ msgid "Mémoriser vos préférences (thème, panier) pour une expérience plus f
 msgstr "Store your preferences (theme, cart) for a smoother experience."
 
 #: src/components/layouts/Navbar.jsx
-msgid "Menu"
-msgstr "Menu"
+#~ msgid "Menu"
+#~ msgstr "Menu"
 
 #: src/pages/TooManyRequests.jsx
 msgid "Merci de patienter quelques instants..."
 msgstr "Merci de patienter quelques instants..."
+
+#: src/hooks/useLoginForm.jsx
+msgid "Merci de renseigner ton email."
+msgstr "Please enter your email address."
+
+#: src/hooks/useLoginForm.jsx
+msgid "Merci de renseigner ton mot de passe."
+msgstr "Please enter your password."
 
 #: src/pages/SuccessCheckout.jsx
 msgid "Merci pour votre commande. La transaction a été validée par Stripe et vos articles sont en cours de préparation."
@@ -1101,8 +1162,8 @@ msgid "Mes avis"
 msgstr "My reviews"
 
 #: src/components/layouts/Navbar.jsx
-msgid "Mes commandes"
-msgstr "My orders"
+#~ msgid "Mes commandes"
+#~ msgstr "My orders"
 
 #: src/pages/Orders.jsx
 msgid "Mes Commandes"
@@ -1112,7 +1173,6 @@ msgstr "My Orders"
 msgid "Mes Discussions"
 msgstr "My Chats"
 
-#: src/components/layouts/Navbar.jsx
 #: src/pages/Messagerie.jsx
 #: src/pages/TermsOfService.jsx
 msgid "Messagerie"
@@ -1167,8 +1227,8 @@ msgid "Modifier le message"
 msgstr "Edit message"
 
 #: src/components/layouts/Navbar.jsx
-msgid "Mon profil"
-msgstr "My profile"
+#~ msgid "Mon profil"
+#~ msgstr "My profile"
 
 #: src/pages/Settings.jsx
 msgid "Montant à créditer"
@@ -1282,6 +1342,10 @@ msgstr "New conversation"
 msgid "Numéro"
 msgstr "Street number"
 
+#: src/hooks/useProfileEditForm.jsx
+msgid "Numéro de téléphone invalide (10 chiffres requis)."
+msgstr "Invalid phone number (10 digits required)."
+
 #: src/pages/TermsOfService.jsx
 msgid "Objet"
 msgstr "Purpose"
@@ -1323,14 +1387,13 @@ msgid "Paiement sécurisé avec Stripe • Données chiffrées • 100% confiden
 msgstr "Secure payment with Stripe • Encrypted data • 100% confidential"
 
 #: src/components/layouts/Navbar.jsx
-msgid "Panier"
-msgstr "Cart"
+#~ msgid "Panier"
+#~ msgstr "Cart"
 
 #: src/pages/CartPopover.jsx
 msgid "Panier vide"
 msgstr "Empty cart"
 
-#: src/components/layouts/Navbar.jsx
 #: src/pages/Settings.jsx
 msgid "Paramètres"
 msgstr "Settings"
@@ -1433,6 +1496,10 @@ msgstr "Why we use them"
 msgid "Précise la catégorie personnalisée"
 msgstr "Specify custom category"
 
+#: src/hooks/useProductForm.jsx
+msgid "Précise la catégorie personnalisée."
+msgstr "Specify the custom category."
+
 #: src/pages/Home.jsx
 msgid "Prêt à acheter un max de produit ?"
 msgstr "Ready to discover great deals?"
@@ -1466,7 +1533,6 @@ msgid "Produit supprimé"
 msgstr "Product removed"
 
 #: src/components/layouts/Footer.jsx
-#: src/components/layouts/Navbar.jsx
 #: src/pages/ProduitDetail.jsx
 msgid "Produits"
 msgstr "Products"
@@ -1549,8 +1615,8 @@ msgid "Recommencer"
 msgstr "Start over"
 
 #: src/pages/Profile.jsx
-msgid "Refuser"
-msgstr "Decline"
+#~ msgid "Refuser"
+#~ msgstr "Decline"
 
 #: src/pages/Profile.jsx
 msgid "Refuser la demande d'ami"
@@ -1650,7 +1716,6 @@ msgstr "Save"
 msgid "Savoir si une session est potentiellement active au chargement"
 msgstr "Detect if a session might be active on page load"
 
-#: src/components/layouts/Navbar.jsx
 #: src/pages/Checkout.jsx
 #: src/pages/Login.jsx
 #: src/pages/Messagerie.jsx
@@ -1660,12 +1725,16 @@ msgid "Se connecter"
 msgstr "Log in"
 
 #: src/components/layouts/Navbar.jsx
-msgid "Se déconnecter"
-msgstr "Log out"
+#~ msgid "Se déconnecter"
+#~ msgstr "Log out"
 
 #: src/pages/PrivacyPolicy.jsx
 msgid "Sécurité"
 msgstr "Security"
+
+#: src/hooks/useProductForm.jsx
+msgid "Sélectionne une catégorie."
+msgstr "Select a category."
 
 #: src/components/chat/ChatThread.jsx
 msgid "Sélectionne une conversation"
@@ -1813,8 +1882,8 @@ msgid "TheGoodCorner est une plateforme qui met en relation des particuliers sou
 msgstr "TheGoodCorner is a platform connecting individuals who want to buy or sell second-hand goods. TheGoodCorner acts as a technical intermediary and is not a party to any transaction concluded between users."
 
 #: src/components/layouts/Navbar.jsx
-msgid "Thème"
-msgstr "Theme"
+#~ msgid "Thème"
+#~ msgstr "Theme"
 
 #: src/pages/Settings.jsx
 msgid "Thème clair activé"
@@ -1829,8 +1898,7 @@ msgstr "Dark theme active"
 msgid "Total :"
 msgstr "Total:"
 
-#: src/pages/ProduitDetail.jsx
-#: src/pages/Produits.jsx
+#: src/utils/constants.jsx
 msgid "Tous"
 msgstr "All"
 

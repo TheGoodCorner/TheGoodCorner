@@ -4,7 +4,7 @@ import { Trans, Plural, useLingui } from "@lingui/react/macro";
 import { useProductStore } from "../stores/productStore";
 import ProductCard from "../components/products/ProductCard";
 import { useUserStore } from "../stores/userStore";
-import { PRODUCT_PRICE_MAX, CATEGORIES, getCategoryLabel } from "../utils/constants";
+import { PRODUCT_PRICE_MAX, CATEGORIES, useCategoryLabel } from "../utils/constants";
 import ReactPaginate from "react-paginate";
 
 const STANDARD_CATEGORIES = ["All", ...CATEGORIES.map((c) => c.value)];
@@ -24,13 +24,7 @@ function Products() {
     const [itemOffset, setItemOffset] = useState(0);
     const filteredProducts = getFilteredProducts();
 
-    const categoryLabels = useMemo(() => ({
-        All: t`Tous`,
-        Training: t`Entraînement`,
-        Professional: t`Professionnel`,
-        Combat: t`Combat`,
-        Cardio: t`Cardio`,
-    }), [t]);
+    const categoryLabel = useCategoryLabel();
 
     useEffect(() => {
         setItemOffset(0);
@@ -94,7 +88,7 @@ function Products() {
                                                     : "bg-[var(--color-surface-hover)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
                                                     }`}
                                             >
-                                                {categoryLabels[categoryKey] ?? getCategoryLabel(categoryKey)}
+                                                {categoryLabel(categoryKey)}
                                             </button>
                                         );
                                     })}

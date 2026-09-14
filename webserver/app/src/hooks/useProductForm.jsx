@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useLingui } from '@lingui/react/macro';
 import { useProductStore } from '../stores/productStore';
 import { PRODUCT_PRICE_MAX } from '../utils/constants';
 
 const CATEGORY_VALUES = ['Training', 'Professionnal', 'Combat', 'Cardio'];
 
 export function useProductForm(initialProduct = null) {
+  const { t } = useLingui();
   const { createProduct, updateProduct, error, setError } = useProductStore();
   const isEditMode = !!initialProduct;
 
@@ -64,14 +66,14 @@ export function useProductForm(initialProduct = null) {
   };
 
   const validate = () => {
-    if (!form.name.trim()) return 'Le nom du produit est requis.';
-    if (!form.category.trim()) return 'Sélectionne une catégorie.';
-    if (form.category === 'other' && !form.customCategory.trim()) return 'Précise la catégorie personnalisée.';
-    if (!form.price || isNaN(parseFloat(form.price))) return 'Le prix doit être un nombre valide.';
-    if (parseFloat(form.price) <= 0 || parseFloat(form.price) > PRODUCT_PRICE_MAX) return 'Le prix doit être supérieur à 0 et inferieur a 10 000.';
-    if (!isEditMode && !form.image) return 'Ajoute une image.';
-    if (!form.description.trim()) return 'Ajoute une description.';
-    if (form.description.length < 10) return 'La description doit faire au moins 10 caractères.';
+    if (!form.name.trim()) return t`Le nom du produit est requis.`;
+    if (!form.category.trim()) return t`Sélectionne une catégorie.`;
+    if (form.category === 'other' && !form.customCategory.trim()) return t`Précise la catégorie personnalisée.`;
+    if (!form.price || isNaN(parseFloat(form.price))) return t`Le prix doit être un nombre valide.`;
+    if (parseFloat(form.price) <= 0 || parseFloat(form.price) > PRODUCT_PRICE_MAX) return t`Le prix doit être supérieur à 0 et inférieur à 10 000.`;
+    if (!isEditMode && !form.image) return t`Ajoute une image.`;
+    if (!form.description.trim()) return t`Ajoute une description.`;
+    if (form.description.length < 10) return t`La description doit faire au moins 10 caractères.`;
     return null;
   };
 

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLingui } from '@lingui/react/macro';
 import { useAuthStore } from '../stores/authStore';
 
 /**
@@ -10,6 +11,7 @@ import { useAuthStore } from '../stores/authStore';
  * de passe tapé) finisse sérialisé dans localStorage via le persist d'authStore.
  */
 export function useLoginForm() {
+  const { t } = useLingui();
   const { login, register, error, setError } = useAuthStore();
 
   const [requiresTwoFactor, setRequiresTwoFactor] = useState(false);
@@ -33,10 +35,10 @@ export function useLoginForm() {
   };
 
   const validate = () => {
-    if (isRegister && !form.username.trim()) return "Choisis un nom d'utilisateur.";
-    if (!form.email.trim()) return 'Merci de renseigner ton email.';
-    if (!form.password) return 'Merci de renseigner ton mot de passe.';
-    if (form.password.length < 6) return 'Le mot de passe doit faire au moins 6 caractères.';
+    if (isRegister && !form.username.trim()) return t`Choisis un nom d'utilisateur.`;
+    if (!form.email.trim()) return t`Merci de renseigner ton email.`;
+    if (!form.password) return t`Merci de renseigner ton mot de passe.`;
+    if (form.password.length < 6) return t`Le mot de passe doit faire au moins 6 caractères.`;
     return null;
   };
 
