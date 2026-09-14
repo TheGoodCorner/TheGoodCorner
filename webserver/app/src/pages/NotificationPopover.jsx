@@ -9,7 +9,7 @@ export function NotificationPopover() {
   const isOpen = useUIStore((state) => state.UserInterfaces['notification-popover']) || false;
   const closeUi = useUIStore((state) => state.closeUi);
   const conversations = useMessageStore((state) => state.conversations);
-  const unreadCounts = useMessageStore((state) => state.unreadCounts);
+  const unreadCounts = useMessageStore((state) => state.unreadCounts) || {};
   const setActiveConversation = useMessageStore((state) => state.setActiveConversation);
   const notifications = useNotificationStore((state) => state.notifications);
   const markAsRead = useNotificationStore((state) => state.markAsRead);
@@ -40,25 +40,39 @@ export function NotificationPopover() {
 
   const hasNotifications = allNotifications.length > 0;
 
-  const handleMessageClick = (conversationId) => {
-    setActiveConversation(conversationId);
+  const handleMessageClick = (e, interlocutorId) => {
+    e.stopPropagation();
+
+    useMessageStore.setState((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [interlocutorId]: 0,
+      },
+    }));
+
+    setActiveConversation(interlocutorId);
+
     closeUi('notification-popover');
-    navigate('/messagerie');
+
+    navigate(`/messagerie?userId=${interlocutorId}`);
   };
 
-  const handleReviewClick = (notifId) => {
+  const handleReviewClick = (e, notifId) => {
+    e.stopPropagation();
     markAsRead(notifId);
     closeUi('notification-popover');
     navigate('/profile?tab=reviews');
   };
 
-  const handleFriendNotifClick = (notifId) => {
+  const handleFriendNotifClick = (e, notifId) => {
+    e.stopPropagation();
     markAsRead(notifId);
     closeUi('notification-popover');
     navigate('/profile?tab=friends');
   };
 
-  const handleProductSoldClick = (notifId) => {
+  const handleProductSoldClick = (e, notifId) => {
+    e.stopPropagation();
     markAsRead(notifId);
     closeUi('notification-popover');
     navigate('/profile?tab=products');
@@ -89,7 +103,7 @@ export function NotificationPopover() {
                     notif.type === 'PRODUCT_SOLD' ? (
                       <li
                         key={notif.key}
-                        onClick={() => handleProductSoldClick(notif.data.notifId)}
+                        onClick={(e) => handleProductSoldClick(e, notif.data.notifId)}
                         className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">
@@ -104,7 +118,7 @@ export function NotificationPopover() {
                     ) : notif.type === 'message' ? (
                       <li
                         key={notif.key}
-                        onClick={() => handleMessageClick(notif.data.interlocutor.id)}
+                        onClick={(e) => handleMessageClick(e, notif.data.interlocutor.id)}
                         className="flex items-center justify-between gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">
@@ -122,7 +136,7 @@ export function NotificationPopover() {
                     ) : notif.type === 'REVIEW' ? (
                       <li
                         key={notif.key}
-                        onClick={() => handleReviewClick(notif.data.notifId)}
+                        onClick={(e) => handleReviewClick(e, notif.data.notifId)}
                         className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">
@@ -139,7 +153,7 @@ export function NotificationPopover() {
                     ) : (
                       <li
                         key={notif.key}
-                        onClick={() => handleFriendNotifClick(notif.data.notifId)}
+                        onClick={(e) => handleFriendNotifClick(e, notif.data.notifId)}
                         className="flex items-center gap-3 p-3 rounded-lg cursor-pointer hover:bg-[var(--color-surface-hover)] transition-colors"
                       >
                         <div className="flex flex-col min-w-0">

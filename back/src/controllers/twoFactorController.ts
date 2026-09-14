@@ -13,7 +13,7 @@ export async function setupFactor(req: AuthenticatedRequest, res: Response) {
   const userId = req.user!.id;
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
   if (typeof req.body.password !== 'string' || !comparePassword(req.body.password, user.password))
-    return res.status(400).json({ message: 'Mot de passe incorrect' });
+    return res.status(400).json({ message: 'Invalid password' });
   const secret = newSecret();
   const encrypted = encryptSecret(secret);
   const result = await prisma.$transaction(async tx => {
@@ -34,7 +34,7 @@ export const changeFactor = (action: 'enable' | 'disable') => async (req: Authen
   const userId = req.user!.id;
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
   if (typeof req.body.password !== 'string' || !comparePassword(req.body.password, user.password))
-    return res.status(400).json({ message: 'Mot de passe incorrect' });
+    return res.status(400).json({ message: 'Invalid password' });
   const result = await consumeFactor(userId, req.body.code, action);
   if (!result.ok) return res.status(result.limited ? 429 : 400).json({ message: result.limited ? 'Trop de tentatives' : 'Code incorrect ou déjà utilisé' });
   return res.set('Cache-Control', 'no-store').json(result);

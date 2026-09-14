@@ -4,6 +4,7 @@ import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import { buildProduct } from "../services/products/buildProduct.js";
 import { productUpdate } from "../services/products/updateProduct.js";
 import { findReturnProduct } from "../services/products/utilsProducts.js";
+
 // request has already been processed by multer before arriving here since its a middleware, req.file has been filtered already
 /**
  * create a product inside the prisma database by taking the request and sending the json object
@@ -105,7 +106,6 @@ const ProductController =
 			console.log(error);
 			res.status(500).json({ status: 'ERROR', message: 'Internal server error' })
 		}
-
 	},
 
 }

@@ -29,7 +29,7 @@ const userController =
 			const allowedDomains: string[] = [ 'gmail.com', 'hotmail.com', 'yahoo.com', 'laposte.net'];
 			const domain:string = req.body.email.split('@')[1];
 			if (!domain || !allowedDomains.includes(domain.toLowerCase()))
-				return res.status(400).json({ status: 'ERROR', message: 'l\'extension de mail est incorrecte !'});
+				return res.status(400).json({ status: 'ERROR', message: 'Invalid email suffix extension'});
 
 			const newUser = buildUser(req);
 
@@ -67,11 +67,11 @@ const userController =
 			const reqPassword = req.body.password;
 			const email = req.body.email;
 			if (!reqPassword || !email)
-				return (res.status(400).json({ status: 'ERROR', message: 'L\'email et le mot de passe sont obligatoire !'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'Email and Password filling are mandatory'}));
 
 			const existingUser = await findUserByEmail(email);
 			if (!existingUser)
-				return (res.status(400).json({ status: 'ERROR', message: 'L\'email n\'existe pas sur notre site !'}));
+				return (res.status(400).json({ status: 'ERROR', message: 'User doesn\'t exist on our website'}));
 			
 			const passMatch = comparePassword(reqPassword, existingUser.password);
 			if (!passMatch)
@@ -81,7 +81,7 @@ const userController =
             if (factor?.enabled) {
                 if (!req.body.code) return res.set('Cache-Control', 'no-store').status(200).json({ requiresTwoFactor: true });
                 const result = await consumeFactor(existingUser.id, req.body.code, 'login');
-                if (!result.ok) return res.status(result.limited ? 429 : 400).json({ message: result.limited ? 'Trop de tentatives' : 'Code incorrect ou déjà utilisé' });
+                if (!result.ok) return res.status(result.limited ? 429 : 400).json({ message: result.limited ? 'Too much retries' : 'invalid code !' });
             }
 			const {accessToken, refreshToken} = generateTokens(existingUser.id, existingUser.email);
 			const hashedRefreshToken = hashIt(refreshToken);
@@ -180,7 +180,6 @@ const userController =
 			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error'}));
 		}
 	},
-
 	removeUser: async (req:AuthenticatedRequest<{ id:string }>, res:Response) =>
 	{
 		try {
@@ -229,16 +228,13 @@ const userController =
 			} catch (error) {
 				console.log(error);
 
-			if (error instanceof ValidationError) {
-				// Erreurs "métier" volontairement levées dans userUpdate() : domaine
-				// email refusé, adresse incomplète, téléphone invalide...
+			if (error instanceof ValidationError)
 				return res.status(400).json({ status: 'ERROR', message: error.message });
-			}
 
 			if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
 				const target = (error.meta?.target as string[] | undefined) || [];
-				const field = target.includes('email') ? 'email' : target.includes('username') ? "nom d'utilisateur" : 'valeur';
-				return res.status(409).json({ status: 'ERROR', message: `Ce ${field} est déjà utilisé par un autre compte.` });
+				const field = target.includes('email') ? 'email' : target.includes('username') ? "username" : 'value';
+				return res.status(409).json({ status: 'ERROR', message: `This ${field} is already used by some other account.` });
 			}
 
 			res.status(500).json({ status: 'ERROR', message: 'Internal server error' });

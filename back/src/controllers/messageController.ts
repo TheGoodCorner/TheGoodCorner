@@ -1,5 +1,5 @@
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { MessageService } from "../services/messages/messageUtils.js";
 
 const messageController = {
@@ -25,9 +25,9 @@ const messageController = {
 	},
 	fetchAllConversations: async (req: AuthenticatedRequest, res:Response) => {
 		try {
-				const currentUserId = req.user!.id;
-				if (!currentUserId)
-					return res.status(400).json({ error: 'Missing currentUserId' });
+			const currentUserId = req.user!.id;
+			if (!currentUserId)
+				return res.status(400).json({ error: 'Missing currentUserId' });
 			const conversationList = await MessageService.getConversationList(currentUserId);
 			console.log('Messages successfully fetched');
 			return (res.status(200).json({ message: 'ConversationList sucessfully fetched', data: conversationList }));
@@ -35,7 +35,7 @@ const messageController = {
 		catch (error)
 		{
 			console.log(' an error occured inside fetchAllConversation');
-				return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
+			return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 		}
 	},
 	sendMessage: async (req: AuthenticatedRequest, res: Response) => {

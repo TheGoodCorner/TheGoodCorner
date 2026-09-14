@@ -4,7 +4,7 @@ import { fetchNotificationsRequest, markNotificationReadRequest, markAllNotifica
 
 export const useNotificationStore = create(
   persist(
-    (set, get) => ({
+    (set, _get) => ({
       notifications: [],
       notificationsEnabled: true,
 

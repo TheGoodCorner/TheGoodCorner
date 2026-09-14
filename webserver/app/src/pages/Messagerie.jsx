@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom'; // 1. Importer useSearchParams
 import { MessageCircle, Plus } from 'lucide-react';
 import { Trans } from '@lingui/react/macro';
 import { useUserStore } from '../stores/userStore';
@@ -10,6 +11,9 @@ import ConversationsSidebar from '../components/chat/ConversationsSidebar';
 import ChatThread from '../components/chat/ChatThread';
 
 function Messagerie() {
+  const [searchParams] = useSearchParams();
+  const targetUserId = searchParams.get('userId'); // 2. Récupérer le userId depuis l'URL
+
   const currentUser = useUserStore((state) => state.user);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const initializing = useAuthStore((state) => state.initializing);
@@ -31,16 +35,18 @@ function Messagerie() {
   const startConversationWith = useMessageStore((state) => state.startConversationWith);
   const updateMessage = useMessageStore((state) => state.updateMessage);
   const deleteMessage = useMessageStore((state) => state.deleteMessage);
-  const [sendError, setSendError] = useState(null);
 
+  // Méthode de lecture (si disponible dans le store)
+  const markConversationAsRead = useMessageStore(
+    (state) => state.markConversationAsRead || state.markAsRead
+  );
+
+  const [sendError, setSendError] = useState(null);
   const [showUserModal, setShowUserModal] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [search, setSearch] = useState('');
-
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editingContent, setEditingContent] = useState('');
-
-  // Sur mobile, on affiche soit la liste soit la conversation ouverte
   const [showThreadOnMobile, setShowThreadOnMobile] = useState(false);
 
   useEffect(() => {
@@ -48,6 +54,24 @@ function Messagerie() {
       fetchConversations();
     }
   }, [isAuthenticated, currentUser?.id, fetchConversations]);
+
+  useEffect(() => {
+    if (!targetUserId) return;
+
+    setActiveConversation(targetUserId);
+    setShowThreadOnMobile(true);
+
+    useMessageStore.setState((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [targetUserId]: 0,
+      },
+    }));
+
+    if (typeof markConversationAsRead === 'function') {
+      markConversationAsRead(targetUserId);
+    }
+  }, [targetUserId, setActiveConversation, markConversationAsRead]);
 
   useEffect(() => {
     return () => {
@@ -72,17 +96,8 @@ function Messagerie() {
   const saveEditingMessage = async () => {
     const trimmed = editingContent.trim();
     const messageId = editingMessageId;
-    const original = activeMessages.find((m) => m.id === messageId)?.content;
     setEditingMessageId(null);
-
-    // Sécurité de longueur et de contenu
-    if (!trimmed || !activeConversationId || trimmed === original || trimmed.length > 5000) return;
-
-    try {
-      await updateMessage(messageId, activeConversationId, trimmed);
-    } catch {
-      // rollback déjà appliqué dans le store
-    }
+    await updateMessage(messageId, activeConversationId, trimmed);
   };
 
   const handleDeleteConversation = (interlocutorId) => {
@@ -90,16 +105,23 @@ function Messagerie() {
   };
 
   const handleDeleteMessage = async (messageId) => {
-    try {
-      await deleteMessage(messageId, activeConversationId);
-    } catch {
-      // rollback déjà appliqué dans le store
-    }
+    await deleteMessage(messageId, activeConversationId);
   };
 
   const handleSelectConversation = (conversationId) => {
     setActiveConversation(conversationId);
     setShowThreadOnMobile(true);
+
+    // Nettoyer les notifications non lues lors d'un clic manuel dans la liste
+    useMessageStore.setState((state) => ({
+      unreadCounts: {
+        ...state.unreadCounts,
+        [conversationId]: 0,
+      },
+    }));
+    if (typeof markConversationAsRead === 'function') {
+      markConversationAsRead(conversationId);
+    }
   };
 
   const handleSelectUser = (selectedUser) => {
@@ -116,6 +138,7 @@ function Messagerie() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
+    setSendError(null);
     setSendError(null);
     const trimmed = messageText.trim();
     
@@ -201,7 +224,6 @@ function Messagerie() {
             className={showThreadOnMobile ? 'hidden sm:flex' : 'flex'}
           />
 
-          {/* min-w-0 est indispensable pour empêcher les enfants flex de forcer la largeur */}
           <div className={`flex-1 min-w-0 flex-col ${showThreadOnMobile ? 'flex' : 'hidden sm:flex'}`}>
             <ChatThread
               conversation={activeConversation}

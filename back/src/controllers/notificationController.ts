@@ -4,7 +4,7 @@ import { Response } from "express";
 import prisma from "../services/db.js";
 
 const notificationController = {
-    getNotifications: async (req: AuthenticatedRequest, res: Response) => {
+	getNotifications: async (req: AuthenticatedRequest, res: Response) => {
 		try {
 			const userId = req.user!.id;
 			const notifications = await prisma.notification.findMany({

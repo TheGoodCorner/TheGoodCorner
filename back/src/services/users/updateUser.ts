@@ -20,7 +20,7 @@ export const userUpdate = ({ body, file }: UserUpdate): Prisma.UserUpdateInput =
 		const allowedDomains: string[] = ['gmail.com', 'hotmail.com', 'yahoo.com', 'laposte.net'];
 		const domain = body.email.split('@')[1];
 		if (domain && !allowedDomains.includes(domain.toLowerCase()))
-			throw new ValidationError('Email invalide : domaine non autorisé.');
+			throw new ValidationError('Invalid email. Domain is forbidden.');
 		data.email = String(body.email);
 	}
 
@@ -40,11 +40,10 @@ export const userUpdate = ({ body, file }: UserUpdate): Prisma.UserUpdateInput =
 	else {
 		const sanitizedPhone = String(body.phoneNumber).replace(/\D/g, '');
 		if (sanitizedPhone.length !== 10)
-			throw new ValidationError('Numéro de téléphone invalide (10 chiffres requis).');
+			throw new ValidationError('Invalid phone number (10 digits are required).');
 		data.phoneNumber = sanitizedPhone;
 		}
 	}
-
 	if (body.sellerEliteStatusCatchPhrase !== undefined) {
 		if (body.sellerEliteStatusCatchPhrase === sellerEliteStatusCatchPass && body.sellerEliteStatus === false)
 			data.sellerEliteStatus = true;
@@ -61,17 +60,17 @@ export const userUpdate = ({ body, file }: UserUpdate): Prisma.UserUpdateInput =
 	  loc = typeof body.location === 'string' ? JSON.parse(body.location) : body.location;
 	} 
 	catch {
-		throw new ValidationError('Adresse invalide (format incorrect).');
+		throw new ValidationError('Invalid adress (bad format)');
 	}
 
 	const requiredFields = ['country', 'region', 'city', 'street', 'house_number'];
 	const missing = requiredFields.filter((key) => !loc?.[key]);
 	if (missing.length > 0)
-		throw new ValidationError(`Adresse incomplète : ${missing.join(', ')} requis.`);
+		throw new ValidationError(`incomplete adress : ${missing.join(', ')} required.`);
 
 	const houseNumber = Number(loc.house_number);
 	if (Number.isNaN(houseNumber))
-		throw new ValidationError('Numéro de rue invalide.');
+		throw new ValidationError('Invalid house street number');
 
 	const locPayload = {
 		country: String(loc.country),

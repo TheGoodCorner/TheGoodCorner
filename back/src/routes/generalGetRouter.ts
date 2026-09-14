@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import controller from '../controllers/generalController.js';
-import { AuthenticateToken } from '../services/middlewareAuthenticateToken.js';
 
 const generalGetRouter: Router = Router();
 
@@ -13,7 +12,5 @@ const generalGetRouter: Router = Router();
 
 generalGetRouter.get('/products', controller.getProductsPage);
 generalGetRouter.get(`/signup`, controller.getSignUpPage);
-
-// generalGetRouter.get(`/user/profile`, AuthenticateToken, controller.userProfile)
 
 export default generalGetRouter;
