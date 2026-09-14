@@ -473,11 +473,12 @@ The main challenge was getting used to a new language (javascript), aswell as ga
 
 ### `tgomez-f` - Thomas Gomez
 
-- Designed and implemented the UI React tree structure and routing pages
-- Implemented JWT authentication with refresh token, registration, login, logout, and password change
+- Designed and implemented the UI React tree structure, and the routing of the pages
+- Implemented JWT authentication logic with refresh token
 - Implemented user profile, products, reviews, friends-requests, and auhtentication related APIs
 - Implemented the frontend part of Websockets, for the Messaging feature, and online friend status
-- Participation in creating the file nginx configuration file
+- Participation in creating the nginx configuration file
+- Coordination and debugging of the project throughout the entire duration.
 
 The main challenge was learning multiple programming languages and tech stacks from scratch while producing clean, coherent results without losing focus—all under tight time constraints. And also maintain good resilience when facing these challenges, uncertainties, and changes in the project's organization.
 
