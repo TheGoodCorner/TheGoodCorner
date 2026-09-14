@@ -186,6 +186,8 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 [Documentation : NodeJs releases](https://nodejs.org/en/about/previous-releases)  
 [Documentation : Tsconfig.json](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html)  
 [Documentation : Basic SQL syntaxe](https://www.w3schools.com/sql/sql_syntax.asp)  
+[Documentation : REST API](https://fr.wikipedia.org/wiki/Representational_state_transfer)  
+[Documentation : REST API](https://www.redhat.com/fr/topics/api/what-is-a-rest-api)  
 
 </details>
 
