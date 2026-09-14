@@ -502,25 +502,21 @@ The main challenge was understanding each concept, because the features I was wo
 
 ### `chlimous` - Charles Limousin
 
-- Designed and implemented the Django/DRF backend API structure
-- Implemented JWT authentication, registration, login, logout, and password change
-- Implemented user profile, follow, report, and user-ban related APIs
-- Implemented Django Channels chat models and WebSocket consumer
-- Built core domain constraints, serializers, and views
+- Implemented two-factor authentication (2FA) for user login
+- Contributed to both frontend and backend development across several features
+- Debugging throughout the project's lifespan
 
-The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+The main challenge was integrating 2FA cleanly into the existing authentication flow without breaking the user experience, while also switching between frontend and backend work and keeping both sides consistent.
 
 
 ### `chdoe` - Chloé Doe
 
-- Designed and implemented the Django/DRF backend API structure
-- Implemented JWT authentication, registration, login, logout, and password change
-- Implemented user profile, follow, report, and user-ban related APIs
-- Implemented Django Channels chat models and WebSocket consumer
-- Built core domain constraints, serializers, and views
-- Handled project management and documentation: meeting notes, task tracking, README.md structuring, code testing, and general quality improvements (syntax and spelling fixes, added options)
+- Acted as Product Manager: defined the project scope, prioritized features, and coordinated tasks across the team
+- Designed the monolithic backend architecture (single server, shared codebase) and defined the overall project structure
+- Designed the graphic identity and frontend UI/UX (mockups, layout, styling)
+- Debugging throughout the project's lifespan
 
-The main challenge was juggling technical development with the organizational side of the project, keeping documentation and task tracking up to date while the codebase kept evolving, and making sure the team stayed aligned throughout.
+The main challenge was balancing the product management role with the technical work, making sure priorities stayed clear for the team while also keeping the monolithic architecture simple enough to scale and remain maintainable as new features were added.
 
 
 # Known limitations
