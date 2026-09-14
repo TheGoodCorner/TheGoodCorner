@@ -8,23 +8,16 @@ import { Package, Euro, Tag, FileText, PlusCircle } from 'lucide-react';
 import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
-  const { t } = useLingui();
-  const { form, submitting, error, isEditMode, handleChange, submit, isShaking } = useProductForm(product);
+  const { _, t } = useLingui();
+  const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
 
   const categories = useMemo(() => {
-    const categoryLabels = {
-      Training: t`Entraînement`,
-      Professional: t`Professionnel`,
-      Combat: t`Combat`,
-      Cardio: t`Cardio`,
-      other: t`Autre`,
-    };
 
     return CATEGORIES.map((cat) => ({
       value: cat.value,
-      label: cat.label,
+      label: _(cat.label),
     }));
-  }, [t]);
+  }, [_]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
