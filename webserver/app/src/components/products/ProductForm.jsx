@@ -9,7 +9,7 @@ import { PRODUCT_PRICE_MAX, CATEGORIES } from '../../utils/constants';
 
 export function ProductForm({ product = null, onSuccess }) {
   const { _, t } = useLingui();
-  const { form, submitting, error, isEditMode, handleChange, submit } = useProductForm(product);
+  const { form, submitting, error, isEditMode, handleChange, submit, isShaking } = useProductForm(product);
 
   const categories = useMemo(() => {
 
