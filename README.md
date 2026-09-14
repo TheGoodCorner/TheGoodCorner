@@ -447,7 +447,18 @@ Each major module is worth 2 points | Each minor module is worth 1 point
 
 # Individual Contributions
 
-Maxence:
+### `mchanlia` - Maxence Chanliat
+
+- Designed and implemented the Django/DRF backend API structure
+- Implemented JWT authentication, registration, login, logout, and password change
+- Implemented user profile, follow, report, and user-ban related APIs
+- Implemented Django Channels chat models and WebSocket consumer
+- Built core domain constraints, serializers, and views
+
+The main challenge was aligning REST API authentication and WebSocket authentication around the same user model. Redis is used both as the channel layer and as a connection-status store, while chat-room members and messages are persisted in the database for reconnection and moderation workflows.
+
+### `Thoma` - Maxence Chanliat
+
 Thomas:
 Delphine:
 Chloé:
