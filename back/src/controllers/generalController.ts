@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../services/db.js";
 import { comparePassword } from "../utils/securityUtils.js";
-import { AuthenticatedRequest } from "../interfaces/interfaces.js";
+
 /**
  * generalController object creation with methods
  */

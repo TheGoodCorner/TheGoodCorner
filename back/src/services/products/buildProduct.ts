@@ -9,11 +9,11 @@ export const buildProduct = ({ body, file, userId }: ProductCrInput): Prisma.Pro
 
 	const parsedPrice = typeof price === 'number' ? price : Number(price);
 	if (isNaN(parsedPrice) || parsedPrice <= 0 || parsedPrice > 10000) 
-		throw new Error('Le prix doit être un nombre valide compris entre 0.01 € et 10 000 €.');
+		throw new Error('Price must be a valid number sitting in the range of 0.01€ and 10 000€.');
 	const parsedUserId = typeof userId === 'number' ? userId : parseInt(String(userId), 10);
 	const parsedQuantity = quantity ? (typeof quantity === 'number' ? quantity : parseInt(quantity, 10)) : 1;
 	if (category.length > 256 || description.length > 256 || name.length > 256)
-		throw new Error('la categorie du produit ne doit pas aussi longue.');
+		throw new Error('Product category cannot be this long.');
 
 	return {
 		name: String(name),

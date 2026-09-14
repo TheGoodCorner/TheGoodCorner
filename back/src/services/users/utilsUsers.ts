@@ -58,7 +58,6 @@ export const saveRefreshToken = async (userId:number, hashedToken:string) =>{
 	});
 	console.log(`refresh token added to db`);
 }
-
 export const getUserById = async (req: Request< { id:string}>, res: Response) =>
 {
 	try{

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-export const printRequest = ((req: Request, res: Response, next: NextFunction) => {
+export const printRequest = ((req: Request, _res: Response, next: NextFunction) => {
 	const timestamp = new Date().toISOString();
 	console.log(`[${timestamp}] ${req.method} ${req.url}`);
 	
@@ -8,6 +8,5 @@ export const printRequest = ((req: Request, res: Response, next: NextFunction) =
 	if (Object.keys(req.body || {}).length > 0) {
 	  console.log('Body:', JSON.stringify(req.body, null, 2));
 	}
-	void res;
 	next(); // Passer la main au middleware/routeur suivant
 });

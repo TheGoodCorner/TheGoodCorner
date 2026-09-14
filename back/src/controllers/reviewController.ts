@@ -1,12 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { PrismaClient} from '@prisma/client';
-import { comparePassword, hashIt } from "../utils/securityUtils.js";
-import { findUserByEmail, findUserByUsername, createDbUser, saveRefreshToken, findReturnUser } from "../services/users/utilsUsers.js";
-import { generateTokens, verifyRefreshToken } from '../utils/jsonWebTokens.js';
-import { buildUser } from "../services/users/buildUser.js";
-import { userUpdate } from "../services/users/updateUser.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
-import { findReturnProduct } from "../services/products/utilsProducts.js";
 
 const prisma = new PrismaClient; // get the prisma client instance
 
@@ -19,13 +13,13 @@ const reviewController =
 			const { reviews, reviewRating } = req.body;
 			
 			if (isNaN(reviewedId))
-				return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
+				return res.status(400).json({ message: 'Invalid review identifier.' });
 			if (!reviewRating || reviewRating < 1 || reviewRating > 5)
-				return (res.status(400).json({ message: 'La note doit être comprise entre 1 et 5.' }));
+				return (res.status(400).json({ message: 'Review mark must sit in between 1 and 5' }));
 			if (!reviews)
-				return (res.status(400).json({ message: 'La review ne peut pas etre vide' }));
+				return (res.status(400).json({ message: 'Review cannot be empty' }));
 			if (userId === reviewedId)
-				return (res.status(400).json({error: 'Vous ne pouvez pas vous evaluer vous meme'}));
+				return (res.status(400).json({error: 'You cannot register a review for your own account'}));
 			const createdReview = await prisma.$transaction(async (tx) => {
 				const newReview = await tx.review.create({
 					data:{
@@ -79,12 +73,12 @@ const reviewController =
 			if (io) {
 				io.to(`user_${reviewedId}`).emit('new_review', { ...notifContent, notifId: notif.id });
 			}
-			return (res.status(201).json({message: 'Avis cree avec succes', data:{createdReview}}));
+			return (res.status(201).json({message: 'Review creation successfull', data:{createdReview}}));
 		}
 		catch (error:any){
 			console.log(` an error ocurred inside the review create function` + error);
 			if (error.code === 'P2002')
-				return res.status(409).json({ error: "Vous avez déjà évalué cet utilisateur." });
+				return res.status(409).json({ error: "You already reviewed this user" });
 			res.status(500).json({status: 'ERROR', message: 'internal server error', error: "Unknown error"});
 		}
 	},
@@ -95,18 +89,18 @@ const reviewController =
 			const { reviews, reviewRating } = req.body;
 			
 			if (isNaN(reviewedId))
-				return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
+				return res.status(400).json({ message: 'Invalid review identifier.' });
 			if (!reviewRating || reviewRating < 1 || reviewRating > 5)
-				return (res.status(400).json({ message: 'La note doit être comprise entre 1 et 5.' }));
+				return (res.status(400).json({ message: 'Review mark must sit in between 1 and 5' }));
 			if (!reviews)
-				return (res.status(400).json({ message: 'La review ne peut pas etre vide' }));
+				return (res.status(400).json({ message: 'Review cannot be empty' }));
 			const oldReview = await prisma.review.findFirst({
 				where: {id: reviewedId, deletedAt: null},
 			})
 			if (!oldReview)
-				return (res.status(400).json({error: 'Ancien avis introuvable'}));
+				return (res.status(400).json({error: 'Old review is nowhere to be found'}));
 			if (oldReview.authorId !== userId)
-				return (res.status(400).json({error: 'Vous ne pouvez pas modifier l\'evaluation de quelqu\'un d\'autre'}));
+				return (res.status(400).json({error: 'You cannot change someone else\'s review'}));
 			const updatedReview = await prisma.$transaction(async (tx) => {
 				const newReview = await tx.review.update({
 					where: {id: reviewedId},
@@ -146,7 +140,7 @@ const reviewController =
 			if (io) {
 				io.to(`user_${oldReview.reviewedUserId}`).emit('review_updated', { review: updatedReview, reviewedUserId: oldReview.reviewedUserId });
 			}
-			return (res.status(200).json({message: 'Avis mis a jour avec succes', data:{updatedReview}}));
+			return (res.status(200).json({message: 'Successfully updated review', data:{updatedReview}}));
 		}
 		catch (error:any){
 			console.log(` an error ocurred inside the review create function` + error);
@@ -159,14 +153,14 @@ const reviewController =
 			const reviewedId = parseInt(req.params.reviewId, 10);
 			
 			if (isNaN(reviewedId))
-				return res.status(400).json({ message: 'Identifiant d\'avis invalide.' });
+				return res.status(400).json({ message: 'Invalid review identifier.' });
 			const oldReview = await prisma.review.findFirst({
 				where: {id: reviewedId, deletedAt: null},
 			})
 			if (!oldReview)
-				return (res.status(400).json({error: 'Ancien avis introuvable'}));
+				return (res.status(400).json({error: 'Old review is nowhere to be found'}));
 			if (oldReview.authorId !== userId)
-				return (res.status(400).json({error: 'Vous ne pouvez pas supprimer l\'evaluation de quelqu\'un d\'autre'}));
+				return (res.status(400).json({error: 'You cannot delete someone else\'s review'}));
 			await prisma.$transaction(async (tx) => {
 				await tx.review.delete({
 					where: {id: reviewedId},
@@ -199,7 +193,7 @@ const reviewController =
 					reviewId: reviewedId,
 				});
 			}
-			return (res.status(201).json({message:' Avis supprime avec succes'}));
+			return (res.status(201).json({message:'Sucessfully deleted review'}));
 		}
 		catch (error:any){
 			console.log(` an error ocurred inside the review create function` + error);

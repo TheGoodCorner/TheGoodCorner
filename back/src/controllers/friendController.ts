@@ -1,7 +1,6 @@
 import prisma from "../services/db.js";
 import { AuthenticatedRequest } from "../interfaces/interfaces.js";
 import { Response } from "express";
-import { stat } from "node:fs";
 
 const friendController = {
 	sendFriendRequest: async (req: AuthenticatedRequest, res: Response) => {
@@ -132,7 +131,6 @@ const friendController = {
 					OR: [{ senderId: userId }, { receiverId: userId }],
 				};
 			}
-
 			if (status){
 				where.status = status;
 			}

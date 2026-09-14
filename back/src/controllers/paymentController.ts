@@ -22,16 +22,16 @@ const paymentController =
 			const { stripeCurrency = 'eur', productId = [], quantity = [], cartSnapshot = [] } = req.body;
 
 			if (!Array.isArray(productId) || !Array.isArray(quantity) || productId.length === 0)
-				return (res.status(400).json({ status: 'ERROR', message: 'le panier ne peut pas etre vide' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Cart cannot be empty' }));
 
 			if (productId.length !== quantity.length)
-				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence entre produits et quantités' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Discrepancy between product and quantity' }));
 
 			const quantityMap = new Map<number, number>();
 			for (let i = 0; i < productId.length; i++) {
 				const qty = Number(quantity[i]);
 				if (isNaN(qty) || qty <= 0)
-					return (res.status(400).json({ status: 'ERROR', message: 'Quantité invalide' }));
+					return (res.status(400).json({ status: 'ERROR', message: 'Invalid quantity' }));
 				quantityMap.set(productId[i], qty);
 			}
 
@@ -48,13 +48,13 @@ const paymentController =
 				return (res.status(404).json({ status: 'ERROR', message: 'User not found' }));
 
 			if (products.length !== productId.length)
-				return (res.status(400).json({ status: 'ERROR', message: 'certains produits sont introuvables en db' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Somes products are not found in the database' }));
 			
 			if (!Array.isArray(cartSnapshot) || cartSnapshot.length === 0)
-				return (res.status(400).json({ status: 'ERROR', message: 'Snapshot du panier invalide' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Cart Snapshot is invalid' }));
 
 			if (cartSnapshot.length !== productId.length)
-				return (res.status(400).json({ status: 'ERROR', message: 'Incohérence: snapshot ne match pas le cart' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Discrepancy cart snapshot does not match cart' }));
 			
 			const numericPrice = products.reduce((sum, item) => {
 				const itemQty = quantityMap.get(item.id) || 0;
@@ -62,10 +62,10 @@ const paymentController =
 			}, 0);
 
 			if (numericPrice <= 0)
-				return (res.status(400).json({ status: 'ERROR', message: 'Montant total invalide' }));
+				return (res.status(400).json({ status: 'ERROR', message: 'Invalid total amount' }));
 
 			if (user.budget < numericPrice)
-				return (res.status(400).json({ status: 'ERROR', message: "L'utilisateur n'a plus assez de budget !", currentBudget: user.budget }));
+				return (res.status(400).json({ status: 'ERROR', message: "User doesnt have enough budget left", currentBudget: user.budget }));
 
 			let customerId = user.stripeCustomerId;
 			if (!customerId) {
@@ -199,7 +199,7 @@ const paymentController =
 						}
 					}
 					// 2. Decrement user budget securely
-					const updatedBuyerBudget = await tx.user.update({
+					await tx.user.update({
 						where: { id: transaction.userId },
 						data: { budget: { decrement: amountToDeduct } }
 					});
@@ -214,18 +214,18 @@ const paymentController =
 				if (io) {
 					for (const item of cart) {
 						const product = await prisma.product.findUnique({ where: { id: Number(item.id) } });
-						if (product) {
-							if (product.userId) {
-								io.to(`user_${product.userId}`).emit('product_sold', {
-									notifId: soldNotifIds.get(Number(item.id)),
-									productId: product.id,
-									productName: product.name,
-									quantity: Number(item.qty),
-									gain: Number(item.qty) * Number(product.price),
-								});
-							}
-							io.emit('product_updated', { id: product.id, quantity: product.quantity });
+						if (!product)
+							return (res.status(404).json({ status: 'ERROR', message: 'Couldn\'t find the product asked for' }));
+						if (product.userId) {
+							io.to(`user_${product.userId}`).emit('product_sold', {
+								notifId: soldNotifIds.get(Number(item.id)),
+								productId: product.id,
+								productName: product.name,
+								quantity: Number(item.qty),
+								gain: Number(item.qty) * Number(product.price),
+							});
 						}
+						io.emit('product_updated', { id: product.id, quantity: product.quantity });
 					}
 				}
 			} catch (dbError: any) {
@@ -240,6 +240,7 @@ const paymentController =
 				where: { stripeId: paymentIntent.id },
 				data: { status: event.type === 'payment_intent.canceled' ? 'CANCELED' : 'FAILED' }
 			});
+			console.log(`failed or canceled payment successfully proceeded.`);
 		}
 		return (res.status(200).json({ status: 'OK', received: true }));
 	},

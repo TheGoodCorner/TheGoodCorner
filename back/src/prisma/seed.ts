@@ -3,11 +3,9 @@ import { Prisma } from '@prisma/client';
 import { buildProduct } from '../services/products/buildProduct.js';
 import 'dotenv/config';
 import { hashIt } from '../utils/securityUtils.js';
-import { generateTokens, verifyRefreshToken, verifyAcessToken } from '../utils/jsonWebTokens.js'
+import { generateTokens,} from '../utils/jsonWebTokens.js'
 import { saveRefreshToken } from '../services/users/utilsUsers.js';
-// import generated prisma binaries containing scheme tables as methods/objects
 
-// get an instance of the database object from prisma
 
 /**
  * return a random int between max and min (on call)
@@ -19,11 +17,18 @@ import { saveRefreshToken } from '../services/users/utilsUsers.js';
 const getRandomInt = (min: number, max: number): number => {
 	return (Math.floor(Math.random() * (max - min + 1) + min));
 }
+/**
+ * return a random float between max and min (on call)
+ * @param min 
+ * @param max 
+ * @returns integer
+ * */
 
 const getRandomFloat = (min: number, max: number, decimals: number = 1): number => {
 	const val = Math.random() * (max - min) + min;
 	return parseFloat(val.toFixed(decimals));
 };
+
 /**
  * return a ramdom element from an array using a random determined array index
  * @param array : string[]
@@ -60,7 +65,7 @@ const locationPool = [
 	{ city: 'Nice', region: "Provence-Alpes-Côte d'Azur", country: 'France', street: 'Promenade des Anglais', houseNumber: 50 },
 	{ city: 'Toulouse', region: 'Occitanie', country: 'France', street: 'Rue Pargaminières', houseNumber: 12 },
 	{ city: 'Nantes', region: 'Pays de la Loire', country: 'France', street: 'Rue de la Paix', houseNumber: 7 }
-];
+	];
 const sellerReviewsPool: string[] = ['Vendeur ultra réactif, matériel comme neuf et emballage au top !', 'Article conforme à la description, livraison rapide. Je recommande sans hésiter.', 'Les gants sont super confortables mais le colis a mis un peu de temps à arriver.', 'Parfait ! Transaction fluide, vendeur très sérieux et courtois.', 'Produit conforme mais l\'odeur du cuir neuf était un peu forte au déballage.', 'Super qualité d\'équipement, vendeur passionné et de bon conseil !', 'Envoi soigné et rapide. Le matériel encaisse bien les entraînements intensifs.', 'Très bonne communication, le vendeur a répondu à toutes mes questions.'];
 
 /**
@@ -69,8 +74,6 @@ const sellerReviewsPool: string[] = ['Vendeur ultra réactif, matériel comme ne
  * @param map builtin function
  * @return an initialized User
  */
-// seller review 
-// review count
 const randomUsers: Prisma.UserCreateInput[] = [];
 for (let i = 0; i < 15; i++) {
 	const firstName: string = getRandomElement(firstNamePool);
@@ -104,6 +107,7 @@ for (let i = 0; i < 15; i++) {
  */
 async function main() {
 	try {
+		// basic database cleaning
 		console.log('Cleaning existing data...');
 		await prisma.review.deleteMany();
 		await prisma.product.deleteMany();
@@ -117,6 +121,7 @@ async function main() {
 		await prisma.location.deleteMany();
 
 
+		// basic categories filling
 		console.log('Seeding categories...');
 		for (const category of defaultCategories) {
 			await prisma.category.upsert({
@@ -126,6 +131,7 @@ async function main() {
 			});
 		}
 
+		// user creation with random values
 		console.log('Seeding users...');
 		await Promise.all(
 			randomUsers.map((userData) =>
@@ -136,12 +142,12 @@ async function main() {
 		);
 
 		const users = await prisma.user.findMany({ select: { id: true, email: true } });
-
+		// basic products seeding for users
 		console.log('Seeding products...');
 		const productCreatePromises: Promise<any>[] = [];
 
 		for (const user of users) {
-			const { refreshToken } = generateTokens(user.id, user.email);
+			const { refreshToken } = generateTokens(user.id, user.email); // token generation
 			const hashedRefreshToken = hashIt(refreshToken);
 			await saveRefreshToken(user.id, hashedRefreshToken);
 			const productCount = getRandomInt(1, 2);
@@ -178,7 +184,7 @@ async function main() {
 		const foundUsers = await prisma.user.findMany({ select: { id: true } });
 		const reviewData: Prisma.ReviewCreateManyInput[] = [];
 
-		for (const targetUser of foundUsers) {
+		for (const targetUser of foundUsers) { // basic reviews creations
 			const eligibleAuthors = foundUsers.filter((u) => u.id !== targetUser.id);
 			if (eligibleAuthors.length === 0) continue;
 			const reviewCount = getRandomInt(1, Math.min(2, eligibleAuthors.length));
@@ -207,7 +213,7 @@ async function main() {
 				}
 			}
 		});
-		for (const user of usersWithReviews) {
+		for (const user of usersWithReviews) { // synchronizing users reviews and rating altogether
 			const count = user.receivedReviews.length;
 			const average =
 				count > 0 ? user.receivedReviews.reduce((account, rev) => account + rev.reviewRating, 0) / count : 0;
@@ -220,13 +226,12 @@ async function main() {
 				}
 			})
 		};
-		console.log('Seeding friend requests and friends...');
+		console.log('Seeding friend requests and friends...'); // seeding des friends demandes et amis acceptes 
 		const userIds = foundUsers.map((u) => u.id);
 		const existingPairs = new Set<string>();
 		const friendRequestData: Prisma.FriendRequestCreateManyInput[] = [];
 
 		for (const senderId of userIds) {
-			// Pick 2-4 potential connections per user
 			const potentialTargets = userIds.filter((id) => id !== senderId);
 			const targetCount = getRandomInt(1, Math.min(3, potentialTargets.length));
 			const chosenTargets = shuffleArray(potentialTargets).slice(0, targetCount);
