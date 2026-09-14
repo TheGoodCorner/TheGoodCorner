@@ -215,7 +215,7 @@ http://localhost:8080 for non encrypted connection on your local machine's web-b
 | 42 login | Name | Role(s) | Responsibilities |
 | --- | --- | --- | --- |
 | `mchanlia` | Maxence Chanliat | PO/PM / Backend/Frontend Developer | Backend development, Backend API, DevOps, Debugging, Frontend support |
-| `tgomez-f` | Thomas Gomez | PO/PM / Frontend/Backend Developer | Frontend development, Frontend API, Mocking, UI Integration, Backend support |
+| `tgomez-f` | Thomas Gomez | PO/PM / Frontend/Backend Developer | Frontend development, Frontend and Backend API, UI Integration, Backend support, Nginx infrastructure configuration, Debugging |
 | `dpaiva` | Delphine Paiva | Tech Lead / Full-Stack Developer| |
 | `chdoe` | Chloé Bond | PM/Tech Lead | Frontend Developer, Team Coordination, Frontend development, Debugging, Language support and architecture |
 | `chlimous` | Charles Limousin | PM/Tech Lead | Backend development, Backend services, 2FA service |
