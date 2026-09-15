@@ -14,7 +14,8 @@ const options: swaggerJsdoc.Options = {
       description: 'API documentation for TheGoodCorner marketplace',
     },
     servers: [
-      { url: 'http://localhost:8080', description: 'HTTP (dev)' },
+      { url: 'http://localhost:8080/api', description: 'HTTP (dev via Nginx)' },
+      { url: 'https://localhost:4443/api', description: 'HTTPS (dev via Nginx)' },
     ],
     components: {
       securitySchemes: {
