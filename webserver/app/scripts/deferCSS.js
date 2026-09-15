@@ -18,5 +18,4 @@ if (fs.existsSync(indexPath)) {
   );
 
   fs.writeFileSync(indexPath, html, 'utf8');
-  console.log('Successfully deferred render-blocking CSS in build/index.html');
 }

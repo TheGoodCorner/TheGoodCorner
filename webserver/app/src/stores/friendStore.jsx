@@ -35,7 +35,6 @@ export const useFriendStore = create((set, get) => ({
       return newRequest;
     } catch (err) {
       set({ error: err.message, submitting: false });
-      console.error('sendFriendRequest error:', err);
       throw err;
     }
   },
@@ -73,7 +72,6 @@ export const useFriendStore = create((set, get) => ({
     } catch (err) {
       // ← SI ERREUR : restaurer les demandes précédentes
       set({ friendRequests: previousRequests, error: err.message, submitting: false });
-      console.error('acceptFriendRequest error:', err);
       throw err;
     }
   },
@@ -95,7 +93,6 @@ export const useFriendStore = create((set, get) => ({
       return rejected;
     } catch (err) {
       set({ friendRequests: previousRequests, error: err.message, submitting: false });
-      console.error('rejectFriendRequest error:', err);
       throw err;
     }
   },
@@ -136,7 +133,6 @@ export const useFriendStore = create((set, get) => ({
       set({ sentFriendRequests: sentData || [], friends, submitting: false });
     } catch (err) {
       set({ sentFriendRequests: previousSent, friends: previousFriends, error: err.message, submitting: false });
-      console.error('deleteFriendRequest error:', err);
       throw err;
     }
   },
@@ -148,7 +144,6 @@ export const useFriendStore = create((set, get) => ({
       const data = await fetchFriendRequestsRequest({ status: 'PENDING', type: 'received' });
       set({ friendRequests: data || [] });  // ← Juste remplacer, pas spread/concat
     } catch (err) {
-      console.error('fetchReceivedFriendRequests error:', err);
     }
   },
 
@@ -161,7 +156,6 @@ export const useFriendStore = create((set, get) => ({
       const data = await fetchFriendRequestsRequest({ status: 'PENDING', type: 'sent' });
       set({ sentFriendRequests: data || [] });  // ← Idem
     } catch (err) {
-      console.error('fetchSentFriendRequests error:', err);
     }
   },
     // GET /friends. La route ne renvoie que l'id de l'UTILISATEUR ami,
@@ -187,7 +181,6 @@ export const useFriendStore = create((set, get) => ({
         });
         set({ friends });
       } catch (err) {
-        console.error('fetchFriends error:', err);
       }
     },
 

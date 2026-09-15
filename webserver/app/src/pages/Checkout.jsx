@@ -125,7 +125,6 @@ export default function Checkout() {
                     setWalletBudget(Number(currentBudget));
                 }
             } catch (err) {
-                console.error('Erreur récupération solde portefeuille:', err);
             }
         };
 
@@ -206,7 +205,6 @@ export default function Checkout() {
                 setError(t`Impossible d'initialiser le formulaire de paiement.`);
             }
         } catch (err) {
-            console.error('Erreur lors du paiement :', err);
             setError(
                 err.response?.data?.message ||
                 err.message ||

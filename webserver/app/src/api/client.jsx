@@ -49,6 +49,10 @@ apiClient.interceptors.response.use(
       originalRequest?.url?.includes(path)
     );
 
+	if (error.response?.status === 503) {
+	  redirectTo('/Unavailable');
+	  return Promise.reject(new Error('Service temporairement indisponible.'));
+	}
   // ===== 429 : redirection + blocage, une seule fois =====
     if (error.response?.status === 429) {
       if (!rateLimitBlocked) {

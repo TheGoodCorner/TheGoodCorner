@@ -19,7 +19,6 @@ export const useNotificationStore = create(
           const data = await fetchNotificationsRequest();
           set({ notifications: data });
         } catch (error) {
-          console.error('fetchNotifications error:', error);
 		  set({ notifications: [] });
         }
       },
@@ -45,7 +44,6 @@ export const useNotificationStore = create(
         try {
           await markNotificationReadRequest(id);
         } catch (error) {
-          console.error('markAsRead error:', error);
         }
       },
 
@@ -56,7 +54,6 @@ export const useNotificationStore = create(
             notifications: state.notifications.map((n) => ({ ...n, read: true })),
           }));
         } catch (error) {
-          console.error('markAllRead error:', error);
         }
       },
 

@@ -46,7 +46,6 @@ export const useCartStore = create(
               currentUserId: userId,
             })
           } catch (e) {
-            console.error('Erreur parsing cart:', e)
             set({ currentUserId: userId, cartItems: [], cartCount: 0, cartTotal: 0 })
           }
         } else {

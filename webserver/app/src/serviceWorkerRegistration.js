@@ -50,10 +50,8 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
-              console.log('[SW] Nouvelle version disponible.');
               config?.onUpdate?.(registration);
             } else {
-              console.log('[SW] Contenu mis en cache pour un usage hors-ligne.');
               config?.onSuccess?.(registration);
             }
           }
@@ -61,7 +59,6 @@ function registerValidSW(swUrl, config) {
       };
     })
     .catch((error) => {
-      console.error("[SW] Échec de l'enregistrement :", error);
     });
 
   let refreshing = false;
@@ -85,7 +82,6 @@ function checkValidServiceWorker(swUrl, config) {
       }
     })
     .catch(() => {
-      console.log('[SW] Aucune connexion réseau — app en mode hors-ligne.');
     });
 }
 

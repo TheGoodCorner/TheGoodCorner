@@ -26,6 +26,7 @@ import Produits from './pages/Produits';
 import './styles/style.css';
 import './styles/tokens.css';
 import { useLanguageStore, dynamicActivate } from './stores/languageStore';
+import Unavailable from './pages/Unavailable';
 
 function ScrollToTop() {
     const { pathname } = useLocation();
@@ -87,8 +88,9 @@ function App() {
                         <Route path="/checkout/success" element={<SuccessCheckout />} />
                     </Route>
 
-                    <Route path="*" element={<NotFound />} />
                     <Route path="/rate-limiting" element={<TooManyRequests />} />
+                    <Route path="/Unavailable" element={<Unavailable />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </Router>
         </I18nProvider>

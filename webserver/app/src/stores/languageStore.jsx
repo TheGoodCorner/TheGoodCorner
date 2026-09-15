@@ -9,7 +9,6 @@ export async function dynamicActivate(locale) {
     i18n.load(locale, messages);
     i18n.activate(locale);
   } catch (err) {
-    console.error(`Failed to load messages for ${locale}:`, err);
   }
 }
 

@@ -26,7 +26,6 @@ function SelectUserModal({ isOpen, onClose, onSelectUser }) {
       const allUsers = await GetAllUsers();
       setUsers(Array.isArray(allUsers) ? allUsers : []);
     } catch (error) {
-      console.error('Erreur lors du chargement des utilisateurs:', error);
       setUsers([]);
     } finally {
       setLoading(false);

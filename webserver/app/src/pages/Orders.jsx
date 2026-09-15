@@ -24,7 +24,6 @@ export default function Orders() {
 
         setOrders(paymentList);
       } catch (err) {
-        console.error('Erreur récupération commandes:', err);
         setError(err.message || t`Impossible de charger vos commandes.`);
       } finally {
         setLoading(false);

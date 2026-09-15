@@ -63,7 +63,6 @@ export const useMessageStore = create(
           });
         } catch (err) {
           set({ conversationsError: err.message, conversationsLoading: false });
-          console.error('fetchConversations error:', err);
         }
       },
 
@@ -117,7 +116,6 @@ export const useMessageStore = create(
           }));
         } catch (err) {
           set({ messagesError: err.message, messagesLoading: false });
-          console.error('fetchMessages error:', err);
         }
       },
 
@@ -130,7 +128,6 @@ export const useMessageStore = create(
           return; // ← Retourne sans newMessage
         } catch (err) {
           set({ error: err.message, sending: false });
-          console.error('sendMessage error:', err);
           throw err;
         }
       },

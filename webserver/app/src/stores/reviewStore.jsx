@@ -20,7 +20,6 @@ export const useReviewStore = create((set) => ({
       return newReview;
     } catch (err) {
       set({ error: err.message, submitting: false });
-      console.error('createReview error:', err);
       throw err;
     }
   },
@@ -34,7 +33,6 @@ export const useReviewStore = create((set) => ({
       return updatedReview;
     } catch (err) {
       set({ error: err.message, submitting: false });
-      console.error('updateReview error:', err);
       throw err;
     }
   },
@@ -47,7 +45,6 @@ export const useReviewStore = create((set) => ({
 	  useProductStore.getState().fetchProducts();
     } catch (err) {
       set({ error: err.message, submitting: false });
-      console.error('deleteReview error:', err);
       throw err;
     }
   },

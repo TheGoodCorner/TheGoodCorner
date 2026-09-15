@@ -32,7 +32,6 @@ export const useUserStore = create(
             return data;
           } catch (err) {
             set({ error: err.message, loading: false });
-            console.error('fetchUser for CurrentUser error:', err);
           }
         }
         set({ viewedUserLoading: true, viewedUserError: null });
@@ -42,7 +41,6 @@ export const useUserStore = create(
           return data;
         } catch (err) {
           set({ viewedUserError: err.message, viewedUserLoading: false });
-          console.error('fetchUser error:', err);
         }
       },
 
@@ -67,7 +65,6 @@ export const useUserStore = create(
           return data;
         } catch (err) {
           set({ error: err.message });
-          console.error('updateProfile error:', err);
           throw err;
         } finally {
           set({ loading: false });
@@ -84,7 +81,6 @@ export const useUserStore = create(
           set({ user: null, loading: false });
         } catch (err) {
           set({ error: err.message, loading: false });
-          console.error('deleteAccount error:', err);
           throw err;
         }
       },

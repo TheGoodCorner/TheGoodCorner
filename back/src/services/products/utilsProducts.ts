@@ -16,7 +16,6 @@ export const getProductById = async (req: Request<{id: string}>, res: Response) 
 		return (res.status(200).json(result));
 	}
 	catch (error){
-		console.error(error);
 		return (res.status(500).json({ status: 'ERROR', message: 'Internal server error' }));
 	}
 }

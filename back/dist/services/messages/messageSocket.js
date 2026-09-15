@@ -15,9 +15,7 @@ export function initializeWebServer(server) {
             credentials: true
         }
     });
-    // console.log('🔌 Socket.io initialisé'); //
     io.on('connection', (socket) => {
-        // console.log('✅ Nouveau client connecté:', socket.id);
         socket.on('register_user', (userId) => {
             const uid = String(userId);
             socket.join(`user_${uid}`);
@@ -36,7 +34,6 @@ export function initializeWebServer(server) {
             }
         });
         socket.on('send_direct_message', async (data) => {
-            // console.log('📨 send_direct_message reçu:', data); //
             try {
                 // console.log(`💾 Sauvegarde du message de ${data.senderId} à ${data.receiverId}...`); // ✅
                 const savedMessage = await MessageService.saveMessage(data.senderId, data.receiverId, data.content);
