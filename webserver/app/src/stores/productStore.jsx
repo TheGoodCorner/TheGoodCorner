@@ -50,7 +50,19 @@ export const useProductStore = create((set, get) => ({
       set({ currentProduct: data, currentProductLoading: false });
       return data;
     } catch (err) {
-      set({ currentProductError: err.message, currentProductLoading: false });
+      // Check if it's a 503 status (Axios stores response in err.response)
+      const status = err.response?.status;
+      const isOffline = status === 503 || !navigator.onLine;
+
+      set({ 
+        currentProductError: {
+          message: err.message,
+          status: status,
+          isOffline: isOffline,
+          data: err.response?.data // Contains your service worker's JSON response if available
+        }, 
+        currentProductLoading: false 
+      });
     }
   },
 

@@ -102,17 +102,20 @@ function ProductDetail() {
     }
   }, [product?.quantity]);
 
-  if (!product && currentProductError) {
-    const isOffline = currentProductError?.response?.status === 503 || !navigator.onLine;
+  if (!product && !currentProductError) {
+    return <ProductDetailSkeleton />;
+  }
 
-    if (isOffline) {
+  if (!product && currentProductError) {
+    // Check if the error is due to being offline / 503
+    if (currentProductError.isOffline || currentProductError.status === 503) {
       return (
         <div className="container py-16 text-center">
           <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">
             <Trans>Vous êtes hors-ligne</Trans>
           </h1>
           <p className="text-[var(--color-text-muted)] mb-6">
-            <Trans>Ce produit n'a pas été trouvé en cache et votre connexion est indisponible.</Trans>
+            <Trans>Ce produit n'est pas disponible en cache et votre connexion est interrompue.</Trans>
           </p>
           <Button to="/products" variant="primary">
             <Trans>Retour aux produits</Trans>
