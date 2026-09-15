@@ -102,8 +102,26 @@ function ProductDetail() {
     }
   }, [product?.quantity]);
 
-  if (!product && !currentProductError) {
-    return <ProductDetailSkeleton />;
+  if (!product && currentProductError) {
+    const isOffline = currentProductError?.response?.status === 503 || !navigator.onLine;
+
+    if (isOffline) {
+      return (
+        <div className="container py-16 text-center">
+          <h1 className="text-2xl font-bold text-[var(--color-text)] mb-4">
+            <Trans>Vous êtes hors-ligne</Trans>
+          </h1>
+          <p className="text-[var(--color-text-muted)] mb-6">
+            <Trans>Ce produit n'a pas été trouvé en cache et votre connexion est indisponible.</Trans>
+          </p>
+          <Button to="/products" variant="primary">
+            <Trans>Retour aux produits</Trans>
+          </Button>
+        </div>
+      );
+    }
+
+    return <NotFound />;
   }
 
   if (!product && currentProductError) {

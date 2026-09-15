@@ -150,7 +150,7 @@ export default function ProductCard({
                         alt={product.name}
                         width="340"
                         height="340"
-                        loading="eager"
+                        loading="lazy"
                         decoding="async"
                         className="w-full h-full object-cover"
                     />
