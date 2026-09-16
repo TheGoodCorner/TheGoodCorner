@@ -1,11 +1,12 @@
+import { send } from 'node:process';
 import prisma from '../db.js';
 
 export class MessageService {
 	static async saveMessage(senderId: number, receiverId: number, content: string) {
 		return (await prisma.message.create({
 			data: {
-				senderId,
-				receiverId,
+				senderId: Number(senderId),
+				receiverId: Number(receiverId),
 				content
 			},
 			include: {
@@ -75,7 +76,7 @@ export class MessageService {
 	}
 	static async updateMessage(messageId: number, newMessage: string){
 		return (await prisma.message.update({
-			where: { id: messageId },
+			where: { id: Number(messageId) },
 		data: {
 			content: newMessage,
 			modifiedAt: new Date()
@@ -93,7 +94,7 @@ export class MessageService {
 	}
 	static async deleteMessage(messageId: number){
 		return (await prisma.message.delete({
-			where: {id: messageId}
+			where: {id: Number(messageId)}
 		}));
 	}
 }
