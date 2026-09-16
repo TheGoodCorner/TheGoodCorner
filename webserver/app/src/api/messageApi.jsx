@@ -26,8 +26,8 @@ export async function SendMessage(receiver_id, content) {
     }
     
     socket.emit('send_direct_message', {
-        senderId: userId,
-        receiverId: receiver_id,
+        senderId: Number(userId),
+        receiverId: Number(receiver_id),
         content: content
     });
 }
